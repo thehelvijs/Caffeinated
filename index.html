@@ -16,7 +16,7 @@
       <div class="header">
         <label class="title">Caffeinated</label>
         <i id="closebtn" class="fas fa-times"></i>
-        <img id="loading" class="hide" src="media/load2.gif">
+        <!-- <img id="loading" class="hide" src="media/load2.gif"> -->
       </div>
 
       <div class="sidenav">
@@ -89,42 +89,40 @@
 
       app.use(cors());
 
-      function generatePaths() {
-        server.listen(store.get("hostPort"), "localhost");
-        console.log("Server running on port " + String(store.get("hostPort")));
+      server.listen(store.get("hostPort"), "localhost");
+      console.log("Server running on port " + String(store.get("hostPort")));
 
-        app.get('/', function(req,res){
-          res.send("pong");
-        });
+      app.get('/', function(req,res){
+        res.send("pong");
+      });
 
-        app.get('/chat', function(req,res){
-          res.sendFile(__dirname+"/chat.html");
-        });
+      app.get('/chat', function(req,res){
+        res.sendFile(__dirname+"/chat.html");
+      });
 
-        app.get('/followers', function(req,res){
-          res.sendFile(__dirname+"/followers.html");
-        });
+      app.get('/followers', function(req,res){
+        res.sendFile(__dirname+"/followers.html");
+      });
 
-        app.get('/donations', function(req,res){
-          res.sendFile(__dirname+"/donations.html");
-        });
+      app.get('/donations', function(req,res){
+        res.sendFile(__dirname+"/donations.html");
+      });
 
-        app.get('/media/follower-alert.mp3',function(req,res){
-          res.sendFile(store.get('followerAudio')); 
-        });
+      app.get('/media/follower-alert.mp3',function(req,res){
+        res.sendFile(store.get('followerAudio')); 
+      });
 
-        app.get('/media/follower-gif.gif',function(req,res){
-          res.sendFile(store.get('followerGIF')); 
-        });
+      app.get('/media/follower-gif.gif',function(req,res){
+        res.sendFile(store.get('followerGIF')); 
+      });
 
-        app.get('/media/donation-alert.mp3',function(req,res){
-          res.sendFile(store.get('donationAudio')); 
-        });
+      app.get('/media/donation-alert.mp3',function(req,res){
+        res.sendFile(store.get('donationAudio')); 
+      });
 
-        app.get('/media/donation-gif.gif',function(req,res){
-          res.sendFile(store.get('donationGIF')); 
-        });
-      }
+      app.get('/media/donation-gif.gif',function(req,res){
+        res.sendFile(store.get('donationGIF')); 
+      });
 
       io.sockets.on('connection', function(socket){
         console.log("New connection");
@@ -159,18 +157,14 @@
             filePath = filePath[0];
             switch(type){
               case "FOLLOWER_GIF":
-                server.close();
                 store.set('followerGIF', filePath);
-                generatePaths();
                 io.sockets.emit('reload', 1);
                 break;
               case "FOLLOWER_MP3":
                 store.set('followerAudio', filePath);
                 break;
               case "DONATION_GIF":
-                server.close();
                 store.set('donationGIF', filePath);
-                generatePaths();
                 io.sockets.emit('reload', 1);
                 break;
               case "DONATION_MP3":
@@ -195,8 +189,6 @@
       
         var userInfo = JSON.parse(json.response);
         userInfo = userInfo.user;
-
-        generatePaths();
 
         connectChatDon(userInfo.stage_id);
 
@@ -252,7 +244,8 @@
 				ws.onmessage = function(message) {
 					var message_raw = message.data;
 					if (message_raw != ("\"THANKS\"")) {
-						var json = JSON.parse(message_raw);
+            var json = JSON.parse(message_raw);
+            console.log(json);
 						
 						if (json.type == "reaction" && !json.hasOwnProperty("endorsement_count")) {
 							var body = json.body;
@@ -288,6 +281,10 @@
         }
         return false;
       }
+
+      setInterval(() => {
+        io.sockets.emit('ping', 1);
+      }, 1000);
 
       setInterval(() => {
         if(store.get("user") !== undefined) {
@@ -331,7 +328,6 @@
           document.getElementById("greetings").innerHTML = "Hey, " + userInfo.username + "!";
           document.getElementById("followersTitle").innerHTML = "Followers";
           document.getElementById("followerCount").innerHTML = userInfo.followers_count;
-          generatePaths();
           connectChatDon(userInfo.stage_id);
         }
         else {
