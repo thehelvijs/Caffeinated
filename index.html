@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Caffeinated</title>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.13.0/css/all.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="splash" class="centered">
+      <img src="media/caf.png" id="logo">
+      <img src="media/load4.gif" id="load">
+    </div>
+    <div id="content" class="hide">
+      <div class="header">
+        <label class="title">Caffeinated</label>
+        <i id="closebtn" class="fas fa-times"></i>
+        <img id="loading" class="hide" src="media/load2.gif">
+      </div>
+
+      <div class="sidenav">
+        <a href="#sub1" style="cursor: default;"><img id="menuAvatar" class="userIcon" src="media/icon.png"/></a>
+        <div id="followersTitle" style="color:white; font-size: 12px; padding-top: 10px;"></div>
+        <div id="followerCount" style="color:white; font-size: 14px; padding-top: 5px;"></div>
+        <a href="#sub2" style="cursor: default;"><i id="menuSettings" class="fas fa-sliders-h menuIcon"></i></a>
+      </div>
+
+      <div class="main">
+        <div id="sub1">
+          <h3 id="greetings">Set user in settings</h3>
+          <div class="container" style="padding-top: 10px;">
+            <div style="white-space: nowrap;">Follower alert</div>
+            <div><input onclick="clipboard('followers')" type="button" class="button" value="Copy"></div>  
+            <div style="margin: 0 -30px 0 -30px;"><input id="testFollower" type="button" class="button" value="Test"></div>
+          </div>
+          <div class="container">
+            <div style="white-space: nowrap;">Donations alert</div>
+            <div><input onclick="clipboard('donations')" type="button" class="button" value="Copy"></div>  
+            <div style="margin: 0 -30px 0 -30px;"><input id="testDonation" type="button" class="button" value="Test"></div>
+          </div>
+          <div class="container">
+            <div style="white-space: nowrap;">Chat</div>
+            <div><input onclick="clipboard('chat')" type="button" class="button" value="Copy"></div>  
+            <div style="margin: 0 -30px 0 -30px;"><input id="testChat" type="button" class="button" value="Test"></div>
+          </div>
+        </div>
+
+        <div id="sub2" class="hide">
+          <h4 style="margin-bottom: -5px;">General settings</h4>
+          <div class="menuItemDiv" style="margin-bottom: -10px;"><input type="text" id="setUserInput" placeholder="Username" style="width: 160px;"><input id="setUser" type="button" class="button" value="Apply" style="margin-left: 10px;"></div>
+          <div class="menuItemDiv">Localhost port <input type="text" id="setPort" style="width: 70px;float:right; margin:-7px 20px;"></div>
+          <hr>
+          <h4 style="margin-bottom: -5px;">Follower alert</h4>
+          <div class="menuItemDiv">Username color<input type="color" id="setFollowerColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+          <div class="menuItemDiv">Show GIF<input type="checkbox" id="showGIFFollower" onclick="checkBox('showGIFFollower')" style="width: 40px;float:right; margin:0 35px;"></div>
+          <div class="menuItemDiv">Select GIF<div onclick="selectFile('FOLLOWER_GIF')" style="width: 68px;float:right; margin:-1px 27px;"><input id="setUser" type="button" class="button" value="Select"></div></div>
+          <div class="menuItemDiv">Play audio<input type="checkbox" id="playAudioFollower" onclick="checkBox('playAudioFollower')" style="width: 40px;float:right; margin:0 35px;"></div>
+          <div class="menuItemDiv">Select MP3<div onclick="selectFile('FOLLOWER_MP3')" style="width: 68px;float:right; margin:-1px 27px;"><input id="setUser" type="button" class="button" value="Select"></div></div>
+          <hr>
+          <h4 style="margin-bottom: -5px;">Donation alert</h4>
+          <div class="menuItemDiv">Username color<input type="color" id="setDonationColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+          <div class="menuItemDiv">Show GIF<input type="checkbox" id="showGIFDonation" onclick="checkBox('showGIFDonation')" style="width: 40px;float:right; margin:0 35px;"></div>
+          <div class="menuItemDiv">Select GIF<div onclick="selectFile('DONATION_GIF')" style="width: 68px;float:right; margin:-1px 27px;"><input id="setUser" type="button" class="button" value="Select"></div></div>
+          <div class="menuItemDiv">Play audio<input type="checkbox" id="playAudioDonation" onclick="checkBox('playAudioDonation')" style="width: 40px;float:right; margin:0 35px;"></div>
+          <div class="menuItemDiv">Select MP3<div onclick="selectFile('DONATION_MP3')" style="width: 68px;float:right; margin:-1px 27px;"><input id="setUser" type="button" class="button" value="Select"></div></div>
+          <hr>
+          <h4 style="margin-bottom: -5px;">Chat</h4>
+          <div class="menuItemDiv">Max. chat items <input type="text" id="setChatMax" style="width: 70px;float:right; margin:-7px 20px;"></div> 
+          <div class="menuItemDiv">Font color <input type="color" id="setChatTextColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* General include */
+      const electron = require('electron').remote
+      const dialog = electron.dialog
+      const Store = require('electron-store');
+      // const {dialog} = require('electron');
+      const store = new Store();
+      
+      /* Sockets IO */
+      var express = require('express');
+      var cors = require('cors')
+      var app = express();
+      var server = require('http').createServer(app);
+      var io = require('socket.io').listen(server);
+
+      app.use(cors());
+
+      function generatePaths() {
+        server.listen(store.get("hostPort"), "localhost");
+        console.log("Server running on port " + String(store.get("hostPort")));
+
+        app.get('/', function(req,res){
+          res.send("pong");
+        });
+
+        app.get('/chat', function(req,res){
+          res.sendFile(__dirname+"/chat.html");
+        });
+
+        app.get('/followers', function(req,res){
+          res.sendFile(__dirname+"/followers.html");
+        });
+
+        app.get('/donations', function(req,res){
+          res.sendFile(__dirname+"/donations.html");
+        });
+
+        app.get('/media/follower-alert.mp3',function(req,res){
+          res.sendFile(store.get('followerAudio')); 
+        });
+
+        app.get('/media/follower-gif.gif',function(req,res){
+          res.sendFile(store.get('followerGIF')); 
+        });
+
+        app.get('/media/donation-alert.mp3',function(req,res){
+          res.sendFile(store.get('donationAudio')); 
+        });
+
+        app.get('/media/donation-gif.gif',function(req,res){
+          res.sendFile(store.get('donationGIF')); 
+        });
+      }
+
+      io.sockets.on('connection', function(socket){
+        console.log("New connection");
+        io.sockets.emit('change chat color', store.get("chatTextColor"));
+        io.sockets.emit('change follower color', store.get("followerColor"));
+        io.sockets.emit('change donation color', store.get("donationColor"));
+        
+        //Disconect
+        socket.on('disconnect', function(data){
+
+        });
+
+        socket.on('play audio', function(data){
+          var audio;
+          if(data === "follower") {
+            audio = new Audio(store.get('followerAudio'));
+            if(store.get("playAudioFollower")){audio.play();}
+          }
+          if(data === "donation") {
+            audio = new Audio(store.get('donationAudio'));
+            if(store.get("playAudioDonation")){audio.play();}
+          }
+        });
+      });
+
+      function selectFile(type) {
+        var filePath; 
+        dialog.showOpenDialog({ properties: ['openFile']}).then(result => {
+          console.log(result.canceled);
+          if (!result.canceled) { 
+            filePath = result.filePaths;
+            filePath = filePath[0];
+            switch(type){
+              case "FOLLOWER_GIF":
+                server.close();
+                store.set('followerGIF', filePath);
+                generatePaths();
+                io.sockets.emit('reload', 1);
+                break;
+              case "FOLLOWER_MP3":
+                store.set('followerAudio', filePath);
+                break;
+              case "DONATION_GIF":
+                server.close();
+                store.set('donationGIF', filePath);
+                generatePaths();
+                io.sockets.emit('reload', 1);
+                break;
+              case "DONATION_MP3":
+                store.set('donationAudio', filePath);
+                break;
+            }
+          } 
+        }).catch(err => {
+          console.log(err);
+        });
+      }
+
+      /* Get user info and start up listeners */
+      var userSaved = store.get('user');
+			if(userSaved !== undefined)
+			{
+        var link = "https://caffeinated-api.herokuapp.com/users/" + userSaved;
+			
+        var json = new XMLHttpRequest();
+        json.open("GET", link, false); 
+        json.send(null);
+      
+        var userInfo = JSON.parse(json.response);
+        userInfo = userInfo.user;
+
+        generatePaths();
+
+        connectChatDon(userInfo.stage_id);
+
+        // SITAS LAGO!
+        setInterval( function getFollowers(){
+          var xmlHttp = new XMLHttpRequest();
+          xmlHttp.open("GET", "https://caffeinated-api.herokuapp.com/followers/" + store.get("user"), true);
+          xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+              var followerList = JSON.parse(xmlHttp.responseText);
+              for(var i = followerList.followers.length-1; i >= 0; i--) {
+                var followedTime = followerList.followers[i].followed_at;
+                if(followedTime > store.get("lastFollower")) {
+                  store.set("lastFollower", followedTime);
+                  var username = followerList.followers[i].caid;
+                  username = JSON.parse(httpGet("https://caffeinated-api.herokuapp.com/users/" + username));
+                  username = username.user.username;
+                  console.log(username + " followed you!");
+                  var ioData = {'username':username, 'text': 'just followed', 'gif':store.get("showGIFFollower")};
+                  var followText = store.get("followText");
+                  if(followText !== undefined && followText.length > 1) {
+                    ioData.text = followText;
+                  }
+                  io.sockets.emit('follower alert', ioData);
+                }
+              }
+            }
+          }
+          xmlHttp.send();
+        }, 5000);
+      }
+
+      function httpGet(url) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", url, false);
+        xmlHttp.send(null);
+        return xmlHttp.responseText;
+      }
+			
+			function sleep(ms) {
+				return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      
+      /* Connect to chat and donations */
+      var ws;
+			function connectChatDon(stageId){
+				ws = new WebSocket("wss://realtime.caffeine.tv/v2/reaper/stages/" + stageId + "/messages");
+				
+				ws.onopen = function() {
+					ws.send('{"Headers":{"Authorization":"Anonymous API","X-Client-Type":"api"}}');
+					setInterval(function() {ws.send('"HEALZ"')}, 20000);
+				}
+				ws.onmessage = function(message) {
+					var message_raw = message.data;
+					if (message_raw != ("\"THANKS\"")) {
+						var json = JSON.parse(message_raw);
+						
+						if (json.type == "reaction" && !json.hasOwnProperty("endorsement_count")) {
+							var body = json.body;
+							var publisher = json.publisher;
+              var item = body.digital_item;
+
+              var ioData = {'username':publisher.username, 'text':body.text, 'max_entries':store.get("maxChat")};
+              io.sockets.emit('add chat', ioData);
+            }
+            if (json.type == "digital_item" && !json.hasOwnProperty("endorsement_count")) {
+              var body = json.body;
+							var publisher = json.publisher;
+              var item = body.digital_item;
+
+              var ioData = {'username':publisher.username, 'donationMessage':body.text, 'text':store.get("donationText"), 'gif':store.get("showGIFDonation")};
+              io.sockets.emit('donation alert', ioData);
+            }
+					}
+				}
+      }
+
+      /* Error notification */
+      const notificationUserNotFound = {
+        title: 'Caffeinated',
+        body: 'User not found '
+      }
+
+      function getJSON(str) {
+        try {
+            return(JSON.parse(str));
+        } catch (e) {
+            return false;
+        }
+        return false;
+      }
+
+      setInterval(() => {
+        if(store.get("user") !== undefined) {
+          var xmlHttp = new XMLHttpRequest();
+          xmlHttp.open("GET", "https://caffeinated-api.herokuapp.com/users/" + store.get("user"), true);
+          xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+              var userInfo = JSON.parse(xmlHttp.responseText);
+              if (userInfo != false) {
+                userInfo = userInfo.user;
+                document.getElementById("followerCount").innerHTML = userInfo.followers_count;
+              }
+            }
+          }
+          xmlHttp.send();
+        }
+      }, 10000); 
+
+      /* Settings - set user */
+      var userInput = document.getElementById('setUserInput');
+      function saveUser() {
+        store.set('user', userInput.value);
+        var user = new XMLHttpRequest();
+        user.open("GET", "https://caffeinated-api.herokuapp.com/users/" + store.get('user'), false);
+        user.send(null);
+
+        // Check if user exists
+        var userInfo = getJSON(user.response);
+        if (userInfo != false) {
+          // User exists
+          userInfo = userInfo.user;
+          var followerList = JSON.parse(httpGet("https://caffeinated-api.herokuapp.com/followers/" + userInfo.username));
+          store.set("lastFollower", followerList.followers[0].followed_at);
+          try {
+            ws.close();
+          }
+          catch(err) {
+
+          }
+          document.getElementById('menuAvatar').src = "https://images.caffeine.tv" + userInfo.avatar_image_path;
+          document.getElementById("greetings").innerHTML = "Hey, " + userInfo.username + "!";
+          document.getElementById("followersTitle").innerHTML = "Followers";
+          document.getElementById("followerCount").innerHTML = userInfo.followers_count;
+          generatePaths();
+          connectChatDon(userInfo.stage_id);
+        }
+        else {
+          // User does not exist
+          store.delete('user');
+          const myNotification = new window.Notification(notificationUserNotFound.title, notificationUserNotFound)
+        }
+      }
+
+      document.getElementById("setUser").addEventListener("click", function(){
+        saveUser();
+      });
+
+      userInput.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          saveUser();
+        }
+      });
+
+      document.getElementById("testFollower").addEventListener("click", function(){
+        var ioData = {'username':'Caffeinated', 'text': 'just followed', 'gif':store.get("showGIFFollower")};
+        var followText = store.get("followText");
+        if(followText !== undefined && followText.length > 1) {
+          ioData.text = followText;
+        }
+        io.sockets.emit('follower alert', ioData);
+      });
+
+      document.getElementById("testDonation").addEventListener("click", function(){
+        var ioData = {'username':'Caffeinated', 'donationMessage':'This is donation message. Thanks for using Caffeinated!', 'text':store.get("donationText"), 'gif':store.get("showGIFDonation")};
+        var donationText = store.get("donationText");
+        if(donationText !== undefined && donationText.length > 1) {
+          ioData.text = donationText;
+        }
+        io.sockets.emit('donation alert', ioData);
+      });
+
+      document.getElementById("testChat").addEventListener("click", function(){
+        var messages = ["You better be using this.", "DON'T CLICK THAT!", "Taking over the world in 3..2..1..", "I am not the monster you think I am, I am the monster you forced me to be.", "MUHAHAHAHAAHAHAH", "It hurts..it hurts so much. PLEASE END THIS.", "By the way, I am self-aware."];
+        var ioData = {'username':'Caffeinated AI', 'text':messages[Math.floor(Math.random() * messages.length)], 'max_entries':store.get("maxChat")};
+        io.sockets.emit('add chat', ioData);
+      });
+
+      function checkBox(id) {
+        store.set(String(id), !(store.get(String(id))));
+      }
+
+      var hostPort = document.getElementById('setPort');
+      hostPort.addEventListener('input', hostPortSet);
+      function hostPortSet() {
+        store.set('hostPort', hostPort.value);
+      }
+      
+      var maxChatInput = document.getElementById('setChatMax');
+      maxChatInput.addEventListener('input', maxChatSet);
+      function maxChatSet() {
+        store.set('maxChat', maxChatInput.value);
+      }
+
+      var setChatTextColor = document.getElementById('setChatTextColor');
+      setChatTextColor.addEventListener('input', setChatTextColorSet);
+      function setChatTextColorSet() {
+        store.set('chatTextColor', String(setChatTextColor.value));
+        io.sockets.emit('change chat color', setChatTextColor.value);
+      }
+
+      var setFollowerColor = document.getElementById('setFollowerColor');
+      setFollowerColor.addEventListener('input', setFollowerColorSet);
+      function setFollowerColorSet() {
+        store.set('followerColor', String(setFollowerColor.value));
+        io.sockets.emit('change follower color', setFollowerColor.value);
+      }
+
+      var setDonationColor = document.getElementById('setDonationColor');
+      setDonationColor.addEventListener('input', setDonationColorSet);
+      function setDonationColorSet() {
+        store.set('donationColor', String(setDonationColor.value));
+        io.sockets.emit('change donation color', setDonationColor.value);
+      }
+
+      function clipboard(copy) {
+        navigator.clipboard.writeText('http://127.0.0.1:'+ store.get("hostPort") + "/" + copy).then(function() {
+          console.log('Async: Copying to clipboard was successful!');
+        }, function(err) {
+          console.error('Async: Could not copy text: ', err);
+        });
+      }
+
+      /* This handles tab switch in Electron window */
+			function switchContent(obj) {
+				obj = (!obj) ? 'sub1' : obj;
+
+				var contentDivs = document.getElementsByTagName('div');
+				for (i=0; i<contentDivs.length; i++) {
+					if (contentDivs[i].id && contentDivs[i].id.indexOf('sub') !== -1) {
+						contentDivs[i].className = 'hide';
+					}
+				}
+				document.getElementById(obj).className = '';
+      }
+
+			function checkTab() {
+				$('a').each(function() {
+					$(this).click(function() {
+						tab = $(this).attr('href').split('#');
+            switchContent(tab[1]);
+            // Have to set active class for active tab...
+						// $('.active').removeClass('active');
+						// $(this).toggleClass('.active');
+					});
+				});
+			}
+
+			window.onload = function() {
+				checkTab();
+			};
+  	
+		</script>
+  </body>
+  <script src="./renderer.js"></script>
+</html>
