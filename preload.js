@@ -14,6 +14,11 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function init() {
+      // var followerLink = "http://127.0.0.1:5000/followers/";
+      // var usersLink = "http://127.0.0.1:5000/users/";
+      var followerLink = "https://caffeinated-api.herokuapp.com/followers/";
+      var usersLink = "https://caffeinated-api.herokuapp.com/users/";
+
   const Store = require('electron-store');
   const store = new Store();
 
@@ -29,10 +34,11 @@ function init() {
   var userSaved = store.get('user');
   if(userSaved !== undefined)
   {
-    var followerList = JSON.parse(httpGet("https://caffeinated-api.herokuapp.com/followers/" + store.get("user")));
+    var followerList = JSON.parse(httpGet(followerLink + store.get("user") + "/100"));
+    store.set("followerListFull", followerList);
     store.set("lastFollower", followerList.followers[0].followed_at);
 
-    var link = "https://caffeinated-api.herokuapp.com/users/" + userSaved;
+    var link = usersLink + userSaved;
     
     var json = new XMLHttpRequest();
     json.open("GET", link, false); 
@@ -48,8 +54,8 @@ function init() {
   }
  
   // Check saved checkboxes
-  var checkBoxes = ["playAudioFollower", "showGIFFollower", "playAudioDonation", "showGIFDonation"];
-  var checkBoxesDefault = [1, 1, 1, 1];
+  var checkBoxes = ["playAudioFollower", "showGIFFollower", "playAudioDonation", "showGIFDonation", "enableAlertFollowers", "enableAlertDonations", "enableChat"];
+  var checkBoxesDefault = [1, 1, 1, 1, 1, 1, 1];
   for(var i = 0; i < checkBoxes.length; i++)
   {
     var state = store.get(checkBoxes[i]);
@@ -67,6 +73,19 @@ function init() {
   }
   document.getElementById("setPort").value = hostPort;
 
+  var timeoutFollowers = store.get('timeoutFollowers');
+  if(timeoutFollowers === undefined) {
+    timeoutFollowers = 5000;
+    store.set('timeoutFollowers', timeoutFollowers);
+  }
+  document.getElementById("setTimeoutFollowers").value = timeoutFollowers;
+
+  var timeoutDonations = store.get('timeoutDonations');
+  if(timeoutDonations === undefined) {
+    timeoutDonations = 10000;
+    store.set('timeoutDonations', timeoutDonations);
+  }
+  document.getElementById("setTimeoutDonations").value = timeoutDonations;
 
   var maxChatVal = store.get('maxChat');
   if(maxChatVal === undefined) {

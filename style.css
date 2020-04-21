@@ -65,7 +65,7 @@ body {
     color: #fff;
     overflow-y: auto;
     height: 208px;
-    width: 270px;
+    width: 280px;
     overflow-x: hidden;
 }
 
@@ -119,6 +119,10 @@ input[type=text] {
     margin-bottom: 10px;
 }
 
+input[type=checkbox] {
+    display: inline-block;
+}
+
 .hide {
     display: none;
 }	
@@ -136,7 +140,7 @@ input[type=text]:focus {outline:0;}
     font-size: 12px;
     cursor: default;
     border-radius: 20px;
-    margin-top: -5px;
+    margin-top: 0;
     border: 2px solid #353535 !important; 
 }
 
