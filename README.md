@@ -16,6 +16,8 @@ Bigger features under development:
 - Push to Twitter/FB/Discord/others when starting stream
 - Chatbot with commands (e.g. !DS for Discord channel link etc.)
 
+Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
+
 ## Note: this is open beta. If something does not work or you break something, please open issue or drop a message here https://discord.gg/m5Jhbg
 
 ## Installation
