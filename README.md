@@ -1,5 +1,7 @@
 # Caffeinated
-![Caffeinated](https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif) 
+<p align="center">
+  <img height="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif">
+</p>
 
 No login required. Using local web-server to display alerts and chat. Based on Electron JS. Tested only on Windows. <br /><br />
 
@@ -28,7 +30,9 @@ Bigger features under development:
   - http://127.0.0.1:8080/chat
 - Magic
 
-![Usage2](https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn2.jpg)
+<p align="center">
+  <img height="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn2.jpg">
+</p>
 
 ## Known issues
 - Caffeinated has to be started before opening OBS. Or if OBS has been started, after running Caffeinated - in Browser Source properties "Refresh cache of current page" has to be clicked.
