@@ -3,8 +3,8 @@ No login required. Using local web-server to display alerts and chat. Based on E
 ![Usage](https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif)
 
 ## Installation
-Grab latest release from https://github.com/thehelvijs/Caffeinated/releases \
-Until I figure out proper Windows install packager - .exe can be found at C:\Users\ %AppData%\Local\caffeinated ; or just extract .rar archive and run .exe from there.
+- Grab latest release from https://github.com/thehelvijs/Caffeinated/releases \
+- Until I figure out proper Windows install packager - .exe can be found at C:\Users\ %AppData%\Local\caffeinated after installation; or just extract .rar archive and run .exe from there.
 
 ## Usage
 - Set user in settings
