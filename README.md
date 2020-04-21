@@ -40,6 +40,7 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 - Caffeinated has to be started before opening OBS. Or if OBS has been started, after running Caffeinated - in Browser Source properties "Refresh cache of current page" has to be clicked.
 - Unfollow -> follow gives alert. Can be abused by viewers.
 - Empty donation message gives default message from donation test -> should be left empty.
+- If more localhost links are open, audio plays for every window and becomes distorted/loud. Have to limit to 1 window.
 
 ## For developers
 
