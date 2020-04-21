@@ -1,6 +1,13 @@
 # Caffeinated
-No login required. Using local web-server to display alerts and chat. Based on Electron JS. Tested only on Windows. <br /><br /><br />
-![Usage](https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif)
+No login required. Using local web-server to display alerts and chat. Based on Electron JS. Tested only on Windows. <br /><br />
+
+Basic features:
+- New follower alert
+- Donation alert
+- Chat
+
+<br /><br />
+![Usage](https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif) 
 
 ## Installation
 - Grab latest release from https://github.com/thehelvijs/Caffeinated/releases \
