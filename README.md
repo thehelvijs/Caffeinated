@@ -25,6 +25,7 @@ Basic features:
 
 ## Known issues
 - Caffeinated has to be started before opening OBS. Or if OBS has been started, after running Caffeinated - in Browser Source properties "Refresh cache of current page" has to be clicked.
+- Unfollow -> follow gives alert. Can be abused by viewers.
 
 ## For developers
 
