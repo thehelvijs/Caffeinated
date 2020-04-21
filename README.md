@@ -16,6 +16,9 @@ No login required. Using local web-server to display alerts and chat. Based on E
 
 ![Usage2](https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn2.jpg)
 
+## Known issues
+- Caffeinated has to be started before opening OBS. Or if OBS has been started, after running Caffeinated - in Browser Source properties "Refresh cache of current page" has to be clicked.
+
 ## For developers
 
 ```elm
