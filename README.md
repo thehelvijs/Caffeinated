@@ -6,6 +6,8 @@ Basic features:
 - Donation alert
 - Chat
 
+## Note: this is open beta. If something does not work or you break something, please let me know here or https://discord.gg/m5Jhbg
+
 <br /><br />
 ![Usage](https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif) 
 
