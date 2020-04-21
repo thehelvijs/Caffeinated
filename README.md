@@ -13,7 +13,7 @@ Basic features:
 
 Bigger features under development:
 - Donation goal overlay
-- Push to Twitter/FB/Discord/others when starting stream
+- Push to Twitter/FB/Discord/others when starting broadcast
 - Chatbot with commands (e.g. !DS for Discord channel link etc.)
 
 Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
