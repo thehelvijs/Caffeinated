@@ -93,12 +93,15 @@
 			}, 1000);
 
             socket.on('donation alert', function(data){
+                timeout = data.timeout;
                 document.getElementById("donationText").innerHTML = data.text;
+                document.getElementById("donationMessage").innerHTML = " ";
                 if(data.donationMessage !== undefined) {
                     if(data.donationMessage.length > 1) {
                         document.getElementById("donationMessage").innerHTML = data.donationMessage;
-                    } 
+                    }
                 }
+              
 				var element = document.getElementById("gif");
 				if(data.gif) {
   					element.classList.remove("hide");

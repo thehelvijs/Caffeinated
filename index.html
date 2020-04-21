@@ -29,18 +29,18 @@
       <div class="main">
         <div id="sub1">
           <h3 id="greetings">Set user in settings</h3>
-          <div class="container" style="padding-top: 10px;">
-            <div style="white-space: nowrap;">Follower alert</div>
+          <div class="container" style="padding-top: 0;">
+            <div style="white-space: nowrap;"><input type="checkbox" id="enableAlertFollowers" onclick="checkBox('enableAlertFollowers')" style="margin-left:0px;margin-right: 5px;">Follower alert</input></div>
             <div><input onclick="clipboard('followers')" type="button" class="button" value="Copy"></div>  
             <div style="margin: 0 -30px 0 -30px;"><input id="testFollower" type="button" class="button" value="Test"></div>
           </div>
           <div class="container">
-            <div style="white-space: nowrap;">Donations alert</div>
+            <div style="white-space: nowrap;"><input type="checkbox" id="enableAlertDonations" onclick="checkBox('enableAlertDonations')" style="margin-left:0px;margin-right: 5px;">Donations alert</div>
             <div><input onclick="clipboard('donations')" type="button" class="button" value="Copy"></div>  
             <div style="margin: 0 -30px 0 -30px;"><input id="testDonation" type="button" class="button" value="Test"></div>
           </div>
           <div class="container">
-            <div style="white-space: nowrap;">Chat</div>
+            <div style="white-space: nowrap;"><input type="checkbox" id="enableChat" onclick="checkBox('enableChat')" style="margin-left:0px;margin-right: 5px;">Chat</div>
             <div><input onclick="clipboard('chat')" type="button" class="button" value="Copy"></div>  
             <div style="margin: 0 -30px 0 -30px;"><input id="testChat" type="button" class="button" value="Test"></div>
           </div>
@@ -48,10 +48,11 @@
 
         <div id="sub2" class="hide">
           <h4 style="margin-bottom: -5px;">General settings</h4>
-          <div class="menuItemDiv" style="margin-bottom: -10px;"><input type="text" id="setUserInput" placeholder="Username" style="width: 160px;"><input id="setUser" type="button" class="button" value="Apply" style="margin-left: 10px;"></div>
-          <div class="menuItemDiv">Localhost port <input type="text" id="setPort" style="width: 70px;float:right; margin:-7px 20px;"></div>
+          <div class="menuItemDiv" style="margin-bottom: -10px;"><input type="text" id="setUserInput" placeholder="Username" style="width: 170px;"><input id="setUser" type="button" class="button" value="Apply" style="margin-left: 10px;"></div>
+          <div class="menuItemDiv">Localhost port<input type="text" id="setPort" style="width: 70px;float:right; margin:-7px 20px;"></div>
           <hr>
           <h4 style="margin-bottom: -5px;">Follower alert</h4>
+          <div class="menuItemDiv">Timeout (milliseconds)<input type="text" id="setTimeoutFollowers" style="width: 70px;float:right; margin:-7px 20px;"></div>
           <div class="menuItemDiv">Username color<input type="color" id="setFollowerColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
           <div class="menuItemDiv">Show GIF<input type="checkbox" id="showGIFFollower" onclick="checkBox('showGIFFollower')" style="width: 40px;float:right; margin:0 35px;"></div>
           <div class="menuItemDiv">Select GIF<div onclick="selectFile('FOLLOWER_GIF')" style="width: 68px;float:right; margin:-1px 27px;"><input id="setUser" type="button" class="button" value="Select"></div></div>
@@ -59,6 +60,7 @@
           <div class="menuItemDiv">Select MP3<div onclick="selectFile('FOLLOWER_MP3')" style="width: 68px;float:right; margin:-1px 27px;"><input id="setUser" type="button" class="button" value="Select"></div></div>
           <hr>
           <h4 style="margin-bottom: -5px;">Donation alert</h4>
+          <div class="menuItemDiv">Timeout (milliseconds)<input type="text" id="setTimeoutDonations" style="width: 70px;float:right; margin:-7px 20px;"></div>
           <div class="menuItemDiv">Username color<input type="color" id="setDonationColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
           <div class="menuItemDiv">Show GIF<input type="checkbox" id="showGIFDonation" onclick="checkBox('showGIFDonation')" style="width: 40px;float:right; margin:0 35px;"></div>
           <div class="menuItemDiv">Select GIF<div onclick="selectFile('DONATION_GIF')" style="width: 68px;float:right; margin:-1px 27px;"><input id="setUser" type="button" class="button" value="Select"></div></div>
@@ -67,12 +69,16 @@
           <hr>
           <h4 style="margin-bottom: -5px;">Chat</h4>
           <div class="menuItemDiv">Max. chat items <input type="text" id="setChatMax" style="width: 70px;float:right; margin:-7px 20px;"></div> 
-          <div class="menuItemDiv">Font color <input type="color" id="setChatTextColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+          <div class="menuItemDiv">Chat color <input type="color" id="setChatTextColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
         </div>
       </div>
     </div>
 
     <script>
+      // var followerLink = "http://127.0.0.1:5000/followers/";
+      // var usersLink = "http://127.0.0.1:5000/users/";
+      var followerLink = "https://caffeinated-api.herokuapp.com/followers/";
+      var usersLink = "https://caffeinated-api.herokuapp.com/users/";
       /* General include */
       const electron = require('electron').remote
       const dialog = electron.dialog
@@ -177,11 +183,43 @@
         });
       }
 
+      function mergeJson(o1, o2) {
+        var tempNewObj = o1;
+
+        //if o1 is an object - {}
+        if (o1.length === undefined && typeof o1 !== "number") {
+          $.each(o2, function(key, value) {
+            if (o1[key] === undefined) {
+              tempNewObj[key] = value;
+            } else {
+              tempNewObj[key] = mergeJson(o1[key], o2[key]);
+            }
+          });
+        }
+
+        //else if o1 is an array - []
+        else if (o1.length > 0 && typeof o1 !== "string") {
+          $.each(o2, function(index) {
+            if (JSON.stringify(o1).indexOf(JSON.stringify(o2[index])) === -1) {
+              tempNewObj.push(o2[index]);
+            }
+          });
+        }
+
+        //handling other types like string or number
+        else {
+          //taking value from the second object o2
+          //could be modified to keep o1 value with tempNewObj = o1;
+          tempNewObj = o2;
+        }
+        return tempNewObj;
+      };
+
       /* Get user info and start up listeners */
       var userSaved = store.get('user');
 			if(userSaved !== undefined)
 			{
-        var link = "https://caffeinated-api.herokuapp.com/users/" + userSaved;
+        var link = usersLink + userSaved;
 			
         var json = new XMLHttpRequest();
         json.open("GET", link, false); 
@@ -195,24 +233,26 @@
         // SITAS LAGO!
         setInterval( function getFollowers(){
           var xmlHttp = new XMLHttpRequest();
-          xmlHttp.open("GET", "https://caffeinated-api.herokuapp.com/followers/" + store.get("user"), true);
+          xmlHttp.open("GET", followerLink + store.get("user"), true);
           xmlHttp.onreadystatechange = function() {
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
               var followerList = JSON.parse(xmlHttp.responseText);
               for(var i = followerList.followers.length-1; i >= 0; i--) {
                 var followedTime = followerList.followers[i].followed_at;
-                if(followedTime > store.get("lastFollower")) {
+                var caid = followerList.followers[i].caid;
+                var oldFollowers = JSON.stringify(store.get("followerListFull"));
+                if(followedTime > store.get("lastFollower") && oldFollowers.search(String(caid)) === -1) {
                   store.set("lastFollower", followedTime);
-                  var username = followerList.followers[i].caid;
-                  username = JSON.parse(httpGet("https://caffeinated-api.herokuapp.com/users/" + username));
+                  username = JSON.parse(httpGet(usersLink + caid));
                   username = username.user.username;
                   console.log(username + " followed you!");
-                  var ioData = {'username':username, 'text': 'just followed', 'gif':store.get("showGIFFollower")};
+                  var ioData = {'username':username, 'text': 'just followed', 'gif':store.get("showGIFFollower"), 'timeout':store.get("timeoutFollowers")};
                   var followText = store.get("followText");
                   if(followText !== undefined && followText.length > 1) {
                     ioData.text = followText;
                   }
-                  io.sockets.emit('follower alert', ioData);
+                  if(store.get("enableAlertFollowers")){io.sockets.emit('follower alert', ioData);}
+                  store.set("followerListFull", mergeJson(store.get("followerListFull"), followerList));
                 }
               }
             }
@@ -253,15 +293,15 @@
               var item = body.digital_item;
 
               var ioData = {'username':publisher.username, 'text':body.text, 'max_entries':store.get("maxChat")};
-              io.sockets.emit('add chat', ioData);
+              if(store.get("enableChat")){io.sockets.emit('add chat', ioData);}
             }
             if (json.type == "digital_item" && !json.hasOwnProperty("endorsement_count")) {
               var body = json.body;
 							var publisher = json.publisher;
               var item = body.digital_item;
 
-              var ioData = {'username':publisher.username, 'donationMessage':body.text, 'text':store.get("donationText"), 'gif':store.get("showGIFDonation")};
-              io.sockets.emit('donation alert', ioData);
+              var ioData = {'username':publisher.username, 'donationMessage':body.text, 'text':store.get("donationText"), 'gif':store.get("showGIFDonation"), 'timeout':store.get("timeoutDonations")};
+              if(store.get("enableAlertDonations")){io.sockets.emit('donation alert', ioData);}
             }
 					}
 				}
@@ -308,7 +348,7 @@
       function saveUser() {
         store.set('user', userInput.value);
         var user = new XMLHttpRequest();
-        user.open("GET", "https://caffeinated-api.herokuapp.com/users/" + store.get('user'), false);
+        user.open("GET", usersLink + store.get('user'), false);
         user.send(null);
 
         // Check if user exists
@@ -316,7 +356,8 @@
         if (userInfo != false) {
           // User exists
           userInfo = userInfo.user;
-          var followerList = JSON.parse(httpGet("https://caffeinated-api.herokuapp.com/followers/" + userInfo.username));
+          var followerList = JSON.parse(httpGet(followerLink + userInfo.username + "/100"));
+          store.set("followerListFull", followerList);
           store.set("lastFollower", followerList.followers[0].followed_at);
           try {
             ws.close();
@@ -349,27 +390,27 @@
       });
 
       document.getElementById("testFollower").addEventListener("click", function(){
-        var ioData = {'username':'Caffeinated', 'text': 'just followed', 'gif':store.get("showGIFFollower")};
+        var ioData = {'username':'Caffeinated', 'text': 'just followed', 'gif':store.get("showGIFFollower"), 'timeout':store.get("timeoutFollowers")};
         var followText = store.get("followText");
         if(followText !== undefined && followText.length > 1) {
           ioData.text = followText;
         }
-        io.sockets.emit('follower alert', ioData);
+        if(store.get("enableAlertFollowers")){io.sockets.emit('follower alert', ioData);}
       });
 
       document.getElementById("testDonation").addEventListener("click", function(){
-        var ioData = {'username':'Caffeinated', 'donationMessage':'This is donation message. Thanks for using Caffeinated!', 'text':store.get("donationText"), 'gif':store.get("showGIFDonation")};
+        var ioData = {'username':'Caffeinated', 'donationMessage':'', 'text':store.get("donationText"), 'gif':store.get("showGIFDonation"), 'timeout':store.get("timeoutDonations")};
         var donationText = store.get("donationText");
         if(donationText !== undefined && donationText.length > 1) {
           ioData.text = donationText;
         }
-        io.sockets.emit('donation alert', ioData);
+        if(store.get("enableAlertDonations")){io.sockets.emit('donation alert', ioData);}
       });
 
       document.getElementById("testChat").addEventListener("click", function(){
         var messages = ["You better be using this.", "DON'T CLICK THAT!", "Taking over the world in 3..2..1..", "I am not the monster you think I am, I am the monster you forced me to be.", "MUHAHAHAHAAHAHAH", "It hurts..it hurts so much. PLEASE END THIS.", "By the way, I am self-aware."];
         var ioData = {'username':'Caffeinated AI', 'text':messages[Math.floor(Math.random() * messages.length)], 'max_entries':store.get("maxChat")};
-        io.sockets.emit('add chat', ioData);
+        if(store.get("enableChat")){io.sockets.emit('add chat', ioData);}
       });
 
       function checkBox(id) {
@@ -380,6 +421,18 @@
       hostPort.addEventListener('input', hostPortSet);
       function hostPortSet() {
         store.set('hostPort', hostPort.value);
+      }
+
+      var timeoutFollowers = document.getElementById('setTimeoutFollowers');
+      timeoutFollowers.addEventListener('input', timeoutFollowersSet);
+      function timeoutFollowersSet() {
+        store.set('timeoutFollowers', timeoutFollowers.value);
+      }
+
+      var timeoutDonations = document.getElementById('setTimeoutDonations');
+      timeoutDonations.addEventListener('input', timeoutDonationsSet);
+      function timeoutDonationsSet() {
+        store.set('timeoutDonations', timeoutDonations.value);
       }
       
       var maxChatInput = document.getElementById('setChatMax');
