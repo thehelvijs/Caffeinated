@@ -36,6 +36,10 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
   <img height="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn2.jpg">
 </p>
 
+## Troubleshooting
+- If nothing appears on alert test
+  - Open web browser (preferably Chrome), copy link there and test again. If nothing happens, go to Caffeinated settings and change local host port (e.g. 3000), restart Caffeinated and change link to that port, test again.
+
 ## Known issues
 - Caffeinated has to be started before opening OBS. Or if OBS has been started, after running Caffeinated - in Browser Source properties "Refresh cache of current page" has to be clicked.
 - ~~Unfollow -> follow gives alert. Can be abused by viewers.~~
