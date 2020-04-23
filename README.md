@@ -15,6 +15,8 @@ Bigger features under development:
 - Donation goal overlay
 - Push to Twitter/FB/Discord/others when starting broadcast
 - Chatbot with commands (e.g. !DS for Discord channel link etc.)
+- Features, that require Caffeine login (with security in mind):
+  - Broadcast viewers
 
 Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 
