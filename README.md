@@ -20,7 +20,7 @@ Bigger features under development:
 
 Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 
-## Note: this is open beta. If something does not work or you break something, please open issue or drop a message here https://discord.gg/m5Jhbg
+## Note: this is open beta. If something does not work or you break something, please open an issue on GitHub or drop a message here https://discord.gg/FQwqDrr
 
 ## Installation
 - Grab latest release from https://github.com/thehelvijs/Caffeinated/releases
