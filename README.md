@@ -15,6 +15,7 @@ Bigger features under development:
 - Donation goal overlay
 - Push to Twitter/FB/Discord/others when starting broadcast
 - Chatbot with commands (e.g. !DS for Discord channel link etc.)
+- (Physical integration e.g. LumiaStream)
 - Features, that require Caffeine login (with security in mind):
   - Broadcast viewers
 
