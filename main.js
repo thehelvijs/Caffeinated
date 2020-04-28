@@ -5,12 +5,12 @@ const path = require('path')
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 350,
-    height: 250,
-    maxWidth : 350,
-    maxHeight : 250,
-    minWidth: 350,
-    minHeight: 250,
+    width: 420,
+    height: 330,
+    // maxWidth : 350,
+    // maxHeight : 250,
+    // minWidth: 350,
+    // minHeight: 250,
     resizable: false,
     transparent: false,
     titleBarStyle: 'hidden',

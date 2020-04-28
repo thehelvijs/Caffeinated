@@ -23,36 +23,57 @@
         <a href="#sub1" style="cursor: default;"><img id="menuAvatar" class="userIcon" src="media/icon.png"/></a>
         <div id="followersTitle" style="color:white; font-size: 12px; padding-top: 10px;"></div>
         <div id="followerCount" style="color:white; font-size: 14px; padding-top: 5px;"></div>
-        <a href="#sub2" style="cursor: default;"><i id="menuSettings" class="fas fa-sliders-h menuIcon"></i></a>
+        <a href="#sub3"><i id="menuGoal" class="fas fa-hand-holding-usd menuIcon sideNavItem"></i></a>
+        <a href="#sub2"><i id="menuSettings" class="fas fa-sliders-h menuIcon sideNavItem"></i></a>
       </div>
 
       <div class="main">
-        <div id="sub1">
-          <h3 id="greetings">Set user in settings</h3>
-          <div class="container" style="padding-top: 0;">
-            <div style="white-space: nowrap;"><input type="checkbox" id="enableAlertFollowers" onclick="checkBox('enableAlertFollowers')" style="margin-left:0px;margin-right: 5px;">Follower alert</input></div>
-            <div><input onclick="clipboard('followers')" type="button" class="button" value="Copy"></div>  
-            <div style="margin: 0 -30px 0 -30px;"><input id="testFollower" type="button" class="button" value="Test"></div>
-          </div>
-          <div class="container">
-            <div style="white-space: nowrap;"><input type="checkbox" id="enableAlertDonations" onclick="checkBox('enableAlertDonations')" style="margin-left:0px;margin-right: 5px;">Donations alert</div>
-            <div><input onclick="clipboard('donations')" type="button" class="button" value="Copy"></div>  
-            <div style="margin: 0 -30px 0 -30px;"><input id="testDonation" type="button" class="button" value="Test"></div>
-          </div>
-          <div class="container">
-            <div style="white-space: nowrap;"><input type="checkbox" id="enableChat" onclick="checkBox('enableChat')" style="margin-left:0px;margin-right: 5px;">Chat</div>
-            <div><input onclick="clipboard('chat')" type="button" class="button" value="Copy"></div>  
-            <div style="margin: 0 -30px 0 -30px;"><input id="testChat" type="button" class="button" value="Test"></div>
+        <div id="sub1" class="sub">
+            <h3 id="greetings" style="margin-top: 0;">Set user in settings</h3>
+            <div class="container" style="padding-top: 0;">
+              <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox" id="enableAlertFollowers" onclick="checkBox('enableAlertFollowers')">Follower alert</label></div>
+              <div><input onclick="clipboard('followers')" type="button" class="button" value="Copy"></div>  
+              <div style="margin: 0 -50px 0 -60px;"><input id="testFollower" type="button" class="button" value="Test"></div>
+            </div>
+            <div class="container">
+              <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox" id="enableAlertDonations" onclick="checkBox('enableAlertDonations')">Donations alert</label></div>
+              <div><input onclick="clipboard('donations')" type="button" class="button" value="Copy"></div>  
+              <div style="margin: 0 -50px 0 -60px;"><input id="testDonation" type="button" class="button" value="Test"></div>
+            </div>
+            <div class="container">
+              <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox" id="enableChat" onclick="checkBox('enableChat')">Chat</label></div>
+              <div><input onclick="clipboard('chat')" type="button" class="button" value="Copy"></div>  
+              <div style="margin: 0 -50px 0 -60px;"><input id="testChat" type="button" class="button" value="Test"></div>
+            </div>
+            <div class="container">
+              <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox" id="enableGoal" onclick="checkBox('enableGoal')">Donation goal</label></div>
+              <div><input onclick="clipboard('goal')" type="button" class="button" value="Copy"></div>  
+              <div style="margin: 0 -50px 0 -60px;"><a href="#sub3"><input id="settingsGoal" type="button" class="button" value="Settings"></a></div>
+            </div>
+            <!-- <div class="container">
+              <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox" id="enableTopDon" onclick="checkBox('enableTopDon')">Top donators</label></div>
+              <div><input onclick="clipboard('top-donators')" type="button" class="button" value="Copy"></div>  
+              <div style="margin: 0 -50px 0 -60px;"><a href="#sub3"><input id="settingsGoal" type="button" class="button" value="Settings"></a></div>
+            </div> -->
+          <div class="lowerButtonContainer">
+            <!-- <div class="lowerButton" id="openOverlay">
+              OPEN OVERLAY
+            </div>
+            <div class="lowerButton" id="toggleBackground">
+              TOGGLE BACKGROUND
+            </div> -->
+            <input id="openOverlay" type="button" class="button" style="width: 50%; margin-left:10px;" value="Open overlay">
+            <input id="toggleBackground" type="button" class="button" style="width: 50%; margin-left:15px;" value="Toggle background">
           </div>
         </div>
 
-        <div id="sub2" class="hide">
+        <div id="sub2" class="hide sub">
           <h4 style="margin-bottom: -5px;">General settings</h4>
-          <div class="menuItemDiv" style="margin-bottom: -10px;"><input type="text" id="setUserInput" placeholder="Username" style="width: 170px;"><input id="setUser" type="button" class="button" value="Apply" style="margin-left: 10px;"></div>
+          <div class="menuItemDiv" style="margin-bottom: -10px;"><input type="text" id="setUserInput" placeholder="Username" style="width: 228px;"><input id="setUser" type="button" class="button" value="Apply" style="margin-left: 10px;"></div>
           <div class="menuItemDiv">Localhost port<input type="text" id="setPort" style="width: 70px;float:right; margin:-7px 20px;"></div>
           <hr>
           <h4 style="margin-bottom: -5px;">Follower alert</h4>
-          <div class="menuItemDiv">Timeout (milliseconds)<input type="text" id="setTimeoutFollowers" style="width: 70px;float:right; margin:-7px 20px;"></div>
+          <div class="menuItemDiv">Timeout (seconds)<input type="text" id="setTimeoutFollowers" style="width: 70px;float:right; margin:-7px 20px;"></div>
           <div class="menuItemDiv">Username color<input type="color" id="setFollowerColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
           <div class="menuItemDiv">Show GIF<input type="checkbox" id="showGIFFollower" onclick="checkBox('showGIFFollower')" style="width: 40px;float:right; margin:0 35px;"></div>
           <div class="menuItemDiv">Select GIF<div onclick="selectFile('FOLLOWER_GIF')" style="width: 68px;float:right; margin:-1px 27px;"><input id="setUser" type="button" class="button" value="Select"></div></div>
@@ -60,7 +81,7 @@
           <div class="menuItemDiv">Select MP3<div onclick="selectFile('FOLLOWER_MP3')" style="width: 68px;float:right; margin:-1px 27px;"><input id="setUser" type="button" class="button" value="Select"></div></div>
           <hr>
           <h4 style="margin-bottom: -5px;">Donation alert</h4>
-          <div class="menuItemDiv">Timeout (milliseconds)<input type="text" id="setTimeoutDonations" style="width: 70px;float:right; margin:-7px 20px;"></div>
+          <div class="menuItemDiv">Timeout (seconds)<input type="text" id="setTimeoutDonations" style="width: 70px;float:right; margin:-7px 20px;"></div>
           <div class="menuItemDiv">Username color<input type="color" id="setDonationColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
           <div class="menuItemDiv">Show GIF<input type="checkbox" id="showGIFDonation" onclick="checkBox('showGIFDonation')" style="width: 40px;float:right; margin:0 35px;"></div>
           <div class="menuItemDiv">Select GIF<div onclick="selectFile('DONATION_GIF')" style="width: 68px;float:right; margin:-1px 27px;"><input id="setUser" type="button" class="button" value="Select"></div></div>
@@ -71,9 +92,37 @@
           <div class="menuItemDiv">Max. chat items <input type="text" id="setChatMax" style="width: 70px;float:right; margin:-7px 20px;"></div> 
           <div class="menuItemDiv">Chat color <input type="color" id="setChatTextColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
         </div>
+
+        <div id="sub3" class="hide sub">
+          <h4 style="margin-bottom: -5px;">Donation goal</h4>
+          <div class="menuItemDiv"><input type="text" id="setGoalTitle" placeholder="Goal title" style="width: 92%;"></div>
+          <div class="menuItemDiv">Goal type
+            <select id="goalTypes" style="float:right; margin:-3px 27px;">
+              <option value="percentage">Percentage (0-100%)</option>
+              <option value="usd">USD</option>
+              <!-- <option value="gold">Gold (cost of prop)</option> -->
+              <!-- <option value="credits">Credits (actual prop worth)</option> -->
+            </select>
+          </div>
+          <div class="menuItemDiv">Goal reached (USD)<input type="text" id="goalReached" style="width: 70px;float:right; margin:-7px 20px;"></div>
+          <div class="menuItemDiv">Goal amount (USD)<input type="text" id="goalUSD" style="width: 70px;float:right; margin:-7px 20px;"></div>
+          <div class="menuItemDiv">Goal amount (Credits)<input type="text" id="goalCredits" style="width: 70px;float:right; margin:-7px 20px;"></div>
+          <div class="menuItemDiv">Goal amount (Gold)<input type="text" id="goalGold" style="width: 70px;float:right; margin:-7px 20px;"></div> 
+          <div class="menuItemDiv">Note: these numbers are based on direct calculations between USD and credit ratio assuming $100 = 10050 credits. Caffeinated has to be open as it is logging all the incomming donations.</div>
+          <div class="menuItemDiv">Bar color<input type="color" id="setGoalBarColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+          <div class="menuItemDiv">Text color<input type="color" id="setGoalTextColor" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+          <hr>
+          <h4 style="margin-bottom: -5px;">Donations</h4>
+          <div class="menuItemDiv">
+            <div class="tableFixHead">
+              <p id="donatorTable"></p>
+            </div>
+          </div>
+          <!-- <div class="menuItemDiv">Top donator count in overlay<input type="text" id="donUserCount" style="width: 70px;float:right; margin:-7px 20px;"></div> -->         
+        </div>
       </div>
     </div>
-
+    <!-- <script src="testingGround.js"></script> -->
     <script>
       // var followerLink = "http://127.0.0.1:5000/followers/";
       // var usersLink = "http://127.0.0.1:5000/users/";
@@ -83,8 +132,10 @@
       const electron = require('electron').remote
       const dialog = electron.dialog
       const Store = require('electron-store');
+      const {ipcMain, BrowserWindow} = require('electron').remote
       // const {dialog} = require('electron');
       const store = new Store();
+      const toggleBackground = document.getElementById('toggleBackground');
       
       /* Sockets IO */
       var express = require('express');
@@ -114,6 +165,14 @@
         res.sendFile(__dirname+"/donations.html");
       });
 
+      app.get('/goal', function(req,res){
+        res.sendFile(__dirname+"/goal.html");
+      });
+
+      app.get('/top-donators', function(req,res){
+        res.sendFile(__dirname+"/top-donators.html");
+      });
+
       app.get('/media/follower-alert.mp3',function(req,res){
         res.sendFile(store.get('followerAudio')); 
       });
@@ -135,6 +194,12 @@
         io.sockets.emit('change chat color', store.get("chatTextColor"));
         io.sockets.emit('change follower color', store.get("followerColor"));
         io.sockets.emit('change donation color', store.get("donationColor"));
+        io.sockets.emit('change goal title', store.get("goalTitle"));
+        io.sockets.emit('change goal text color', store.get("goalTitleColor"));
+        io.sockets.emit('change goal bar color', store.get("goalBarColor"));
+        var ioData = {total:store.get('goal'), current:store.get('goalReached'), type:store.get('goalType')};
+        io.sockets.emit('goal', ioData);
+        
         
         //Disconect
         socket.on('disconnect', function(data){
@@ -153,6 +218,129 @@
           }
         });
       });
+      
+      document.getElementById("goalUSD").addEventListener("input", (event) => {
+        var usd = document.getElementById("goalUSD").value;
+        var credits = Math.round((usd / 0.00995024875)*100)/100;
+        var gold = Math.round((credits / 3)*100)/100;
+        
+        document.getElementById("goalGold").value = gold;
+        document.getElementById("goalCredits").value = credits;
+
+        store.set("goal", parseFloat(usd));
+        var ioData = {total:store.get('goal'), current:store.get('goalReached'), type:store.get('goalType')};
+        io.sockets.emit('goal', ioData);
+      });
+
+      document.getElementById("goalCredits").addEventListener("input", (event) => {
+        var credits = document.getElementById("goalCredits").value;
+        var usd = Math.round((credits * 0.00995024875)*100)/100;
+        var gold = Math.round((credits / 3)*100)/100;
+
+        document.getElementById("goalGold").value = gold;
+        document.getElementById("goalUSD").value = usd;
+
+        store.set("goal", parseFloat(usd));
+        var ioData = {total:store.get('goal'), current:store.get('goalReached'), type:store.get('goalType')};
+        io.sockets.emit('goal', ioData);
+      });
+
+      document.getElementById("goalGold").addEventListener("input", (event) => {
+        var gold = document.getElementById("goalGold").value;
+        var credits = Math.round((gold * 3)*100)/100;
+        var usd = Math.round((credits * 0.00995024875)*100)/100;
+
+        document.getElementById("goalUSD").value = usd;
+        document.getElementById("goalCredits").value = credits;
+
+        store.set("goal", parseFloat(usd));
+        var ioData = {total:store.get('goal'), current:store.get('goalReached'), type:store.get('goalType')};
+        io.sockets.emit('goal', ioData);
+      });
+
+      toggleBackground.addEventListener('click', (event) => {
+        io.sockets.emit('toggle background', 1);
+      });
+
+      const openOverlay = document.getElementById('openOverlay');
+
+      openOverlay.addEventListener('click', (event) => {
+        setTimeout(function(){
+          io.sockets.emit('toggle background', 1);
+          io.sockets.emit('set overlay title', 1);
+        },500);
+        if(store.get("enableAlertFollowers")) {
+          let win = new BrowserWindow({ 
+            width: 300,
+            height: 300,
+            transparent: true,
+            resizable: false,
+            frame: false,
+            alwaysOnTop: true,
+            setVisibleOnAllWorkspaces:true
+          });
+
+          win.on('close', () => { win = null });
+          win.loadURL("http://127.0.0.1:8080/followers");
+          win.setAlwaysOnTop(true, "floating", 1);
+          win.setVisibleOnAllWorkspaces(true);
+          win.show();
+        }
+
+        if(store.get("enableAlertDonations")) {
+          let win = new BrowserWindow({ 
+            width: 300,
+            height: 300,
+            transparent: true,
+            resizable: false,
+            frame: false,
+            alwaysOnTop: true
+          });
+
+          win.on('close', () => { win = null });
+          win.loadURL("http://127.0.0.1:8080/donations");
+          win.setAlwaysOnTop(true, "floating", 1);
+          win.setVisibleOnAllWorkspaces(true);
+          win.show();
+        }
+
+        if(store.get("enableChat")) {
+          var chatHeight = parseInt(store.get("maxChat"))*35;
+          let win = new BrowserWindow({ 
+            width: 900,
+            height: chatHeight,
+            transparent: true,
+            resizable: false,
+            frame: false,
+            alwaysOnTop: true
+          });
+
+          win.on('close', () => { win = null });
+          win.loadURL("http://127.0.0.1:8080/chat");
+          win.setAlwaysOnTop(true, "floating", 1);
+          win.setVisibleOnAllWorkspaces(true);
+          win.show();
+        }
+
+        if(store.get("enableGoal")) {
+          let win = new BrowserWindow({ 
+            width: 900,
+            height: 100,
+            transparent: true,
+            resizable: false,
+            frame: false,
+            alwaysOnTop: true
+          });
+
+          win.on('close', () => { win = null });
+          win.loadURL("http://127.0.0.1:8080/goal");
+          win.setAlwaysOnTop(true, "floating", 1);
+          win.setVisibleOnAllWorkspaces(true);
+          win.show();
+        }
+                
+      })
+
 
       function selectFile(type) {
         var filePath; 
@@ -215,6 +403,20 @@
         return tempNewObj;
       };
 
+      function donatorTableUpdate() {
+        /* Generate donator table */
+        var donatorList = store.get("donatorList");
+        var user = store.get("user");
+        txt = "<table><thead><tr><th>User</th><th>Credits</th><th>USD</th></tr></thead><tbody>";
+        for (var key in donatorList[user]) {
+            // console.log("Key: " + key);
+            // console.log("Value: " + obj.d[key]);
+            txt += "<tr><td>" + key + "</td><td>" + donatorList[user][key] + "</td><td>" + Math.round((donatorList[user][key] * 0.00995024875)*100)/100 + "</td></tr>";
+        }
+        txt += "</tbody></table>";
+        document.getElementById("donatorTable").innerHTML = txt;
+      }
+
       /* Get user info and start up listeners */
       var userSaved = store.get('user');
 			if(userSaved !== undefined)
@@ -227,6 +429,9 @@
       
         var userInfo = JSON.parse(json.response);
         userInfo = userInfo.user;
+        var username = userInfo.username;
+
+        donatorTableUpdate();
 
         connectChatDon(userInfo.stage_id);
 
@@ -243,10 +448,10 @@
                 var oldFollowers = JSON.stringify(store.get("followerListFull"));
                 if(followedTime > store.get("lastFollower") && oldFollowers.search(String(caid)) === -1) {
                   store.set("lastFollower", followedTime);
-                  username = JSON.parse(httpGet(usersLink + caid));
-                  username = username.user.username;
-                  console.log(username + " followed you!");
-                  var ioData = {'username':username, 'text': 'just followed', 'gif':store.get("showGIFFollower"), 'timeout':store.get("timeoutFollowers")};
+                  followedUsername = JSON.parse(httpGet(usersLink + caid));
+                  followedUsername = followedUsername.user.username;
+                  console.log(followedUsername + " followed you!");
+                  var ioData = {'username':followedUsername, 'text': 'just followed', 'gif':store.get("showGIFFollower"), 'timeout':store.get("timeoutFollowers")};
                   var followText = store.get("followText");
                   if(followText !== undefined && followText.length > 1) {
                     ioData.text = followText;
@@ -285,8 +490,6 @@
 					var message_raw = message.data;
 					if (message_raw != ("\"THANKS\"")) {
             var json = JSON.parse(message_raw);
-            console.log(json);
-						
 						if (json.type == "reaction" && !json.hasOwnProperty("endorsement_count")) {
 							var body = json.body;
 							var publisher = json.publisher;
@@ -299,8 +502,37 @@
               var body = json.body;
 							var publisher = json.publisher;
               var item = body.digital_item;
+              var credits = item.count * item.credits_per_item;
+              var donatorList = store.get("donatorList");
+              var currentUser = store.get("user");
+              var donator = publisher.username;
 
-              var ioData = {'username':publisher.username, 'donationMessage':body.text, 'text':store.get("donationText"), 'gif':store.get("showGIFDonation"), 'timeout':store.get("timeoutDonations")};
+              var goalReached = parseFloat(store.get('goalReached'));
+              goalReached += Math.round((credits * 0.00995024875)*100)/100;
+              store.set('goalReached', goalReached);
+              document.getElementById('goalReached').value = goalReached;
+              var ioData = {total:store.get('goal'), current:store.get('goalReached'), type:store.get('goalType')};
+              io.sockets.emit('goal', ioData);
+
+              if(donatorList.hasOwnProperty(currentUser)) {
+                var donatorListUser = donatorList[currentUser];
+                if(donatorListUser.hasOwnProperty(donator)) {
+                  var donatedAmount = donatorListUser[donator];
+                  donatedAmount += credits;
+                  donatorListUser[donator] = donatedAmount;
+                } else {
+                  donatorListUser[donator] = credits;
+                }
+                donatorList[currentUser] = donatorListUser;
+              } else {
+                donatorList[currentUser] = {[donator]:credits};
+              }
+
+              store.set("donatorList", donatorList);
+              donatorTableUpdate();
+
+              console.log(json);
+              var ioData = {'username':donator, 'donationMessage':body.text, 'text':store.get("donationText"), 'gif':store.get("showGIFDonation"), 'timeout':store.get("timeoutDonations"), 'prop':item.static_image_path};
               if(store.get("enableAlertDonations")){io.sockets.emit('donation alert', ioData);}
             }
 					}
@@ -366,16 +598,25 @@
 
           }
           document.getElementById('menuAvatar').src = "https://images.caffeine.tv" + userInfo.avatar_image_path;
-          document.getElementById("greetings").innerHTML = "Hey, " + userInfo.username + "!";
+          var name = userInfo.username;
+          try {
+            name = userInfo.name;
+            if(name === null || name === undefined) {
+              name = userInfo.username;
+            }
+          } catch (e) {
+            // do nothing?
+          }
+          document.getElementById("greetings").innerHTML = "Hey, " + name + "!";
           document.getElementById("followersTitle").innerHTML = "Followers";
           document.getElementById("followerCount").innerHTML = userInfo.followers_count;
           connectChatDon(userInfo.stage_id);
-        }
-        else {
+        } else {
           // User does not exist
           store.delete('user');
           const myNotification = new window.Notification(notificationUserNotFound.title, notificationUserNotFound)
         }
+        donatorTableUpdate();
       }
 
       document.getElementById("setUser").addEventListener("click", function(){
@@ -399,7 +640,7 @@
       });
 
       document.getElementById("testDonation").addEventListener("click", function(){
-        var ioData = {'username':'Caffeinated', 'donationMessage':'', 'text':store.get("donationText"), 'gif':store.get("showGIFDonation"), 'timeout':store.get("timeoutDonations")};
+        var ioData = {'username':'Caffeinated', 'donationMessage':'Donation message', 'text':store.get("donationText"), 'gif':store.get("showGIFDonation"), 'timeout':store.get("timeoutDonations"), 'prop':"/digital-items/horns.d4a0a03488886bcb14a14dee4670cdc2.png"};
         var donationText = store.get("donationText");
         if(donationText !== undefined && donationText.length > 1) {
           ioData.text = donationText;
@@ -461,6 +702,43 @@
         store.set('donationColor', String(setDonationColor.value));
         io.sockets.emit('change donation color', setDonationColor.value);
       }
+      
+      var goalTitle = document.getElementById('setGoalTitle');
+      goalTitle.addEventListener('input', goalTitleSet);
+      function goalTitleSet() {
+        store.set('goalTitle', goalTitle.value);
+        io.sockets.emit('change goal title', goalTitle.value);
+      }
+
+      var setGoalTextColor = document.getElementById('setGoalTextColor');
+      setGoalTextColor.addEventListener('input', setGoalTextColorSet);
+      function setGoalTextColorSet() {
+        store.set('goalTitleColor', String(setGoalTextColor.value));
+        io.sockets.emit('change goal text color', setGoalTextColor.value);
+      }
+
+      var setGoalBarColor = document.getElementById('setGoalBarColor');
+      setGoalBarColor.addEventListener('input', setGoalBarColorSet);
+      function setGoalBarColorSet() {
+        store.set('goalBarColor', String(setGoalBarColor.value));
+        io.sockets.emit('change goal bar color', setGoalBarColor.value);
+      }
+
+      var goalReached = document.getElementById('goalReached');
+      goalReached.addEventListener('input', goalReachedSet);
+      function goalReachedSet() {
+        store.set('goalReached', parseFloat(goalReached.value));
+        var ioData = {total:store.get('goal'), current:store.get('goalReached'), type:store.get('goalType')};
+        io.sockets.emit('goal', ioData);
+      }
+
+      var goalType = document.getElementById('goalTypes');
+      goalType.addEventListener('input', goalTypeSet);
+      function goalTypeSet() {
+        store.set('goalType', parseInt(goalTypes.selectedIndex));
+        var ioData = {total:store.get('goal'), current:store.get('goalReached'), type:store.get('goalType')};
+        io.sockets.emit('goal', ioData);
+      }
 
       function clipboard(copy) {
         navigator.clipboard.writeText('http://127.0.0.1:'+ store.get("hostPort") + "/" + copy).then(function() {
@@ -480,7 +758,7 @@
 						contentDivs[i].className = 'hide';
 					}
 				}
-				document.getElementById(obj).className = '';
+				document.getElementById(obj).className = 'sub';
       }
 
 			function checkTab() {

@@ -8,9 +8,10 @@
 				position: absolute;
 				bottom: 0;
 				left: 0;
-				background-color: rgba(0, 0, 0, 0);
+				background-color:rgba(0,0,0,0);
+				/* background-color: #052AFF; */
 				-webkit-app-region: drag;
-				font-size: 30px;
+				font-size: 22px;
 				width: 100%;
 				height: 100%;
 				overflow: hidden;
@@ -66,12 +67,14 @@
 		</style>
   	</head>
   	<body>
+		<span id="overlayTitle" style="position: absolute; font-size: 35px;" class="hide">Chat</span>
 		<div id="div"></div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
 		<script>
 			var maxChatItems;
 			var colors = ["purpblue", "lightpurple", "lightmagenta", "pinky", "heavypink", "red", "lightred"];
+			var backgroundTransparent = true;
 
 			setInterval(() => {
 				$.get( "http://127.0.0.1:" + location.port, function( data ) {
@@ -119,6 +122,18 @@
 			socket.on('add chat', function(data){
 				maxChatItems = data.max_entries;
 				addChat(data.username, data.text);
+			});
+
+			socket.on('toggle background', function(data){
+				if(!backgroundTransparent) {
+					document.body.style.backgroundColor = "transparent";
+					document.getElementById("overlayTitle").classList.add("hide");
+					backgroundTransparent = true;
+				} else {
+					document.body.style.backgroundColor = "#31f8ff";
+					document.getElementById("overlayTitle").classList.remove("hide");
+					backgroundTransparent = false;
+				}
 			});
 
 			socket.on('change chat color', function(data){
