@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
         <title>Caffeinated Donation Alert</title>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
         <style>
@@ -61,13 +64,21 @@
                 justify-content: center;
                 flex-direction: column;
             }
+
+            #prop {
+                height: 40px;
+                position: absolute;
+                margin-top: -5px;
+                padding-left: 10px;
+            }
         </style>
 	</head>
-	<body onload="hideMe()">
+    <body onload="hideMe()">
+        <span id="overlayTitle" style="position: absolute; font-size: 35px;" class="hide">Donation alert</span>
 		<div id="container">
             <div id="gif"><img src="/media/donation-gif.gif"></div>
             <div class="text text-big"><span id="username"></span></div>
-            <div class="text text-big"><span id="donationText"></span></div>
+            <div class="text text-big" style="margin-top: 0; margin-left: -40px;"><span id="donationText"></span><img id="prop" src="https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png"></div>
             <div class="text text-small" style="padding-top: 10px;"><span id="donationMessage"></span></div>
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -75,7 +86,8 @@
 		<script>
             var socket = io.connect();
             var timeout = 10000;
-            
+            var backgroundTransparent = true;
+
             function hideMe() {
                 $("#container").hide();
             }
@@ -93,7 +105,8 @@
 			}, 1000);
 
             socket.on('donation alert', function(data){
-                timeout = data.timeout;
+                timeout = data.timeout * 1000;
+                document.getElementById("prop").src = "https://assets.caffeine.tv" + data.prop;
                 document.getElementById("donationText").innerHTML = data.text;
                 document.getElementById("donationMessage").innerHTML = " ";
                 if(data.donationMessage !== undefined) {
@@ -105,8 +118,7 @@
 				var element = document.getElementById("gif");
 				if(data.gif) {
   					element.classList.remove("hide");
-				}
-				else {
+				} else {
 					element.classList.add("hide");
 				}
                 $("#container").fadeIn("slow", function() {});
@@ -119,6 +131,18 @@
 				$(document).ready(function() {
 					$('#username').css('color', data);
 				});
+            });
+            
+            socket.on('toggle background', function(data){
+				if(!backgroundTransparent) {
+                    document.body.style.backgroundColor = "transparent";
+                    document.getElementById("overlayTitle").classList.add("hide");
+					backgroundTransparent = true;
+				} else {
+                    document.body.style.backgroundColor = "#31f8ff";
+                    document.getElementById("overlayTitle").classList.remove("hide");
+					backgroundTransparent = false;
+				}
 			});
 
 			socket.on('reload', function(data){

@@ -14,10 +14,10 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function init() {
-      // var followerLink = "http://127.0.0.1:5000/followers/";
-      // var usersLink = "http://127.0.0.1:5000/users/";
-      var followerLink = "https://caffeinated-api.herokuapp.com/followers/";
-      var usersLink = "https://caffeinated-api.herokuapp.com/users/";
+  // var followerLink = "http://127.0.0.1:5000/followers/";
+  // var usersLink = "http://127.0.0.1:5000/users/";
+  var followerLink = "https://caffeinated-api.herokuapp.com/followers/";
+  var usersLink = "https://caffeinated-api.herokuapp.com/users/";
 
   const Store = require('electron-store');
   const store = new Store();
@@ -48,20 +48,40 @@ function init() {
     userInfo = userInfo.user;
   
     document.getElementById('menuAvatar').src = "https://images.caffeine.tv" + userInfo.avatar_image_path;
-    document.getElementById("greetings").innerHTML = "Hey, " + userInfo.username + "!";
+    var name = userInfo.username;
+    try {
+      name = userInfo.name;
+      if(name === null || name === undefined) {
+        name = userInfo.username;
+      }
+    } catch (e) {
+      // do nothing?
+    }
+    document.getElementById("greetings").innerHTML = "Hey, " + name + "!";
     document.getElementById("followersTitle").innerHTML = "Followers";
     document.getElementById("followerCount").innerHTML = userInfo.followers_count;
+
+    /* Set goal */
+    if(store.get("goal") !== undefined) {
+      var usd = store.get("goal");
+      var credits = Math.round((usd / 0.00995024875)*100)/100;
+      var gold = Math.round((credits / 3)*100)/100;
+      document.getElementById("goalUSD").value = usd;
+      document.getElementById("goalCredits").value = credits;
+      document.getElementById("goalGold").value = gold;
+    }
   }
  
   // Check saved checkboxes
-  var checkBoxes = ["playAudioFollower", "showGIFFollower", "playAudioDonation", "showGIFDonation", "enableAlertFollowers", "enableAlertDonations", "enableChat"];
-  var checkBoxesDefault = [1, 1, 1, 1, 1, 1, 1];
+  var checkBoxes = ["playAudioFollower", "showGIFFollower", "playAudioDonation", "showGIFDonation", "enableAlertFollowers", "enableAlertDonations", "enableChat", "enableGoal"];
+  var checkBoxesDefault = [1, 1, 1, 1, 1, 1, 1, 0, 0];
   for(var i = 0; i < checkBoxes.length; i++)
   {
     var state = store.get(checkBoxes[i]);
     if(state === undefined)
     {
       store.set(checkBoxes[i], checkBoxesDefault[i]);
+      state = checkBoxesDefault[i];
     }
     document.getElementById(checkBoxes[i]).checked = state;
   }
@@ -75,14 +95,14 @@ function init() {
 
   var timeoutFollowers = store.get('timeoutFollowers');
   if(timeoutFollowers === undefined) {
-    timeoutFollowers = 5000;
+    timeoutFollowers = 5;
     store.set('timeoutFollowers', timeoutFollowers);
   }
   document.getElementById("setTimeoutFollowers").value = timeoutFollowers;
 
   var timeoutDonations = store.get('timeoutDonations');
   if(timeoutDonations === undefined) {
-    timeoutDonations = 10000;
+    timeoutDonations = 10;
     store.set('timeoutDonations', timeoutDonations);
   }
   document.getElementById("setTimeoutDonations").value = timeoutDonations;
@@ -144,6 +164,45 @@ function init() {
     donationText = 'just donated';
     store.set('donationText', donationText);
   }
+
+  var donatorList = store.get('donatorList');
+  if(donatorList === undefined) {
+    donatorList = {};
+    store.set('donatorList', donatorList);
+  }
+
+  var goalTitle = store.get('goalTitle');
+  if(goalTitle !== undefined) {
+    document.getElementById('setGoalTitle').value = goalTitle;
+  }
+
+  var goalTitleColor = store.get('goalTitleColor');
+  if(goalTitleColor === undefined) {
+    goalTitleColor = '#ffffff';
+    store.set('goalTitleColor', goalTitleColor);
+  }
+  document.getElementById('setGoalTextColor').value = goalTitleColor;
+
+  var goalBarColor = store.get('goalBarColor');
+  if(goalBarColor === undefined) {
+    goalBarColor = '#31f8ff';
+    store.set('goalBarColor', goalBarColor);
+  }
+  document.getElementById('setGoalBarColor').value = goalBarColor;
+
+  var goalReached = store.get('goalReached');
+  if(goalReached === undefined) {
+    goalReached = 0;
+    store.set('goalReached', goalReached);
+  }
+  document.getElementById('goalReached').value = goalReached;
+
+  var goalType = store.get('goalType');
+  if(goalType === undefined) {
+    goalType = 0;
+    store.set('goalType', goalType);
+  }
+  document.getElementById('goalTypes').selectedIndex = goalType;
 
   // Remove splash screen and show content
   var element = document.getElementById("splash");

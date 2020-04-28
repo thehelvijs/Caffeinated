@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Expires" content="0">
 		<title>Caffeinated Follower Alert</title>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
 		<style>
@@ -10,6 +13,7 @@
 				bottom: 0;
 				left: 0;
 				background-color: rgba(0, 0, 0, 0);
+				/* background-color: #31f8ff; */
 				color: white;
 				-webkit-app-region: drag;
 				font-size: 30px;
@@ -65,6 +69,7 @@
 		</style>
 	</head>
 	<body>
+		<span id="overlayTitle" style="position: absolute; font-size: 35px;" class="hide">Follower alert</span>
 		<div id="container" class="hide">
             <div id="gif"><img src="/media/follower-gif.gif"></div>
             <div class="text text-big"><span id="username"></span></div>
@@ -75,10 +80,10 @@
 		<script>
 			var socket = io.connect();
 			var timeout = 5000;
+			var backgroundTransparent = true;
 			
 			function hideMe() {
 				$("#container").hide();
-				
 			}
 
 			setInterval(() => {
@@ -102,16 +107,27 @@
 			}
 
 			socket.on('follower alert', function(data){
-				timeout = data.timeout;
+				timeout = data.timeout * 1000;
 				document.getElementById("followText").innerHTML = data.text;
 				var element = document.getElementById("gif");
 				if(data.gif) {
   					element.classList.remove("hide");
-				}
-				else {
+				} else {
 					element.classList.add("hide");
 				}
 				generateAlert(data.username);
+			});
+
+			socket.on('toggle background', function(data){
+				if(!backgroundTransparent) {
+					document.body.style.backgroundColor = "transparent";
+					document.getElementById("overlayTitle").classList.add("hide");
+					backgroundTransparent = true;
+				} else {
+					document.body.style.backgroundColor = "#31f8ff";
+					document.getElementById("overlayTitle").classList.remove("hide");
+					backgroundTransparent = false;
+				}
 			});
 
 			socket.on('change follower color', function(data){
