@@ -105,7 +105,11 @@
 			}, 1000);
 
             socket.on('donation alert', function(data){
-                timeout = data.timeout * 1000;
+                if(data.timeout !== undefined) {
+                    timeout = data.timeout * 1000;
+                } else {
+                    timeout = 10000;
+                }
                 document.getElementById("prop").src = "https://assets.caffeine.tv" + data.prop;
                 document.getElementById("donationText").innerHTML = data.text;
                 document.getElementById("donationMessage").innerHTML = " ";

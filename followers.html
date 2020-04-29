@@ -107,7 +107,11 @@
 			}
 
 			socket.on('follower alert', function(data){
-				timeout = data.timeout * 1000;
+				if(data.timeout !== undefined) {
+                    timeout = data.timeout * 1000;
+                } else {
+                    timeout = 5000;
+                }
 				document.getElementById("followText").innerHTML = data.text;
 				var element = document.getElementById("gif");
 				if(data.gif) {
