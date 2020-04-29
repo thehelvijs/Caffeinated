@@ -30,7 +30,10 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 
 ## Usage
 - Set user in settings
+- (If first time ever using - restart Caffeinated)
+
 ### 1: browser source
+
 - In OBS add Browser Source (can copy from Caffeinated mainscreen):
   - http://127.0.0.1:8080/followers
   - http://127.0.0.1:8080/donations
@@ -52,6 +55,7 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 </p>
 
 - Keep in mind - Caffeinated has to be opened before OBS. This is an issue that hopefully will be resolved soon.
+- If you are updating to newer version, make sure to "Refresh cache of current page" in OBS after starting Caffeinated. 
 
 ## Troubleshooting
 - If nothing appears on alert test
