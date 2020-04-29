@@ -51,6 +51,8 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
   <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn3.jpg">
 </p>
 
+- Keep in mind - Caffeinated has to be opened before OBS. This is an issue that hopefully will be resolved soon.
+
 ## Troubleshooting
 - If nothing appears on alert test
   - Open web browser (preferably Chrome), copy link there and test again. If nothing happens, go to Caffeinated settings and change local host port (e.g. 3000), restart Caffeinated and change link to that port, test again.
