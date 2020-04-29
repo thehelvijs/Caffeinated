@@ -1,6 +1,6 @@
 # Caffeinated
 <p align="center">
-  <img height="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif">
+  <img width="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif">
 </p>
 
 No login required. Using local web-server to display alerts and chat. Based on Electron JS. Tested only on Windows. <br /><br />
@@ -9,19 +9,20 @@ Basic features:
 - New follower alert
 - Donation alert
 - Chat
+- Donation goal overlay
 - Custom MP3's, GIF's, colors etc.
 
 Bigger features under development:
-- Donation goal overlay
 - Push to Twitter/FB/Discord/others when starting broadcast
 - Chatbot with commands (e.g. !DS for Discord channel link etc.)
 - (Physical integration e.g. LumiaStream)
-- Features, that require Caffeine login (with security in mind):
+- Features, that require Caffeine login (with high security in mind):
   - Broadcast viewers
 
 Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 
 ## Note: this is open beta. If something does not work or you break something, please open an issue on GitHub or drop a message here https://discord.gg/FQwqDrr
+## Disclaimer: once you start to use Caffeinated - your username will be logged in order to see the usage of Caffeinated - this helps to see the load on back-end server and improve the service
 
 ## Installation
 - Grab latest release from https://github.com/thehelvijs/Caffeinated/releases
@@ -29,6 +30,7 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 
 ## Usage
 - Set user in settings
+### 1: browser source
 - In OBS add Browser Source (can copy from Caffeinated mainscreen):
   - http://127.0.0.1:8080/followers
   - http://127.0.0.1:8080/donations
@@ -36,9 +38,16 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 - Magic
 
 <p align="center">
-  <img height="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn2.jpg">
+  <img width="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn2.jpg">
 </p>
-
+### 2: window
+- Enable check-boxes for required overlays
+- Click 'Open overlay'
+- Position them and click 'Toggle background' to make them transparent
+- Magic
+<p align="center">
+  <img width="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn3.jpg">
+</p>
 ## Troubleshooting
 - If nothing appears on alert test
   - Open web browser (preferably Chrome), copy link there and test again. If nothing happens, go to Caffeinated settings and change local host port (e.g. 3000), restart Caffeinated and change link to that port, test again.
