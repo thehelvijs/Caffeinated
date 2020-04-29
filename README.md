@@ -35,11 +35,13 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
   - http://127.0.0.1:8080/followers
   - http://127.0.0.1:8080/donations
   - http://127.0.0.1:8080/chat
+  - http://127.0.0.1:8080/goal
 - Magic
 
 <p align="center">
   <img width="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn2.jpg">
 </p>
+
 ### 2: window
 - Enable check-boxes for required overlays
 - Click 'Open overlay'
