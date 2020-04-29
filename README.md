@@ -1,6 +1,6 @@
 # Caffeinated
 <p align="center">
-  <img width="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif">
+  <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif">
 </p>
 
 No login required. Using local web-server to display alerts and chat. Based on Electron JS. Tested only on Windows. <br /><br />
@@ -39,7 +39,7 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 - Magic
 
 <p align="center">
-  <img width="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn2.jpg">
+  <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn2.jpg">
 </p>
 
 ### 2: window
@@ -48,7 +48,7 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 - Position them and click 'Toggle background' to make them transparent
 - Magic
 <p align="center">
-  <img width="300" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn3.jpg">
+  <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn3.jpg">
 </p>
 ## Troubleshooting
 - If nothing appears on alert test
