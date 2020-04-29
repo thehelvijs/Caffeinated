@@ -268,7 +268,7 @@
         setTimeout(function(){
           io.sockets.emit('toggle background', 1);
           io.sockets.emit('set overlay title', 1);
-        },500);
+        },1000);
         if(store.get("enableAlertFollowers")) {
           let win = new BrowserWindow({ 
             width: 300,
@@ -480,7 +480,9 @@
       /* Connect to chat and donations */
       var ws;
 			function connectChatDon(stageId){
-				ws = new WebSocket("wss://realtime.caffeine.tv/v2/reaper/stages/" + stageId + "/messages");
+        var stageLink = "wss://realtime.caffeine.tv/v2/reaper/stages/" + stageId + "/messages";
+        console.log(stageLink);
+				ws = new WebSocket(stageLink);
 				
 				ws.onopen = function() {
 					ws.send('{"Headers":{"Authorization":"Anonymous API","X-Client-Type":"api"}}');
@@ -490,6 +492,7 @@
 					var message_raw = message.data;
 					if (message_raw != ("\"THANKS\"")) {
             var json = JSON.parse(message_raw);
+            console.log(json);
 						if (json.type == "reaction" && !json.hasOwnProperty("endorsement_count")) {
 							var body = json.body;
 							var publisher = json.publisher;
