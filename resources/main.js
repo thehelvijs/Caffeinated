@@ -1,8 +1,15 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
+const windowStateKeeper = require('electron-window-state');
 
 function createWindow () {
+  let mainWindowState = windowStateKeeper({
+    defaultWidth: 420,
+    defaultHeight: 330,
+    file: 'main-window.json'
+  });
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 420,
@@ -11,6 +18,8 @@ function createWindow () {
     // maxHeight : 250,
     // minWidth: 350,
     // minHeight: 250,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
     resizable: false,
     transparent: false,
     titleBarStyle: 'hidden',
@@ -26,8 +35,10 @@ function createWindow () {
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
 
+  mainWindowState.manage(mainWindow);
+
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
