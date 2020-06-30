@@ -95,7 +95,7 @@ h4 {
     margin-top: 2px;
     margin-bottom: 0;
     font-size: 15px;
-    color: #31f8ff;
+    color: #FF5252;
 }
 
 .menuItem {
@@ -159,15 +159,31 @@ input[type=text]:focus {outline:0;}
     width: 80px;
 }
 
+.vol-slider {
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+    color: white;
+    padding: 4px 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    cursor: default;
+    border-radius: 20px;
+    margin-top: 0;
+    border: 2px solid #a7a7a7 !important; 
+    width: 80px;
+}
+
 .buttonDiv {
     margin-right: -30px;
     margin-left: -30px;
 }
 
 .button:hover {
-    background-color: #31f8ff;
+    background-color: #FF5252;
     color: #000;
-    border: 2px solid #31f8ff !important; 
+    border: 2px solid #FF5252 !important; 
 }
 
 .button:active {
@@ -229,7 +245,7 @@ th     { background:rgb(56, 56, 56); border: solid 1px #DDD;}
 }
 
 .lowerButton:hover {
-    background-color: #31f8ff;
+    background-color: #FF5252;
     color: #000;
 }
 
@@ -313,7 +329,7 @@ th     { background:rgb(56, 56, 56); border: solid 1px #DDD;}
 }
 
 .menuIcon:hover {
-    color: #31f8ff;
+    color: #FF5252;
 }
 
 a {
@@ -322,7 +338,7 @@ a {
 }
 
 .active {
-    border: 3px solid #31f8ff !important; 
+    border: 3px solid #FF5252 !important; 
 }
 
 .userIcon {
@@ -338,13 +354,13 @@ a {
 
 .userIcon:hover {
     /* border: 3px solid #818181; */
-    border: 3px solid #31f8ff !important;
-    box-shadow: 0 0 1px 0px #31f8ff inset, 0 0 1px 0px #31f8ff;
+    border: 3px solid #FF5252 !important;
+    box-shadow: 0 0 1px 0px #FF5252 inset, 0 0 1px 0px #FF5252;
 }
 
 .userIcon.active {
-    border: 3px solid #31f8ff !important;
-    box-shadow: 0 0 1px 0px #31f8ff inset, 0 0 1px 0px #31f8ff;
+    border: 3px solid #FF5252 !important;
+    box-shadow: 0 0 1px 0px #FF5252 inset, 0 0 1px 0px #FF5252;
 }
 
 img {
@@ -363,8 +379,15 @@ img {
     position: absolute;
 }
 
-#logo {
+#logo1 {
     width: 150px;
+}
+
+#logo2 {
+    margin-top: -140px;
+    margin-left: -80px;
+    position: absolute;
+    width: 50px;
 }
 
 .centered {
