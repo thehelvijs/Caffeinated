@@ -291,6 +291,12 @@
      console.log('INFO:');
      console.log(event);
    }
+
+   /* Auto-reconnect */
+   koi.ws.onclose = () => {
+      console.log('Reconnecting')
+      koi = new Koi("wss://live.casterlabs.co/koi");
+   }
    
    /* Get user info and start up listeners */ 
          if(currentUser !== undefined)

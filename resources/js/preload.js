@@ -61,6 +61,7 @@ function init() {
     if(store.get(setting) === undefined) {
       store.set(setting, defaultSettings[setting]);
     }
+    // This does not work. Cant pass JSON key as a String for element ID (had to it manually on updateElements())
     // document.getElementById(key).value = store.get(key);
   }
 }
