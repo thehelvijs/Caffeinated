@@ -69,11 +69,11 @@
 		</style>
 	</head>
 	<body>
-		<span id="overlayTitle" style="position: absolute; font-size: 35px;" class="hide">Follower alert</span>
+		<span id="overlay_title" style="position: absolute; font-size: 35px;" class="hide">Follower alert</span>
 		<div id="container" class="hide">
-            <div id="gif"><img src="/media/follower-gif.gif"></div>
+            <div id="gif"><img src="../media/follower-gif.gif"></div>
             <div class="text text-big"><span id="username"></span></div>
-            <div class="text text-big"><span id="followText"></span></div>
+            <div class="text text-big"><span id="follow_text"></span></div>
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
@@ -112,7 +112,7 @@
                 } else {
                     timeout = 5000;
                 }
-				document.getElementById("followText").innerHTML = data.text;
+				document.getElementById("follow_text").innerHTML = data.text;
 				var element = document.getElementById("gif");
 				if(data.gif) {
   					element.classList.remove("hide");
@@ -125,11 +125,11 @@
 			socket.on('toggle background', function(data){
 				if(!backgroundTransparent) {
 					document.body.style.backgroundColor = "transparent";
-					document.getElementById("overlayTitle").classList.add("hide");
+					document.getElementById("overlay_title").classList.add("hide");
 					backgroundTransparent = true;
 				} else {
 					document.body.style.backgroundColor = "#31f8ff";
-					document.getElementById("overlayTitle").classList.remove("hide");
+					document.getElementById("overlay_title").classList.remove("hide");
 					backgroundTransparent = false;
 				}
 			});

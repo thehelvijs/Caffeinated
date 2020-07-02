@@ -74,12 +74,12 @@
         </style>
 	</head>
     <body onload="hideMe()">
-        <span id="overlayTitle" style="position: absolute; font-size: 35px;" class="hide">Donation alert</span>
+        <span id="overlay_title" style="position: absolute; font-size: 35px;" class="hide">Donation alert</span>
 		<div id="container">
-            <div id="gif"><img src="/media/donation-gif.gif"></div>
+            <div id="gif"><img src="../media/donation-gif.gif"></div>
             <div class="text text-big"><span id="username"></span></div>
-            <div class="text text-big" style="margin-top: 0; margin-left: -40px;"><span id="donationText"></span><img id="prop" src="https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png"></div>
-            <div class="text text-small" style="padding-top: 10px;"><span id="donationMessage"></span></div>
+            <div class="text text-big" style="margin-top: 0; margin-left: -40px;"><span id="donation_text"></span><img id="prop" src="https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png"></div>
+            <div class="text text-small" style="padding-top: 10px;"><span id="donation_message"></span></div>
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
@@ -110,12 +110,12 @@
                 } else {
                     timeout = 10000;
                 }
-                document.getElementById("prop").src = "https://assets.caffeine.tv" + data.prop;
-                document.getElementById("donationText").innerHTML = data.text;
-                document.getElementById("donationMessage").innerHTML = " ";
+                document.getElementById("prop").src = data.prop;
+                document.getElementById("donation_text").innerHTML = data.text;
+                document.getElementById("donation_message").innerHTML = " ";
                 if(data.donationMessage !== undefined) {
                     if(data.donationMessage.length > 1) {
-                        document.getElementById("donationMessage").innerHTML = data.donationMessage;
+                        document.getElementById("donation_message").innerHTML = data.donationMessage;
                     }
                 }
               
@@ -140,11 +140,11 @@
             socket.on('toggle background', function(data){
 				if(!backgroundTransparent) {
                     document.body.style.backgroundColor = "transparent";
-                    document.getElementById("overlayTitle").classList.add("hide");
+                    document.getElementById("overlay_title").classList.add("hide");
 					backgroundTransparent = true;
 				} else {
                     document.body.style.backgroundColor = "#31f8ff";
-                    document.getElementById("overlayTitle").classList.remove("hide");
+                    document.getElementById("overlay_title").classList.remove("hide");
 					backgroundTransparent = false;
 				}
 			});

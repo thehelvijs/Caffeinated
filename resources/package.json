@@ -1,6 +1,6 @@
 {
-  "name": "caffeinated",
-  "version": "0.2.1",
+  "name": "casterlabs_caffeinated",
+  "version": "0.3.0",
   "description": "Caffeine TV overlay",
   "main": "main.js",
   "scripts": {
@@ -12,17 +12,21 @@
     "CaffeineTV",
     "Caffeine",
     "OBS overlay",
-    "CaffeineTV Overlay"
+    "CaffeineTV Overlay",
+    "Casterlabs",
+    "Casterlabs Caffeinated",
+    "Caffeinated"
   ],
-  "author": "Helvijs Adams",
+  "author": "Casterlabs",
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
     "electron": "^8.2.1",
     "electron-packager": "^14.2.1",
     "electron-store": "^5.1.1",
+    "electron-window-state": "^5.0.3",
     "express": "^4.17.1",
-    "jquery": "^3.5.0",
+    "jquery": "^3.5.1",
     "node-static": "^0.7.11",
     "socket.io": "^2.3.0"
   }

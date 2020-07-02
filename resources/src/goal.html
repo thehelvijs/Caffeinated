@@ -35,7 +35,7 @@
             }
                 
             /* All html objects will be wrapped in the #wrap div */
-            .goal-cont {
+            .goal_cont {
             margin: 10px;
                 color: white;
             -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
@@ -52,7 +52,7 @@
             z-index: 1;
             }
 
-            #goal-bar {
+            #goal_bar {
             /* border: 4px solid white; */
             background-color: rgba(1, 1, 1, 0.5);
             padding: 16px;
@@ -61,8 +61,8 @@
             overflow: hidden;
             }
 
-            #goal-current,
-            #goal-total {
+            #goal_current,
+            #goal_total {
             margin: 0;
                 font-family: Roboto, sans-serif;
             font-weight: bold;
@@ -72,11 +72,11 @@
             z-index: 1;
             }
 
-            #goal-total {
+            #goal_total {
             text-align: right;
             }
 
-            #total-bar {
+            #total_bar {
             position: absolute;
             width: calc(100% - 8px);
             height: calc(100% - 8px);
@@ -89,13 +89,13 @@
         </style>
 	</head>
     <body>
-		<div class='goal-cont'>
+		<div class='goal_cont'>
             <div style='position: relative'>
-                <div id='goal-bar'>
-                    <p id='goal-current'>0 $</p>
+                <div id='goal_bar'>
+                    <p id='goal_current'>0 $</p>
                     <p id='title'>Donations</p>
-                    <p id='goal-total'>20 $</p>
-                    <div id='total-bar'></div>
+                    <p id='goal_total'>20 $</p>
+                    <div id='total_bar'></div>
                 </div>
             </div>
         </div>
@@ -130,12 +130,12 @@
 
             socket.on('change goal text color', function(data){
                 document.getElementById('title').style.color = String(data);
-                document.getElementById('goal-current').style.color = String(data);
-                document.getElementById('goal-total').style.color = String(data);
+                document.getElementById('goal_current').style.color = String(data);
+                document.getElementById('goal_total').style.color = String(data);
             });
 
             socket.on('change goal bar color', function(data){
-                document.getElementById('total-bar').style.background = String(data);
+                document.getElementById('total_bar').style.background = String(data);
             });
 
             socket.on('goal', function(data){
@@ -144,14 +144,14 @@
                 var total = data.total;
 
                 var percentage = Math.round(current / total * 100);
-                $('#total-bar').css('width', percentage + '%').css('width', '-=8px');
+                $('#total_bar').css('width', percentage + '%').css('width', '-=8px');
 
                 if(type === 0) {
-                    document.getElementById('goal-current').innerHTML = "0 %";
-                    document.getElementById('goal-total').innerHTML = "100 %";
+                    document.getElementById('goal_current').innerHTML = percentage + " %";
+                    document.getElementById('goal_total').innerHTML = "100 %";
                 } else if(type === 1) {
-                    document.getElementById('goal-current').innerHTML = "0 $"
-                    document.getElementById('goal-total').innerHTML = total + " $";
+                    document.getElementById('goal_current').innerHTML = current + " $";
+                    document.getElementById('goal_total').innerHTML = total + " $";
                 }
             });
 		</script>
