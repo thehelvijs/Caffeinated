@@ -1,8 +1,9 @@
-# Caffeinated
+# Casterlabs Caffeinated
 <p align="center">
   <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif">
 </p>
 
+Caffeinated has been merged with [Casterlabs](https://casterlabs.co).
 No login required. Using local web-server to display alerts and chat. Based on Electron JS. Tested only on Windows. <br /><br />
 
 Basic features:
@@ -30,8 +31,6 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 
 ## Usage
 - Set user in settings
-- (If first time ever using - restart Caffeinated)
-
 ### 1: browser source
 
 - In OBS add Browser Source (can copy from Caffeinated mainscreen):
@@ -67,18 +66,14 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 - ~~Empty donation message gives default message from donation test -> should be left empty.~~
 - If more localhost links are open, audio plays for every window and becomes distorted/loud. Have to limit to 1 window.
 - Overlapping alerts - a delay has to be set so all alerts play after previous one has finished.
+- A lot more that me and [e3ndr](https://github.com/e3ndr/) are working on
 
 ## For developers
-
 ```elm
 git clone https://github.com/thehelvijs/Caffeinated    
 npm install    
 npm start
 ```
-Private API endpoints:
-- https://caffeinated-api.herokuapp.com/users/$username$
-- https://caffeinated-api.herokuapp.com/followers/$username$ (gives 5 latest followers)
-- https://caffeinated-api.herokuapp.com/followers/$username$/$follower_count$ (gives last followers where follower_count is 1-100 (Caffeine caps them at 100))
 ## Acknowledgments
 
 - [e3ndr](https://github.com/e3ndr/) for inspiration and software examples for chat and donations
