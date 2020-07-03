@@ -2,7 +2,10 @@
 const electron = require("electron").remote
 const dialog = electron.dialog
 const Store = require("electron-store");
-const { ipcMain, BrowserWindow } = require("electron").remote
+const {
+    ipcMain,
+    BrowserWindow
+} = require("electron").remote
 // const {dialog} = require("electron");
 const store = new Store();
 const toggleBackground = document.getElementById("toggleBackground");
@@ -73,7 +76,11 @@ io.sockets.on("connection", function (socket) {
     io.sockets.emit("change goal title", store.get("goal_title"));
     io.sockets.emit("change goal text color", store.get("goal_color_text"));
     io.sockets.emit("change goal bar color", store.get("goal_color_bar"));
-    var ioData = { total: store.get("goal"), current: store.get("goal_reached"), type: store.get("goal_type") };
+    var ioData = {
+        total: store.get("goal"),
+        current: store.get("goal_reached"),
+        type: store.get("goal_type")
+    };
     io.sockets.emit("goal", ioData);
 
 
@@ -87,12 +94,16 @@ io.sockets.on("connection", function (socket) {
         if (data === "follower") {
             audio = new Audio(store.get("follower_audio"));
             audio.volume = store.get("follower_volume");
-            if (store.get("follower_audio")) { audio.play(); }
+            if (store.get("follower_audio")) {
+                audio.play();
+            }
         }
         if (data === "donation") {
             audio = new Audio(store.get("donation_audio"));
             audio.volume = store.get("donation_volume");
-            if (store.get("donation_audio")) { audio.play(); }
+            if (store.get("donation_audio")) {
+                audio.play();
+            }
         }
     });
 });
@@ -114,11 +125,15 @@ document.getElementById("goalUSD").addEventListener("input", (event) => {
     var gold = Math.round((credits / 3) * 100) / 100;
 
     store.set("goal", parseFloat(usd));
-    var ioData = { total: store.get("goal"), current: store.get("goal_reached"), type: store.get("goal_type") };
+    var ioData = {
+        total: store.get("goal"),
+        current: store.get("goal_reached"),
+        type: store.get("goal_type")
+    };
     io.sockets.emit("goal", ioData);
 });
 
-let backgroundToggled = true;
+let backgroundToggled = false;
 
 toggleBackground.addEventListener("click", (event) => {
     backgroundToggled = !backgroundToggled;
@@ -131,7 +146,8 @@ const openOverlay = document.getElementById("openOverlay");
 openOverlay.addEventListener("click", (event) => {
     setTimeout(function () {
         io.sockets.emit("set overlay title", 1);
-    }, 1000);
+        io.sockets.emit("toggle background", backgroundToggled);
+    }, 400);
 
     /* Followers */
     if (store.get("enable_follow")) {
@@ -145,7 +161,9 @@ openOverlay.addEventListener("click", (event) => {
             setVisibleOnAllWorkspaces: true
         });
 
-        win.on("close", () => { win = null });
+        win.on("close", () => {
+            win = null
+        });
         win.loadURL("http://127.0.0.1:8080/followers");
         win.setAlwaysOnTop(true, "floating", 1);
         win.setVisibleOnAllWorkspaces(true);
@@ -163,7 +181,9 @@ openOverlay.addEventListener("click", (event) => {
             alwaysOnTop: true
         });
 
-        win.on("close", () => { win = null });
+        win.on("close", () => {
+            win = null
+        });
         win.loadURL("http://127.0.0.1:8080/donations");
         win.setAlwaysOnTop(true, "floating", 1);
         win.setVisibleOnAllWorkspaces(true);
@@ -182,7 +202,9 @@ openOverlay.addEventListener("click", (event) => {
             alwaysOnTop: true
         });
 
-        win.on("close", () => { win = null });
+        win.on("close", () => {
+            win = null
+        });
         win.loadURL("http://127.0.0.1:8080/chat");
         win.setAlwaysOnTop(true, "floating", 1);
         win.setVisibleOnAllWorkspaces(true);
@@ -200,20 +222,22 @@ openOverlay.addEventListener("click", (event) => {
             alwaysOnTop: true
         });
 
-        win.on("close", () => { win = null });
+        win.on("close", () => {
+            win = null
+        });
         win.loadURL("http://127.0.0.1:8080/goal");
         win.setAlwaysOnTop(true, "floating", 1);
         win.setVisibleOnAllWorkspaces(true);
         win.show();
     }
-
-    io.sockets.emit("toggle background", backgroundToggled);
 })
 
 /* File selector */
 function selectFile(type) {
     var filePath;
-    dialog.showOpenDialog({ properties: ["openFile"] }).then(result => {
+    dialog.showOpenDialog({
+        properties: ["openFile"]
+    }).then(result => {
         console.log(result.canceled);
         if (!result.canceled) {
             filePath = result.filePaths;
@@ -256,6 +280,7 @@ function donatorTableUpdate() {
 
 /* Splash screen */
 var splashActive = true;
+
 function splashScreen(state) {
     var splash = document.getElementById("splash");
     var content = document.getElementById("content");
@@ -371,33 +396,59 @@ koi.onupdate = event => {
 
 koi.onchat = event => {
     console.log(event);
-    var ioData = { "username": event.sender.username, "text": event.message, "max_entries": store.get("chat_entries") };
-    if (store.get("enable_chat")) { io.sockets.emit("add chat", ioData) }
+    var ioData = {
+        "username": event.sender.username,
+        "text": event.message,
+        "max_entries": store.get("chat_entries")
+    };
+    if (store.get("enable_chat")) {
+        io.sockets.emit("add chat", ioData)
+    }
 }
 
 koi.onfollow = event => {
     console.log(event);
     var follower = event.follower;
-    var ioData = { "username": follower.username, "text": "just followed", "gif": store.get("follower_gif"), "timeout": store.get("follower_timeout") };
+    var ioData = {
+        "username": follower.username,
+        "text": "just followed",
+        "gif": store.get("follower_gif"),
+        "timeout": store.get("follower_timeout")
+    };
     var followText = store.get("follower_text");
     if (followText !== undefined && followText.length > 1) {
         ioData.text = followText;
     }
-    if (store.get("enable_follow")) { io.sockets.emit("follower alert", ioData); }
+    if (store.get("enable_follow")) {
+        io.sockets.emit("follower alert", ioData);
+    }
 }
 
 koi.ondonation = event => {
     console.log(event);
     var donator = event.sender.username;
-    var ioData = { "username": donator, "donationMessage": event.message, "text": store.get("donation_text"), "gif": store.get("donation_gif"), "timeout": store.get("donation_timeout"), "prop": event.image };
-    if (store.get("enable_donation")) { io.sockets.emit("donation alert", ioData); }
+    var ioData = {
+        "username": donator,
+        "donationMessage": event.message,
+        "text": store.get("donation_text"),
+        "gif": store.get("donation_gif"),
+        "timeout": store.get("donation_timeout"),
+        "prop": event.image
+    };
+    if (store.get("enable_donation")) {
+        io.sockets.emit("donation alert", ioData);
+    }
 
     /* Update donation log */
     var goalReached = store.get("goal_reached");
     goalReached += event.usd_equivalent;
     store.set("goal_reached", goalReached);
     document.getElementById("goalReached").value = goalReached;
-    var ioData = { total: store.get("goal"), current: store.get("goal_reached"), type: store.get("goal_type") };
+    var ioData = {
+        total: store.get("goal"),
+        current: store.get("goal_reached"),
+        type: store.get("goal_type")
+    };
     io.sockets.emit("goal", ioData);
 
     /* Update donator list */
@@ -413,7 +464,9 @@ koi.ondonation = event => {
         }
         donatorList[currentUser] = donatorListUser;
     } else {
-        donatorList[currentUser] = { [donator]: event.usd_equivalent };
+        donatorList[currentUser] = {
+            [donator]: event.usd_equivalent
+        };
     }
     store.set("donator_list", donatorList);
     donatorTableUpdate();
@@ -445,9 +498,12 @@ setInterval(() => {
 
 /* Settings - set user */
 var userInput = document.getElementById("setUserInput");
+
 function saveUser() {
     var newUser = userInput.value;
-    if (currentUser !== undefined) { koi.removeUser(currentUser); }
+    if (currentUser !== undefined) {
+        koi.removeUser(currentUser);
+    }
     koi.addUser(newUser);
     currentUser = newUser;
     store.set("user", newUser);
@@ -495,30 +551,35 @@ function checkBox(id) {
 
 var hostPort = document.getElementById("hostPort");
 hostPort.addEventListener("input", hostPortSet);
+
 function hostPortSet() {
     store.set("host_port", parseInt(hostPort.value));
 }
 
 var timeoutFollowers = document.getElementById("followerTimeout");
 timeoutFollowers.addEventListener("input", timeoutFollowersSet);
+
 function timeoutFollowersSet() {
     store.set("follower_timeout", parseInt(timeoutFollowers.value));
 }
 
 var timeoutDonations = document.getElementById("donationTimeout");
 timeoutDonations.addEventListener("input", timeoutDonationsSet);
+
 function timeoutDonationsSet() {
     store.set("donation_timeout", parseInt(timeoutDonations.value));
 }
 
 var maxChatInput = document.getElementById("chatEntries");
 maxChatInput.addEventListener("input", maxChatSet);
+
 function maxChatSet() {
     store.set("chat_entries", parseInt(maxChatInput.value));
 }
 
 var setChatTextColor = document.getElementById("chatColorText");
 setChatTextColor.addEventListener("input", setChatTextColorSet);
+
 function setChatTextColorSet() {
     store.set("chat_color_text", String(setChatTextColor.value));
     io.sockets.emit("change chat color", setChatTextColor.value);
@@ -526,6 +587,7 @@ function setChatTextColorSet() {
 
 var setFollowerColor = document.getElementById("followerColorText");
 setFollowerColor.addEventListener("input", setFollowerColorSet);
+
 function setFollowerColorSet() {
     store.set("follower_color_text", String(setFollowerColor.value));
     io.sockets.emit("change follower color", setFollowerColor.value);
@@ -533,6 +595,7 @@ function setFollowerColorSet() {
 
 var setDonationColor = document.getElementById("donationColorText");
 setDonationColor.addEventListener("input", setDonationColorSet);
+
 function setDonationColorSet() {
     store.set("donation_color_text", String(setDonationColor.value));
     io.sockets.emit("change donation color", setDonationColor.value);
@@ -540,6 +603,7 @@ function setDonationColorSet() {
 
 var goalTitle = document.getElementById("goalTitle");
 goalTitle.addEventListener("input", goalTitleSet);
+
 function goalTitleSet() {
     store.set("goal_title", goalTitle.value);
     io.sockets.emit("change goal title", goalTitle.value);
@@ -547,6 +611,7 @@ function goalTitleSet() {
 
 var setGoalTextColor = document.getElementById("goalColorText");
 setGoalTextColor.addEventListener("input", setGoalTextColorSet);
+
 function setGoalTextColorSet() {
     store.set("goal_color_text", String(setGoalTextColor.value));
     io.sockets.emit("change goal text color", setGoalTextColor.value);
@@ -554,6 +619,7 @@ function setGoalTextColorSet() {
 
 var setGoalBarColor = document.getElementById("goalColorBar");
 setGoalBarColor.addEventListener("input", setGoalBarColorSet);
+
 function setGoalBarColorSet() {
     store.set("goal_color_bar", String(setGoalBarColor.value));
     io.sockets.emit("change goal bar color", setGoalBarColor.value);
@@ -561,17 +627,27 @@ function setGoalBarColorSet() {
 
 var goalReached = document.getElementById("goalReached");
 goalReached.addEventListener("input", goalReachedSet);
+
 function goalReachedSet() {
     store.set("goal_reached", parseFloat(goalReached.value));
-    var ioData = { total: store.get("goal"), current: store.get("goal_reached"), type: store.get("goal_type") };
+    var ioData = {
+        total: store.get("goal"),
+        current: store.get("goal_reached"),
+        type: store.get("goal_type")
+    };
     io.sockets.emit("goal", ioData);
 }
 
 var goalType = document.getElementById("goalTypes");
 goalType.addEventListener("input", goalTypeSet);
+
 function goalTypeSet() {
     store.set("goal_type", parseInt(goalTypes.selectedIndex));
-    var ioData = { total: store.get("goal"), current: store.get("goal_reached"), type: store.get("goal_type") };
+    var ioData = {
+        total: store.get("goal"),
+        current: store.get("goal_reached"),
+        type: store.get("goal_type")
+    };
     io.sockets.emit("goal", ioData);
 }
 
