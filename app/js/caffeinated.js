@@ -130,7 +130,6 @@ const openOverlay = document.getElementById("openOverlay");
 /* Open overlay as window */
 openOverlay.addEventListener("click", (event) => {
     setTimeout(function () {
-        io.sockets.emit("toggle background", 1);
         io.sockets.emit("set overlay title", 1);
     }, 1000);
 
