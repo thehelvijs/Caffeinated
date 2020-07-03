@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Casterlabs Caffeinated</title>
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.13.0/css/all.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+    </head>
+
+    <body>
+        <div id="splash" class="centered">
+            <img src="media/app_icon.png" id="logo2">
+            <img src="media/caf.png" id="logo1">
+            <img src="media/load4.gif" id="load">
+        </div>
+        <div id="content" class="hide">
+            <div class="header">
+                <label class="title">Casterlabs Caffeinated</label>
+                <i id="closebtn" class="fas fa-times"></i>
+                <!-- <img id="loading" class="hide" src="media/load2.gif"> -->
+            </div>
+
+            <div class="sidenav">
+                <a href="#sub1" style="cursor: default;"><img id="menuAvatar" class="userIcon"
+                        src="media/icon.png" /></a>
+                <div id="followersTitle" style="color:white; font-size: 12px; padding-top: 10px;"></div>
+                <div id="followerCount" style="color:white; font-size: 14px; padding-top: 5px;"></div>
+                <a href="#sub3"><i id="menuGoal" class="fas fa-hand-holding-usd menuIcon sideNavItem"></i></a>
+                <a href="#sub2"><i id="menuSettings" class="fas fa-sliders-h menuIcon sideNavItem"></i></a>
+            </div>
+
+            <div class="main">
+                <div id="sub1" class="sub">
+                    <h3 id="greetings" style="margin-top: 0;">Set user in settings</h3>
+                    <div class="container" style="padding-top: 0;">
+                        <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox"
+                                    id="enable_follow" onclick="checkBox(" enable_follow")">Follower alert</label></div>
+                        <div><input onclick="clipboard(" followers")" type="button" class="button" value="Copy"></div>
+                        <div style="margin: 0 -50px 0 -60px;"><input id="testFollower" type="button" class="button"
+                                value="Test"></div>
+                    </div>
+                    <div class="container">
+                        <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox"
+                                    id="enable_donation" onclick="checkBox(" enable_donation")">Donations alert</label>
+                        </div>
+                        <div><input onclick="clipboard(" donations")" type="button" class="button" value="Copy"></div>
+                        <div style="margin: 0 -50px 0 -60px;"><input id="testDonation" type="button" class="button"
+                                value="Test"></div>
+                    </div>
+                    <div class="container">
+                        <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox"
+                                    id="enable_chat" onclick="checkBox(" enable_chat")">Chat</label></div>
+                        <div><input onclick="clipboard(" chat")" type="button" class="button" value="Copy"></div>
+                        <div style="margin: 0 -50px 0 -60px;"><input id="testChat" type="button" class="button"
+                                value="Test"></div>
+                    </div>
+                    <div class="container">
+                        <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox"
+                                    id="enable_goal" onclick="checkBox(" enable_goal")">Donation goal</label></div>
+                        <div><input onclick="clipboard(" goal")" type="button" class="button" value="Copy"></div>
+                        <div style="margin: 0 -50px 0 -60px;"><a href="#sub3"><input id="settingsGoal" type="button"
+                                    class="button" value="Settings"></a></div>
+                    </div>
+                    <!-- <div class="container">
+              <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox" id="enableTopDon" onclick="checkBox("enableTopDon")">Top donators</label></div>
+              <div><input onclick="clipboard("top-donators")" type="button" class="button" value="Copy"></div>  
+              <div style="margin: 0 -50px 0 -60px;"><a href="#sub3"><input id="settingsGoal" type="button" class="button" value="Settings"></a></div>
+            </div> -->
+                    <div class="lowerButtonContainer">
+                        <!-- <div class="lowerButton" id="openOverlay">
+              OPEN OVERLAY
+            </div>
+            <div class="lowerButton" id="toggleBackground">
+              TOGGLE BACKGROUND
+            </div> -->
+                        <input id="openOverlay" type="button" class="button" style="width: 50%; margin-left:10px;"
+                            value="Open overlay">
+                        <input id="toggleBackground" type="button" class="button" style="width: 50%; margin-left:15px;"
+                            value="Toggle background">
+                    </div>
+                </div>
+
+                <div id="sub2" class="hide sub">
+                    <h4 style="margin-bottom: -5px;">General settings</h4>
+                    <div class="menuItemDiv" style="margin-bottom: -10px;"><input type="text" id="setUserInput"
+                            placeholder="Username" style="width: 228px;"><input id="setUser" type="button"
+                            class="button" value="Apply" style="margin-left: 10px;"></div>
+                    <div class="menuItemDiv">Localhost port<input type="text" id="hostPort"
+                            style="width: 70px;float:right; margin:-7px 20px;"></div>
+                    <hr>
+                    <h4 style="margin-bottom: -5px;">Follower alert</h4>
+                    <div class="menuItemDiv">Timeout (seconds)<input type="text" id="followerTimeout"
+                            style="width: 70px;float:right; margin:-7px 20px;"></div>
+                    <div class="menuItemDiv">Username color<input type="color" id="followerColorText"
+                            style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+                    <div class="menuItemDiv">Show GIF<input type="checkbox" id="gif_follow" onclick="checkBox("
+                            gif_follow")" style="width: 40px;float:right; margin:0 35px;"></div>
+                    <div class="menuItemDiv">Select GIF<div onclick="selectFile(" FOLLOWER_GIF")"
+                            style="width: 68px;float:right; margin:-1px 27px;"><input type="button" class="button"
+                                value="Select"></div>
+                    </div>
+                    <div class="menuItemDiv">Play audio<input type="checkbox" id="audio_follow" onclick="checkBox("
+                            audio_follow")" style="width: 40px;float:right; margin:0 35px;"></div>
+                    <div class="menuItemDiv">Select MP3<div onclick="selectFile(" FOLLOWER_MP3")"
+                            style="width: 68px;float:right; margin:-1px 27px;"><input type="button" class="button"
+                                value="Select"></div>
+                    </div>
+                    <div class="menuItemDiv">Volume<input id="followerVolume" type="range" min="0" max="1" step="0.1"
+                            oninput="setVolume(" VOL_FOLLOWER",this.value)" onchange="setVolume("
+                            VOL_FOLLOWER",this.value)" style="width: 70px;float:right; margin:0 20px;"></input></div>
+                    <hr>
+                    <h4 style="margin-bottom: -5px;">Donation alert</h4>
+                    <div class="menuItemDiv">Timeout (seconds)<input type="text" id="donationTimeout"
+                            style="width: 70px;float:right; margin:-7px 20px;"></div>
+                    <div class="menuItemDiv">Username color<input type="color" id="donationColorText"
+                            style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+                    <div class="menuItemDiv">Show GIF<input type="checkbox" id="gif_donation" onclick="checkBox("
+                            gif_donation")" style="width: 40px;float:right; margin:0 35px;"></div>
+                    <div class="menuItemDiv">Select GIF<div onclick="selectFile(" DONATION_GIF")"
+                            style="width: 68px;float:right; margin:-1px 27px;"><input type="button" class="button"
+                                value="Select"></div>
+                    </div>
+                    <div class="menuItemDiv">Play audio<input type="checkbox" id="audio_donation" onclick="checkBox("
+                            audio_donation")" style="width: 40px;float:right; margin:0 35px;"></div>
+                    <div class="menuItemDiv">Select MP3<div onclick="selectFile(" DONATION_MP3")"
+                            style="width: 68px;float:right; margin:-1px 27px;"><input type="button" class="button"
+                                value="Select"></div>
+                    </div>
+                    <div class="menuItemDiv">Volume<input id="donationVolume" type="range" min="0" max="1" step="0.1"
+                            oninput="setVolume(" VOL_DONATION",this.value)" onchange="setVolume("
+                            VOL_DONATION",this.value)" style="width: 70px;float:right; margin:0 20px;"></input></div>
+                    <hr>
+                    <h4 style="margin-bottom: -5px;">Chat</h4>
+                    <div class="menuItemDiv">Max. chat items <input type="text" id="chatEntries"
+                            style="width: 70px;float:right; margin:-7px 20px;"></div>
+                    <div class="menuItemDiv">Chat color <input type="color" id="chatColorText"
+                            style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+                </div>
+
+                <div id="sub3" class="hide sub">
+                    <h4 style="margin-bottom: -5px;">Donation goal</h4>
+                    <div class="menuItemDiv"><input type="text" id="goalTitle" placeholder="Goal title"
+                            style="width: 92%;"></div>
+                    <div class="menuItemDiv">Goal type
+                        <select id="goalTypes" style="float:right; margin:-3px 27px;">
+                            <option value="percentage">Percentage (0-100%)</option>
+                            <option value="usd">USD</option>
+                        </select>
+                    </div>
+                    <div class="menuItemDiv">Goal reached (USD)<input type="text" id="goalReached"
+                            style="width: 70px;float:right; margin:-7px 20px;"></div>
+                    <div class="menuItemDiv">Goal amount (USD)<input type="text" id="goalUSD"
+                            style="width: 70px;float:right; margin:-7px 20px;"></div>
+                    <div class="menuItemDiv">Bar color<input type="color" id="goalColorBar"
+                            style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+                    <div class="menuItemDiv">Text color<input type="color" id="goalColorText"
+                            style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+                    <hr>
+                    <h4 style="margin-bottom: -5px;">Donations</h4>
+                    <div class="menuItemDiv">
+                        <div class="tableFixHead">
+                            <p id="donatorTable"></p>
+                        </div>
+                    </div>
+                    <!-- <div class="menuItemDiv">Top donator count in overlay<input type="text" id="donUserCount" style="width: 70px;float:right; margin:-7px 20px;"></div> -->
+                </div>
+            </div>
+        </div>
+        <script src="js/koi.js"></script>
+        <script src="js/caffeinated.js"></script>
+    </body>
+    <script src="js/renderer.js"></script>
+
+</html>
