@@ -82,7 +82,6 @@
         <script>
             var socket = io.connect();
             var timeout = 5000;
-            var backgroundTransparent = true;
 
             function hideMe() {
                 $("#container").hide();
@@ -125,14 +124,12 @@
             });
 
             socket.on("toggle background", function (data) {
-                if (!backgroundTransparent) {
+                if (data) {
                     document.body.style.backgroundColor = "transparent";
                     document.getElementById("overlay_title").classList.add("hide");
-                    backgroundTransparent = true;
                 } else {
                     document.body.style.backgroundColor = "#31f8ff";
                     document.getElementById("overlay_title").classList.remove("hide");
-                    backgroundTransparent = false;
                 }
             });
 

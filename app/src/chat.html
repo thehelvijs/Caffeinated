@@ -28,34 +28,6 @@
                 text-shadow: 2px 2px rgba(0, 0, 0, 0.3);
             }
 
-            .purpblue {
-                color: rgb(124, 0, 255);
-            }
-
-            .lightpurple {
-                color: rgb(161, 0, 253);
-            }
-
-            .lightmagenta {
-                color: rgb(191, 95, 225);
-            }
-
-            .pinky {
-                color: rgb(210, 112, 166);
-            }
-
-            .heavypink {
-                color: rgb(199, 62, 135);
-            }
-
-            .red {
-                color: rgb(165, 32, 53);
-            }
-
-            .lightred {
-                color: rgb(192, 85, 102);
-            }
-
             #div {
                 position: fixed;
                 bottom: 0;
@@ -74,9 +46,21 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
         <script>
+            var colors = ["#E6194B", "#3CB44B", "#FFE119", "#4363D8", "#F58231", "#911EB4", "#46F0F0", "#F032E6", "#BCF60C", "#FABEBE", "#008080", "#E6BEFF", "#9A6324", "#FFFAC8", "#800000", "#AAFFC3", "#808000", "#FFD8B1", "#000075", "#808080"];
             var maxChatItems;
-            var colors = ["purpblue", "lightpurple", "lightmagenta", "pinky", "heavypink", "red", "lightred"];
-            var backgroundTransparent = true;
+            var userColors = {};
+
+            function getColor(username) {
+                if (userColors[username]) {
+                    return userColors[username];
+                } else {
+                    var random = colors[Math.floor(Math.random() * colors.length)];
+
+                    userColors[username] = random;
+
+                    return random;
+                }
+            }
 
             setInterval(() => {
                 $.get("http://127.0.0.1:" + location.port, function (data) {
@@ -101,7 +85,8 @@
                     chat.shift();
                 }
 
-                user.className += colors[Math.floor(Math.random() * colors.length)];
+                user.style = "color: " + getColor(username) + ";";
+
                 div.className = "chat_box";
 
                 user.textContent = username;
@@ -127,14 +112,12 @@
             });
 
             socket.on("toggle background", function (data) {
-                if (!backgroundTransparent) {
+                if (data) {
                     document.body.style.backgroundColor = "transparent";
                     document.getElementById("overlayTitle").classList.add("hide");
-                    backgroundTransparent = true;
                 } else {
                     document.body.style.backgroundColor = "#31f8ff";
                     document.getElementById("overlayTitle").classList.remove("hide");
-                    backgroundTransparent = false;
                 }
             });
 

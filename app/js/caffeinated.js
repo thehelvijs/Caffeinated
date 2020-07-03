@@ -118,8 +118,11 @@ document.getElementById("goalUSD").addEventListener("input", (event) => {
     io.sockets.emit("goal", ioData);
 });
 
+let backgroundToggled = true;
+
 toggleBackground.addEventListener("click", (event) => {
-    io.sockets.emit("toggle background", 1);
+    backgroundToggled = !backgroundToggled;
+    io.sockets.emit("toggle background", backgroundToggled);
 });
 
 const openOverlay = document.getElementById("openOverlay");
@@ -204,6 +207,8 @@ openOverlay.addEventListener("click", (event) => {
         win.setVisibleOnAllWorkspaces(true);
         win.show();
     }
+
+    io.sockets.emit("toggle background", backgroundToggled);
 })
 
 /* File selector */
