@@ -51,6 +51,11 @@
               <div><input onclick="clipboard('goal')" type="button" class="button" value="Copy"></div>  
               <div style="margin: 0 -50px 0 -60px;"><a href="#sub3"><input id="settingsGoal" type="button" class="button" value="Settings"></a></div>
             </div>
+            <div class="container">
+              <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox" id="enable_share" onclick="checkBox('enable_share')">Share alert</label></div>
+              <div><input onclick="clipboard('share')" type="button" class="button" value="Copy"></div>  
+              <div style="margin: 0 -50px 0 -60px;"><input id="testShare" type="button" class="button" value="Test"></div>
+            </div>
             <!-- <div class="container">
               <div style="white-space: nowrap;"><label class="container-title"><input type="checkbox" id="enableTopDon" onclick="checkBox('enableTopDon')">Top donators</label></div>
               <div><input onclick="clipboard('top-donators')" type="button" class="button" value="Copy"></div>  
@@ -94,6 +99,15 @@
           <h4 style="margin-bottom: -5px;">Chat</h4>
           <div class="menuItemDiv">Max. chat items <input type="text" id="chatEntries" style="width: 70px;float:right; margin:-7px 20px;"></div> 
           <div class="menuItemDiv">Chat color <input type="color" id="chatColorText" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+          <hr>
+          <h4 style="margin-bottom: -5px;">Share alert</h4>
+          <div class="menuItemDiv">Timeout (seconds)<input type="text" id="shareTimeout" style="width: 70px;float:right; margin:-7px 20px;"></div>
+          <div class="menuItemDiv">Username color<input type="color" id="shareColorText" style="width: 68px;float:right; margin:-7px 20px; border:0;"></div>
+          <div class="menuItemDiv">Show GIF<input type="checkbox" id="gif_share" onclick="checkBox('gif_share')" style="width: 40px;float:right; margin:0 35px;"></div>
+          <div class="menuItemDiv">Select GIF<div onclick="selectFile('share_GIF')" style="width: 68px;float:right; margin:-1px 27px;"><input type="button" class="button" value="Select"></div></div>
+          <div class="menuItemDiv">Play audio<input type="checkbox" id="audio_share" onclick="checkBox('audio_share')" style="width: 40px;float:right; margin:0 35px;"></div>
+          <div class="menuItemDiv">Select MP3<div onclick="selectFile('share_MP3')" style="width: 68px;float:right; margin:-1px 27px;"><input type="button" class="button" value="Select"></div></div>
+          <div class="menuItemDiv">Volume<input id="shareVolume" type="range" min="0" max="1" step="0.1" oninput="setVolume('VOL_share',this.value)" onchange="setVolume('VOL_share',this.value)" style="width: 70px;float:right; margin:0 20px;"></input></div>
         </div>
 
         <div id="sub3" class="hide sub">

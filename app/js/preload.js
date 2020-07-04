@@ -10,6 +10,9 @@ const defaultCheckboxes = {
     "gif_follow": true,
     "audio_donation": true,
     "gif_donation": true,
+    "audio_share":true,
+    "gif_share":true,
+    "enable_share": false,
     "enable_follow": true,
     "enable_donation": true,
     "enable_chat": false,
@@ -33,6 +36,10 @@ const defaultSettings = {
     "donation_text": "just donated",
     "donation_volume": 1,
     "donator_list": {},
+    "share_audio": directory + "media/share.mp3",
+    "share_gif": directory + "media/share.gif",
+    "share_text": "shared your broadcast!",
+    "share_volume": 1,
     "goal_color_text": "#ffffff",
     "goal_color_bar": "#31f8ff",
     "goal_reached": 0,
@@ -78,10 +85,12 @@ function updateElements() {
     document.getElementById("hostPort").value = store.get("host_port");
     document.getElementById("followerTimeout").value = store.get("follower_timeout");
     document.getElementById("donationTimeout").value = store.get("donation_timeout");
+    document.getElementById("shareTimeout").value = store.get("share_timeout");
     document.getElementById("chatEntries").value = store.get("chat_entries");
     document.getElementById("chatColorText").value = store.get("chat_color_text");
     document.getElementById("followerColorText").value = store.get("follower_color_text");
     document.getElementById("donationColorText").value = store.get("donation_color_text");
+    document.getElementById("shareColorText").value = store.get("share_color_text");
     var goalTitle = store.get("goal_title");
     if (goalTitle !== undefined) {
         document.getElementById("goalTitle").value = goalTitle;
@@ -93,6 +102,7 @@ function updateElements() {
     document.getElementById("goalUSD").value = store.get("goal");
     document.getElementById("followerVolume").value = store.get("follower_volume");
     document.getElementById("donationVolume").value = store.get("donation_volume");
+    document.getElementById("shareVolume").value = store.get("share_volume");
 
     console.log("Settings initialized")
 }

@@ -52,6 +52,10 @@ app.get("/top-donators", function (req, res) {
     res.sendFile(__dirname + "/src/top-donators.html");
 });
 
+app.get("/share", function (req, res) {
+    res.sendFile(__dirname + "/src/share.html");
+});
+
 app.get("/media/follower-alert.mp3", function (req, res) {
     res.sendFile(store.get("follower_audio"));
 });
@@ -68,11 +72,20 @@ app.get("/media/donation-gif.gif", function (req, res) {
     res.sendFile(store.get("donation_gif"));
 });
 
+app.get("/media/share-gif.gif", function (req, res) {
+    res.sendFile(store.get("share_gif"));
+});
+
+app.get("/media/share-alert.mp3", function (req, res) {
+    res.sendFile(store.get("share_mp3"));
+});
+
 io.sockets.on("connection", function (socket) {
     console.log("New connection");
     io.sockets.emit("change chat color", store.get("chat_color_text"));
     io.sockets.emit("change follower color", store.get("follower_color_text"));
     io.sockets.emit("change donation color", store.get("donation_color_text"));
+    io.sockets.emit("change share color", store.get("donation_color_text"));
     io.sockets.emit("change goal title", store.get("goal_title"));
     io.sockets.emit("change goal text color", store.get("goal_color_text"));
     io.sockets.emit("change goal bar color", store.get("goal_color_bar"));
@@ -105,6 +118,13 @@ io.sockets.on("connection", function (socket) {
                 audio.play();
             }
         }
+        if (data === "share") {
+            audio = new Audio(store.get("share_audio"));
+            audio.volume = store.get("share_volume");
+            if (store.get("share_audio")) {
+                audio.play();
+            }
+        }
     });
 });
 
@@ -115,6 +135,9 @@ function setVolume(type, value) {
             break;
         case "VOL_DONATION":
             store.set("donation_volume", value);
+            break;
+        case "VOL_SHARE":
+            store.set("share_volume", value);
             break;
     }
 }
@@ -230,6 +253,26 @@ openOverlay.addEventListener("click", (event) => {
         win.setVisibleOnAllWorkspaces(true);
         win.show();
     }
+
+    /* Share */
+    if (store.get("enable_share")) {
+        let win = new BrowserWindow({
+            width: 300,
+            height: 300,
+            transparent: true,
+            resizable: false,
+            frame: false,
+            alwaysOnTop: true
+        });
+
+        win.on("close", () => {
+            win = null
+        });
+        win.loadURL("http://127.0.0.1:8080/share");
+        win.setAlwaysOnTop(true, "floating", 1);
+        win.setVisibleOnAllWorkspaces(true);
+        win.show();
+    }
 })
 
 /* File selector */
@@ -256,6 +299,12 @@ function selectFile(type) {
                     break;
                 case "DONATION_MP3":
                     store.set("donation_audio", filePath);
+                    break;
+                case "SHARE_GIF":
+                    store.set("share_gif", filePath);
+                    break;
+                case "SHARE_MP3":
+                    store.set("share_audio", filePath);
                     break;
             }
         }
@@ -366,6 +415,20 @@ koi.onstatus = event => {
     /* Remove splash screen and show content */
     splashScreen(false);
 };
+
+koi.onshare = event => {
+    console.log(event);
+    var user = event.sender.username;
+    var ioData = {
+        "username": user,
+        "text": store.get("share_text"),
+        "gif": store.get("share_gif"),
+        "timeout": store.get("share_timeout")
+    };
+    if (store.get("enable_share")) {
+        io.sockets.emit("share alert", ioData);
+    }
+}
 
 koi.onupdate = event => {
     console.log(event);
@@ -537,6 +600,14 @@ document.getElementById("testDonation").addEventListener("click", function () {
     }
 });
 
+document.getElementById("testShare").addEventListener("click", function () {
+    if (currentUser !== undefined) {
+        koi.test(currentUser, "SHARE");
+    } else {
+        koi.test("Casterlabs", "SHARE");
+    }
+});
+
 document.getElementById("testChat").addEventListener("click", function () {
     if (currentUser !== undefined) {
         koi.test(currentUser, "CHAT");
@@ -570,6 +641,13 @@ function timeoutDonationsSet() {
     store.set("donation_timeout", parseInt(timeoutDonations.value));
 }
 
+var timeoutshare = document.getElementById("shareTimeout");
+timeoutshare.addEventListener("input", timeoutShareSet);
+
+function timeoutShareSet() {
+    store.set("share_timeout", parseInt(timeoutshare.value));
+}
+
 var maxChatInput = document.getElementById("chatEntries");
 maxChatInput.addEventListener("input", maxChatSet);
 
@@ -599,6 +677,14 @@ setDonationColor.addEventListener("input", setDonationColorSet);
 function setDonationColorSet() {
     store.set("donation_color_text", String(setDonationColor.value));
     io.sockets.emit("change donation color", setDonationColor.value);
+}
+
+var setShareColor = document.getElementById("shareColorText");
+setShareColor.addEventListener("input", setShareColorSet);
+
+function setShareColorSet() {
+    store.set("share_color_text", String(setShareColor.value));
+    io.sockets.emit("change share color", setShareColor.value);
 }
 
 var goalTitle = document.getElementById("goalTitle");
