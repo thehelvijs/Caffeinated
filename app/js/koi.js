@@ -1,10 +1,47 @@
 class Koi {
     constructor(address) {
-        var instance = this;
-        this.ws = new WebSocket(address);
+        this.address = address;
+        this.listeners = {};
+        this.reconnect();
+    }
+
+    addEventListener(type, callback) {
+        let callbacks = this.listeners[type];
+
+        if (!callbacks) callbacks = [];
+
+        callbacks.push(callback);
+    }
+
+    broadcast(type, data) {
+        let listeners = this.listeners[type];
+
+        if (listeners) {
+            listeners.forEach((callback) => {
+                try {
+                    callback(data);
+                } catch (e) {
+                    console.error("An event listener produced an exception: ");
+                    console.error(e);
+                }
+            });
+        }
+    }
+
+    reconnect() {
+        if (this.ws && !this.ws.CLOSED) {
+            this.ws.close();
+        }
+
+        let instance = this;
+        this.ws = new WebSocket(this.address);
 
         this.ws.onopen = function () {
-            instance.onopen();
+            instance.broadcast("open");
+        };
+
+        this.ws.onclose = function () {
+            instance.broadcast("close");
         };
 
         this.ws.onmessage = function (message) {
@@ -18,35 +55,27 @@ class Koi {
 
                 this.send(JSON.stringify(json));
             } else if (json["type"] == "ERROR") {
-                instance.onerror(json);
+                instance.broadcast("error", json);
             } else if (json["type"] == "EVENT") {
                 var event = json["event"];
 
                 switch (event["event_type"]) {
-                    case "CHAT": instance.onchat(event); break;
-                    case "SHARE": instance.onshare(event); break;
-                    case "FOLLOW": instance.onfollow(event); break;
-                    case "DONATION": instance.ondonation(event); break;
-                    case "INFO": instance.oninfo(event["event"]); break;
-                    case "STREAM_STATUS": instance.onstatus(event); break;
-                    case "USER_UPDATE": instance.onupdate(event); break;
+                    case "CHAT": instance.broadcast("chat", event); break;
+                    case "SHARE": instance.broadcast("share", event); break;
+                    case "FOLLOW": instance.broadcast("follow", event); break;
+                    case "DONATION": instance.broadcast("donation", event); break;
+                    case "INFO": instance.broadcast("info", event["event"]); break;
+                    case "STREAM_STATUS": instance.broadcast("streamstatus", event); break;
+                    case "USER_UPDATE": instance.broadcast("userupdate", event); break;
                 }
             } else {
-                instance.onmessage(json);
+                instance.broadcast("message", json);
             }
         };
     }
 
-    onopen() {
-        console.log("Open!");
-    }
-
     isAlive() {
         return this.ws.readyState == this.ws.OPEN;
-    }
-
-    onmessage(json) {
-        console.log(json);
     }
 
     addUser(user) {
@@ -77,40 +106,8 @@ class Koi {
         this.ws.send(JSON.stringify(json));
     }
 
-    onchat(event) {
-        console.log(event);
-    }
-
-    ondonation(event) {
-        console.log(event);
-    }
-
-    onfollow(event) {
-        console.log(event);
-    }
-
-    onshare(event) {
-        console.log(event);
-    }
-
-    onstatus(event) {
-        console.log(event);
-    }
-
-    onupdate(event) {
-        console.log(event);
-    }
-
-    oninfo(event) {
-        console.log(event);
-    }
-
     close() {
         this.ws.close();
-    }
-
-    onerror(event) {
-        console.log(event);
     }
 
 }
