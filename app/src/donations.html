@@ -75,70 +75,60 @@
         </style>
     </head>
 
-    <body onload="hideMe()">
+    <body>
         <span id="overlay_title" style="position: absolute; font-size: 35px;" class="hide">Donation alert</span>
         <div id="container">
-            <div id="gif"><img src="../media/donation-gif.gif"></div>
-            <div class="text text-big"><span id="username"></span></div>
-            <div class="text text-big" style="margin-top: 0; margin-left: -40px;"><span id="donation_text"></span><img
-                    id="prop"
-                    src="https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png"></div>
-            <div class="text text-small" style="padding-top: 10px;"><span id="donation_message"></span></div>
+            <img id="gif" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+            <div class="text text-big">
+                <span id="username"></span>
+            </div>
+            <div class="text text-big" style="margin-top: 0; margin-left: -40px;">
+                <span id="donation_text"></span>
+                <img id="prop">
+            </div>
+            <div class="text text-small" style="padding-top: 10px;">
+                <span id="donation_message"></span>
+            </div>
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
         <script>
             var socket = io.connect();
-            var timeout = 10000;
+            var displayTime = 10000;
+            var gif = document.getElementById("gif");
             var backgroundTransparent = true;
 
-            function hideMe() {
-                $("#container").hide();
-            }
+            socket.on("donation alert", function (event) {
+                document.getElementById("prop").src = event.image;
+                document.getElementById("donation_text").innerHTML = event.text;
+                document.getElementById("username").innerHTML = event.sender.username;
 
-            setInterval(() => {
-                $.get("http://127.0.0.1:" + location.port, function (data) {
-                    // console.log("ping");
-                    if (data !== "pong") {
-                        window.location.reload(false);
-                    }
-                    else {
-                        // console.log("pong");
-                    }
-                });
-            }, 1000);
-
-            socket.on("donation alert", function (data) {
-                if (data.timeout !== undefined) {
-                    timeout = data.timeout * 1000;
+                if ((data.donationMessage !== undefined) && (data.donationMessage.length > 1)) {
+                    document.getElementById("donation_message").innerHTML = event.message;
                 } else {
-                    timeout = 10000;
-                }
-                document.getElementById("prop").src = data.prop;
-                document.getElementById("donation_text").innerHTML = data.text;
-                document.getElementById("donation_message").innerHTML = " ";
-                if (data.donationMessage !== undefined) {
-                    if (data.donationMessage.length > 1) {
-                        document.getElementById("donation_message").innerHTML = data.donationMessage;
-                    }
+                    document.getElementById("donation_message").innerHTML = " ";
                 }
 
-                var element = document.getElementById("gif");
-                if (data.gif) {
-                    element.classList.remove("hide");
-                } else {
-                    element.classList.add("hide");
-                }
-                $("#container").fadeIn("slow", function () { });
-                document.getElementById("username").innerHTML = data.username;
-                setTimeout(() => { socket.emit("play audio", "donation"); }, 100);
-                setTimeout(() => { $("#container").fadeOut("slow", function () { }); }, timeout);
+                $("#container").fadeIn("slow");
+
+                setTimeout(() => {
+                    socket.emit("donation audio", 1);
+                }, 100);
+
+                setTimeout(() => {
+                    $("#container").fadeOut("slow");
+                }, displayTime);
             });
 
-            socket.on("change donation color", function (data) {
-                $(document).ready(function () {
-                    $("#username").css("color", data);
-                });
+            socket.on("donation config", function (config) {
+                $("#username").css("color", config.color);
+
+                if (data.gif) {
+                    gif.classList.remove("hide");
+                    gif.src = data.gif;
+                } else {
+                    gif.classList.add("hide");
+                }
             });
 
             socket.on("toggle background", function (data) {

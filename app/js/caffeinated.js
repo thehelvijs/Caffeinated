@@ -10,39 +10,75 @@ const {
 const app = express();
 const cors = require("cors");
 const server = require("http").createServer(app);
-const io = require("socket.io").listen(server);
-
+const koi = new Koi("wss://live.casterlabs.co/koi");
 const store = new Store();
-// const koi = new Koi("wss://live.casterlabs.co/koi");
 
-/* initalize the store */
-if (!store.get("initalized")) {
-    store.set({
-        initalized: true,
-        port: 8080,
-        modules: {
-            donation: {
-                example: {}
+app.use(cors());
+
+class Caffeinated {
+    io = require("socket.io").listen(server);
+
+    constructor() {
+        if (!store.get("initalized")) {
+            this.reset();
+        }
+
+        this.user = store.get("user");
+    }
+
+    reset() {
+        store.set({
+            initalized: true,
+            port: 8080,
+            user: null,
+            modules: {
+                casterlabs_donation: {
+                    donation: {}
+                }
+
+            }
+        });
+    }
+
+    init() {
+        console.log("init!");
+
+        for (const [type, modules] of Object.entries(store.get("modules"))) {
+            for (const [id, module] of Object.entries(modules)) {
+                try {
+                    MODULES.initalizeModule(new MODULES.moduleTypes[type](id), document.getElementById("settings"), document.getElementById("overlays"));
+                } catch (e) {
+                    console.warn(e)
+                } // Ignore, module not loaded
             }
         }
-    });
-}
-
-function init() {
-    console.log("init!");
-
-    for (const [type, modules] of Object.entries(store.get("modules"))) {
-        for (const [id, module] of Object.entries(modules)) {
-            try {
-                MODULES.initalizeModule(new MODULES.moduleTypes[type](id));
-            } catch (e) { } // Ignore, module not loaded
-        }
     }
+
+    setUser(user) {
+        if (this.user !== null) {
+            koi.removeUser(this.user);
+        }
+
+        this.user = user;
+
+        koi.addUser(this.user);
+    }
+
 }
 
-/*
+const CAFFEINATED = new Caffeinated();
+const MODULES = new Modules();
+
+/* Koi */
 koi.addEventListener("close", () => {
     koi.reconnect();
+});
+
+koi.addEventListener("userupdate", (e) => {
+    // document.getElementById("user_image").src = e.streamer.image_link; // TODO CSS to prevent problems...
+    document.getElementById("username").innerText = e.streamer.username;
+
+    console.log(e)
 });
 
 koi.addEventListener("error", () => {
@@ -56,43 +92,9 @@ koi.addEventListener("error", () => {
             break;
     }
 });
-*/
 
-/* Splash screen */
-let splashActive = true;
-function splashScreen(show) {
-    let splash = document.getElementById("splash");
-    let content = document.getElementById("content");
-
-    if (!show) {
-        /* Remove */
-        if (splashActive) {
-            splash.classList.add("hide");
-            content.classList.remove("hide");
-        }
-
-        splashActive = false;
-    } else {
-        /* Generate */
-        if (!splashActive) {
-            splash.classList.remove("hide");
-            content.classList.add("hide");
-        }
-
-        splashActive = true;
+koi.addEventListener("open", () => {
+    if (CAFFEINATED.user !== null) {
+        koi.addUser(CAFFEINATED.user);
     }
-}
-
-function prettifyString(str) {
-    let splitStr = str.split("_");
-
-    for (let i = 0; i < splitStr.length; i++) {
-        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-    }
-
-    return splitStr.join(" ");
-}
-
-function putInClipboard(copy) {
-    navigator.clipboard.writeText("http://127.0.0.1:" + store.get("host_port") + "/" + copy);
-}
+});

@@ -10,3 +10,27 @@ function navigate(page) {
     element.classList.remove("hide");
     element.classList.add("navigated");
 }
+
+let splashActive = true;
+function splashScreen(show) {
+    let splash = document.getElementById("splash");
+    let content = document.getElementById("content");
+
+    if (!show) {
+        /* Remove */
+        if (splashActive) {
+            splash.classList.add("hide");
+            content.classList.remove("hide");
+        }
+
+        splashActive = false;
+    } else {
+        /* Generate */
+        if (!splashActive) {
+            splash.classList.remove("hide");
+            content.classList.add("hide");
+        }
+
+        splashActive = true;
+    }
+}

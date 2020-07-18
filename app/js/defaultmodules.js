@@ -1,12 +1,9 @@
 
 class DonationModule {
-    type = "donation";
+    namespace = "casterlabs_donation";
 
     constructor(id) {
         this.id = id;
-
-        this.audioFile = "media/donation.mp3";
-        this.imageFile = "media/donation.gif";
     }
 
     linkDisplay = {
@@ -37,49 +34,22 @@ class DonationModule {
         image_file: "file"
     };
 
-    setWindowVisbility(visible) {
-        if (visible) {
-            this.window = new BrowserWindow({
-                width: 300,
-                height: 300,
-                x: this.settings.window_x,
-                y: this.settings.window_y,
-                transparent: true,
-                resizable: false,
-                frame: false,
-                alwaysOnTop: true
-            });
-
-            this.window.loadURL("http://127.0.0.1:8080/donations");
-            this.window.setAlwaysOnTop(true, "floating", 1);
-            this.window.setVisibleOnAllWorkspaces(true);
-        } else {
-            this.window.close();
-        }
-    }
-
     onInit() {
-
+        koi.addEventListener("donation", (event) => {
+            MODULES.emitIO(this, "event", event);
+        });
     }
 
-    onSettingsUpdate() {
+    async onSettingsUpdate() {
         // Since you can't set file values
-        if (this.settings.audio_file) {
-            let file = document.querySelector("[name=audio_file][owner=" + this.id + "]");
-            // this.audioFile = this.settings.audio_file;
-
-            console.log(file);
+        if ((typeof this.settings.audio_file != "string") && (this.settings.audio_file.files.length > 0)) {
+            this.settings.audio_file = await fileToBase64(this.settings.audio_file);
         }
-        if (this.settings.image_file) {
-            let file = document.querySelector("[name=image_file][owner=" + this.id + "]");
-            // this.imageFile = this.settings.image_file;
-
-            console.log(file);
+        if ((typeof this.settings.image_file != "string") && (this.settings.image_file.files.length > 0)) {
+            this.settings.image_file = await fileToBase64(this.settings.audio_file);
         }
 
-        console.log(this.settings);
-        console.log("audio: " + this.audioFile);
-        console.log("image: " + this.imageFile);
+        MODULES.emitIO(this, "config", this.settings);
     }
 
     defaultSettings = {
@@ -94,4 +64,4 @@ class DonationModule {
 }
 
 /* Add modules to registry */
-MODULES.moduleTypes["donation"] = DonationModule;
+MODULES.moduleTypes["casterlabs_donation"] = DonationModule;

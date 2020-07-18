@@ -6,15 +6,19 @@ class Koi {
     }
 
     addEventListener(type, callback) {
+        type = type.toLowerCase();
+
         let callbacks = this.listeners[type];
 
         if (!callbacks) callbacks = [];
 
         callbacks.push(callback);
+
+        this.listeners[type] = callbacks;
     }
 
     broadcast(type, data) {
-        let listeners = this.listeners[type];
+        let listeners = this.listeners[type.toLowerCase()];
 
         if (listeners) {
             listeners.forEach((callback) => {

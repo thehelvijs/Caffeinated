@@ -1,23 +1,43 @@
+
 class Modules {
     settingsDisplayClasses = "";
     overlaysDisplayClasses = "";
     moduleTypes = {};
     modules = [];
 
-    saveAllToStore() {
-        this.modules.forEach((module) => {
-            let path = "modules." + module.type + "." + module.id;
+    addIOHandler(module, channel, callback) {
+        let uuid = module.namespace + ":" + module.id;
 
-            store.set(path, module.getDataToStore());
-        });
+        CAFFEINATED.io.on(uuid + " " + channel, callback);
     }
 
-    initalizeModule(module, settings = document.querySelector("#settings"), overlays = document.querySelector("#overlays")) {
+    emitIO(module, channel, content) {
+        let uuid = module.namespace + ":" + module.id;
+
+        CAFFEINATED.io.emit(uuid + " " + channel, content);
+    }
+
+    addHTTPHandler(module, path, callback) {
+        // TODO
+    }
+
+    saveToStore(module) {
+        try {
+            let path = "modules." + module.namespace + "." + module.id;
+
+            store.set(path, module.getDataToStore());
+        } catch (e) {
+            console.error("Unable to save module");
+            console.error(e);
+        }
+    }
+
+    initalizeModule(module, settings, overlays) {
         try {
             if (module.preInit) module.preInit();
-            this.initalizeModuleSettings(module, settings, overlays);
+            this.initalizeModuleSettings(module, settings);
             if (module.onInit) module.onInit();
-            this.initalizeModuleOverlay(module);
+            this.initalizeModuleOverlay(module, overlays);
             if (module.postInit) module.postInit();
 
             this.modules.push(module);
@@ -27,7 +47,7 @@ class Modules {
         }
     }
 
-    initalizeModuleOverlay(module) {
+    initalizeModuleOverlay(module, overlays) {
         let linkDisplay = module.linkDisplay;
         let div = document.createElement("div");
         let label = document.createElement("label");
@@ -59,8 +79,8 @@ class Modules {
         overlays.appendChild(div);
     }
 
-    initalizeModuleSettings(module) {
-        const settingsSelector = module.name + "_" + module.id;
+    initalizeModuleSettings(module, settings) {
+        const settingsSelector = module.namespace + "_" + module.id;
         let stored = this.getStoredValues(module);
         let div = document.createElement("div");
         let label = document.createElement("label");
@@ -73,9 +93,11 @@ class Modules {
             if (module.onSettingsUpdate) {
                 module.onSettingsUpdate();
             }
+
+            this.saveToStore(module);
         };
 
-        label.innerText = prettifyString(module.type);
+        label.innerText = prettifyString(module.id);
 
         div.classList = this.settingsDisplayClasses;
         div.id = settingsSelector;
@@ -129,7 +151,7 @@ class Modules {
     }
 
     getStoredValues(module) {
-        let stored = store.get("modules." + module.type + "." + module.id);
+        let stored = store.get("modules." + module.namespace + "." + module.id);
 
         if (stored) {
             for (const [key, value] of Object.entries(module.defaultSettings)) {
@@ -145,5 +167,3 @@ class Modules {
     }
 
 }
-
-const MODULES = new Modules();

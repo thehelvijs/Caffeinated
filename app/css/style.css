@@ -1,6 +1,17 @@
 html {
     color: whitesmoke;
     background-color: rgb(20, 20, 20);
+    -webkit-app-region: drag;
+    height: 100%;
+    width: 100%;
+}
+
+input {
+    -webkit-app-region: no-drag;
+}
+
+button {
+    -webkit-app-region: no-drag;
 }
 
 .hide {
@@ -11,16 +22,20 @@ html {
 
 ::-webkit-scrollbar {
     width: 5px;
+    -webkit-app-region: no-drag;
 }
 
 ::-webkit-scrollbar-track {
     background: #aaaaaa;
+    -webkit-app-region: no-drag;
 }
 
 ::-webkit-scrollbar-thumb {
     background: rgb(68, 68, 68);
+    -webkit-app-region: no-drag;
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
+    -webkit-app-region: no-drag;
 }

@@ -1,9 +1,11 @@
-const { remote } = require("electron");
-const Store = require("electron-store");
-const store = new Store();
+/*
+const BrowserWindow = require("electron").remote;
 
-let currWindow = remote.BrowserWindow.getFocusedWindow();
+let currWindow = BrowserWindow.getFocusedWindow();
 
 window.closeCurrentWindow = function () {
     currWindow.close();
-}
+};
+
+*/
+// TODO make work.

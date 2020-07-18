@@ -14,6 +14,10 @@
         <div id="content" class="">
             <div class="sidebar">
                 <img id="user_image" class="user-icon" src="https://via.placeholder.com/75/" />
+                <span>
+                    Welcome,
+                    <span id="username"></span>
+                </span>
                 <button class="menu-button button" onclick="navigate('overlays');">
                     Overlays
                 </button>
@@ -37,6 +41,7 @@
     </body>
 
     <footer>
+        <script src="js/util.js"></script>
         <script src="js/forms.js"></script>
         <script src="js/koi.js"></script>
         <script src="js/navigate.js"></script>
@@ -45,7 +50,7 @@
         <script src="js/defaultmodules.js"></script>
         <script>
             navigate("overlays");
-            init();
+            CAFFEINATED.init();
         </script>
     </footer>
 

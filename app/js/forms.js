@@ -55,6 +55,9 @@ const FORMSJS = {
             case "checkbox":
                 return element.checked;
 
+            case "file":
+                return element;
+
             default:
                 return element.value;
         }

@@ -5,3 +5,4 @@ closebtn.addEventListener("click", (e) => {
     e.preventDefault();
     window.closeCurrentWindow();
 });
+
