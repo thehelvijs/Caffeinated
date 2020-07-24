@@ -167,6 +167,126 @@ class DonationModule {
 
 }
 
+class TopDonationModule {
+
+    constructor(id) {
+        this.namespace = "casterlabs_topdonation";
+        this.type = "overlay";
+        this.id = id;
+    }
+
+    linkDisplay = {
+        path: "https://caffeinated.casterlabs.co/topdonation",
+        option: {
+            name: "Reset",
+            onclick: function (instance) {
+                instance.event = null;
+                MODULES.emitIO(instance, "event", null);
+            }
+        }
+    };
+
+    getDataToStore() {
+        let data = Object.assign({}, this.settings);
+
+        data.event = this.event;
+
+        return data;
+    }
+
+    onConnection(socket) {
+        MODULES.emitIO(this, "config", this.settings, socket);
+        MODULES.emitIO(this, "event", this.event, socket);
+    }
+
+    init() {
+        const instance = this;
+
+        koi.addEventListener("donation", (event) => {
+            if (!instance.top || (instance.top.usd_equivalent <= event.usd_equivalent)) {
+                instance.event = event;
+
+                MODULES.emitIO(this, "event", event);
+            }
+        });
+
+        this.event = this.settings.event;
+    }
+
+    async onSettingsUpdate() {
+        MODULES.emitIO(this, "config", this.settings);
+    }
+
+    settingsDisplay = {
+        currency: "select",
+        text_color: "color"
+    };
+
+    defaultSettings = {
+        currency: ["default", "usd"],
+        text_color: "#FFFFFF"
+    };
+
+}
+
+class RecentFollowModule {
+
+    constructor(id) {
+        this.namespace = "casterlabs_recentfollow";
+        this.type = "overlay";
+        this.id = id;
+    }
+
+    linkDisplay = {
+        path: "https://caffeinated.casterlabs.co/recentfollow",
+        option: {
+            name: "Reset",
+            onclick: function (instance) {
+                instance.event = null;
+                MODULES.emitIO(instance, "event", null);
+            }
+        }
+    };
+
+    getDataToStore() {
+        let data = Object.assign({}, this.settings);
+
+        data.event = this.event;
+
+        return data;
+    }
+
+    onConnection(socket) {
+        MODULES.emitIO(this, "config", this.settings, socket);
+        MODULES.emitIO(this, "event", this.event, socket);
+    }
+
+    init() {
+        const instance = this;
+
+        koi.addEventListener("follow", (event) => {
+            instance.event = event;
+
+            MODULES.emitIO(this, "event", event);
+        });
+
+        this.event = this.settings.event;
+    }
+
+    async onSettingsUpdate() {
+        MODULES.emitIO(this, "config", this.settings);
+    }
+
+    settingsDisplay = {
+        text_color: "color"
+    };
+
+    defaultSettings = {
+        text_color: "#FFFFFF"
+    };
+
+}
+
 class ChatModule {
 
     constructor(id) {
@@ -255,3 +375,5 @@ MODULES.moduleClasses["casterlabs_caffeinated"] = CaffeinatedModule;
 MODULES.moduleClasses["casterlabs_donation"] = DonationModule;
 MODULES.moduleClasses["casterlabs_follower"] = FollowerModule;
 MODULES.moduleClasses["casterlabs_chat"] = ChatModule;
+MODULES.moduleClasses["casterlabs_topdonation"] = TopDonationModule;
+MODULES.moduleClasses["casterlabs_recentfollow"] = RecentFollowModule;

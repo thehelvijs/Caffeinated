@@ -45,6 +45,12 @@ class Caffeinated {
                     },
                     casterlabs_chat: {
                         chat: {}
+                    },
+                    casterlabs_topdonation: {
+                        topdonation: {}
+                    },
+                    casterlabs_recentfollow: {
+                        recentfollow: {}
                     }
                 }
             });

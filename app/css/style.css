@@ -78,6 +78,14 @@ input[type=color] {
     cursor: pointer;
 }
 
+select {
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #DCDCDC;
+    cursor: pointer;
+    outline: none;
+}
+
 input[type=number] {
     background-color: white;
     border-radius: 6px;
@@ -237,6 +245,7 @@ input[type=number] {
     height: 35px;
     margin-left: 10px;
     line-height: 20px;
+    width: 75px;
 }
 
 #overlays .overlay-id {

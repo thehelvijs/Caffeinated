@@ -47,6 +47,11 @@ class Modules {
     initalizeModule(module) {
         try {
             switch (module.type.toUpperCase()) {
+                case "OVERLAY_ONLY": {
+                    this.initalizeModuleOverlayPage(module);
+                    break;
+                }
+
                 case "OVERLAY": {
                     this.initalizeModuleSettingsPage(module);
                     this.initalizeModuleOverlayPage(module);
@@ -146,6 +151,10 @@ class Modules {
             let name = document.createElement("label");
             let input = document.createElement("input");
 
+            if (type === "select") {
+                input = document.createElement("select");
+            }
+
             name.innerText = prettifyString(key) + " ";
 
             input.id = uuid;
@@ -162,7 +171,12 @@ class Modules {
                 input.setAttribute("step", .01);
             }
 
-            if (type === "checkbox") {
+            if (type === "select") {
+                let values = stored[key];
+                let options = "<option>" + values.join("</option><option>") + "</option>";
+
+                input.innerHTML = options;
+            } else if (type === "checkbox") {
                 input.checked = stored[key];
             } else if (type !== "file") { // You can't set file values, not even in Electron
                 input.value = stored[key];
