@@ -8,6 +8,9 @@ const {
     BrowserWindow
 } = require("electron").remote
 
+const VERSION = "0.4.0-pre1";
+const COLOR = "#FFFFFF";
+
 const koi = new Koi("wss://live.casterlabs.co/koi");
 let CONNECTED = false;
 
@@ -17,6 +20,12 @@ console.warn(
     "If you're good at UX, consider contributing to the Caffeinated project at " + "\n" +
     "https://github.com/thehelvijs/Caffeinated" + "\n"
 );
+
+Array.from(document.querySelectorAll(".spinner div")).forEach((element) => {
+    element.style = "background-color: " + COLOR + ";";
+});
+document.querySelector(".settings-version").innerText = VERSION;
+document.querySelector(".settings-version").style = "color: " + COLOR + ";";
 
 class Caffeinated {
     constructor() {
@@ -46,10 +55,9 @@ class Caffeinated {
                     casterlabs_chat: {
                         chat: {}
                     },
-                    casterlabs_topdonation: {
-                        topdonation: {}
-                    },
-                    casterlabs_recentfollow: {
+                    casterlabs_info: {
+                        topdonation: {},
+                        recentdonation: {},
                         recentfollow: {}
                     }
                 }
@@ -61,6 +69,7 @@ class Caffeinated {
 
         this.io = require("socket.io").listen(server);
         this.user = this.store.get("user");
+        this.userdata = null;
     }
 
     reset() {
@@ -180,6 +189,8 @@ koi.addEventListener("userupdate", (e) => {
     splashScreen(false);
     CAFFEINATED.setUserImage(e.streamer.image_link);
     CAFFEINATED.setFollowerCount(e.streamer.follower_count);
+
+    CAFFEINATED.userdata = e;
 
     document.getElementById("casterlabs_caffeinated:settings").value = e.streamer.username;
     CAFFEINATED.store.set("user", e.streamer.username /* + ";" + e.streamer.platform */);

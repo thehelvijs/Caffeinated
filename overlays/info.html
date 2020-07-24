@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Caffeinated RecentFollow</title>
+        <title>Caffeinated TopDonation</title>
         <link id="font" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
         <script>
@@ -17,11 +17,12 @@
 
     <body>
         <span id="user"></span>
+        <span id="amount"></span>
     </body>
 
     <footer>
         <script>
-            const namespace = "casterlabs_recentfollow:" + vars["id"];
+            const namespace = "casterlabs_info:" + vars["id"];
             const socket = io("http://localhost:8091", {
                 "reconnection": true,
                 "reconnectionDelay": 2000,
@@ -39,16 +40,32 @@
                 config = data;
 
                 document.querySelector("#user").style = "color: " + config.text_color + ";";
+                document.querySelector("#amount").style = "color: " + config.text_color + ";";
             });
 
             socket.on(namespace + " event", (event) => {
                 if (config) {
+                    let amount = document.querySelector("#amount");
                     let user = document.querySelector("#user");
 
                     if (event) {
-                        user.innerText = event.follower.username;
+                        if (event.hasOwnProperty("follower")) {
+                            user.innerText = event.follower.username;
+                            amount.innerText = "";
+                        } else {
+                            user.innerText = event.sender.username;
+
+                            if (config.currency == "usd") {
+                                let round = (Math.round(event.usd_equivalent * 100) / 100).toFixed(2);
+
+                                amount.innerText = "$" + round;
+                            } else {
+                                amount.innerText = event.formatted;
+                            }
+                        }
                     } else {
                         user.innerText = "";
+                        amount.innerText = "";
                     }
                 }
             });

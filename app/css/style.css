@@ -213,6 +213,11 @@ input[type=number] {
 
 /* Settings */
 
+#settings {
+    position: relative;
+    margin-bottom: 15px;
+}
+
 .settings-label {
     text-align: center;
     display: block;
@@ -225,6 +230,11 @@ input[type=number] {
 .settings-page .box {
     padding: 15px;
     margin-bottom: 0px;
+}
+
+.settings-version {
+    position: absolute;
+    bottom: 0;
 }
 
 /* Pages */
