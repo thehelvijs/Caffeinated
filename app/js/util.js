@@ -17,9 +17,11 @@ function fileToBase64(file, type) {
         try {
             const reader = new FileReader();
 
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file.files[0]);
             reader.onload = () => {
                 let result = reader.result;
+
+                file.value = "";
 
                 if (!type || result.startsWith("data:" + type)) {
                     resolve(result);
@@ -28,7 +30,9 @@ function fileToBase64(file, type) {
                 }
             }
         } catch (e) {
+            console.warn(e);
             resolve("");
+            file.value = "";
         }
     });
 }
@@ -44,4 +48,14 @@ function playAudio(b64, vol = 1) {
     } catch (e) {
         return {};
     }
+}
+
+function nullFields(object, fields) {
+    let clone = Object.assign({}, object);
+
+    fields.forEach((field) => {
+        clone[field] = null;
+    });
+
+    return clone;
 }

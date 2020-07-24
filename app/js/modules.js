@@ -6,22 +6,36 @@ class Modules {
         this.modules = [];
     }
 
-    addIOHandler(module, channel, callback) {
+    addIOHandler(module, channel, callback, socket) {
         let uuid = module.namespace + ":" + module.id;
 
-        CAFFEINATED.io.on(uuid + " " + channel, callback);
+        socket.on(uuid + " " + channel, callback);
     }
 
-    emitIO(module, channel, content) {
+    emitIO(module, channel, data, socket = CAFFEINATED.io) {
         let uuid = module.namespace + ":" + module.id;
 
-        CAFFEINATED.io.emit(uuid + " " + channel, content);
+        socket.emit(uuid + " " + channel, data);
+    }
+
+    getFromUUID(target) {
+        return new Promise((resolve) => {
+            this.modules.forEach((module) => {
+                let uuid = module.namespace + ":" + module.id;
+
+                if (uuid == target) {
+                    resolve(module);
+                }
+            });
+
+            resolve(null);
+        });
     }
 
     saveToStore(module) {
         try {
             let path = "modules." + module.namespace + "." + module.id;
-            let data = Object.assign({}, module.getDataToStore());
+            let data = module.getDataToStore();
 
             CAFFEINATED.store.set(path, data);
         } catch (e) {
@@ -67,6 +81,7 @@ class Modules {
         let custom = document.createElement("button");
         // let visible = document.createElement("input");
 
+        label.classList.add("overlay-id");
         label.innerText = prettifyString(module.id);
 
         /* visible.setAttribute("type", "checkbox");

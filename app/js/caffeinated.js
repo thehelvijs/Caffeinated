@@ -8,8 +8,8 @@ const {
     BrowserWindow
 } = require("electron").remote
 
-let CONNECTED = false;
 const koi = new Koi("wss://live.casterlabs.co/koi");
+let CONNECTED = false;
 
 console.warn(
     "Caution, here be dragons!" + "\n\n" +
@@ -39,11 +39,19 @@ class Caffeinated {
                     },
                     casterlabs_donation: {
                         donation: {}
+                    },
+                    casterlabs_follower: {
+                        follower: {}
+                    },
+                    casterlabs_chat: {
+                        chat: {}
                     }
                 }
             });
             console.log("reset!");
         }
+
+        server.listen(this.store.get("port"));
 
         this.io = require("socket.io").listen(server);
         this.user = this.store.get("user");
@@ -70,6 +78,18 @@ class Caffeinated {
         if (!this.user) {
             splashScreen(false);
         }
+
+        this.io.on("connection", (socket) => {
+            socket.on("uuid", (uuid) => {
+                MODULES.getFromUUID(uuid).then((module) => {
+                    if (module && module.onConnection) {
+                        module.onConnection(socket);
+                    }
+                });
+            });
+
+            socket.emit("init");
+        });
     }
 
     setUserImage(image) {

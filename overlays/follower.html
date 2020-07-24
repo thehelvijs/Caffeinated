@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet" />
+        <style>
+            body {
+                font-family: "Poppins", sans-serif;
+            }
+
+            .center {
+                margin: auto;
+                width: 60%;
+                text-align: center;
+                padding: 10px;
+            }
+
+            img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 20%;
+            }
+        </style>
+        <title>Caffeinated Followers</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+        <script>
+            let vars = {};
+
+            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = value;
+            });
+        </script>
+    </head>
+
+    <body>
+        <h1 class="center" id="event" style="opacity: 0;">
+            <img src="" id="image" />
+            <span id="user"></span>
+            <span id="text">
+                &nbsp;followed.
+            </span>
+        </h1>
+    </body>
+
+    <footer>
+        <script>
+            const DISPLAY_TIME = 10 * 1000;
+            const FADE_TIME = 1000;
+            const namespace = "casterlabs_follower:" + vars["id"];
+            const socket = io("http://localhost:8091", {
+                "reconnection": true,
+                "reconnectionDelay": 2000,
+                "reconnectionAttempts": Number.MAX_SAFE_INTEGER
+            });
+            let config = null;
+            let files = {};
+            let audio = {};
+            let queue = [];
+
+            socket.on("init", () => {
+                socket.emit("uuid", namespace);
+            });
+
+            socket.on(namespace + " config", (data) => {
+                config = data;
+
+                audio.volume = config.volume;
+                updateRenderer();
+            });
+
+            socket.on(namespace + " audio_file", (data) => {
+                files.audio_file = data;
+            });
+
+            socket.on(namespace + " image_file", (data) => {
+                files.image_file = data;
+            });
+
+            socket.on(namespace + " event", (event) => {
+                if (config) {
+                    queue.push(event);
+
+                    if (queue.length == 1) {
+                        render();
+                    }
+                }
+            });
+
+            function updateRenderer() {
+                let text = document.querySelector("#text");
+
+                text.style = "color: " + config.text_color + ";";
+            }
+
+            async function render() {
+                let event = queue[0];
+                let user = document.querySelector("#user");
+                let img = document.querySelector("#image");
+                let text = document.querySelector("#text");
+
+                if (config.use_custom_image) {
+                    if (files.image_file) {
+                        img.src = files.image_file;
+                    } else {
+                        img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+                    }
+                } else {
+                    img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+                }
+
+                user.innerText = event.follower.username;
+                user.style = "color: " + event.follower.color + ";";
+
+                if (config.enable_audio) {
+                    playAudio();
+                }
+
+                anime({
+                    targets: "#event",
+                    easing: "linear",
+                    opacity: 1,
+                    duration: FADE_TIME
+                }).finished.then(async function () {
+                    await sleep(DISPLAY_TIME);
+
+                    anime({
+                        targets: "#event",
+                        easing: "linear",
+                        opacity: 0,
+                        duration: FADE_TIME
+                    }).finished.then(function () {
+                        queue.shift();
+
+                        if (queue.length > 0) {
+                            render();
+                        }
+                    });
+                });
+            }
+
+            function playAudio() {
+                try {
+                    audio = new Audio(files.audio_file);
+
+                    audio.volume = config.volume;
+                    audio.play();
+                } catch (e) {
+                    audio = {};
+                }
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+        </script>
+    </footer>
+
+</html>

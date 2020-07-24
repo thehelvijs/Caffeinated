@@ -60,7 +60,7 @@ input[type=range] {
     border: none;
     height: 12px;
     width: 12px;
-    border-radius: 510%;
+    border-radius: 500%;
     background: #141414;
     border: 2px solid #515151;
     margin-top: -5px;
@@ -76,6 +76,16 @@ input[type=color] {
     border-radius: 6px;
     border: 1px solid #DCDCDC;
     cursor: pointer;
+}
+
+input[type=number] {
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #DCDCDC;
+    cursor: pointer;
+    font-size: 15px;
+    width: 100px;
+    cursor: auto;
 }
 
 .file-button {
@@ -229,7 +239,9 @@ input[type=color] {
     line-height: 20px;
 }
 
-#overlays label {
+#overlays .overlay-id {
     font-size: 20px;
     line-height: 35px;
+    width: 175px;
+    display: inline-block;
 }

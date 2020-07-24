@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet" />
+        <style>
+            body {
+                font-family: "Poppins", sans-serif;
+            }
+
+            img {
+                height: 20px;
+            }
+
+            body {
+                /* For testing in a browser */
+                /* background-color: black; */
+                position: absolute;
+                bottom: 0;
+                left: 0;
+            }
+        </style>
+        <title>Caffeinated Chat</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+        <script>
+            let vars = {};
+
+            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = value;
+            });
+        </script>
+    </head>
+
+    <body>
+        <div id="div"></div>
+    </body>
+
+    <footer>
+        <script>
+            const namespace = "casterlabs_chat:" + vars["id"];
+            const socket = io("http://localhost:8091", {
+                "reconnection": true,
+                "reconnectionDelay": 2000,
+                "reconnectionAttempts": Number.MAX_SAFE_INTEGER
+            });
+            let config = null;
+
+            socket.on("init", () => {
+                socket.emit("uuid", namespace);
+            });
+
+            socket.on(namespace + " config", (data) => {
+                config = data;
+
+                document.getElementById("div").style = "color: " + config.text_color + ";";// width: " + config.overlay_width + "px;";
+            });
+
+            socket.on(namespace + " event", (event) => {
+                if (config) {
+                    addChat(event);
+                }
+            });
+
+            function addChat(event) {
+                let div = document.createElement("div");
+                let msg = document.createElement("span");
+                let user = document.createElement("span");
+
+                user.textContent = event.sender.username;
+                user.style = "color: " + event.sender.color + ";";
+
+                msg.textContent = " " + event.message + " ";
+
+                div.appendChild(user);
+                div.appendChild(msg);
+
+                if (event.image) {
+                    let donation = document.createElement("img");
+
+                    donation.src = event.image
+
+                    div.appendChild(donation);
+                }
+
+                document.getElementById("div").appendChild(div);
+            }
+
+        </script>
+    </footer>
+
+</html>

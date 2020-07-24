@@ -1,6 +1,6 @@
 // https://github.com/e3ndr/FormsJS/blob/master/forms.js - MIT
 const FORMSJS = {
-    // 1.1.0
+    // 1.1.0 MODIFIED
 
     CLASS_SELECTOR: "data",
     NAME_PROPERTY: "name",
