@@ -1,8 +1,9 @@
 
 class DonationModule {
-    namespace = "casterlabs_donation";
 
     constructor(id) {
+        this.namespace = "casterlabs_donation";
+        this.type = "overlay";
         this.id = id;
     }
 
@@ -10,29 +11,15 @@ class DonationModule {
         path: "/donation",
         option: {
             name: "Test",
-            onclick: function () { }
+            onclick: function (instance) {
+                koi.test("casterlabs", "donation");
+            }
         }
     };
 
     getDataToStore() {
-        let store = Object.assign({}, this.settings); // Clone
-
-        store.audio_file = this.audioFile;
-        store.image_file = this.imageFile;
-        store.window_x = this.window.getNormalBounds();
-        store.window_y = this.window.getNormalBounds();
-
-        return store;
+        return this.settings;
     }
-
-    settingsDisplay = {
-        color: "color",
-        volume: "range",
-        enable_audio: "checkbox",
-        enable_image: "checkbox",
-        audio_file: "file",
-        image_file: "file"
-    };
 
     onInit() {
         koi.addEventListener("donation", (event) => {
@@ -41,20 +28,28 @@ class DonationModule {
     }
 
     async onSettingsUpdate() {
-        // Since you can't set file values
-        if ((typeof this.settings.audio_file != "string") && (this.settings.audio_file.files.length > 0)) {
-            this.settings.audio_file = await fileToBase64(this.settings.audio_file);
+        if (typeof this.settings.audio_file != "string") {
+            this.settings.audio_file = await fileToBase64(this.settings.audio_file.files[0], "audio");
         }
-        if ((typeof this.settings.image_file != "string") && (this.settings.image_file.files.length > 0)) {
-            this.settings.image_file = await fileToBase64(this.settings.audio_file);
+        if (typeof this.settings.image_file != "string") {
+            this.settings.image_file = await fileToBase64(this.settings.image_file.files[0], "image");
         }
 
         MODULES.emitIO(this, "config", this.settings);
     }
 
+    settingsDisplay = {
+        text_color: "color",
+        volume: "range",
+        enable_audio: "checkbox",
+        enable_image: "checkbox",
+        audio_file: "file",
+        image_file: "file"
+    };
+
     defaultSettings = {
-        color: "#FFFFFF",
-        volume: .5,
+        text_color: "#FFFFFF",
+        volume: 1,
         enable_audio: true,
         enable_image: true,
         audio_file: "",
@@ -63,5 +58,29 @@ class DonationModule {
 
 }
 
+class CaffeinatedModule {
+
+    constructor(id) {
+        this.namespace = "casterlabs_caffeinated";
+        this.type = "settings";
+        this.persist = true;
+        this.id = id;
+    }
+
+    async onSettingsUpdate() {
+        CAFFEINATED.setUser(this.settings.username);
+    }
+
+    settingsDisplay = {
+        username: "input"
+    };
+
+    defaultSettings = {
+        username: ""
+    };
+
+}
+
 /* Add modules to registry */
-MODULES.moduleTypes["casterlabs_donation"] = DonationModule;
+MODULES.moduleClasses["casterlabs_caffeinated"] = CaffeinatedModule;
+MODULES.moduleClasses["casterlabs_donation"] = DonationModule;

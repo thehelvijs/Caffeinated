@@ -1,9 +1,10 @@
 
 class Modules {
-    settingsDisplayClasses = "";
-    overlaysDisplayClasses = "";
-    moduleTypes = {};
-    modules = [];
+
+    constructor() {
+        this.moduleClasses = {};
+        this.modules = [];
+    }
 
     addIOHandler(module, channel, callback) {
         let uuid = module.namespace + ":" + module.id;
@@ -17,28 +18,39 @@ class Modules {
         CAFFEINATED.io.emit(uuid + " " + channel, content);
     }
 
-    addHTTPHandler(module, path, callback) {
-        // TODO
-    }
-
     saveToStore(module) {
         try {
             let path = "modules." + module.namespace + "." + module.id;
+            let data = Object.assign({}, module.getDataToStore());
 
-            store.set(path, module.getDataToStore());
+            CAFFEINATED.store.set(path, data);
         } catch (e) {
             console.error("Unable to save module");
             console.error(e);
         }
     }
 
-    initalizeModule(module, settings, overlays) {
+    initalizeModule(module) {
         try {
-            if (module.preInit) module.preInit();
-            this.initalizeModuleSettings(module, settings);
-            if (module.onInit) module.onInit();
-            this.initalizeModuleOverlay(module, overlays);
-            if (module.postInit) module.postInit();
+            switch (module.type.toUpperCase()) {
+                case "OVERLAY": {
+                    this.initalizeModuleSettingsPage(module);
+                    this.initalizeModuleOverlayPage(module);
+                    break;
+                }
+
+                case "SETTINGS": {
+                    this.initalizeModuleSettingsPage(module);
+                    break;
+                }
+
+                case "APPLICATION": {
+                    // TODO
+                    break;
+                }
+            }
+
+            if (module.init) module.init();
 
             this.modules.push(module);
         } catch (e) {
@@ -47,69 +59,81 @@ class Modules {
         }
     }
 
-    initalizeModuleOverlay(module, overlays) {
+    initalizeModuleOverlayPage(module) {
         let linkDisplay = module.linkDisplay;
         let div = document.createElement("div");
         let label = document.createElement("label");
         let copy = document.createElement("button");
         let custom = document.createElement("button");
-        let visible = document.createElement("input");
+        // let visible = document.createElement("input");
 
         label.innerText = prettifyString(module.id);
 
-        visible.setAttribute("type", "checkbox");
+        /* visible.setAttribute("type", "checkbox");
         visible.addEventListener("change", (e) => {
             module.setWindowVisbility(e.target.checked);
-        });
+        }); */
 
+        copy.classList.add("button");
         copy.innerText = "Copy";
         copy.addEventListener("click", () => {
-            putInClipboard(linkDisplay.path);
+            putInClipboard(linkDisplay.path) + "?id=" + module.id;
         });
 
+        custom.classList.add("button");
         custom.innerText = linkDisplay.option.name;
-        custom.addEventListener("click", linkDisplay.option.onclick);
+        custom.addEventListener("click", () => {
+            linkDisplay.option.onclick(module);
+        });
 
-        div.classList = this.overlaysDisplayClasses;
-        div.appendChild(visible);
+        // div.appendChild(visible);
         div.appendChild(label);
         div.appendChild(copy);
         div.appendChild(custom);
 
-        overlays.appendChild(div);
+        document.getElementById("overlays").appendChild(div);
     }
 
-    initalizeModuleSettings(module, settings) {
+    initalizeModuleSettingsPage(module) {
         const settingsSelector = module.namespace + "_" + module.id;
         let stored = this.getStoredValues(module);
+        let container = document.createElement("div");
         let div = document.createElement("div");
         let label = document.createElement("label");
 
-        let formCallback = () => {
+        let formCallback = async function () {
             let result = FORMSJS.readForm("#" + settingsSelector);
 
             module.settings = result;
 
             if (module.onSettingsUpdate) {
-                module.onSettingsUpdate();
+                await module.onSettingsUpdate();
             }
 
-            this.saveToStore(module);
+            if (module.getDataToStore) {
+                MODULES.saveToStore(module);
+            }
         };
 
+        label.classList.add("settings-label");
         label.innerText = prettifyString(module.id);
 
-        div.classList = this.settingsDisplayClasses;
+        div.classList.add("box");
         div.id = settingsSelector;
         div.appendChild(label);
-        div.appendChild(document.createElement("br"));
+
+        container.classList.add("settings-page");
+        container.appendChild(div);
+        container.appendChild(document.createElement("br"));
 
         for (const [key, type] of Object.entries(module.settingsDisplay)) {
+            let uuid = module.namespace + ":" + module.id;
             let name = document.createElement("label");
             let input = document.createElement("input");
 
             name.innerText = prettifyString(key) + " ";
 
+            input.id = uuid;
             input.classList = type + " data";
             input.setAttribute("type", type);
             input.setAttribute("name", key);
@@ -134,24 +158,35 @@ class Modules {
                 name.appendChild(document.createElement("br"));
             }
 
+            // Make file inputs appear as buttons only.
+            if (type === "file") {
+                let button = document.createElement("button");
+
+                button.classList.add("file-button");
+                button.innerText = "Select a file";
+                button.addEventListener("click", () => {
+                    input.click(); // Forward clicks to the input.
+                });
+
+                name.appendChild(button);
+
+                input.classList.add("hide");
+            }
+
             name.appendChild(input);
             name.appendChild(document.createElement("br"));
-
-            // Add an extra br, since other inputs don't line break
-            if (type !== "file") {
-                name.appendChild(document.createElement("br"));
-            }
+            name.appendChild(document.createElement("br"));
 
             div.appendChild(name);
         }
 
-        settings.appendChild(div);
+        document.getElementById("settings").appendChild(container);
 
         module.settings = stored;
     }
 
     getStoredValues(module) {
-        let stored = store.get("modules." + module.namespace + "." + module.id);
+        let stored = CAFFEINATED.store.get("modules." + module.namespace + "." + module.id);
 
         if (stored) {
             for (const [key, value] of Object.entries(module.defaultSettings)) {
@@ -162,7 +197,7 @@ class Modules {
 
             return stored;
         } else {
-            return module.defaultSettings;
+            return Object.assign({}, module.defaultSettings);
         }
     }
 

@@ -1,41 +1,235 @@
+/* Misc */
+
 html {
     color: whitesmoke;
-    background-color: rgb(20, 20, 20);
-    -webkit-app-region: drag;
+    background-color: #141414;
     height: 100%;
     width: 100%;
-}
-
-input {
-    -webkit-app-region: no-drag;
-}
-
-button {
-    -webkit-app-region: no-drag;
+    overflow: hidden;
 }
 
 .hide {
     display: none;
 }
 
+a {
+    color: white;
+}
+
+ion-icons {
+    color: white;
+}
+
+.box {
+    background-color: #181818;
+}
+
 /* Scrollbar */
 
 ::-webkit-scrollbar {
     width: 5px;
-    -webkit-app-region: no-drag;
 }
 
 ::-webkit-scrollbar-track {
-    background: #aaaaaa;
-    -webkit-app-region: no-drag;
+    background: #AAAAAA;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgb(68, 68, 68);
-    -webkit-app-region: no-drag;
+    background: #444444;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #505050;
+}
+
+/* Inputs */
+
+input[type=range] {
+    -webkit-appearance: none;
+}
+
+::-webkit-slider-runnable-track {
+    width: 300px;
+    height: 2px;
+    border: none;
+    border-radius: 3px;
+}
+
+::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 12px;
+    width: 12px;
+    border-radius: 510%;
+    background: #141414;
+    border: 2px solid #515151;
+    margin-top: -5px;
+    cursor: pointer;
+}
+
+input:focus {
+    outline: none;
+}
+
+input[type=color] {
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #DCDCDC;
+    cursor: pointer;
+}
+
+.file-button {
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #DCDCDC;
+    cursor: pointer;
+    color: black;
+    font-size: 15px;
+    padding: 5px;
+}
+
+.file-button:focus {
+    outline: none;
+}
+
+/* Splash page */
+
+#splash {
+    position: relative;
+    width: 216px;
+    height: 40px;
+    top: 140px;
+    margin: auto;
+}
+
+#splash span {
+    bottom: 60px;
+    position: fixed;
+    transform: translateX(-50%);
+    left: 50%;
+}
+
+#splash a {
+    color: lightgrey;
+}
+
+.app-icon {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 0px;
+    left: 0px;
+}
+
+.caffeinated-logo {
+    position: absolute;
+    width: auto;
+    height: 40px;
+    top: 0px;
+    right: 0px;
+}
+
+/* Title bar */
+
+.title-bar {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 30px;
+    margin-top: 0px;
+    -webkit-app-region: drag;
+    background-color: #141414;
+    padding-top: 5px;
+}
+
+.currentpage {
+    position: absolute;
+    left: 70px;
+}
+
+.close {
+    position: absolute;
+    right: 10px;
     -webkit-app-region: no-drag;
+}
+
+/* Menu */
+
+.menu {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 60px;
+    height: 100%;
+    z-index: 99;
+}
+
+.menu-list {
+    position: absolute;
+    bottom: 0px;
+    font-size: 25px;
+}
+
+#followers {
+    margin-top: 60px;
+    padding-left: 4px;
+}
+
+.user-icon {
+    position: absolute;
+    border-radius: 50%;
+    padding: 5px;
+    top: 0px;
+}
+
+.placeholder-icon {
+    position: absolute;
+    border-radius: 50%;
+    padding: 5px;
+    top: 0px;
+}
+
+.menu-label {
+    text-align: center;
+}
+
+/* Settings */
+
+.settings-label {
+    text-align: center;
+    display: block;
+}
+
+.settings-page {
+    padding-right: 15px;
+}
+
+.settings-page .box {
+    padding: 15px;
+    margin-bottom: 0px;
+}
+
+/* Pages */
+
+.pages {
+    position: absolute;
+    padding-top: 40px;
+    right: 0px;
+    top: 0px;
+    height: 100%;
+    overflow: auto;
+    width: 430px;
+}
+
+/* Overlays */
+
+#overlays button {
+    height: 35px;
+    margin-left: 10px;
+    line-height: 20px;
+}
+
+#overlays label {
+    font-size: 20px;
+    line-height: 35px;
 }

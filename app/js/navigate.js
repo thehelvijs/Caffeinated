@@ -1,36 +1,79 @@
 
 function navigate(page) {
-    Array.from(document.querySelectorAll(".page")).forEach((e) => {
-        e.classList.add("hide");
-        e.classList.remove("navigated");
+    let selector = "[page='" + page + "']";
+
+    anime({
+        targets: ".page",
+        easing: "linear",
+        opacity: 0,
+        duration: 250
+    }).finished.then(function () {
+        Array.from(document.querySelectorAll(".page")).forEach((e) => {
+            if (e.getAttribute("page") != page) {
+                e.classList.add("hide");
+            }
+        });
     });
 
-    let element = document.querySelector("[page='" + page + "']");
+    document.querySelector(selector).classList.remove("hide");
 
-    element.classList.remove("hide");
-    element.classList.add("navigated");
+    anime({
+        targets: selector,
+        easing: "linear",
+        opacity: 1,
+        duration: 250
+    });
+
+    document.querySelector(".currentpage").innerText = prettifyString(page);
 }
 
-let splashActive = true;
+function splashText(text) {
+    const all = [".problems", ".reconnecting"];
+
+    anime({
+        targets: all,
+        easing: "linear",
+        opacity: 0,
+        duration: 500
+    }).finished.then(function () {
+        all.forEach((selector) => {
+            document.querySelector(selector).classList.add("hide");
+        });
+
+        if (all.includes("." + text)) {
+            let show = {
+                targets: "." + text,
+                easing: "linear",
+                opacity: 1,
+                duration: 500
+            };
+
+            document.querySelector("." + text).classList.remove("hide");
+            anime(show);
+        }
+    });
+}
+
 function splashScreen(show) {
-    let splash = document.getElementById("splash");
-    let content = document.getElementById("content");
+    anime({
+        targets: [".currentpage", "#content"],
+        easing: "linear",
+        opacity: show ? 0 : 1,
+        duration: 500
+    });
 
-    if (!show) {
-        /* Remove */
-        if (splashActive) {
-            splash.classList.add("hide");
-            content.classList.remove("hide");
+    anime({
+        targets: "#splash",
+        easing: "linear",
+        opacity: show ? 1 : 0,
+        duration: 500
+    }).finished.then(function () {
+        if (show) {
+            document.querySelector("#splash").classList.remove("hide");
+            document.querySelector("#content").classList.add("hide");
+        } else {
+            document.querySelector("#splash").classList.add("hide");
+            document.querySelector("#content").classList.remove("hide");
         }
-
-        splashActive = false;
-    } else {
-        /* Generate */
-        if (!splashActive) {
-            splash.classList.remove("hide");
-            content.classList.add("hide");
-        }
-
-        splashActive = true;
-    }
+    });
 }

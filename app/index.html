@@ -2,41 +2,58 @@
 <html>
 
     <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
         <link rel="stylesheet" href="css/style.css" />
+        <title>Caffeinated</title>
+        <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+        <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
     </head>
 
     <body>
-        <div id="splash" class="hide">
-            <img src="media/app_icon.png">
-            <img src="media/caf.png">
-            <img src="media/load4.gif">
+        <div id="content" style="opacity: 0;">
+            <aside class="menu">
+                <a onclick="navigate('settings');">
+                    <img class="user-icon" style="opacity: 0;" />
+                    <img class="placeholder-icon" src="media/icon.png" style="opacity: 1;" />
+                </a>
+                <p class="menu-label" id="followers"></p>
+                <ul class="menu-list">
+                    <li>
+                        <a class="menu-button" onclick="navigate('overlays');">
+                            <ion-icon name="copy"></ion-icon>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="menu-button" onclick="navigate('settings');">
+                            <ion-icon name="cog"></ion-icon>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+            <div class="pages">
+                <div class="content page" page="settings" id="settings"></div>
+                <div class="content page" page="overlays" id="overlays"></div>
+            </div>
         </div>
-        <div id="content" class="">
-            <div class="sidebar">
-                <img id="user_image" class="user-icon" src="https://via.placeholder.com/75/" />
-                <span>
-                    Welcome,
-                    <span id="username"></span>
-                </span>
-                <button class="menu-button button" onclick="navigate('overlays');">
-                    Overlays
-                </button>
-                <button class="menu-button button" onclick="navigate('settings');">
-                    Settings
-                </button>
-            </div>
-            <div class="main">
-                <div class="page" page="settings" id="settings">
-                    <label>Settings</label>
-                    <br />
-                    <br />
-                </div>
-                <div class="page" page="overlays" id="overlays">
-                    <label>Overlays</label>
-                    <br />
-                    <br />
-                </div>
-            </div>
+        <div class="title-bar">
+            <span class="currentpage" style="opacity: 0;"></span>
+            <a class="close">
+                <ion-icon name="close"></ion-icon>
+            </a>
+        </div>
+        <div id="splash" style="opacity: 1;">
+            <img src="media/app_icon.png" class="app-icon" />
+            <img src="media/caffeinated.png" class="caffeinated-logo" />
+            <span class="problems" style="opacity: 0;">
+                Having problems?
+                <a onclick="openLink('https:\/\/twitter.com/casterlabs');">
+                    Tweet at us.
+                </a>
+            </span>
+            <span class="reconnecting" style="opacity: 0;">
+                Reconnecting to Koi.
+            </span>
         </div>
     </body>
 

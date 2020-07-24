@@ -5,15 +5,15 @@ const windowStateKeeper = require("electron-window-state");
 
 function createWindow() {
     let mainWindowState = windowStateKeeper({
-        defaultWidth: 420,
-        defaultHeight: 330,
+        defaultWidth: 500,
+        defaultHeight: 400,
         file: "main-window.json"
     });
 
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 420,
-        height: 370,
+        width: 500,
+        height: 400,
         // maxWidth : 350,
         // maxHeight : 250,
         // minWidth: 350,
@@ -23,11 +23,10 @@ function createWindow() {
         resizable: false,
         transparent: false,
         titleBarStyle: "hidden",
-        backgroundColor: "#1a1a1a",
+        backgroundColor: "#141414",
         icon: __dirname + "/media/app_icon.png",
         frame: false,
         webPreferences: {
-            preload: path.join(__dirname, "/js/preload.js"),
             nodeIntegration: true
         }
     })
@@ -36,13 +35,6 @@ function createWindow() {
     mainWindow.loadFile("index.html")
 
     mainWindowState.manage(mainWindow);
-
-    // Open the DevTools.
-    process.argv.forEach(function (val, index, array) {
-        if(val === 'debug'){
-            mainWindow.webContents.openDevTools();
-        }
-    });
 }
 
 // This method will be called when Electron has finished
