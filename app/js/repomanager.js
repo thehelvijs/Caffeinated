@@ -24,7 +24,11 @@ class RepoManager {
 
                 if (Array.isArray(modules.required)) {
                     for (let instance of modules.required) {
-                        MODULES.initalizeModule(new MODULES.moduleClasses[instance.namespace](instance.id));
+                        let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
+
+                        if (!loaded) {
+                            MODULES.initalizeModule(new MODULES.moduleClasses[instance.namespace](instance.id));
+                        }
                     }
                 }
             } else {

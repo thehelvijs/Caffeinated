@@ -29,16 +29,16 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
         const instance = this;
 
         koi.addEventListener("chat", (event) => {
-            MODULES.emitIO(this, "event", event);
+            MODULES.emitIO(instance, "event", event);
         });
 
         koi.addEventListener("share", (event) => {
-            MODULES.emitIO(this, "event", event);
+            MODULES.emitIO(instance, "event", event);
         });
 
         koi.addEventListener("donation", (event) => {
             if (instance.settings.show_donations) {
-                MODULES.emitIO(this, "event", event);
+                MODULES.emitIO(instance, "event", event);
             }
         });
     }
@@ -50,18 +50,18 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
     settingsDisplay = {
         text_color: "color",
         show_donations: "checkbox",
-        chatdirection: "select",
-        //overlay_width: "number"
+        chat_direction: "select",
+        // overlay_width: "number"
     };
 
     defaultSettings = {
         text_color: "#FFFFFF",
         show_donations: "true",
-        chatdirection: [
-            "up",
-            "down"
+        chat_direction: [
+            "Down",
+            "Up"
         ],
-        //overlay_width: 600
+        // overlay_width: 600
     };
 
 };

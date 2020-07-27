@@ -5,6 +5,11 @@ MODULES.moduleClasses["casterlabs_info"] = class {
         this.namespace = "casterlabs_info";
         this.type = "overlay settings";
         this.id = id;
+
+        if (this.id.includes("donation")) {
+            this.settingsDisplay.currency = "select";
+            this.defaultSettings.currency = ["Default", "USD"];
+        }
     }
 
     linkDisplay = {

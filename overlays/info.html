@@ -40,7 +40,7 @@
                         } else {
                             user.innerText = event.sender.username;
 
-                            if (config.currency == "usd") {
+                            if (config.currency == "USD") {
                                 let round = (Math.round(event.usd_equivalent * 100) / 100).toFixed(2);
 
                                 amount.innerText = "$" + round;

@@ -196,6 +196,7 @@ input[type=number] {
 .user-icon {
     position: absolute;
     border-radius: 50%;
+    object-fit: cover;
     padding: 5px;
     top: 0px;
 }

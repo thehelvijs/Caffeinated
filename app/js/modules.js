@@ -186,8 +186,20 @@ class Modules {
             }
 
             if (type === "select") {
-                let values = stored[key];
-                let options = "<option>" + values.join("</option><option>") + "</option>";
+                let selected = stored[key];
+                let values = module.defaultSettings[key];
+                let options = "";
+
+                // Loop and mark the selected option, TODO better way.
+                values.forEach((value) => {
+                    if (value === selected) {
+                        options = options + "<option selected>" + value + "</option>";
+                    } else {
+                        options = options + "<option>" + value + "</option>";
+                    }
+                });
+
+                stored[key] = selected; // Set the selected key
 
                 input.innerHTML = options;
             } else if (type === "checkbox") {

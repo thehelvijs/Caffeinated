@@ -17,8 +17,9 @@
                 /* For testing in a browser */
                 /* background-color: black; */
                 position: absolute;
-                bottom: 0;
-                left: 0;
+                left: 0px;
+                bottom: 0px;
+                overflow: hidden;
             }
         </style>
         <title>Caffeinated Chat</title>
@@ -34,9 +35,13 @@
     <footer>
         <script>
             const overlay = new OverlayUtil("casterlabs_chat");
-            let config = null;
+            let config = {};
 
             overlay.on("config", (data) => {
+                if (config.chat_direction != data.chat_direction) {
+                    document.getElementById("div").innerHTML = "";
+                }
+
                 config = data;
 
                 document.getElementById("div").style = "color: " + config.text_color + ";";// width: " + config.overlay_width + "px;";
@@ -69,7 +74,13 @@
                     div.appendChild(donation);
                 }
 
-                document.getElementById("div").appendChild(div);
+                if (config.chat_direction.toUpperCase() == "UP") {
+                    document.body.style = "top: 0px;";
+                    document.getElementById("div").insertBefore(div, document.getElementById("div").firstChild);
+                } else {
+                    document.body.style = "bottom: 0px;";
+                    document.getElementById("div").appendChild(div);
+                }
             }
 
         </script>

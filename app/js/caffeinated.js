@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.0-pre2";
+const VERSION = "0.4.0-pre3";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://live.casterlabs.co/koi");
@@ -34,8 +34,9 @@ class Caffeinated {
                 initalized: true,
                 port: 8091,
                 user: null,
+                modules: {},
                 repos: [
-                    __dirname + "/../overlays", // Tree walk to the folder, works in the devlopment enviroment.
+                    __dirname + "\\..\\overlays", // Tree walk to the folder, works in the devlopment enviroment.
                     "https://caffeinated.casterlabs.co"
                 ]
             });
