@@ -6,13 +6,7 @@
         <title>Caffeinated TopDonation</title>
         <link id="font" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
-        <script>
-            let vars = {};
-
-            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-                vars[key] = value;
-            });
-        </script>
+        <script src="overlayutil.js"></script>
     </head>
 
     <body>
@@ -22,28 +16,19 @@
 
     <footer>
         <script>
-            const namespace = "casterlabs_info:" + vars["id"];
-            const socket = io("http://localhost:8091", {
-                "reconnection": true,
-                "reconnectionDelay": 2000,
-                "reconnectionAttempts": Number.MAX_SAFE_INTEGER
-            });
+            const overlay = new OverlayUtil("casterlabs_info");
             let config = null;
 
-            document.querySelector("#font").href = vars["font"];
+            document.querySelector("#font").href = vars.font;
 
-            socket.on("init", () => {
-                socket.emit("uuid", namespace);
-            });
-
-            socket.on(namespace + " config", (data) => {
+            overlay.on("config", (data) => {
                 config = data;
 
                 document.querySelector("#user").style = "color: " + config.text_color + ";";
                 document.querySelector("#amount").style = "color: " + config.text_color + ";";
             });
 
-            socket.on(namespace + " event", (event) => {
+            overlay.on("event", (event) => {
                 if (config) {
                     let amount = document.querySelector("#amount");
                     let user = document.querySelector("#user");

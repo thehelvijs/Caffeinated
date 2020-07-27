@@ -26,13 +26,7 @@
         <title>Caffeinated Followers</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
-        <script>
-            let vars = {};
-
-            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-                vars[key] = value;
-            });
-        </script>
+        <script src="overlayutil.js"></script>
     </head>
 
     <body>
@@ -47,39 +41,30 @@
 
     <footer>
         <script>
+            const overlay = new OverlayUtil("casterlabs_follower");
             const DISPLAY_TIME = 10 * 1000;
             const FADE_TIME = 1000;
-            const namespace = "casterlabs_follower:" + vars["id"];
-            const socket = io("http://localhost:8091", {
-                "reconnection": true,
-                "reconnectionDelay": 2000,
-                "reconnectionAttempts": Number.MAX_SAFE_INTEGER
-            });
             let config = null;
             let files = {};
             let audio = {};
             let queue = [];
 
-            socket.on("init", () => {
-                socket.emit("uuid", namespace);
-            });
-
-            socket.on(namespace + " config", (data) => {
+            overlay.on("config", (data) => {
                 config = data;
 
                 audio.volume = config.volume;
                 updateRenderer();
             });
 
-            socket.on(namespace + " audio_file", (data) => {
+            overlay.on("audio_file", (data) => {
                 files.audio_file = data;
             });
 
-            socket.on(namespace + " image_file", (data) => {
+            overlay.on("image_file", (data) => {
                 files.image_file = data;
             });
 
-            socket.on(namespace + " event", (event) => {
+            overlay.on("event", (event) => {
                 if (config) {
                     queue.push(event);
 

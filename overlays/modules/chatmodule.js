@@ -50,12 +50,17 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
     settingsDisplay = {
         text_color: "color",
         show_donations: "checkbox",
+        chatdirection: "select",
         //overlay_width: "number"
     };
 
     defaultSettings = {
         text_color: "#FFFFFF",
         show_donations: "true",
+        chatdirection: [
+            "up",
+            "down"
+        ],
         //overlay_width: 600
     };
 

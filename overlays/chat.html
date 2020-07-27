@@ -24,13 +24,7 @@
         <title>Caffeinated Chat</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
-        <script>
-            let vars = {};
-
-            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-                vars[key] = value;
-            });
-        </script>
+        <script src="overlayutil.js"></script>
     </head>
 
     <body>
@@ -39,25 +33,16 @@
 
     <footer>
         <script>
-            const namespace = "casterlabs_chat:" + vars["id"];
-            const socket = io("http://localhost:8091", {
-                "reconnection": true,
-                "reconnectionDelay": 2000,
-                "reconnectionAttempts": Number.MAX_SAFE_INTEGER
-            });
+            const overlay = new OverlayUtil("casterlabs_chat");
             let config = null;
 
-            socket.on("init", () => {
-                socket.emit("uuid", namespace);
-            });
-
-            socket.on(namespace + " config", (data) => {
+            overlay.on("config", (data) => {
                 config = data;
 
                 document.getElementById("div").style = "color: " + config.text_color + ";";// width: " + config.overlay_width + "px;";
             });
 
-            socket.on(namespace + " event", (event) => {
+            overlay.on("event", (event) => {
                 if (config) {
                     addChat(event);
                 }
