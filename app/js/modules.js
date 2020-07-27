@@ -1,6 +1,4 @@
-
 class Modules {
-
     constructor() {
         this.moduleClasses = {};
         this.modules = [];
@@ -97,7 +95,7 @@ class Modules {
         copy.classList.add("button");
         copy.innerText = "Copy";
         copy.addEventListener("click", () => {
-            putInClipboard(linkDisplay.path) + "?id=" + module.id;
+            putInClipboard(linkDisplay.path + "?id=" + module.id);
         });
 
         custom.classList.add("button");
@@ -168,7 +166,7 @@ class Modules {
             if (type === "range") {
                 input.setAttribute("min", 0);
                 input.setAttribute("max", 1);
-                input.setAttribute("step", .01);
+                input.setAttribute("step", 0.01);
             }
 
             if (type === "select") {
@@ -178,7 +176,8 @@ class Modules {
                 input.innerHTML = options;
             } else if (type === "checkbox") {
                 input.checked = stored[key];
-            } else if (type !== "file") { // You can't set file values, not even in Electron
+            } else if (type !== "file") {
+                // You can't set file values, not even in Electron
                 input.value = stored[key];
             }
 
@@ -229,5 +228,4 @@ class Modules {
             return Object.assign({}, module.defaultSettings);
         }
     }
-
 }

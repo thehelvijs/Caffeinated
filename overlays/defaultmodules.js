@@ -8,7 +8,7 @@ class FollowerModule {
     }
 
     linkDisplay = {
-        path: "https://caffeinated.casterlabs.co/follower",
+        path: "https://caffeinated.casterlabs.co/follower.html",
         option: {
             name: "Test",
             onclick: function (instance) {
@@ -92,7 +92,7 @@ class DonationModule {
     }
 
     linkDisplay = {
-        path: "https://caffeinated.casterlabs.co/donation",
+        path: "https://caffeinated.casterlabs.co/donation.html",
         option: {
             name: "Test",
             onclick: function (instance) {
@@ -176,7 +176,7 @@ class InfoModule {
     }
 
     linkDisplay = {
-        path: "https://caffeinated.casterlabs.co/info",
+        path: "https://caffeinated.casterlabs.co/info.html",
         option: {
             name: "Reset",
             onclick: function (instance) {
@@ -257,7 +257,7 @@ class ChatModule {
     }
 
     linkDisplay = {
-        path: "https://caffeinated.casterlabs.co/chat",
+        path: "https://caffeinated.casterlabs.co/chat.html",
         option: {
             name: "Test",
             onclick: function (instance) {

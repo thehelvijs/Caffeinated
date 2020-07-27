@@ -1,12 +1,9 @@
 const electron = require("electron").remote;
 const shell = require("electron").shell;
-const dialog = electron.dialog
+const dialog = electron.dialog;
 const express = require("express");
 const Store = require("electron-store");
-const {
-    ipcMain,
-    BrowserWindow
-} = require("electron").remote
+const { ipcMain, BrowserWindow } = require("electron").remote;
 
 const VERSION = "0.4.0-pre1";
 const COLOR = "#FFFFFF";
@@ -14,12 +11,7 @@ const COLOR = "#FFFFFF";
 const koi = new Koi("wss://live.casterlabs.co/koi");
 let CONNECTED = false;
 
-console.warn(
-    "Caution, here be dragons!" + "\n\n" +
-    "If someone tells you to paste code here, they might be trying to steal important data from you." + "\n" +
-    "If you're good at UX, consider contributing to the Caffeinated project at " + "\n" +
-    "https://github.com/thehelvijs/Caffeinated" + "\n"
-);
+console.warn("Caution, here be dragons!" + "\n\n" + "If someone tells you to paste code here, they might be trying to steal important data from you." + "\n" + "If you're good at UX, consider contributing to the Caffeinated project at " + "\n" + "https://github.com/thehelvijs/Caffeinated" + "\n");
 
 Array.from(document.querySelectorAll(".spinner div")).forEach((element) => {
     element.style = "background-color: " + COLOR + ";";
@@ -44,23 +36,23 @@ class Caffeinated {
                 user: null,
                 modules: {
                     casterlabs_caffeinated: {
-                        settings: {}
+                        settings: {},
                     },
                     casterlabs_donation: {
-                        donation: {}
+                        donation: {},
                     },
                     casterlabs_follower: {
-                        follower: {}
+                        follower: {},
                     },
                     casterlabs_chat: {
-                        chat: {}
+                        chat: {},
                     },
                     casterlabs_info: {
                         topdonation: {},
                         recentdonation: {},
-                        recentfollow: {}
-                    }
-                }
+                        recentfollow: {},
+                    },
+                },
             });
             console.log("reset!");
         }
@@ -84,9 +76,7 @@ class Caffeinated {
             for (const [id, module] of Object.entries(modules)) {
                 try {
                     MODULES.initalizeModule(new MODULES.moduleClasses[namespace](id));
-                } catch (e) {
-                    console.warn(e)
-                } // Ignore, module not loaded
+                } catch (e) {} // Ignore, module not loaded because it's not present
             }
         }
 
@@ -117,26 +107,26 @@ class Caffeinated {
                 targets: ".placeholder-icon",
                 easing: "linear",
                 opacity: 0,
-                duration: 250
+                duration: 250,
             });
             anime({
                 targets: ".user-icon",
                 easing: "linear",
                 opacity: 1,
-                duration: 250
+                duration: 250,
             });
         } else {
             anime({
                 targets: ".placeholder-icon",
                 easing: "linear",
                 opacity: 1,
-                duration: 250
+                duration: 250,
             });
             anime({
                 targets: ".user-icon",
                 easing: "linear",
                 opacity: 0,
-                duration: 250
+                duration: 250,
             });
         }
     }
@@ -161,18 +151,17 @@ class Caffeinated {
                 targets: "#followers",
                 easing: "linear",
                 opacity: 1,
-                duration: 250
+                duration: 250,
             });
         } else {
             anime({
                 targets: "#followers",
                 easing: "linear",
                 opacity: 0,
-                duration: 250
+                duration: 250,
             });
         }
     }
-
 }
 
 const CAFFEINATED = new Caffeinated();
