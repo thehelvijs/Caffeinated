@@ -1,0 +1,9 @@
+{
+    "for": [
+        "0.4.0-pre1"
+    ],
+    "name": "Caffeinated Default Repo",
+    "overlays": [
+        "defaultmodules.js"
+    ]
+}

@@ -1,0 +1,10 @@
+Made by: https://casterlabs.co
+Repository: https://github.com/thehelvijs/Caffeinated
+License: TBD
+
+Libraries used:
+https://github.com/e3ndr/FormsJS
+https://github.com/Casterlabs/KoiApi/tree/JavaScript
+https://www.electronjs.org/
+https://github.com/sindresorhus/electron-store
+https://socket.io/
