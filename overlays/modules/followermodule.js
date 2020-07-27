@@ -28,14 +28,9 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
 
     onConnection(socket) {
         MODULES.emitIO(this, "config", nullFields(this.settings, ["audio_file", "image_file"]), socket);
+        MODULES.emitIO(this, "audio_file", this.audio_file, socket);
+        MODULES.emitIO(this, "image_file", this.image_file, socket);
 
-        if (this.audio_file) {
-            MODULES.emitIO(this, "audio_file", this.audio_file);
-        }
-
-        if (this.image_file) {
-            MODULES.emitIO(this, "image_file", this.image_file);
-        }
     }
 
     init() {
@@ -57,7 +52,7 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
         }
 
         if (this.settings.image_file.files.length > 0) {
-            this.image_file = await fileToBase64(this.settings.image_file, "image");
+            this.image_file = await fileToBase64(this.settings.image_file);
 
             MODULES.emitIO(this, "image_file", this.image_file);
         }
