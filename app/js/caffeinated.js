@@ -35,8 +35,8 @@ class Caffeinated {
                 port: 8091,
                 user: null,
                 repos: [
-                    "https://caffeinated.casterlabs.co",
-                    "C:\\Users\\pigal\\Documents\\jsDev\\Caffeinated\\overlays"
+                    __dirname + "/../overlays", // Tree walk to the folder, works in the devlopment enviroment.
+                    "https://caffeinated.casterlabs.co"
                 ]
             });
 
@@ -51,6 +51,16 @@ class Caffeinated {
         this.io = require("socket.io").listen(server);
         this.user = this.store.get("user");
         this.userdata = null;
+    }
+
+    async addRepo(repo) {
+        await this.repomanager.addRepo(repo);
+        this.store.set("repos", this.store.get("repos").concat(repo));
+    }
+
+    removeRepo(repo) {
+        this.store.set("repos", removeFromArray(this.store.get("repos"), repo));
+        location.reload();
     }
 
     reset() {
