@@ -1,9 +1,40 @@
 {
-    "for": [
-        "0.4.0-pre1"
+    "supported": [
+        "0.4.0-pre*"
     ],
+    "unsupported": [],
+    "version": "0.4.0-pre2",
     "name": "Caffeinated Default Repo",
     "overlays": [
-        "defaultmodules.js"
+        "modules/donationmodule.js",
+        "modules/followermodule.js",
+        "modules/infomodule.js",
+        "modules/chatmodule.js"
+    ],
+    "required": [
+        {
+            "namespace": "casterlabs_donation",
+            "id": "donation"
+        },
+        {
+            "namespace": "casterlabs_follower",
+            "id": "follower"
+        },
+        {
+            "namespace": "casterlabs_chat",
+            "id": "chat"
+        },
+        {
+            "namespace": "casterlabs_info",
+            "id": "topdonation"
+        },
+        {
+            "namespace": "casterlabs_info",
+            "id": "recentdonation"
+        },
+        {
+            "namespace": "casterlabs_info",
+            "id": "recentfollow"
+        }
     ]
 }

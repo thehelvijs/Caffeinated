@@ -10,10 +10,16 @@ class Modules {
         socket.on(uuid + " " + channel, callback);
     }
 
-    emitIO(module, channel, data, socket = CAFFEINATED.io) {
+    emitIO(module, channel, data, socket = module.sockets) {
         let uuid = module.namespace + ":" + module.id;
 
-        socket.emit(uuid + " " + channel, data);
+        if (Array.isArray(socket)) {
+            socket.forEach((sock) => {
+                sock.emit(uuid + " " + channel, data);
+            })
+        } else {
+            socket.emit(uuid + " " + channel, data);
+        }
     }
 
     getFromUUID(target) {
@@ -44,28 +50,22 @@ class Modules {
 
     initalizeModule(module) {
         try {
-            switch (module.type.toUpperCase()) {
-                case "OVERLAY_ONLY": {
-                    this.initalizeModuleOverlayPage(module);
-                    break;
-                }
+            const type = module.type.toUpperCase();
 
-                case "OVERLAY": {
-                    this.initalizeModuleSettingsPage(module);
-                    this.initalizeModuleOverlayPage(module);
-                    break;
-                }
-
-                case "SETTINGS": {
-                    this.initalizeModuleSettingsPage(module);
-                    break;
-                }
-
-                case "APPLICATION": {
-                    // TODO
-                    break;
-                }
+            // Initialize pages, this is ugly yet intentional.
+            if (type.includes("OVERLAY")) {
+                this.initalizeModuleOverlayPage(module);
             }
+
+            if (type.includes("SETTINGS")) {
+                this.initalizeModuleSettingsPage(module);
+            }
+
+            if (type.includes("APPLICATION")) {
+                // TODO
+            }
+
+            module.sockets = [];
 
             if (module.init) module.init();
 
@@ -147,10 +147,26 @@ class Modules {
         for (const [key, type] of Object.entries(module.settingsDisplay)) {
             let uuid = module.namespace + ":" + module.id;
             let name = document.createElement("label");
-            let input = document.createElement("input");
+            let input;
 
             if (type === "select") {
                 input = document.createElement("select");
+            } else if (type === "button") {
+                input = document.createElement("button");
+
+                input.addEventListener("click", stored[key]);
+                input.innerText = prettifyString(key);
+                input.id = uuid;
+                input.classList = type + " data";
+                input.setAttribute("type", type);
+                input.setAttribute("name", key);
+                input.setAttribute("owner", module.id);
+
+                div.appendChild(input);
+
+                continue;
+            } else {
+                input = document.createElement("input");
             }
 
             name.innerText = prettifyString(key) + " ";
@@ -218,7 +234,7 @@ class Modules {
 
         if (stored) {
             for (const [key, value] of Object.entries(module.defaultSettings)) {
-                if (!stored[key]) {
+                if (typeof stored[key] == "undefined") {
                     stored[key] = value;
                 }
             }

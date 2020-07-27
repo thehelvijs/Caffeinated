@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.0-pre1";
+const VERSION = "0.4.0-pre2";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://live.casterlabs.co/koi");
@@ -34,31 +34,20 @@ class Caffeinated {
                 initalized: true,
                 port: 8091,
                 user: null,
-                modules: {
-                    casterlabs_caffeinated: {
-                        settings: {},
-                    },
-                    casterlabs_donation: {
-                        donation: {},
-                    },
-                    casterlabs_follower: {
-                        follower: {},
-                    },
-                    casterlabs_chat: {
-                        chat: {},
-                    },
-                    casterlabs_info: {
-                        topdonation: {},
-                        recentdonation: {},
-                        recentfollow: {},
-                    },
-                },
+                repos: [
+                    "https://caffeinated.casterlabs.co",
+                    "C:\\Users\\pigal\\Documents\\jsDev\\Caffeinated\\overlays"
+                ]
             });
+
             console.log("reset!");
         }
 
         server.listen(this.store.get("port"));
 
+        this.store.set("version", VERSION);
+
+        this.repomanager = new RepoManager();
         this.io = require("socket.io").listen(server);
         this.user = this.store.get("user");
         this.userdata = null;
@@ -69,14 +58,67 @@ class Caffeinated {
         location.reload();
     }
 
-    init() {
+    async init() {
         console.log("init!");
+
+        let settings = {
+            namespace: "casterlabs_caffeinated",
+            type: "settings",
+            persist: true,
+            id: "settings",
+
+            onSettingsUpdate() {
+                if (this.settings.username == "reset") {
+                    CAFFEINATED.reset();
+                } else {
+                    CAFFEINATED.setUser(this.settings.username);
+                }
+            },
+
+            getDataToStore() {
+                return {};
+            },
+
+            settingsDisplay: {
+                username: "input",
+                reset: "button"
+            },
+
+            defaultSettings: {
+                username: "",
+                reset() {
+                    CAFFEINATED.reset();
+                },
+                reload() {
+                    location.reload();
+                }
+            }
+
+        };
+
+        if (VERSION.includes("pre")) {
+            settings.settingsDisplay.reload = "button";
+        }
+
+        MODULES.initalizeModule(settings);
+
+        for (let repo of this.store.get("repos")) {
+            try {
+                await this.repomanager.addRepo(repo);
+            } catch (e) {
+                console.error(e);
+            }
+        }
 
         for (const [namespace, modules] of Object.entries(this.store.get("modules"))) {
             for (const [id, module] of Object.entries(modules)) {
                 try {
-                    MODULES.initalizeModule(new MODULES.moduleClasses[namespace](id));
-                } catch (e) {} // Ignore, module not loaded because it's not present
+                    let loaded = await MODULES.getFromUUID(namespace + ":" + id);
+
+                    if (!loaded) {
+                        MODULES.initalizeModule(new MODULES.moduleClasses[namespace](id));
+                    }
+                } catch (e) { } // Ignore, module not loaded because it's not present
             }
         }
 
@@ -87,8 +129,14 @@ class Caffeinated {
         this.io.on("connection", (socket) => {
             socket.on("uuid", (uuid) => {
                 MODULES.getFromUUID(uuid).then((module) => {
-                    if (module && module.onConnection) {
-                        module.onConnection(socket);
+                    if (module) {
+                        if (module.onConnection) module.onConnection(socket);
+
+                        module.sockets.push(socket);
+
+                        socket.on("disconnect", () => {
+                            removeFromArray(module.sockets, socket);
+                        });
                     }
                 });
             });
