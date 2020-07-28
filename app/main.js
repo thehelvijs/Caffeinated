@@ -37,6 +37,9 @@ function createWindow() {
     mainWindowState.manage(mainWindow);
 }
 
+// Disable web cache.
+app.commandLine.appendSwitch("disable-http-cache");
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
