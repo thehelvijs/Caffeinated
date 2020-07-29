@@ -186,9 +186,13 @@ class Modules {
             }
 
             if (type === "select") {
-                let selected = stored[key];
                 let values = module.defaultSettings[key];
+                let selected = stored[key];
                 let options = "";
+
+                if (Array.isArray(selected)) {
+                    selected = values[0];
+                }
 
                 // Loop and mark the selected option, TODO better way.
                 values.forEach((value) => {
