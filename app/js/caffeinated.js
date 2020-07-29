@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.0-pre3";
+const VERSION = "0.4.0-pre4";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://live.casterlabs.co/koi");
@@ -65,7 +65,7 @@ class Caffeinated {
     }
 
     reset() {
-        this.store.set("initalized", false);
+        this.store.clear();
         location.reload();
     }
 
