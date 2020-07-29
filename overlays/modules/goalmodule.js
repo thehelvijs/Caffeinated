@@ -55,8 +55,8 @@ MODULES.moduleClasses["casterlabs_goal"] = class {
 
         if (!this.amount) this.amount = 0;
 
-        if (this.id.includes("userupdate")) {
-            koi.addEventListener("follow", (event) => {
+        if (this.id.includes("follow")) {
+            koi.addEventListener("userupdate", (event) => {
                 instance.amount = event.streamer.follower_count;
 
                 MODULES.emitIO(this, "amount", instance.amount);

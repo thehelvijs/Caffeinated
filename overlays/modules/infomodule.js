@@ -61,7 +61,7 @@ MODULES.moduleClasses["casterlabs_info"] = class {
         }
 
         koi.addEventListener("userupdate", (event) => {
-            if (instance.event.streamer.uuid != event.streamer.uuid) {
+            if ((instance.event) && (instance.event.streamer.uuid != event.streamer.uuid)) {
                 instance.event = null;
                 MODULES.emitIO(instance, "event", null);
                 MODULES.saveToStore(instance);
