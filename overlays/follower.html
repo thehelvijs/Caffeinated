@@ -20,18 +20,27 @@
                 display: block;
                 margin-left: auto;
                 margin-right: auto;
-                width: 30%;
+                max-height: 50vh;
+                max-width: 90vw;
             }
 
             video {
                 display: block;
                 margin-left: auto;
                 margin-right: auto;
-                width: 30%;
-                transform: translate(0px, -100%);
+                max-height: 50vh;
+                max-width: 90vw;
+            }
+
+            #event {
+                height: 100%;
+            }
+
+            .hide {
+                display: none;
             }
         </style>
-        <title>Caffeinated Followers</title>
+        <title>Caffeinated Follower</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
         <script src="overlayutil.js"></script>
@@ -39,13 +48,11 @@
 
     <body>
         <h1 class="center" id="event" style="opacity: 0;">
-            <img class="image" src="" id="image" />
-            <video class="image" src="" id="video"></video>
+            <img src="" id="image" />
+            <video src="" id="video"></video>
             <div class="text-container">
                 <span id="user"></span>
-                <span id="text">
-                    followed
-                </span>
+                <span id="text">followed</span>
             </div>
         </h1>
     </body>
@@ -90,29 +97,29 @@
             });
 
             function updateRenderer() {
-                let text = document.querySelector("#text");
-
                 text.style = "color: " + config.text_color + ";";
             }
 
             async function render() {
+                let displayTime = DISPLAY_TIME;
                 let event = queue[0];
 
-                if (config.use_custom_image) {
-                    if (files.image_file) {
-                        if (files.image_file.startsWith("data:video")) {
-                            video.src = files.image_file;
-                            img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
-                            video.play();
-                        } else {
-                            img.src = files.image_file;
-                            video.src = "";
-                        }
+                if (config.use_custom_image && files.image_file) {
+                    if (files.image_file.startsWith("data:video")) {
+                        video.src = files.image_file;
+                        video.play();
+                        video.classList = "";
+                        video.addEventListener("loadeddata", () => {
+                            displayTime = video.duration * 1000;
+                        });
+                        img.classList = "hide";
                     } else {
-                        img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+                        video.classList = "hide";
+                        img.classList = "";
+                        img.src = files.image_file;
                     }
                 } else {
-                    img.src = event.image;
+                    img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
                 }
 
                 user.innerText = event.follower.username;
@@ -122,13 +129,15 @@
                     playAudio();
                 }
 
+                displayTime -= (FADE_TIME * 2); // So it stops perfectly
+
                 anime({
                     targets: "#event",
                     easing: "linear",
                     opacity: 1,
                     duration: FADE_TIME
                 }).finished.then(async function () {
-                    await sleep(DISPLAY_TIME);
+                    await sleep(displayTime);
 
                     anime({
                         targets: "#event",
