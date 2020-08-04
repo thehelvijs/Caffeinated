@@ -149,7 +149,9 @@ class Modules {
             let name = document.createElement("label");
             let input;
 
-            if (type === "select") {
+            if (type === "font") {
+                input = document.createElement("select");
+            } else if (type === "select") {
                 input = document.createElement("select");
             } else if (type === "button") {
                 input = document.createElement("button");
@@ -185,7 +187,12 @@ class Modules {
                 input.setAttribute("step", 0.01);
             }
 
-            if (type === "select") {
+            if (type === "font") {
+                FONTSELECT.apply(input, {
+                    updateFont: true,
+                    selected: stored[key]
+                });
+            } else if (type === "select") {
                 let values = module.defaultSettings[key];
                 let selected = stored[key];
                 let options = "";

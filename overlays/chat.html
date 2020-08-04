@@ -3,12 +3,7 @@
 
     <head>
         <meta charset="utf-8" />
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet" />
         <style>
-            body {
-                font-family: "Poppins", sans-serif;
-            }
-
             img {
                 height: 20px;
             }
@@ -25,6 +20,7 @@
         <title>Caffeinated Chat</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
         <script src="overlayutil.js"></script>
     </head>
 
@@ -37,12 +33,16 @@
             const overlay = new OverlayUtil("casterlabs_chat");
             let config = {};
 
+            overlay.changeFont("Poppins");
+
             overlay.on("config", (data) => {
                 if (config.chat_direction != data.chat_direction) {
                     document.getElementById("div").innerHTML = "";
                 }
 
                 config = data;
+
+                overlay.changeFont(config.font);
 
                 document.getElementById("div").style = "color: " + config.text_color + ";";// width: " + config.overlay_width + "px;";
             });

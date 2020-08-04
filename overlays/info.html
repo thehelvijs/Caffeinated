@@ -6,6 +6,7 @@
         <title>Caffeinated TopDonation</title>
         <link id="font" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
         <script src="overlayutil.js"></script>
     </head>
 
@@ -23,6 +24,8 @@
 
             overlay.on("config", (data) => {
                 config = data;
+
+                overlay.changeFont(config.font);
 
                 document.querySelector("#user").style = "color: " + config.text_color + ";";
                 document.querySelector("#amount").style = "color: " + config.text_color + ";";

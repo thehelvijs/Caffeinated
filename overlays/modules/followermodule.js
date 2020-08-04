@@ -59,6 +59,7 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
     }
 
     settingsDisplay = {
+        font: "font",
         text_color: "color",
         volume: "range",
         enable_audio: "checkbox",
@@ -68,6 +69,7 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
     };
 
     defaultSettings = {
+        font: "Poppins",
         text_color: "#FFFFFF",
         volume: 1,
         enable_audio: true,

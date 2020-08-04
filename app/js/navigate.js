@@ -28,7 +28,7 @@ function navigate(page) {
 }
 
 function splashText(text) {
-    const all = [".problems", ".reconnecting"];
+    const all = [".problems", ".reconnecting", ".loading-fonts"];
 
     anime({
         targets: all,

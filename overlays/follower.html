@@ -3,12 +3,7 @@
 
     <head>
         <meta charset="utf-8" />
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet" />
         <style>
-            body {
-                font-family: "Poppins", sans-serif;
-            }
-
             .center {
                 margin: auto;
                 width: 60%;
@@ -43,6 +38,7 @@
         <title>Caffeinated Follower</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
         <script src="overlayutil.js"></script>
     </head>
 
@@ -71,11 +67,15 @@
             let audio = {};
             let queue = [];
 
+            overlay.changeFont("Poppins");
+
             overlay.on("config", (data) => {
                 config = data;
 
+                overlay.changeFont(config.font);
+
                 audio.volume = config.volume;
-                updateRenderer();
+                text.style = "color: " + config.text_color + ";";
             });
 
             overlay.on("audio_file", (data) => {
@@ -95,10 +95,6 @@
                     }
                 }
             });
-
-            function updateRenderer() {
-                text.style = "color: " + config.text_color + ";";
-            }
 
             async function render() {
                 let displayTime = DISPLAY_TIME;

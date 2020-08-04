@@ -27,4 +27,17 @@ class OverlayUtil {
         this.socket.emit(channel, data);
     }
 
+    changeFont(fontname) {
+        if (WebFont) {
+            WebFont.load({
+                active: () => {
+                    document.documentElement.style = "font-family: '" + fontname + "';";
+                },
+                google: {
+                    families: [fontname]
+                }
+            });
+        } // Not loaded.
+    }
+
 }

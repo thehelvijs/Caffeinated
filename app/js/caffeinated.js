@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.0-pre4";
+const VERSION = "0.4.0-pre5";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://live.casterlabs.co/koi");
@@ -24,6 +24,8 @@ class Caffeinated {
         const app = express();
         const cors = require("cors");
         const server = require("http").createServer(app);
+
+        FONTSELECT.endPoint = "https://www.googleapis.com/webfonts/v1/webfonts?sort=popularity&key=AIzaSyBuFeOYplWvsOlgbPeW8OfPUejzzzTCITM"; // TODO cache/proxy from Casterlabs' server
 
         app.use(cors());
 
@@ -71,6 +73,10 @@ class Caffeinated {
 
     async init() {
         console.log("init!");
+
+        splashText("loading-fonts");
+        await FONTSELECT.preload(false);
+        console.log("fonts loaded!");
 
         let settings = {
             namespace: "casterlabs_caffeinated",

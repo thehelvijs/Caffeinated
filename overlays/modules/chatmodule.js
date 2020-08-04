@@ -48,6 +48,7 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
     }
 
     settingsDisplay = {
+        font: "font",
         text_color: "color",
         show_donations: "checkbox",
         chat_direction: "select",
@@ -55,8 +56,9 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
     };
 
     defaultSettings = {
+        font: "Poppins",
+        show_donations: true,
         text_color: "#FFFFFF",
-        show_donations: "true",
         chat_direction: [
             "Down",
             "Up"
