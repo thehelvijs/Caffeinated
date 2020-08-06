@@ -62,7 +62,7 @@ class Modules {
             }
 
             if (type.includes("APPLICATION")) {
-                // TODO
+                this.initalizeModulePage(module);
             }
 
             module.sockets = [];
@@ -74,6 +74,40 @@ class Modules {
             console.error("Unable to initalize module due to an exception:");
             console.error(e);
         }
+    }
+
+    initalizeModulePage(module) {
+        let selector = module.namespace;
+        let name = prettifyString(module.namespace);
+        let li = document.createElement("li");
+        let a = document.createElement("a");
+        let ion = document.createElement("ion-icon");
+        let page = document.createElement("div");
+
+        li.appendChild(a);
+
+        a.appendChild(ion);
+        a.classList.add("menu-button");
+        a.addEventListener("click", () => navigate(selector));
+        a.setAttribute("title", name);
+
+        ion.setAttribute("name", module.icon);
+
+        page.setAttribute("page", selector);
+        page.classList.add("content");
+        page.classList.add("page");
+        page.classList.add("hide");
+
+        if (module.displayname) {
+            page.setAttribute("navbar-title", module.displayname);
+            a.setAttribute("title", module.displayname);
+        }
+
+
+        module.page = page;
+
+        document.querySelector("#page-menu").insertBefore(li, document.querySelector("#page-menu").firstChild);
+        document.querySelector(".pages").appendChild(page);
     }
 
     initalizeModuleOverlayPage(module) {

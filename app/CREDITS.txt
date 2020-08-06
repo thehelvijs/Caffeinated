@@ -9,3 +9,4 @@ https://github.com/Casterlabs/KoiApi/tree/JavaScript
 https://github.com/sindresorhus/electron-store
 https://www.electronjs.org/
 https://socket.io/
+https://ionicons.com/

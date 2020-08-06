@@ -13,11 +13,12 @@ html {
 }
 
 a {
-    color: white;
+    color: darkgrey;
 }
 
-ion-icons {
+ion-icon {
     color: white;
+    pointer-events: none;
 }
 
 .box {
@@ -248,6 +249,10 @@ input[type=number] {
     height: 100%;
     overflow: auto;
     width: 430px;
+}
+
+.page a:hover {
+    color: lightgrey;
 }
 
 /* Overlays */

@@ -77,14 +77,14 @@
                     <img class="placeholder-icon" src="media/icon.png" style="opacity: 1;" />
                 </a>
                 <p class="menu-label" id="followers"></p>
-                <ul class="menu-list">
+                <ul class="menu-list" id="page-menu">
                     <li>
-                        <a class="menu-button" onclick="navigate('overlays');">
+                        <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays">
                             <ion-icon name="copy"></ion-icon>
                         </a>
                     </li>
                     <li>
-                        <a class="menu-button" onclick="navigate('settings');">
+                        <a class="menu-button" onclick="navigate('settings');" title="Caffeinated Settings">
                             <ion-icon name="cog"></ion-icon>
                         </a>
                     </li>
@@ -99,7 +99,7 @@
         </div>
         <div class="title-bar">
             <span class="currentpage" style="opacity: 0;"></span>
-            <a class="close">
+            <a class="close" title="Close">
                 <ion-icon name="close"></ion-icon>
             </a>
         </div>

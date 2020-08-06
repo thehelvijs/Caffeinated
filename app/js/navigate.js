@@ -13,18 +13,23 @@ function navigate(page) {
                 e.classList.add("hide");
             }
         });
+
+        document.querySelector(selector).classList.remove("hide");
+
+        anime({
+            targets: selector,
+            easing: "linear",
+            opacity: 1,
+            duration: 250
+        });
+
+        let title = document.querySelector(selector).getAttribute("navbar-title");
+        if (title) {
+            document.querySelector(".currentpage").innerText = title;
+        } else {
+            document.querySelector(".currentpage").innerText = prettifyString(page);
+        }
     });
-
-    document.querySelector(selector).classList.remove("hide");
-
-    anime({
-        targets: selector,
-        easing: "linear",
-        opacity: 1,
-        duration: 250
-    });
-
-    document.querySelector(".currentpage").innerText = prettifyString(page);
 }
 
 function splashText(text) {

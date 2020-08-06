@@ -10,7 +10,8 @@
         "modules/followermodule.js",
         "modules/infomodule.js",
         "modules/chatmodule.js",
-        "modules/goalmodule.js"
+        "modules/goalmodule.js",
+        "modules/creditmodule.js"
     ],
     "required": [
         {
@@ -44,6 +45,10 @@
         {
             "namespace": "casterlabs_goal",
             "id": "follower_goal"
+        },
+        {
+            "namespace": "casterlabs_credits",
+            "id": "casterlabs_credits"
         }
     ]
 }

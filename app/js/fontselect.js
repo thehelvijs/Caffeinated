@@ -35,7 +35,7 @@ const FONTSELECT = {
                             url = Object.entries(font.files)[0][1]; // Get the entries, get the first entry, get the link.
                         }
 
-                        /* await */ FONTSELECTUTIL.loadFont(name, url);
+                        await FONTSELECTUTIL.loadFont(name, url);
                     }
 
                     // Resolving twice (Assuming quickload = false), is safe.
@@ -63,10 +63,6 @@ const FONTSELECT = {
 
                     option.style = "font-family: '" + name + "';";
                     option.innerText = name;
-
-                    if (name == "Anton") {
-                        window.option = option;
-                    }
 
                     element.appendChild(group);
                 });

@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.0-pre5";
+const VERSION = "0.4.0-pre6";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://live.casterlabs.co/koi");
@@ -75,10 +75,10 @@ class Caffeinated {
         console.log("init!");
 
         splashText("loading-fonts");
-        await FONTSELECT.preload(false);
+        await FONTSELECT.preload(true);
         console.log("fonts loaded!");
 
-        let settings = {
+        MODULES.initalizeModule({
             namespace: "casterlabs_caffeinated",
             type: "settings",
             persist: true,
@@ -92,13 +92,10 @@ class Caffeinated {
                 }
             },
 
-            getDataToStore() {
-                return {};
-            },
-
             settingsDisplay: {
                 username: "input",
-                reset: "button"
+                reset: "button",
+                reload: "button"
             },
 
             defaultSettings: {
@@ -111,13 +108,7 @@ class Caffeinated {
                 }
             }
 
-        };
-
-        if (VERSION.includes("pre")) {
-            settings.settingsDisplay.reload = "button";
-        }
-
-        MODULES.initalizeModule(settings);
+        });
 
         for (let repo of this.store.get("repos")) {
             try {
