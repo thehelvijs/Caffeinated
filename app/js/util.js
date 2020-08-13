@@ -1,3 +1,4 @@
+
 function prettifyString(str) {
     let splitStr = str.split("_");
 

@@ -18,7 +18,18 @@
     <footer>
         <script>
             const overlay = new OverlayUtil("casterlabs_info");
+            const formatter = new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+                minimumFractionDigits: 2
+            });
             let config = null;
+
+            function formatUSD(amount) {
+                let formatted = formatter.format(amount);
+
+                return formatted.replace(".00", ""); // "Round" to the dollar.
+            }
 
             document.querySelector("#font").href = vars.font;
 
@@ -44,9 +55,7 @@
                             user.innerText = event.sender.username;
 
                             if (config.currency == "USD") {
-                                let round = (Math.round(event.usd_equivalent * 100) / 100).toFixed(2);
-
-                                amount.innerText = "$" + round;
+                                amount.innerText = formatUSD(event.usd_equivalent);
                             } else {
                                 amount.innerText = event.formatted;
                             }

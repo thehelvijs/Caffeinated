@@ -5,7 +5,7 @@ const FORMSJS = {
     CLASS_SELECTOR: "data",
     NAME_PROPERTY: "name",
     BLANK_IS_NULL: false,
-    PARSE_NUMBERS: true,
+    PARSE_NUMBERS: false,
     ALLOW_FALSE: true,
 
     readForm(selector) {

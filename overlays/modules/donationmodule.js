@@ -63,7 +63,7 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
         text_color: "color",
         volume: "range",
         enable_audio: "checkbox",
-        use_donation_image: "checkbox",
+        use_custom_image: "checkbox",
         audio_file: "file",
         image_file: "file"
     };
@@ -73,7 +73,7 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
         text_color: "#FFFFFF",
         volume: 1,
         enable_audio: true,
-        use_donation_image: false,
+        use_custom_image: true,
         audio_file: "",
         image_file: ""
     };

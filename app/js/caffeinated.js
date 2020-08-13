@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.0-pre6";
+const VERSION = "0.4.0-pre7";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://live.casterlabs.co/koi");

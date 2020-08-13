@@ -51,7 +51,7 @@ MODULES.moduleClasses["casterlabs_info"] = class {
             });
         } else {
             koi.addEventListener("donation", (event) => {
-                if ((instance.id == "recentdonation") || !instance.event || (instance.event.usd_equivalent <= event.usd_equivalent)) {
+                if (!instance.event || instance.id.includes("recent") || (instance.event.usd_equivalent <= event.usd_equivalent)) {
                     instance.event = event;
 
                     MODULES.emitIO(this, "event", event);
