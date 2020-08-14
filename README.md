@@ -34,7 +34,7 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 ## Usage
 - Set user in settings
 <p align="center">
-  <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/setusername.png">
+  <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/setusername.gif">
 </p>
 - In OBS add Browser Source (can copy from Caffeinated mainscreen)
 <p align="center">
