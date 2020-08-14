@@ -1,4 +1,5 @@
 @echo off
 
 cd app
-npm start
+npm run dist
+pause
