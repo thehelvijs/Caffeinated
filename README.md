@@ -2,15 +2,17 @@
 <p align="center">
   <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/usage.gif">
 </p>
-
-Caffeinated has been merged with [Casterlabs](https://casterlabs.co).
-No login required. Using local web-server to display alerts and chat. Based on Electron JS. Tested only on Windows. <br /><br />
-
+  
+Caffeinated has been merged with [Casterlabs](https://casterlabs.co).  
+No login required.  
+Based on Electron JS. Tested only on Windows.  
+  
 Basic features:
 - New follower alert
 - Donation alert
 - Chat
 - Donation goal overlay
+- Top Donator, Recent Donator, Recent Follower
 - Custom MP3's, GIF's, colors etc.
 
 Bigger features under development:
@@ -22,58 +24,40 @@ Bigger features under development:
 
 Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 
-## Note: this is open beta. If something does not work or you break something, please open an issue on GitHub or drop a message here https://discord.gg/FQwqDrr
-## Disclaimer: once you start to use Caffeinated - your username will be logged in order to see the usage of Caffeinated - this helps to see the load on back-end server and improve the service
+## Note: this is open beta. If something does not work or you break something, please open an issue on GitHub or drop a message on our [Discord](https://discord.gg/FQwqDrr).
+## Make sure to readup on our [Privacy Policy](https://casterlabs.co/privacypolicy), by using the service you agree to the terms.
 
 ## Installation
-- Grab latest release from https://github.com/thehelvijs/Caffeinated/releases
-- Until I figure out proper Windows install packager - .exe can be found at C:\Users\ %AppData%\Local\caffeinated after installation; or just extract .rar archive and run .exe from there.
+- Grab latest release from [here](https://github.com/thehelvijs/Caffeinated/releases/latest).
+- MacOS users may not have a proper installer for a while, sorry.
 
 ## Usage
 - Set user in settings
-### 1: browser source
-
-- In OBS add Browser Source (can copy from Caffeinated mainscreen):
-  - http://127.0.0.1:8080/followers
-  - http://127.0.0.1:8080/donations
-  - http://127.0.0.1:8080/chat
-  - http://127.0.0.1:8080/goal
-- Magic
-
 <p align="center">
-  <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn2.jpg">
+  <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/setusername.png">
 </p>
-
-### 2: window
-- Enable check-boxes for required overlays
-- Click 'Open overlay'
-- Position them and click 'Toggle background' to make them transparent
-- Magic
+- In OBS add Browser Source (can copy from Caffeinated mainscreen)
 <p align="center">
-  <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/scrn3.jpg">
+  <img width="500" src="https://github.com/thehelvijs/Caffeinated/blob/master/README/browsersource.png">
 </p>
-
-- Keep in mind - Caffeinated has to be opened before OBS. This is an issue that hopefully will be resolved soon.
-- If you are updating to newer version, make sure to "Refresh cache of current page" in OBS after starting Caffeinated. 
+- Magic
 
 ## Troubleshooting
 - If nothing appears on alert test
   - Open web browser (preferably Chrome), copy link there and test again. If nothing happens, go to Caffeinated settings and change local host port (e.g. 3000), restart Caffeinated and change link to that port, test again.
 
 ## Known issues
-- Caffeinated has to be started before opening OBS. Or if OBS has been started, after running Caffeinated - in Browser Source properties "Refresh cache of current page" has to be clicked.
-- ~~Unfollow -> follow gives alert. Can be abused by viewers.~~
-- ~~Empty donation message gives default message from donation test -> should be left empty.~~
 - If more localhost links are open, audio plays for every window and becomes distorted/loud. Have to limit to 1 window.
 - Overlapping alerts - a delay has to be set so all alerts play after previous one has finished.
-- A lot more that me and [e3ndr](https://github.com/e3ndr/) are working on
 
 ## For developers
 ```elm
-git clone https://github.com/thehelvijs/Caffeinated    
-npm install    
-npm start
+git clone https://github.com/thehelvijs/Caffeinated  
+cd app  
+npm install  
+npm start  
 ```
+
 ## Acknowledgments
 
 - [e3ndr](https://github.com/e3ndr/) for inspiration and software examples for chat and donations

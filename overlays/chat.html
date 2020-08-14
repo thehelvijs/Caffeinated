@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <style>
+            img {
+                height: 20px;
+            }
+
+            body {
+                /* For testing in a browser */
+                /* background-color: black; */
+                position: absolute;
+                left: 0px;
+                bottom: 0px;
+                overflow: hidden;
+            }
+        </style>
+        <title>Caffeinated Chat</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+        <script src="overlayutil.js"></script>
+    </head>
+
+    <body>
+        <div id="div"></div>
+    </body>
+
+    <footer>
+        <script>
+            const overlay = new OverlayUtil("casterlabs_chat");
+            let config = {};
+
+            overlay.changeFont("Poppins");
+
+            overlay.on("config", (data) => {
+                if (config.chat_direction != data.chat_direction) {
+                    document.getElementById("div").innerHTML = "";
+                }
+
+                config = data;
+
+                overlay.changeFont(config.font);
+
+                document.getElementById("div").style = "color: " + config.text_color + ";";// width: " + config.overlay_width + "px;";
+            });
+
+            overlay.on("event", (event) => {
+                if (config) {
+                    addChat(event);
+                }
+            });
+
+            function addChat(event) {
+                let div = document.createElement("div");
+                let msg = document.createElement("span");
+                let user = document.createElement("span");
+
+                user.textContent = event.sender.username;
+                user.style = "color: " + event.sender.color + ";";
+
+                msg.textContent = " " + event.message + " ";
+
+                div.appendChild(user);
+                div.appendChild(msg);
+
+                if (event.image) {
+                    let donation = document.createElement("img");
+
+                    donation.src = event.image
+
+                    div.appendChild(donation);
+                }
+
+                if (config.chat_direction.toUpperCase() == "UP") {
+                    document.body.style = "top: 0px;";
+                    document.getElementById("div").insertBefore(div, document.getElementById("div").firstChild);
+                } else {
+                    document.body.style = "bottom: 0px;";
+                    document.getElementById("div").appendChild(div);
+                }
+            }
+
+        </script>
+    </footer>
+
+</html>
