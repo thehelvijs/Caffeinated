@@ -10,19 +10,19 @@
     </head>
 
     <body>
-        <span id="user"></span>
         <span id="amount"></span>
     </body>
 
     <footer>
         <script>
-            const overlay = new OverlayUtil("casterlabs_info");
+            const overlay = new OverlayUtil("casterlabs_donation_ticker");
             const formatter = new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
                 minimumFractionDigits: 2
             });
             let config = null;
+            let raised = 0;
 
             function formatUSD(amount) {
                 let formatted = formatter.format(amount);
@@ -34,35 +34,25 @@
                 config = data;
 
                 overlay.changeFont(config.font);
-
-                document.querySelector("#user").style = "color: " + config.text_color + ";";
                 document.querySelector("#amount").style = "color: " + config.text_color + ";";
+
+                update();
             });
 
-            overlay.on("event", (event) => {
+            overlay.on("amount", (event) => {
+                raised = event;
+                update();
+            });
+
+            function update() {
                 if (config) {
-                    let amount = document.querySelector("#amount");
-                    let user = document.querySelector("#user");
-
-                    if (event) {
-                        if (event.hasOwnProperty("follower")) {
-                            user.innerText = event.follower.username;
-                            amount.innerText = "";
-                        } else {
-                            user.innerText = event.sender.username;
-
-                            if (config.currency == "USD") {
-                                amount.innerText = formatUSD(event.usd_equivalent);
-                            } else {
-                                amount.innerText = event.formatted;
-                            }
-                        }
+                    if (config.currency == "Caffeine Credits") {
+                        document.querySelector("#amount").innerText = "•" + (Math.floor(raised) * 91); // Convert.
                     } else {
-                        user.innerText = "";
-                        amount.innerText = "";
+                        document.querySelector("#amount").innerText = formatUSD(raised);
                     }
                 }
-            });
+            }
 
         </script>
     </footer>
