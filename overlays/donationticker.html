@@ -47,7 +47,7 @@
             function update() {
                 if (config) {
                     if (config.currency == "Caffeine Credits") {
-                        document.querySelector("#amount").innerText = "•" + (Math.floor(raised) * 91); // Convert.
+                        document.querySelector("#amount").innerText = "•" + Math.floor(raised * 91); // Convert.
                     } else {
                         document.querySelector("#amount").innerText = formatUSD(raised);
                     }
