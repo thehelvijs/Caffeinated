@@ -46,11 +46,12 @@ MODULES.moduleClasses["casterlabs_credits"] = class {
             div.innerHTML = "";
 
             donations.forEach((donation) => {
-                let p = document.createElement("p");
+                let span = document.createElement("span");
 
-                p.innerText = donation;
+                span.innerText = donation;
 
-                div.appendChild(p);
+                div.appendChild(span);
+                div.appendChild(document.createElement("br"));
             });
         });
     }
