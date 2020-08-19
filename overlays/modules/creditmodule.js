@@ -22,6 +22,8 @@ MODULES.moduleClasses["casterlabs_credits"] = class {
                 <br />
                 Supporters above $10 will be listed here, thank you ♥
             </p>
+            <br />
+            <div id="supporters"></div>
             <div style="position: absolute; bottom: 0;">
                 <span>
                     Icons from 
@@ -31,6 +33,26 @@ MODULES.moduleClasses["casterlabs_credits"] = class {
                 </span>
             </div>
         `;
+
+        setInterval(this.update, 15000); // Every 15s
+
+        this.update();
+    }
+
+    update() {
+        fetch("https://caffeinated.casterlabs.co/supporters.json").then((response) => response.json()).then((donations) => {
+            let div = document.querySelector("#supporters");
+
+            div.innerHTML = "";
+
+            donations.forEach((donation) => {
+                let p = document.createElement("p");
+
+                p.innerText = donation;
+
+                div.appendChild(p);
+            });
+        });
     }
 
 };
