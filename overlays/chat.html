@@ -15,6 +15,7 @@
                 left: 0px;
                 bottom: 0px;
                 overflow: hidden;
+                text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.3);
             }
         </style>
         <title>Caffeinated Chat</title>
@@ -44,7 +45,7 @@
 
                 overlay.changeFont(config.font);
 
-                document.getElementById("div").style = "color: " + config.text_color + ";";// width: " + config.overlay_width + "px;";
+                document.getElementById("div").style = "color: " + config.text_color + "; font-size: " + config.font_size + "px;";// width: " + config.overlay_width + "px;";
             });
 
             overlay.on("event", (event) => {

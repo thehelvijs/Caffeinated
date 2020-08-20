@@ -4,6 +4,10 @@
     <head>
         <meta charset="utf-8" />
         <style>
+            body {
+                text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.3);
+            }
+
             .center {
                 margin: auto;
                 width: 60%;
@@ -75,7 +79,7 @@
                 overlay.changeFont(config.font);
 
                 audio.volume = config.volume;
-                text.style = "color: " + config.text_color + ";";
+                text.style = "color: " + config.text_color + "; font-size: " + config.font_size + "px;";
             });
 
             overlay.on("audio_file", (data) => {

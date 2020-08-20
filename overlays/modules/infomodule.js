@@ -75,12 +75,14 @@ MODULES.moduleClasses["casterlabs_info"] = class {
 
     settingsDisplay = {
         font: "font",
+        font_size: "number",
         // currency: "select",
         text_color: "color"
     };
 
     defaultSettings = {
         font: "Poppins",
+        font_size: "16",
         // currency: ["default", "usd"],
         text_color: "#FFFFFF"
     };

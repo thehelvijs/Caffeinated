@@ -100,7 +100,7 @@ MODULES.moduleClasses["casterlabs_goal"] = class {
         title: "input",
         text_color: "color",
         bar_color: "color",
-        goal_amount: "10"
+        goal_amount: "number"
     };
 
     defaultSettings = {

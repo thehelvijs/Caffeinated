@@ -60,6 +60,7 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
 
     settingsDisplay = {
         font: "font",
+        font_size: "number",
         text_color: "color",
         volume: "range",
         enable_audio: "checkbox",
@@ -70,6 +71,7 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
 
     defaultSettings = {
         font: "Poppins",
+        font_size: "16",
         text_color: "#FFFFFF",
         volume: 1,
         enable_audio: true,

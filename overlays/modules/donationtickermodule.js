@@ -46,12 +46,14 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     settingsDisplay = {
         font: "font",
+        font_size: "number",
         text_color: "color",
         currency: "select"
     };
 
     defaultSettings = {
         font: "Poppins",
+        font_size: "16",
         text_color: "#FFFFFF",
         currency: [
             "Caffeine Credits",
