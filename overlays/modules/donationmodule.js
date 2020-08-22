@@ -63,8 +63,9 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
         font_size: "number",
         text_color: "color",
         volume: "range",
-        enable_audio: "checkbox",
-        use_custom_image: "checkbox",
+        text_to_speech_voice: "select",
+        audio: "select",
+        image: "select",
         audio_file: "file",
         image_file: "file"
     };
@@ -74,8 +75,9 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
         font_size: "16",
         text_color: "#FFFFFF",
         volume: 1,
-        enable_audio: true,
-        use_custom_image: true,
+        text_to_speech_voice: ["Brian", "Russell", "Nicole", "Amy", "Salli", "Joanna", "Matthew", "Ivy", "Joey"],
+        audio: ["Custom Audio", "Text To Speech", "None"],
+        image: ["Custom Image", "Donation Image", "None"],
         audio_file: "",
         image_file: ""
     };
