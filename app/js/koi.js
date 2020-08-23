@@ -37,8 +37,13 @@ class Koi {
             this.ws.close();
         }
 
-        let instance = this;
+        const instance = this;
+
         this.ws = new WebSocket(this.address);
+
+        this.ws.onerror = function () {
+            setTimeout(() => instance.reconnect, 1000);
+        }
 
         this.ws.onopen = function () {
             instance.broadcast("open");
@@ -49,11 +54,11 @@ class Koi {
         };
 
         this.ws.onmessage = function (message) {
-            var raw = message.data;
-            var json = JSON.parse(raw);
+            let raw = message.data;
+            let json = JSON.parse(raw);
 
             if (json["type"] == "KEEP_ALIVE") {
-                var json = {
+                let json = {
                     request: "KEEP_ALIVE"
                 };
 
@@ -61,7 +66,7 @@ class Koi {
             } else if (json["type"] == "ERROR") {
                 instance.broadcast("error", json);
             } else if (json["type"] == "EVENT") {
-                var event = json["event"];
+                let event = json["event"];
 
                 switch (event["event_type"]) {
                     case "CHAT": instance.broadcast("chat", event); break;
@@ -83,7 +88,7 @@ class Koi {
     }
 
     addUser(user) {
-        var json = {
+        let json = {
             request: "ADD",
             user: user
         };
@@ -92,7 +97,7 @@ class Koi {
     }
 
     test(user, event) {
-        var json = {
+        let json = {
             request: "TEST",
             test: event,
             user: user
@@ -102,7 +107,7 @@ class Koi {
     }
 
     removeUser(user) {
-        var json = {
+        let json = {
             request: "REMOVE",
             user: user
         };

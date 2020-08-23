@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.0-release";
+const VERSION = "0.4.1-release";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://live.casterlabs.co/koi");
@@ -21,13 +21,7 @@ document.querySelector(".settings-version").style = "color: " + COLOR + ";";
 
 class Caffeinated {
     constructor() {
-        const app = express();
-        const cors = require("cors");
-        const server = require("http").createServer(app);
-
         FONTSELECT.endPoint = "https://www.googleapis.com/webfonts/v1/webfonts?sort=popularity&key=AIzaSyBuFeOYplWvsOlgbPeW8OfPUejzzzTCITM"; // TODO cache/proxy from Casterlabs' server
-
-        app.use(cors());
 
         this.store = new Store();
 
@@ -46,12 +40,9 @@ class Caffeinated {
             console.log("reset!");
         }
 
-        server.listen(this.store.get("port"));
-
         this.store.set("version", VERSION);
 
         this.repomanager = new RepoManager();
-        this.io = require("socket.io").listen(server);
         this.user = this.store.get("user");
         this.userdata = null;
     }
@@ -133,6 +124,14 @@ class Caffeinated {
         if (!this.user) {
             splashScreen(false);
         }
+
+        const app = express();
+        const cors = require("cors");
+        const server = require("http").createServer(app);
+
+        app.use(cors());
+
+        this.io = require("socket.io").listen(server);
 
         this.io.on("connection", (socket) => {
             socket.on("uuid", (uuid) => {
