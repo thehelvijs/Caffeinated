@@ -22,23 +22,26 @@ const FONTSELECT = {
                         }
                     });
 
-                    if (quickload) resolve();
+                    // Prevent lagging.
+                    /*
+                   if (quickload) resolve();
 
-                    // Asynchronously load fonts one by one (to prevent lag)
-                    for (let font of toload) {
-                        let name = font.family;
-                        let url = null;
+                   // Asynchronously load fonts one by one (to prevent lag)
+                   for (let font of toload) {
+                       let name = font.family;
+                       let url = null;
 
-                        if (font.files.hasOwnProperty("regular")) {
-                            url = font.files.regular;
-                        } else {
-                            url = Object.entries(font.files)[0][1]; // Get the entries, get the first entry, get the link.
-                        }
+                       if (font.files.hasOwnProperty("regular")) {
+                           url = font.files.regular;
+                       } else {
+                           url = Object.entries(font.files)[0][1]; // Get the entries, get the first entry, get the link.
+                       }
 
-                        await FONTSELECTUTIL.loadFont(name, url);
-                    }
+                       await FONTSELECTUTIL.loadFont(name, url);
+                   }
 
-                    // Resolving twice (Assuming quickload = false), is safe.
+                   // Resolving twice (Assuming quickload = false), is safe.
+                   */
                     resolve();
                 });
         });
