@@ -131,6 +131,8 @@ class Caffeinated {
 
         app.use(cors());
 
+        server.listen(this.store.get("port"));
+
         this.io = require("socket.io").listen(server);
 
         this.io.on("connection", (socket) => {
