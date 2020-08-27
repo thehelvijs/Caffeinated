@@ -9,9 +9,10 @@ class OverlayUtil {
         this.namespace = namespace + ":" + vars.id;
 
         this.socket = io("http://localhost:8091", {
-            "reconnection": true,
-            "reconnectionDelay": 2000,
-            "reconnectionAttempts": Number.MAX_SAFE_INTEGER
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 1000,
+            reconnectionAttempts: Number.MAX_SAFE_INTEGER
         });
 
         this.socket.on("init", () => {
