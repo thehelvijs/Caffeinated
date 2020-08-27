@@ -183,11 +183,7 @@ class Modules {
             let name = document.createElement("label");
             let input;
 
-            if (type === "font") {
-                input = document.createElement("select");
-            } else if (type === "select") {
-                input = document.createElement("select");
-            } else if (type === "button") {
+            if (type === "button") {
                 input = document.createElement("button");
 
                 input.addEventListener("click", stored[key]);
@@ -222,31 +218,60 @@ class Modules {
             }
 
             if (type === "font") {
-                FONTSELECT.apply(input, {
-                    updateFont: true,
-                    selected: stored[key]
-                });
+                let id = module.namespace + ":" + module.id + ":" + key;
+                let data = document.createElement("datalist");
+
+                FONTSELECT.apply(data);
+
+                input.setAttribute("list", id);
+                input.classList.add("select");
+                input.value = stored[key];
+                makeDatalistOpenOnSingleClick(input);
+
+                data.id = id;
+                name.appendChild(data);
+            } else if (type === "currency") {
+                let id = module.namespace + ":" + module.id + ":" + key;
+                let data = document.createElement("datalist");
+                let selected = stored[key];
+                let options = "<option>" + CURRENCIES.join("</option><option>") + "</option>";
+
+                if (Array.isArray(selected)) {
+                    selected = CURRENCIES[0];
+                }
+
+                input.setAttribute("list", id);
+                input.value = CURRENCY_TABLE_INVERTED[selected];
+                input.classList.add("select");
+                makeDatalistOpenOnSingleClick(input);
+
+                stored[key] = selected; // Set the selected key
+
+                data.innerHTML = options;
+                data.id = id;
+
+                name.appendChild(data);
             } else if (type === "select") {
+                let id = module.namespace + ":" + module.id + ":" + key;
+                let data = document.createElement("datalist");
                 let values = module.defaultSettings[key];
                 let selected = stored[key];
-                let options = "";
+                let options = "<option>" + values.join("</option><option>") + "</option>";
 
                 if (Array.isArray(selected)) {
                     selected = values[0];
                 }
 
-                // Loop and mark the selected option, TODO better way.
-                values.forEach((value) => {
-                    if (value === selected) {
-                        options = options + "<option selected>" + value + "</option>";
-                    } else {
-                        options = options + "<option>" + value + "</option>";
-                    }
-                });
+                input.setAttribute("list", id);
+                input.value = selected;
+                makeDatalistOpenOnSingleClick(input);
 
                 stored[key] = selected; // Set the selected key
 
-                input.innerHTML = options;
+                data.innerHTML = options;
+                data.id = id;
+
+                name.appendChild(data);
             } else if (type === "checkbox") {
                 input.checked = stored[key];
             } else if (type !== "file") {
@@ -301,4 +326,20 @@ class Modules {
             return Object.assign({}, module.defaultSettings);
         }
     }
+}
+
+function makeDatalistOpenOnSingleClick(input) {
+    let temp = "";
+
+    input.addEventListener("mouseover", () => {
+        input.focus();
+        temp = input.value;
+    });
+    input.addEventListener("mousedown", () => {
+        input.value = "";
+    });
+    input.addEventListener("mouseup", () => {
+        input.value = temp;
+        temp = "";
+    });
 }

@@ -5,10 +5,10 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.0-release";
+const VERSION = "0.5.0-pre1";
 const COLOR = "#FFFFFF";
 
-const koi = new Koi("wss://live.casterlabs.co/koi");
+const koi = new Koi("wss://api.casterlabs.co/v1/koi");
 let CONNECTED = false;
 
 console.warn("Caution, here be dragons!" + "\n\n" + "If someone tells you to paste code here, they might be trying to steal important data from you." + "\n" + "If you're good at UX, consider contributing to the Caffeinated project at " + "\n" + "https://github.com/thehelvijs/Caffeinated" + "\n");
@@ -53,6 +53,7 @@ class Caffeinated {
         this.repomanager = new RepoManager();
         this.io = require("socket.io").listen(server);
         this.user = this.store.get("user");
+        this.currency = this.store.get("currency");
         this.userdata = null;
     }
 
@@ -89,17 +90,26 @@ class Caffeinated {
                     CAFFEINATED.reset();
                 } else {
                     CAFFEINATED.setUser(this.settings.username);
+                    CAFFEINATED.setCurrency(this.settings.currency);
                 }
+            },
+
+            getDataToStore() {
+                return {
+                    currency: CAFFEINATED.currency
+                };
             },
 
             settingsDisplay: {
                 username: "input",
+                currency: "currency",
                 reset: "button",
                 reload: "button"
             },
 
             defaultSettings: {
                 username: "",
+                currency: "USD",
                 reset() {
                     CAFFEINATED.reset();
                 },
@@ -199,6 +209,15 @@ class Caffeinated {
         koi.addUser(this.user);
     }
 
+    setCurrency(currency) {
+        this.currency = currency;
+        this.store.set("currency", currency);
+
+        koi.setCurrency(this.currency);
+
+        setCurrencyFormatter(currency);
+    }
+
     setFollowerCount(count) {
         if (count) {
             document.querySelector("#followers").innerText = count;
@@ -256,6 +275,10 @@ koi.addEventListener("error", (event) => {
 koi.addEventListener("open", () => {
     if (CAFFEINATED.user !== null) {
         koi.addUser(CAFFEINATED.user);
+    }
+
+    if (CAFFEINATED.currency !== null) {
+        koi.setCurrency(CAFFEINATED.currency);
     }
 
     CONNECTED = true;

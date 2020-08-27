@@ -48,42 +48,44 @@ const FONTSELECT = {
         const instance = this;
 
         return new Promise(async (resolve, reject) => {
-            if (element instanceof HTMLSelectElement) {
-                if (instance.fonts.length == 0) {
-                    await instance.preload();
-                }
+            // if (element instanceof HTMLSelectElement) {
+            if (instance.fonts.length == 0) {
+                await instance.preload();
+            }
 
-                instance.fonts.forEach((name) => {
-                    // Some browsers will not allow you to style <option> elements directly, but will allow the styling of <optgroup>'s
-                    let group = document.createElement("optgroup");
-                    let option = document.createElement("option");
+            instance.fonts.forEach((name) => { // optgroup functionality removed because we disabled font loading
+                // Some browsers will not allow you to style <option> elements directly, but will allow the styling of <optgroup>'s
+                // let group = document.createElement("optgroup");
+                let option = document.createElement("option");
 
-                    group.style = "font-family: '" + name + "';";
-                    group.appendChild(option);
+                // group.style = "font-family: '" + name + "';";
+                // group.appendChild(option);
 
-                    option.style = "font-family: '" + name + "';";
-                    option.innerText = name;
+                // option.style = "font-family: '" + name + "';";
+                option.innerText = name;
 
-                    element.appendChild(group);
+                // element.appendChild(group);
+                element.appendChild(option);
+            });
+
+            // Removed because we disabled font loading
+            /* if (settings.updateFont) {
+                element.addEventListener("change", () => {
+                    element.style = "font-family: '" + element.value + "';";
                 });
 
-                if (settings.updateFont) {
-                    element.addEventListener("change", () => {
-                        element.style = "font-family: '" + element.value + "';";
-                    });
+                // Update it initially.
+                element.style = "font-family: '" + element.value + "';";
+            } */
 
-                    // Update it initially.
-                    element.style = "font-family: '" + element.value + "';";
-                }
-
-                if (settings.selected) {
-                    element.value = settings.selected;
-                }
-
-                resolve();
-            } else {
-                reject("Element is not a valid select element");
+            if (settings.selected) {
+                element.value = settings.selected;
             }
+
+            resolve();
+            //} else {
+            //    reject("Element is not a valid select element");
+            //}
         });
     }
 

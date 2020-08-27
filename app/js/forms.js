@@ -43,9 +43,13 @@ const FORMSJS = {
     },
 
     getElementValue(element) {
-        let type = element.type;
+        let type = element.getAttribute("type");
 
         switch (type) {
+            case "currency": {
+                return CURRENCY_TABLE[element.value];
+            }
+
             case "radio": {
                 if (element.checked) {
                     return element.value;

@@ -1,14 +1,3 @@
-const formatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2
-});
-
-function formatUSD(amount) {
-    let formatted = formatter.format(amount);
-
-    return formatted.replace(".00", ""); // "Round" to the dollar.
-}
 
 MODULES.moduleClasses["casterlabs_goal"] = class {
 
@@ -30,7 +19,7 @@ MODULES.moduleClasses["casterlabs_goal"] = class {
                 if (instance.id.includes("follow")) {
                     MODULES.emitIO(instance, "display", instance.amount);
                 } else {
-                    MODULES.emitIO(instance, "display", formatUSD(instance.amount));
+                    MODULES.emitIO(instance, "display", formatAmountToLocalCurrency(instance.amount));
                 }
 
                 MODULES.saveToStore(instance);
@@ -54,8 +43,8 @@ MODULES.moduleClasses["casterlabs_goal"] = class {
             MODULES.emitIO(this, "goaldisplay", this.settings.goal_amount, socket);
             MODULES.emitIO(this, "display", this.amount, socket);
         } else {
-            MODULES.emitIO(this, "goaldisplay", formatUSD(this.settings.goal_amount), socket);
-            MODULES.emitIO(this, "display", formatUSD(this.amount), socket);
+            MODULES.emitIO(this, "goaldisplay", formatAmountToLocalCurrency(this.settings.goal_amount), socket);
+            MODULES.emitIO(this, "display", formatAmountToLocalCurrency(this.amount), socket);
         }
     }
 
@@ -76,10 +65,10 @@ MODULES.moduleClasses["casterlabs_goal"] = class {
             });
         } else {
             koi.addEventListener("donation", (event) => {
-                instance.amount += event.usd_equivalent;
+                instance.amount += event.currency_info.amount;
 
                 MODULES.emitIO(this, "amount", instance.amount);
-                MODULES.emitIO(this, "display", formatUSD(instance.amount));
+                MODULES.emitIO(this, "display", formatAmountToLocalCurrency(instance.amount));
                 MODULES.saveToStore(instance);
             });
         }
@@ -92,7 +81,7 @@ MODULES.moduleClasses["casterlabs_goal"] = class {
         if (this.id.includes("follow")) {
             MODULES.emitIO(this, "goaldisplay", this.settings.goal_amount);
         } else {
-            MODULES.emitIO(this, "goaldisplay", formatUSD(this.settings.goal_amount));
+            MODULES.emitIO(this, "goaldisplay", formatAmountToLocalCurrency(this.settings.goal_amount));
         }
     }
 

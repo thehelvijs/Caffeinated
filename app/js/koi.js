@@ -91,6 +91,17 @@ class Koi {
         this.ws.send(JSON.stringify(json));
     }
 
+    setCurrency(currency) {
+        let json = {
+            request: "PREFERENCES",
+            preferences: {
+                currency: currency
+            }
+        };
+
+        this.ws.send(JSON.stringify(json));
+    }
+
     test(user, event) {
         var json = {
             request: "TEST",
