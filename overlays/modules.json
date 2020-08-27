@@ -1,9 +1,10 @@
 {
     "supported": [
-        "0.4.0-pre*"
+        "0.4.0-pre*",
+        "0.4.0-release"
     ],
     "unsupported": [],
-    "version": "0.4.4",
+    "version": "0.4.10",
     "name": "Caffeinated Default Repo",
     "overlays": [
         "modules/donationmodule.js",
@@ -11,7 +12,9 @@
         "modules/infomodule.js",
         "modules/chatmodule.js",
         "modules/goalmodule.js",
-        "modules/creditmodule.js"
+        "modules/creditmodule.js",
+        "modules/donationtickermodule.js",
+        "modules/chatdisplaymodule.js"
     ],
     "required": [
         {
@@ -49,6 +52,14 @@
         {
             "namespace": "casterlabs_credits",
             "id": "casterlabs_credits"
+        },
+        {
+            "namespace": "casterlabs_donation_ticker",
+            "id": "donation_ticker"
+        },
+        {
+            "namespace": "casterlabs_chat_display",
+            "id": "chat_display"
         }
     ]
 }

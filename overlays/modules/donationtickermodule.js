@@ -1,18 +1,20 @@
 
-MODULES.moduleClasses["casterlabs_chat"] = class {
+MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     constructor(id) {
-        this.namespace = "casterlabs_chat";
+        this.namespace = "casterlabs_donation_ticker";
         this.type = "overlay settings";
         this.id = id;
+        this.raised = 0;
     }
 
     linkDisplay = {
-        path: "https://caffeinated.casterlabs.co/chat.html",
+        path: "https://caffeinated.casterlabs.co/donationticker.html",
         option: {
-            name: "Test",
+            name: "Reset",
             onclick(instance) {
-                koi.test("casterlabs", "chat");
+                instance.raised = 0;
+                instance.update();
             }
         }
     };
@@ -23,24 +25,19 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
 
     onConnection(socket) {
         MODULES.emitIO(this, "config", this.settings, socket);
+        MODULES.emitIO(this, "amount", this.raised, socket);
     }
 
     init() {
         const instance = this;
-
-        koi.addEventListener("chat", (event) => {
-            MODULES.emitIO(instance, "event", event);
-        });
-
-        koi.addEventListener("share", (event) => {
-            MODULES.emitIO(instance, "event", event);
-        });
-
         koi.addEventListener("donation", (event) => {
-            if (instance.settings.show_donations) {
-                MODULES.emitIO(instance, "event", event);
-            }
+            instance.raised += event.usd_equivalent;
+            instance.update();
         });
+    }
+
+    update() {
+        MODULES.emitIO(this, "amount", this.raised);
     }
 
     onSettingsUpdate() {
@@ -51,19 +48,16 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
         font: "font",
         font_size: "number",
         text_color: "color",
-        show_donations: "checkbox",
-        chat_direction: "select",
-        // overlay_width: "number"
+        currency: "select"
     };
 
     defaultSettings = {
         font: "Poppins",
         font_size: "16",
-        show_donations: true,
         text_color: "#FFFFFF",
-        chat_direction: [
-            "Down",
-            "Up"
+        currency: [
+            "Caffeine Credits",
+            "USD"
         ],
         // overlay_width: 600
     };
