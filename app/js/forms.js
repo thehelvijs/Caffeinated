@@ -1,6 +1,6 @@
 // https://github.com/e3ndr/FormsJS/blob/master/forms.js - MIT
 const FORMSJS = {
-    // 1.1.0 MODIFIED
+    // 1.1.0 MODIFIED HEAVILY
 
     CLASS_SELECTOR: "data",
     NAME_PROPERTY: "name",
@@ -8,14 +8,12 @@ const FORMSJS = {
     PARSE_NUMBERS: false,
     ALLOW_FALSE: true,
 
-    readForm(selector) {
-        let parent = document.querySelector(selector);
-
+    readForm(selector, query = document, parent = query.querySelector(selector)) {
         if (parent) {
             let values = {};
 
             Array.from(parent.getElementsByClassName(this.CLASS_SELECTOR)).forEach((element) => {
-                let name = element[this.NAME_PROPERTY];
+                let name = element.getAttribute(this.NAME_PROPERTY);
 
                 if (name && !values[name]) {
                     let value = this.getElementValue(element);
@@ -54,6 +52,16 @@ const FORMSJS = {
                 if (element.checked) {
                     return element.value;
                 }
+            }
+
+            case "dynamic": {
+                let options = [];
+
+                Array.from(element.querySelectorAll(".dynamic-option")).forEach((dyn) => {
+                    options.push(FORMSJS.readForm(null, element, dyn));
+                });
+
+                return options;
             }
 
             case "checkbox":

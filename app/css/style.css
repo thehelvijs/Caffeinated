@@ -105,6 +105,30 @@ input[type=number] {
     outline: none;
 }
 
+.dynamic-setting {
+    position: relative;
+}
+
+.dynamic-option {
+    background-color: #222222;
+    padding-left: 15px;
+    position: relative;
+    margin-top: 15px;
+}
+
+.dynamic-add {
+    position: absolute;
+    top: -35px;
+    right: 4px;
+    z-index: 99;
+}
+
+.dynamic-remove {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+}
+
 /* Splash page */
 
 #splash {
@@ -153,6 +177,7 @@ input[type=number] {
     -webkit-app-region: drag;
     background-color: #141414;
     padding-top: 5px;
+    z-index: 999;
 }
 
 .currentpage {
@@ -174,7 +199,7 @@ input[type=number] {
     top: 0px;
     width: 60px;
     height: 100%;
-    z-index: 99;
+    z-index: 1000;
 }
 
 .menu-list {

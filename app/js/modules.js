@@ -179,131 +179,7 @@ class Modules {
         container.appendChild(document.createElement("br"));
 
         for (const [key, type] of Object.entries(module.settingsDisplay)) {
-            let uuid = module.namespace + ":" + module.id;
-            let name = document.createElement("label");
-            let input;
-
-            if (type === "button") {
-                input = document.createElement("button");
-
-                input.addEventListener("click", stored[key]);
-                input.innerText = prettifyString(key);
-                input.id = uuid;
-                input.classList = type + " data";
-                input.setAttribute("type", type);
-                input.setAttribute("name", key);
-                input.setAttribute("owner", module.id);
-
-                div.appendChild(input);
-
-                continue;
-            } else {
-                input = document.createElement("input");
-            }
-
-            name.innerText = prettifyString(key) + " ";
-
-            input.id = uuid;
-            input.classList = type + " data";
-            input.setAttribute("type", type);
-            input.setAttribute("name", key);
-            input.setAttribute("owner", module.id);
-            input.addEventListener("change", formCallback);
-
-            // Make ranges step in .1 intervals
-            if (type === "range") {
-                input.setAttribute("min", 0);
-                input.setAttribute("max", 1);
-                input.setAttribute("step", 0.01);
-            }
-
-            if (type === "font") {
-                let id = module.namespace + ":" + module.id + ":" + key;
-                let data = document.createElement("datalist");
-
-                FONTSELECT.apply(data);
-
-                input.setAttribute("list", id);
-                input.classList.add("select");
-                input.value = stored[key];
-                makeDatalistOpenOnSingleClick(input);
-
-                data.id = id;
-                name.appendChild(data);
-            } else if (type === "currency") {
-                let id = module.namespace + ":" + module.id + ":" + key;
-                let data = document.createElement("datalist");
-                let selected = stored[key];
-                let options = "<option>" + CURRENCIES.join("</option><option>") + "</option>";
-
-                if (Array.isArray(selected)) {
-                    selected = CURRENCIES[0];
-                }
-
-                input.setAttribute("list", id);
-                input.value = CURRENCY_TABLE_INVERTED[selected];
-                input.classList.add("select");
-                makeDatalistOpenOnSingleClick(input);
-
-                stored[key] = selected; // Set the selected key
-
-                data.innerHTML = options;
-                data.id = id;
-
-                name.appendChild(data);
-            } else if (type === "select") {
-                let id = module.namespace + ":" + module.id + ":" + key;
-                let data = document.createElement("datalist");
-                let values = module.defaultSettings[key];
-                let selected = stored[key];
-                let options = "<option>" + values.join("</option><option>") + "</option>";
-
-                if (Array.isArray(selected)) {
-                    selected = values[0];
-                }
-
-                input.setAttribute("list", id);
-                input.value = selected;
-                makeDatalistOpenOnSingleClick(input);
-
-                stored[key] = selected; // Set the selected key
-
-                data.innerHTML = options;
-                data.id = id;
-
-                name.appendChild(data);
-            } else if (type === "checkbox") {
-                input.checked = stored[key];
-            } else if (type !== "file") {
-                // You can't set file values, not even in Electron
-                input.value = stored[key];
-            }
-
-            // keep checkboxes inline
-            if (type !== "checkbox") {
-                name.appendChild(document.createElement("br"));
-            }
-
-            // Make file inputs appear as buttons only.
-            if (type === "file") {
-                let button = document.createElement("button");
-
-                button.classList.add("file-button");
-                button.innerText = "Select a file";
-                button.addEventListener("click", () => {
-                    input.click(); // Forward clicks to the input.
-                });
-
-                name.appendChild(button);
-
-                input.classList.add("hide");
-            }
-
-            name.appendChild(input);
-            name.appendChild(document.createElement("br"));
-            name.appendChild(document.createElement("br"));
-
-            div.appendChild(name);
+            div.appendChild(createInput(module, key, type, stored, formCallback));
         }
 
         document.getElementById("settings").appendChild(container);
@@ -326,6 +202,192 @@ class Modules {
             return Object.assign({}, module.defaultSettings);
         }
     }
+}
+
+function createDynamicOption(module, layout, values, formCallback) {
+    const display = layout.display;
+    const defaults = layout.default;
+
+    let div = document.createElement("div");
+    let remove = document.createElement("a");
+    let icon = document.createElement("ion-icon");
+
+    div.type = "dynamic";
+    div.appendChild(remove);
+    div.classList = "box dynamic-option";
+
+    icon.setAttribute("name", "remove-circle");
+
+    remove.appendChild(icon);
+    remove.classList = "menu-button dynamic-remove";
+    remove.addEventListener("click", () => {
+        div.remove();
+        formCallback();
+    });
+
+    for (const [key, type] of Object.entries(display)) {
+        div.appendChild(createInput(module, key, type, values, formCallback, defaults[key]));
+    }
+
+    return div;
+}
+
+function createInput(module, key, type, stored, formCallback, defaultValue = module.defaultSettings[key]) {
+    let uuid = module.namespace + ":" + module.id;
+    let name = document.createElement("label");
+    let input;
+
+    if (type === "dynamic") {
+        input = document.createElement("div");
+
+        let add = document.createElement("a");
+        let icon = document.createElement("ion-icon");
+
+        icon.setAttribute("name", "add-circle");
+
+        add.appendChild(icon);
+        add.classList = "menu-button dynamic-add";
+        add.addEventListener("click", () => {
+            input.appendChild(createDynamicOption(module, defaultValue, defaultValue.default, formCallback));
+        });
+
+        input.classList = "dynamic-setting data";
+        input.id = uuid;
+        input.appendChild(add);
+        input.setAttribute("type", type);
+        input.setAttribute("name", key);
+        input.setAttribute("owner", module.id);
+
+        name.innerText = prettifyString(key) + " ";
+        name.appendChild(input);
+        name.appendChild(document.createElement("br"));
+
+        if (Array.isArray(stored[key])) {
+            stored[key].forEach((dynamic) => {
+                input.appendChild(createDynamicOption(module, defaultValue, dynamic, formCallback));
+            });
+        }
+
+        return name;
+    } else if (type === "button") {
+        input = document.createElement("button");
+
+        input.addEventListener("click", stored[key]);
+        input.innerText = prettifyString(key);
+        input.id = uuid;
+        input.classList = type + " data";
+        input.setAttribute("type", type);
+        input.setAttribute("name", key);
+        input.setAttribute("owner", module.id);
+
+        return input;
+    } else {
+        input = document.createElement("input");
+    }
+
+    name.innerText = prettifyString(key) + " ";
+
+    input.id = uuid;
+    input.classList = type + " data";
+    input.setAttribute("type", type);
+    input.setAttribute("name", key);
+    input.setAttribute("owner", module.id);
+    input.addEventListener("change", formCallback);
+
+    // Make ranges step in .1 intervals
+    if (type === "range") {
+        input.setAttribute("min", 0);
+        input.setAttribute("max", 1);
+        input.setAttribute("step", 0.01);
+    }
+
+    if (type === "font") {
+        let id = module.namespace + ":" + module.id + ":" + key;
+        let data = document.createElement("datalist");
+
+        FONTSELECT.apply(data);
+
+        input.setAttribute("list", id);
+        input.classList.add("select");
+        input.value = stored[key];
+        makeDatalistOpenOnSingleClick(input);
+
+        data.id = id;
+        name.appendChild(data);
+    } else if (type === "currency") {
+        let id = module.namespace + ":" + module.id + ":" + key;
+        let data = document.createElement("datalist");
+        let selected = stored[key];
+        let options = "<option>" + CURRENCIES.join("</option><option>") + "</option>";
+
+        if (Array.isArray(selected)) {
+            selected = CURRENCIES[0];
+        }
+
+        input.setAttribute("list", id);
+        input.value = CURRENCY_TABLE_INVERTED[selected];
+        input.classList.add("select");
+        makeDatalistOpenOnSingleClick(input);
+
+        stored[key] = selected; // Set the selected key
+
+        data.innerHTML = options;
+        data.id = id;
+
+        name.appendChild(data);
+    } else if (type === "select") {
+        let id = module.namespace + ":" + module.id + ":" + key;
+        let data = document.createElement("datalist");
+        let values = Object.assign([], defaultValue);
+        let selected = stored[key];
+        let options = "<option>" + values.join("</option><option>") + "</option>";
+
+        if (Array.isArray(selected)) {
+            selected = values[0];
+        }
+
+        input.setAttribute("list", id);
+        input.value = selected;
+        makeDatalistOpenOnSingleClick(input);
+
+        stored[key] = selected; // Set the selected key
+
+        data.innerHTML = options;
+        data.id = id;
+
+        name.appendChild(data);
+    } else if (type === "checkbox") {
+        input.checked = stored[key];
+    } else if (type !== "file") {
+        // You can't set file values, not even in Electron
+        input.value = stored[key];
+    }
+
+    // keep checkboxes inline
+    if (type !== "checkbox") {
+        name.appendChild(document.createElement("br"));
+    }
+
+    // Make file inputs appear as buttons only.
+    if (type === "file") {
+        let button = document.createElement("button");
+
+        button.classList.add("file-button");
+        button.innerText = "Select a file";
+        button.addEventListener("click", () => {
+            input.click(); // Forward clicks to the input.
+        });
+
+        name.appendChild(button);
+
+        input.classList.add("hide");
+    }
+
+    name.appendChild(input);
+    name.appendChild(document.createElement("br"));
+    name.appendChild(document.createElement("br"));
+
+    return name;
 }
 
 function makeDatalistOpenOnSingleClick(input) {
