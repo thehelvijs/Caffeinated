@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <style>
+            body {
+                text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.3);
+            }
+
+            #div {
+                position: relative;
+                width: 100%;
+            }
+
+            #icon {
+                position: absolute;
+            }
+
+            #text {
+                position: absolute;
+            }
+
+            .left>#icon {
+                right: 0px;
+            }
+
+            .left>#text {
+                left: 0px;
+            }
+
+            .right>#icon {
+                left: 0px;
+            }
+
+            .right>#text {
+                right: 0px;
+            }
+        </style>
+        <title>Caffeinated Rotator</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+        <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+        <script src="overlayutil.js"></script>
+    </head>
+
+    <body>
+        <div id="div" style="opacity: 0;">
+            <div id="icon"></div>
+            <span id="text"></span>
+        </div>
+    </body>
+
+    <footer>
+        <script>
+            const overlay = new OverlayUtil("casterlabs_rotator");
+            let running = false;
+            let config = {};
+
+            overlay.changeFont("Poppins");
+
+            overlay.on("config", (data) => {
+                config = data;
+
+                overlay.changeFont(config.font);
+
+                if (config.side == "Right") {
+                    document.getElementById("div").classList = "right";
+                } else {
+                    document.getElementById("div").classList = "left";
+                }
+
+                document.getElementById("icon").style.color = config.icon_color;
+
+                document.getElementById("div").style.color = config.text_color;
+                document.getElementById("div").style.fontSize = config.font_size + "px";
+            });
+
+            overlay.on("trigger", animate);
+
+            async function animate() {
+                if (config && !running) {
+                    running = true;
+
+                    let rotations = Object.assign([], config.elements);
+
+                    for (let rotation of rotations) {
+                        let delay = rotation["Show for (Seconds)"] * 1000;
+
+                        document.getElementById("text").innerText = rotation.text;
+                        setIcon(rotation.icon);
+
+                        anime({
+                            targets: "#div",
+                            easing: "linear",
+                            opacity: 1,
+                            duration: 500
+                        });
+
+                        await sleep(delay);
+
+                        anime({
+                            targets: "#div",
+                            easing: "linear",
+                            opacity: 0,
+                            duration: 500
+                        });
+
+                        await sleep(1000);
+                    }
+
+                    running = false;
+                }
+            }
+
+            function setIcon(name) {
+                let icon = document.createElement("ion-icon");
+
+                if (name === "Discord") {
+                    icon.setAttribute("src", "logos/discord.svg");
+                } else if (name === "Web") {
+                    icon.setAttribute("name", "globe");
+                } else {
+                    icon.setAttribute("name", "logo-" + name.toLowerCase())
+                }
+
+                document.getElementById("icon").innerHTML = "";
+                document.getElementById("icon").appendChild(icon);
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+        </script>
+    </footer>
+
+</html>

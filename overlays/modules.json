@@ -13,7 +13,8 @@
         "modules/goalmodule.js",
         "modules/creditmodule.js",
         "modules/donationtickermodule.js",
-        "modules/chatdisplaymodule.js"
+        "modules/chatdisplaymodule.js",
+        "modules/rotatormodule.js"
     ],
     "required": [
         {
@@ -59,6 +60,10 @@
         {
             "namespace": "casterlabs_chat_display",
             "id": "chat_display"
+        },
+        {
+            "namespace": "casterlabs_rotator",
+            "id": "text_rotator"
         }
     ]
 }
