@@ -17,8 +17,10 @@ a {
 }
 
 ion-icon {
-    color: white;
     pointer-events: none;
+    stroke: white;
+    color: white;
+    fill: white;
 }
 
 .box {
@@ -188,6 +190,12 @@ input[type=number] {
 .close {
     position: absolute;
     right: 10px;
+    -webkit-app-region: no-drag;
+}
+
+.minimize {
+    position: absolute;
+    right: 30px;
     -webkit-app-region: no-drag;
 }
 

@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.5.0-pre1";
+const VERSION = "0.5.0-pre2";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
@@ -44,7 +44,6 @@ class Caffeinated {
 
         this.repomanager = new RepoManager();
         this.user = this.store.get("user");
-        this.currency = this.store.get("currency");
         this.userdata = null;
     }
 
@@ -95,7 +94,11 @@ class Caffeinated {
                 username: "input",
                 currency: "currency",
                 reset: "button",
-                reload: "button"
+                // reload: "button"
+            },
+
+            init() {
+                CAFFEINATED.setCurrency(this.settings.currency);
             },
 
             defaultSettings: {
@@ -103,10 +106,10 @@ class Caffeinated {
                 currency: "USD",
                 reset() {
                     CAFFEINATED.reset();
-                },
+                }/*,
                 reload() {
                     location.reload();
-                }
+                }*/
             }
 
         });
@@ -212,10 +215,8 @@ class Caffeinated {
 
     setCurrency(currency) {
         this.currency = currency;
-        this.store.set("currency", currency);
 
         koi.setCurrency(this.currency);
-
         setCurrencyFormatter(currency);
     }
 
@@ -288,6 +289,10 @@ koi.addEventListener("open", () => {
 
 document.querySelector(".close").addEventListener("click", () => {
     electron.getCurrentWindow().close();
+});
+
+document.querySelector(".minimize").addEventListener("click", () => {
+    electron.getCurrentWindow().minimize();
 });
 
 function openLink(link) {
