@@ -5,7 +5,6 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
         this.namespace = "casterlabs_donation_ticker";
         this.type = "overlay settings";
         this.id = id;
-        this.raised = 0;
     }
 
     linkDisplay = {
@@ -20,7 +19,11 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
     };
 
     getDataToStore() {
-        return this.settings;
+        let data = Object.assign({}, this.settings);
+
+        data.raised = this.raised;
+
+        return data;
     }
 
     onConnection(socket) {
@@ -30,6 +33,9 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     init() {
         const instance = this;
+
+        this.raised = this.settings.raised || 0;
+
         koi.addEventListener("donation", (event) => {
             instance.raised += event.currency_info.amount;
             instance.update();
@@ -38,6 +44,7 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     update() {
         MODULES.emitIO(this, "amount", formatAmountToLocalCurrency(this.raised));
+        MODULES.saveToStore(this);
     }
 
     onSettingsUpdate() {
@@ -53,8 +60,7 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
     defaultSettings = {
         font: "Poppins",
         font_size: "16",
-        text_color: "#FFFFFF",
-        // overlay_width: 600
+        text_color: "#FFFFFF"
     };
 
 };
