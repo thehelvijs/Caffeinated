@@ -50,9 +50,9 @@ const RepoUtil = {
 
     getRepoUrl(base) {
         return new Promise((resolve) => {
-            let versioned = base + "/" + VERSION.split("-")[0] + "/modules.json";
+            let versioned = base + "/" + VERSION.split("-")[0];
 
-            fetch(versioned).then((response) => {
+            fetch(versioned + "/modules.json").then((response) => {
                 if (response.ok) {
                     resolve(versioned);
                 } else {
