@@ -5,12 +5,13 @@
         <meta charset="utf-8" />
         <style>
             body {
-                text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.3);
+                /*text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.3);*/
             }
 
             #div {
-                position: relative;
-                width: 100%;
+                width: 90vw;
+                overflow: hidden;
+                margin: 5px;
             }
 
             #icon {
@@ -21,34 +22,68 @@
                 position: absolute;
             }
 
-            .left>#icon {
-                right: 0px;
+            #title {
+                position: absolute;
             }
 
-            .left>#text {
-                left: 0px;
+            #accent {
+                height: 100%;
             }
 
-            .right>#icon {
-                left: 0px;
+            /* Bubbly CSS */
+
+            .bubbly {
+                font-family: "Open Sans", sans-serif;
+                font-weight: 800;
             }
 
-            .right>#text {
-                right: 0px;
+            .bubbly #icon {
+                font-size: 8vw;
+                left: 4vw;
+                top: 5vw;
+            }
+
+            .bubbly #text {
+                font-size: 6vw;
+                left: 21vw;
+                top: 7vw;
+            }
+
+            .bubbly #title {
+                font-size: 4vw;
+                left: 21vw;
+                top: 3vw;
+            }
+
+            .bubbly #div {
+                height: calc(90vw * 0.186046512);
+                border-radius: 10px;
+                box-shadow: 5px 5px 21px -7px #000000;
+            }
+
+            .bubbly #accent {
+                border-top-right-radius: 55%;
+                border-bottom-right-radius: 55%;
+                width: 16vw;
+                height: 23vw;
+                transform: translate(0, -3vw);
+                box-shadow: 5px 0px 36px -10px #000000;
             }
         </style>
         <title>Caffeinated Rotator</title>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&display=swap" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
         <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
         <script src="overlayutil.js"></script>
     </head>
 
     <body>
         <div id="div" style="opacity: 0;">
+            <div id="accent"></div>
             <div id="icon"></div>
-            <span id="text"></span>
+            <span id="title">DROP A FOLLOW</span>
+            <span id="text">CASTERLABS</span>
         </div>
     </body>
 
@@ -58,23 +93,8 @@
             let running = false;
             let config = {};
 
-            overlay.changeFont("Poppins");
-
             overlay.on("config", (data) => {
                 config = data;
-
-                overlay.changeFont(config.font);
-
-                if (config.side == "Right") {
-                    document.getElementById("div").classList = "right";
-                } else {
-                    document.getElementById("div").classList = "left";
-                }
-
-                document.getElementById("icon").style.color = config.icon_color;
-
-                document.getElementById("div").style.color = config.text_color;
-                document.getElementById("div").style.fontSize = config.font_size + "px";
             });
 
             overlay.on("trigger", animate);
@@ -89,29 +109,47 @@
                         let delay = rotation["Show for (Seconds)"] * 1000;
 
                         document.getElementById("text").innerText = rotation.text;
+                        document.getElementById("title").innerText = rotation.title;
                         setIcon(rotation.icon);
 
-                        anime({
-                            targets: "#div",
-                            easing: "linear",
-                            opacity: 1,
-                            duration: 500
-                        });
+                        document.body.classList = config.animation.toLowerCase();
 
-                        await sleep(delay);
+                        switch (config.animation) {
+                            case "Bubbly": {
+                                await animateBubbly(rotation, delay);
+                            }
+                        }
 
-                        anime({
-                            targets: "#div",
-                            easing: "linear",
-                            opacity: 0,
-                            duration: 500
-                        });
 
                         await sleep(1000);
                     }
 
                     running = false;
                 }
+            }
+
+            async function animateBubbly(rotation, delay) {
+                document.getElementById("title").style.color = rotation.text_color;
+                document.getElementById("text").style.color = rotation.text_color;
+                document.getElementById("accent").style.backgroundColor = rotation.accent_color;
+                document.getElementById("icon").style.color = rotation.background_color;
+                document.getElementById("div").style.backgroundColor = rotation.background_color;
+
+                anime({
+                    targets: "#div",
+                    easing: "linear",
+                    opacity: 1,
+                    duration: 500
+                });
+
+                await sleep(delay);
+
+                anime({
+                    targets: "#div",
+                    easing: "linear",
+                    opacity: 0,
+                    duration: 500
+                });
             }
 
             function setIcon(name) {

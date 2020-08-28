@@ -53,39 +53,30 @@ MODULES.moduleClasses["casterlabs_rotator"] = class {
 
 
     settingsDisplay = {
-        font: "font",
-        font_size: "number",
-        text_color: "color",
-        icon_color: "color",
-        // animation: "select",
-        side: "select",
+        theme: "select",
         "Frequency (Seconds)": "number",
         elements: "dynamic"
     };
 
     defaultSettings = {
-        font: "Poppins",
-        font_size: "48",
-        text_color: "#000000",
-        icon_color: "#000000",
-        /*animation: [
-            "Slide Left",
-            "Slide Right",
-            "Slide Down",
-            "Slide Up"
-        ],*/
-        side: [
-            "Left",
-            "Right"
+        theme: [
+            "Bubbly"
         ],
         "Frequency (Seconds)": 60,
         elements: {
             display: {
+                text_color: "color",
+                background_color: "color",
+                accent_color: "color",
                 icon: "select",
+                title: "input",
                 text: "input",
                 "Show for (Seconds)": "number"
             },
             default: {
+                text_color: "#FFFFFF",
+                background_color: "#9C42FF",
+                accent_color: "#FFFFFF",
                 icon: [
                     "Twitter",
                     "Facebook",
@@ -96,7 +87,8 @@ MODULES.moduleClasses["casterlabs_rotator"] = class {
                     "Discord",
                     "Web"
                 ],
-                text: "Example message.",
+                title: "Drop a follow",
+                text: "@casterlabs",
                 "Show for (Seconds)": 10
             }
         }
