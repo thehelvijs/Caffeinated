@@ -249,6 +249,7 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
         add.classList = "menu-button dynamic-add";
         add.addEventListener("click", () => {
             input.appendChild(createDynamicOption(module, defaultValue, defaultValue.default, formCallback));
+            formCallback();
         });
 
         input.classList = "dynamic-setting data";
