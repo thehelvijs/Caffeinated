@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
         <style>
             body {
-                /*text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.3);*/
+                text-shadow: 1px 1px rgba(0, 0, 0, 0.3);
             }
 
             #div {
@@ -40,19 +40,19 @@
             .bubbly #icon {
                 font-size: 8vw;
                 left: 4vw;
-                top: 5vw;
+                top: calc(5vw + 10px);
             }
 
             .bubbly #text {
                 font-size: 6vw;
                 left: 21vw;
-                top: 7vw;
+                top: calc(7vw - 10px);
             }
 
             .bubbly #title {
                 font-size: 4vw;
                 left: 21vw;
-                top: 3vw;
+                top: calc(3vw - 10px);
             }
 
             .bubbly #div {
@@ -80,10 +80,10 @@
 
     <body>
         <div id="div" style="opacity: 0;">
-            <div id="accent"></div>
-            <div id="icon"></div>
             <span id="title">DROP A FOLLOW</span>
             <span id="text">CASTERLABS</span>
+            <div id="accent"></div>
+            <div id="icon"></div>
         </div>
     </body>
 
@@ -108,18 +108,28 @@
                     for (let rotation of rotations) {
                         let delay = rotation["Show for (Seconds)"] * 1000;
 
-                        document.getElementById("text").innerText = rotation.text;
-                        document.getElementById("title").innerText = rotation.title;
                         setIcon(rotation.icon);
 
+                        document.getElementById("title").style.color = rotation.text_color;
+                        document.getElementById("title").innerText = rotation.title;
+                        document.getElementById("title").style.transform = "";
+
+                        document.getElementById("text").style.color = rotation.text_color;
+                        document.getElementById("text").innerText = rotation.text;
+                        document.getElementById("text").style.transform = "";
+
+                        document.getElementById("icon").style.color = rotation.background_color;
+                        document.getElementById("icon").style.transform = "";
+
                         document.body.classList = config.animation.toLowerCase();
+                        document.getElementById("accent").style.backgroundColor = rotation.accent_color;
+                        document.getElementById("div").style.backgroundColor = rotation.background_color;
 
                         switch (config.animation) {
                             case "Bubbly": {
                                 await animateBubbly(rotation, delay);
                             }
                         }
-
 
                         await sleep(1000);
                     }
@@ -129,17 +139,35 @@
             }
 
             async function animateBubbly(rotation, delay) {
-                document.getElementById("title").style.color = rotation.text_color;
-                document.getElementById("text").style.color = rotation.text_color;
-                document.getElementById("accent").style.backgroundColor = rotation.accent_color;
-                document.getElementById("icon").style.color = rotation.background_color;
-                document.getElementById("div").style.backgroundColor = rotation.background_color;
-
                 anime({
                     targets: "#div",
                     easing: "linear",
                     opacity: 1,
                     duration: 500
+                });
+
+                anime({
+                    targets: "#text",
+                    easing: "linear",
+                    opacity: 1,
+                    duration: 500,
+                    translateY: 10
+                });
+
+                anime({
+                    targets: "#title",
+                    easing: "linear",
+                    opacity: 1,
+                    duration: 500,
+                    translateY: 10
+                });
+
+                anime({
+                    targets: "#icon",
+                    easing: "linear",
+                    opacity: 1,
+                    duration: 500,
+                    translateY: -10
                 });
 
                 await sleep(delay);
