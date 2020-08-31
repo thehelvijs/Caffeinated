@@ -53,6 +53,8 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
         text_color: "color",
         show_donations: "checkbox",
         chat_direction: "select",
+        chat_animation: "select",
+        text_align: "select",
         // overlay_width: "number"
     };
 
@@ -64,6 +66,15 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
         chat_direction: [
             "Down",
             "Up"
+        ],
+        chat_animation: [
+            "Default",
+            "Slide",
+            "Disappearing"
+        ],
+        text_align: [
+            "Left",
+            "Right"
         ],
         // overlay_width: 600
     };
