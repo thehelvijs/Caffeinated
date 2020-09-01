@@ -14,8 +14,14 @@
                 position: absolute;
                 left: 0px;
                 bottom: 0px;
+                width: 100%;
                 overflow: hidden;
                 text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.3);
+            }
+
+            .right-align {
+                text-align: right;
+                padding-right: 15px;
             }
         </style>
         <title>Caffeinated Chat</title>
@@ -50,38 +56,68 @@
 
             overlay.on("event", (event) => {
                 if (config) {
-                    addChat(event);
+                    let div = document.createElement("div");
+                    let msg = document.createElement("span");
+                    let user = document.createElement("span");
+
+                    user.textContent = event.sender.username;
+                    user.classList = "username";
+                    user.style = "color: " + event.sender.color + ";";
+
+                    msg.textContent = " " + event.message + " ";
+
+                    div.appendChild(user);
+                    div.appendChild(msg);
+
+                    switch (config.chat_animation) {
+                        case "Slide": animateSlide(div); break;
+                        case "Disappearing": disappear(div); break;
+                    }
+
+                    if (config.text_align == "Right") {
+                        div.classList = "right-align";
+                    }
+
+                    if (event.image) {
+                        let donation = document.createElement("img");
+
+                        donation.src = event.image
+
+                        div.appendChild(donation);
+                    }
+
+                    if (config.chat_direction.toUpperCase() == "UP") {
+                        document.body.style = "top: 0px;";
+                        document.getElementById("div").insertBefore(div, document.getElementById("div").firstChild);
+                    } else {
+                        document.body.style = "bottom: 0px;";
+                        document.getElementById("div").appendChild(div);
+                    }
                 }
             });
 
-            function addChat(event) {
-                let div = document.createElement("div");
-                let msg = document.createElement("span");
-                let user = document.createElement("span");
+            function disappear(div) {
+                setTimeout(() => {
+                    anime({
+                        targets: div,
+                        opacity: 0,
+                        easing: 'easeOutExpo'
+                    }).finished.then(() => {
+                        div.remove();
+                    });
+                }, 30 * 1000); // 30s, disappear
+            }
 
-                user.textContent = event.sender.username;
-                user.style = "color: " + event.sender.color + ";";
+            function animateSlide(div) {
+                div.style.transform = "translateX(" + window.innerWidth + "px)";
 
-                msg.textContent = " " + event.message + " ";
+                anime({
+                    targets: div,
+                    translateX: 0,
+                    easing: 'easeOutExpo'
+                });
 
-                div.appendChild(user);
-                div.appendChild(msg);
-
-                if (event.image) {
-                    let donation = document.createElement("img");
-
-                    donation.src = event.image
-
-                    div.appendChild(donation);
-                }
-
-                if (config.chat_direction.toUpperCase() == "UP") {
-                    document.body.style = "top: 0px;";
-                    document.getElementById("div").insertBefore(div, document.getElementById("div").firstChild);
-                } else {
-                    document.body.style = "bottom: 0px;";
-                    document.getElementById("div").appendChild(div);
-                }
+                disappear(div);
             }
 
         </script>
