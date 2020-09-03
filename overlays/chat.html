@@ -71,6 +71,9 @@
 
                     switch (config.chat_animation) {
                         case "Slide": animateSlide(div); break;
+
+                        case "Slide (Disappearing)": animateSlide(div); disappear(div); break;
+
                         case "Disappearing": disappear(div); break;
                     }
 
@@ -116,8 +119,6 @@
                     translateX: 0,
                     easing: 'easeOutExpo'
                 });
-
-                disappear(div);
             }
 
         </script>

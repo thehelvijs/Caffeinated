@@ -1,238 +1,9 @@
 
-const CaffeineLoginResponse = {
-    SUCCESSFUL: 0,
-    UNSUCCESSFUL: 1,
-    MFA_AWAIT: 2
-}
-
-class CaffeineViewers {
-
-    constructor(chatUtil) {
-        this.chatUtil = chatUtil;
-
-        this.refreshToken = "";
-        this.credential = {};
-        this.signed = "";
-        this.connected = false;
-        this.loggedIn = false;
-        this.viewers = [];
-        this.knownViewers = [];
-    }
-
-    /*login(username, password, mfa) {
-        const instance = this;
-
-        return new Promise((resolve) => {
-            if (instance.refreshToken) {
-                instance.refresh();
-            } else {
-                instance.loggedIn = false;
-
-                let loginPayload = {
-                    "account": {
-                        "username": username,
-                        "password": password
-                    },
-                    "mfa": {
-                        "otp": mfa
-                    }
-                }
-
-                CaffeineViewerUtil.httpPost("https://api.caffeine.tv/v1/account/signin", loginPayload).then((text) => {
-                    let response = JSON.parse(text);
-
-                    if (response.hasOwnProperty("next")) {
-                        resolve(CaffeineLoginResponse.MFA_AWAIT);
-                    } else if (response.hasOwnProperty("errors")) {
-                        resolve(CaffeineLoginResponse.UNSUCCESSFUL);
-                    } else {
-                        instance.refreshToken = response.refresh_token;
-                        instance.refresh();
-                        resolve(CaffeineLoginResponse.SUCCESSFUL);
-                    }
-                });
-            }
-        });
-    }*/
-
-    refresh(refreshToken = this.refreshToken, reconnect) {
-        if (this.connected) {
-            this.ws.close();
-            this.connected = false;
-        }
-
-        if (refreshToken) {
-            const instance = this;
-            let refreshPayload = {
-                "refresh_token": refreshToken
-            };
-
-            CaffeineViewerUtil.httpPost("https://api.caffeine.tv/v1/account/token", refreshPayload).then((response) => {
-                instance.credential = JSON.parse(response);
-
-                if (!instance.credential.hasOwnProperty("errors")) {
-                    CaffeineViewerUtil.httpGet("https://api.caffeine.tv/v1/users/" + instance.credential.caid + "/signed", instance.credential.access_token).then((signed) => {
-                        instance.signed = signed.token;
-                        instance.refreshToken = refreshToken;
-                        instance.loggedIn = true;
-
-                        if (reconnect) {
-                            this.connectViewers();
-                        }
-
-                        setTimeout(() => {
-                            instance.refresh(refreshToken);
-                        }, (5 * 60) * 1000);
-                    });
-                }
-            });
-        }
-    }
-
-    connectViewers() {
-        if (this.connected) {
-            this.ws.close();
-            this.connected = false;
-        }
-
-        const instance = this;
-        this.connected = true;
-
-        CaffeineViewerUtil.getUser(instance.credential.caid).then((watching) => {
-            if (watching.caid == instance.credential.caid) {
-                let payload = {
-                    "Headers": {
-                        "Authorization": "Bearer " + instance.credential.credentials.access_token,
-                        "X-Client-Type": "external"
-                    },
-                    "Body": "{\"user\":\"" + instance.signed + "\"}"
-                };
-                instance.ws = new WebSocket("wss://realtime.caffeine.tv/v2/reaper/stages/" + instance.credential.caid.substring(4) + "/viewers");
-
-                instance.ws.onopen = function () {
-                    instance.ws.send(JSON.stringify(payload));
-                    setInterval(() => {
-                        instance.ws.send('"HEALZ"');
-                    }, 20000);
-                }
-
-                instance.ws.onmessage = (message) => {
-                    let message_raw = message.data;
-
-                    if (message_raw != ("\"THANKS\"")) {
-                        let json = JSON.parse(message_raw);
-
-                        if (json.hasOwnProperty("total_user_count")) {
-                            // onViewerCount(json.total_user_count - 1); // Sub 1 for Koi
-                        } else if (json.hasOwnProperty("user_event")) {
-                            let status = json.user_event.is_viewing;
-                            let viewing = instance.viewers.includes(json.user_event.caid);
-
-                            if (status && !viewing) {
-                                instance.addViewer(json.user_event.caid);
-                            } else if (!status && viewing) {
-                                instance.removeViewer(json.user_event.caid);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    addViewer(caid) {
-        if (!this.viewers.includes(caid)) {
-            this.viewers.push(caid);
-
-            if (!this.knownViewers.includes(caid)) {
-                this.knownViewers.push(caid);
-
-                CaffeineViewerUtil.getUser(caid).then((user) => {
-                    this.chatUtil.addStatus(user.username, "https://images.caffeine.tv" + user.avatar_image_path, "#FFFFFF", "join");
-                });
-            }
-        }
-    }
-
-    removeViewer(caid) {
-        let index = this.viewers.indexOf(caid);
-
-        if (index > -1) {
-            this.viewers.splice(index, 1);
-
-            setTimeout(() => {
-                if (!this.viewers.includes(caid)) {
-                    CaffeineViewerUtil.getUser(caid).then((user) => {
-                        this.knownViewers.splice(this.knownViewers.indexOf(caid), 1);
-                        this.chatUtil.addStatus(user.username, "https://images.caffeine.tv" + user.avatar_image_path, "#FFFFFF", "leave");
-                    });
-                }
-            }, 3000); // Prevent users from constantly popping.
-        }
-    }
-
-}
-
-const CaffeineViewerUtil = {
-    getUser(id) {
-        return new Promise((resolve) => {
-            this.httpGet("https://api.caffeine.tv/v1/users/" + id).then((userdata) => { // We use Casterlabs' proxy here because there's no ratelimit
-                resolve(userdata.user);
-            });
-        });
-    },
-
-    httpGet(url, credential) {
-        return new Promise((resolve) => {
-            let headers = {};
-
-            if (credential) {
-                headers.authorization = "Bearer " + credential;
-            }
-
-            const options = {
-                method: "GET",
-                headers: new Headers(headers),
-            };
-
-            fetch(url, options).then((response) => {
-                response.text().then((text) => {
-                    resolve(JSON.parse(text));
-                });
-            });
-        });
-    },
-
-    httpPost(url, body, credential) {
-        return new Promise((resolve) => {
-            let headers = {
-                "Content-Type": "application/json"
-            };
-
-            if (credential) {
-                headers.authorization = "Bearer " + credential;
-            }
-
-            const options = {
-                method: "POST",
-                body: JSON.stringify(body),
-                headers: new Headers(headers),
-            };
-
-            fetch(url, options).then((response) => {
-                response.text().then((text) => {
-                    resolve(text);
-                });
-            });
-        });
-    }
-};
-
 MODULES.moduleClasses["casterlabs_chat_display"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_chat_display";
-        this.type = "application settings";
+        this.type = "application";
         this.id = id;
         this.icon = "chatbox";
         this.displayname = "Chat";
@@ -255,6 +26,18 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
             instance.util.addStatus(event.follower.username, event.follower.image_link, event.follower.color, "follow");
         });
 
+        CAFFEINE.addEventListener("join", (event) => {
+            instance.util.addStatus(event.user, event.image, event.color, "join");
+        });
+
+        CAFFEINE.addEventListener("leave", (event) => {
+            instance.util.addStatus(event.user, event.image, event.color, "leave");
+        });
+
+        CAFFEINE.addEventListener("viewcount", (count) => {
+            instance.util.updateViewerCount(count);
+        });
+
     }
 
     init() {
@@ -265,6 +48,18 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 position: absolute;
                 right: 15px;
                 top: 0px;
+            }
+            
+            #vcviewers {
+                position: absolute;
+                right: 15px;
+                top: 45px;
+            }
+
+            .vcviewicon {
+                position: absolute;
+                right: 40px;
+                top: 50px;
             }
 
             .verticalchatmodule span {
@@ -318,35 +113,16 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
         <div class="container verticalchatmodule">
             <div id="chatbox"></div>
+            <ion-icon class="vcviewicon" name="eye"></ion-icon>
+            <span id="vcviewers"></span>
             <button class="button" id="vcclear">
                 Clear
             </button>
         </div>
-        `.split("%id").join(this.id);
+        `;
 
         this.util = new VerticalChatUtil(this);
-        this.caffeine = new CaffeineViewers(this.util);
-
-        this.onSettingsUpdate(); // Try and connect.
-
-        window.test = this;
     }
-
-    getDataToStore() {
-        return this.settings;
-    }
-
-    onSettingsUpdate() {
-        this.caffeine.refresh(this.settings.refresh_token, true);
-    }
-
-    settingsDisplay = {
-        refresh_token: "password"
-    };
-
-    defaultSettings = {
-        refresh_token: ""
-    };
 
 };
 
@@ -358,6 +134,10 @@ class VerticalChatUtil {
         this.module.page.querySelector("#vcclear").addEventListener("click", () => {
             module.page.querySelector("#chatbox").innerHTML = "";
         });
+    }
+
+    updateViewerCount(count) {
+        this.module.page.querySelector("#vcviewers").innerText = count;
     }
 
     addMessage(sender, profilePic, color, message, id, imageLink) {
@@ -423,7 +203,7 @@ class VerticalChatUtil {
 
         this.module.page.querySelector("#chatbox").appendChild(div);
 
-        this.jumpbottom();
+        this.jumpBottom();
     }
 
     isHidden() {
@@ -434,7 +214,7 @@ class VerticalChatUtil {
         return (this.module.page.parentNode.scrollHeight - this.module.page.parentNode.scrollTop) < 500;
     }
 
-    jumpbottom() {
+    jumpBottom() {
         if (!this.isHidden() && this.isAtBottom()) {
             this.module.page.parentNode.scrollTo(0, this.module.page.querySelector("#chatbox").scrollHeight + 1000);
         }

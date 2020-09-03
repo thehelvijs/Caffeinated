@@ -70,6 +70,7 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
         chat_animation: [
             "Default",
             "Slide",
+            "Slide (Disappearing)",
             "Disappearing"
         ],
         text_align: [

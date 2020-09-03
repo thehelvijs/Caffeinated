@@ -49,8 +49,13 @@
                     let amount = document.querySelector("#amount");
                     let user = document.querySelector("#user");
 
+                    user.innerText = "";
+                    amount.innerText = "";
+
                     if (event) {
-                        if (event.hasOwnProperty("follower")) {
+                        if (event.hasOwnProperty("viewcount")) {
+                            user.innerText = event.viewcount;
+                        } else if (event.hasOwnProperty("follower")) {
                             user.innerText = event.follower.username;
                             amount.innerText = "";
                         } else {
@@ -62,9 +67,6 @@
                                 amount.innerText = event.formatted;
                             }
                         }
-                    } else {
-                        user.innerText = "";
-                        amount.innerText = "";
                     }
                 }
             });
