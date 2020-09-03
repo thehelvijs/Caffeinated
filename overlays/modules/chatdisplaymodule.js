@@ -59,7 +59,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
             .vcviewicon {
                 position: absolute;
                 right: 40px;
-                top: 50px;
+                top: 49px;
             }
 
             .verticalchatmodule span {

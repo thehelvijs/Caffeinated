@@ -113,57 +113,68 @@ const CAFFEINE = {
     },
 
     connectViewers() {
-        if (this.connected) {
-            this.ws.close();
-            this.connected = false;
-        }
+        try {
+            if (this.connected) {
+                this.ws.close();
+                this.connected = false;
+            }
 
-        const instance = this;
-        this.connected = true;
+            const instance = this;
+            this.connected = true;
 
-        CaffeineViewerUtil.getUser(instance.credential.caid).then((watching) => {
-            if (watching.caid == instance.credential.caid) {
-                let payload = {
-                    "Headers": {
-                        "Authorization": "Bearer " + instance.credential.credentials.access_token,
-                        "X-Client-Type": "external"
-                    },
-                    "Body": "{\"user\":\"" + instance.signed + "\"}"
-                };
-                instance.ws = new WebSocket("wss://realtime.caffeine.tv/v2/reaper/stages/" + instance.credential.caid.substring(4) + "/viewers");
+            CaffeineViewerUtil.getUser(instance.credential.caid).then((watching) => {
+                if (watching.caid == instance.credential.caid) {
+                    let payload = {
+                        "Headers": {
+                            "Authorization": "Bearer " + instance.credential.credentials.access_token,
+                            "X-Client-Type": "external"
+                        },
+                        "Body": "{\"user\":\"" + instance.signed + "\"}"
+                    };
+                    instance.ws = new WebSocket("wss://realtime.caffeine.tv/v2/reaper/stages/" + instance.credential.caid.substring(4) + "/viewers");
 
-                instance.ws.onopen = function () {
-                    instance.ws.send(JSON.stringify(payload));
-                    setInterval(() => {
-                        instance.ws.send('"HEALZ"');
-                    }, 20000);
-                }
+                    instance.ws.onopen = function () {
+                        instance.ws.send(JSON.stringify(payload));
+                        setInterval(() => {
+                            instance.ws.send('"HEALZ"');
+                        }, 10000);
+                    }
 
-                instance.ws.onmessage = (message) => {
-                    let message_raw = message.data;
+                    instance.ws.onclose = function () {
+                        this.connected = false;
+                        instance.connectViewers();
+                    }
 
-                    if (message_raw != ("\"THANKS\"")) {
-                        let json = JSON.parse(message_raw);
+                    instance.ws.onmessage = (message) => {
+                        let message_raw = message.data;
 
-                        if (json.hasOwnProperty("total_user_count")) {
-                            instance.broadcast("viewcount", json.total_user_count - 1); // Sub 1 for Koi
-                        } else if (json.hasOwnProperty("user_event")) {
-                            let status = json.user_event.is_viewing;
-                            let viewing = instance.viewers.includes(json.user_event.caid);
+                        if (message_raw != ("\"THANKS\"")) {
+                            let json = JSON.parse(message_raw);
 
-                            if (status && !viewing) {
-                                instance.addViewer(json.user_event.caid);
-                            } else if (!status && viewing) {
-                                instance.removeViewer(json.user_event.caid);
+                            if (json.hasOwnProperty("total_user_count")) {
+                                instance.broadcast("viewcount", json.total_user_count);
+                            } else if (json.hasOwnProperty("user_event")) {
+                                let status = json.user_event.is_viewing;
+                                let viewing = instance.viewers.includes(json.user_event.caid);
+
+                                if (status && !viewing) {
+                                    instance.addViewer(json.user_event.caid);
+                                } else if (!status && viewing) {
+                                    instance.removeViewer(json.user_event.caid);
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            });
+        } catch (e) {
+            this.connected = false;
+            setTimeout(() => this.connectViewers(), 1000);
+            console.debug(e);
+        }
     },
 
-    addViewer(caid, chatUtil) {
+    addViewer(caid) {
         if (!this.viewers.includes(caid)) {
             this.viewers.push(caid);
 
