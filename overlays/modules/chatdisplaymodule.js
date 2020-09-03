@@ -173,7 +173,7 @@ class VerticalChatUtil {
 
         this.module.page.querySelector("#chatbox").appendChild(div);
 
-        this.jumpbottom();
+        this.jumpBottom();
     }
 
     addStatus(user, profilePic, color, type) {
