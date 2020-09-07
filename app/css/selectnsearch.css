@@ -1,0 +1,22 @@
+
+.sns-container {
+    position: relative;
+}
+
+.sns-contents {
+    width: 100%;
+    height: 500%;
+    overflow-y: scroll;
+    position: absolute;
+    background-color: white;
+    z-index: 99999;
+}
+
+.sns-contents a {
+    color: black;
+    width: 100%;
+}
+
+.sns-input {
+    width: 100%;
+}

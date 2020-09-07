@@ -45,7 +45,7 @@ const FORMSJS = {
 
         switch (type) {
             case "currency": {
-                return CURRENCY_TABLE[element.value];
+                return CURRENCY_TABLE[element.getAttribute("value")];
             }
 
             case "radio": {
@@ -69,6 +69,12 @@ const FORMSJS = {
 
             case "file":
                 return element;
+
+            case "select":
+                return element.getAttribute("value");
+
+            case "font":
+                return element.getAttribute("value");
 
             default:
                 return element.value;

@@ -153,7 +153,7 @@ class Modules {
         let div = document.createElement("div");
         let label = document.createElement("label");
 
-        let formCallback = async function () {
+        let formCallback = async () => {
             let result = FORMSJS.readForm("#" + settingsSelector);
 
             module.settings = result;
@@ -282,6 +282,12 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
         input.setAttribute("owner", module.id);
 
         return input;
+    } else if (type === "select") {
+        input = document.createElement("div");
+    } else if (type === "font") {
+        input = document.createElement("div");
+    } else if (type === "currency") {
+        input = document.createElement("div");
     } else {
         input = document.createElement("input");
     }
@@ -303,60 +309,45 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
     }
 
     if (type === "font") {
-        let id = module.namespace + ":" + module.id + ":" + key;
-        let data = document.createElement("datalist");
+        input.type = "select";
 
-        FONTSELECT.apply(data);
+        FONTSELECT.apply(input, {
+            updateFont: true, selected: stored[key]
+        });
 
-        input.setAttribute("list", id);
+        input.setAttribute("value", stored[key]);
         input.classList.add("select");
-        input.value = stored[key];
-        makeDatalistOpenOnSingleClick(input);
-
-        data.id = id;
-        name.appendChild(data);
     } else if (type === "currency") {
-        let id = module.namespace + ":" + module.id + ":" + key;
-        let data = document.createElement("datalist");
+        input.type = "currency";
         let selected = stored[key];
-        let options = "<option>" + CURRENCIES.join("</option><option>") + "</option>";
+
+        SELECTNSEARCH.create(CURRENCIES, input);
 
         if (Array.isArray(selected)) {
             selected = CURRENCIES[0];
         }
 
-        input.setAttribute("list", id);
-        input.value = CURRENCY_TABLE_INVERTED[selected];
+        input.setAttribute("value", CURRENCY_TABLE_INVERTED[selected]);
+        input.querySelector(".sns-input").value = CURRENCY_TABLE_INVERTED[selected];
         input.classList.add("select");
-        makeDatalistOpenOnSingleClick(input);
 
         stored[key] = selected; // Set the selected key
-
-        data.innerHTML = options;
-        data.id = id;
-
-        name.appendChild(data);
     } else if (type === "select") {
-        let id = module.namespace + ":" + module.id + ":" + key;
-        let data = document.createElement("datalist");
+        input.type = "select";
         let values = Object.assign([], defaultValue);
         let selected = stored[key];
-        let options = "<option>" + values.join("</option><option>") + "</option>";
+
+        SELECTNSEARCH.create(values, input);
 
         if (Array.isArray(selected)) {
             selected = values[0];
         }
 
-        input.setAttribute("list", id);
-        input.value = selected;
-        makeDatalistOpenOnSingleClick(input);
+        input.setAttribute("value", selected);
+        input.querySelector(".sns-input").value = selected;
+        input.classList.add("select");
 
         stored[key] = selected; // Set the selected key
-
-        data.innerHTML = options;
-        data.id = id;
-
-        name.appendChild(data);
     } else if (type === "checkbox") {
         input.checked = stored[key];
     } else if (type !== "file") {
@@ -389,20 +380,4 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
     name.appendChild(document.createElement("br"));
 
     return name;
-}
-
-function makeDatalistOpenOnSingleClick(input) {
-    let temp = "";
-
-    input.addEventListener("mouseover", () => {
-        input.focus();
-        temp = input.value;
-    });
-    input.addEventListener("mousedown", () => {
-        input.value = "";
-    });
-    input.addEventListener("mouseup", () => {
-        input.value = temp;
-        temp = "";
-    });
 }

@@ -47,7 +47,7 @@ const FONTSELECT = {
         });
     },
 
-    apply(element, settings = { updateFont: true, selected: null }) {
+    apply(element, settings = { updateFont: true, selected: "Poppins" }) {
         const instance = this;
 
         return new Promise(async (resolve, reject) => {
@@ -56,34 +56,10 @@ const FONTSELECT = {
                 await instance.preload();
             }
 
-            instance.fonts.forEach((name) => { // optgroup functionality removed because we disabled font loading
-                // Some browsers will not allow you to style <option> elements directly, but will allow the styling of <optgroup>'s
-                // let group = document.createElement("optgroup");
-                let option = document.createElement("option");
+            SELECTNSEARCH.create(instance.fonts, element);
 
-                // group.style = "font-family: '" + name + "';";
-                // group.appendChild(option);
-
-                // option.style = "font-family: '" + name + "';";
-                option.innerText = name;
-
-                // element.appendChild(group);
-                element.appendChild(option);
-            });
-
-            // Removed because we disabled font loading
-            /* if (settings.updateFont) {
-                element.addEventListener("change", () => {
-                    element.style = "font-family: '" + element.value + "';";
-                });
-
-                // Update it initially.
-                element.style = "font-family: '" + element.value + "';";
-            } */
-
-            if (settings.selected) {
-                element.value = settings.selected;
-            }
+            element.value = settings.selected;
+            element.querySelector(".sns-input").setAttribute("value", settings.selected);
 
             resolve();
             //} else {

@@ -82,6 +82,10 @@ input {
     outline: none;
 }
 
+input[type=select] {
+    height: 3em;
+}
+
 input[type=number] {
     background-color: white;
     border-radius: 6px;
