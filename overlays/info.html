@@ -38,17 +38,19 @@
                     let amount = document.querySelector("#amount");
                     let user = document.querySelector("#user");
 
+                    user.innerText = "";
+                    amount.innerText = "";
+
                     if (event) {
-                        if (event.hasOwnProperty("follower")) {
+                        if (event.hasOwnProperty("viewcount")) {
+                            user.innerText = event.viewcount;
+                        } else if (event.hasOwnProperty("follower")) {
                             user.innerText = event.follower.username;
                             amount.innerText = "";
                         } else {
                             user.innerText = event.sender.username;
                             amount.innerText = event.currency_info.formatted;
                         }
-                    } else {
-                        user.innerText = "";
-                        amount.innerText = "";
                     }
                 }
             });

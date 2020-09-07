@@ -6,6 +6,9 @@
     "version": "0.5.0",
     "name": "Caffeinated Default Repo",
     "overlays": [
+        "modules/caffeineintegrationmodule.js",
+        "modules/broadcastimagemodule.js",
+        "modules/gamepickermodule.js",
         "modules/donationmodule.js",
         "modules/followermodule.js",
         "modules/infomodule.js",
@@ -17,6 +20,10 @@
         "modules/rotatormodule.js"
     ],
     "required": [
+        {
+            "namespace": "casterlabs_caffeine_integration",
+            "id": "caffeine_integration"
+        },
         {
             "namespace": "casterlabs_donation",
             "id": "donation"
@@ -36,6 +43,10 @@
         {
             "namespace": "casterlabs_info",
             "id": "recent_donation"
+        },
+        {
+            "namespace": "casterlabs_info",
+            "id": "view_counter"
         },
         {
             "namespace": "casterlabs_info",
@@ -64,6 +75,14 @@
         {
             "namespace": "casterlabs_rotator",
             "id": "text_rotator"
+        },
+        {
+            "namespace": "casterlabs_game_picker",
+            "id": "game_picker"
+        },
+        {
+            "namespace": "casterlabs_broadcast_image",
+            "id": "broadcast_image"
         }
     ]
 }

@@ -37,31 +37,42 @@ MODULES.moduleClasses["casterlabs_info"] = class {
 
         this.event = this.settings.event;
 
-        if (this.id.includes("follow")) {
-            koi.addEventListener("follow", (event) => {
-                instance.event = event;
+        if (this.id.includes("view")) {
+            CAFFEINE.addEventListener("viewcount", (count) => {
+                instance.event = {
+                    viewcount: count
+                };
 
-                MODULES.emitIO(this, "event", event);
+                MODULES.emitIO(this, "event", instance.event);
                 MODULES.saveToStore(instance);
             });
         } else {
-            koi.addEventListener("donation", (event) => {
-                if (!instance.event || instance.id.includes("recent") || (instance.event.usd_equivalent <= event.usd_equivalent)) {
+            if (this.id.includes("follow")) {
+                koi.addEventListener("follow", (event) => {
                     instance.event = event;
 
                     MODULES.emitIO(this, "event", event);
                     MODULES.saveToStore(instance);
+                });
+            } else {
+                koi.addEventListener("donation", (event) => {
+                    if (!instance.event || instance.id.includes("recent") || (instance.event.usd_equivalent <= event.usd_equivalent)) {
+                        instance.event = event;
+
+                        MODULES.emitIO(this, "event", event);
+                        MODULES.saveToStore(instance);
+                    }
+                });
+            }
+
+            koi.addEventListener("userupdate", (event) => {
+                if ((instance.event) && (instance.event.streamer.uuid != event.streamer.uuid)) {
+                    instance.event = null;
+                    MODULES.emitIO(instance, "event", null);
+                    MODULES.saveToStore(instance);
                 }
             });
         }
-
-        koi.addEventListener("userupdate", (event) => {
-            if ((instance.event) && (instance.event.streamer.uuid != event.streamer.uuid)) {
-                instance.event = null;
-                MODULES.emitIO(instance, "event", null);
-                MODULES.saveToStore(instance);
-            }
-        });
     }
 
     async onSettingsUpdate() {

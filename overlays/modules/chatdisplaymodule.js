@@ -3,7 +3,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_chat_display";
-        this.type = "application";// settings";
+        this.type = "application";
         this.id = id;
         this.icon = "chatbox";
         this.displayname = "Chat";
@@ -26,6 +26,18 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
             instance.util.addStatus(event.follower.username, event.follower.image_link, event.follower.color, "follow");
         });
 
+        CAFFEINE.addEventListener("join", (event) => {
+            instance.util.addStatus(event.user, event.image, event.color, "join");
+        });
+
+        CAFFEINE.addEventListener("leave", (event) => {
+            instance.util.addStatus(event.user, event.image, event.color, "leave");
+        });
+
+        CAFFEINE.addEventListener("viewcount", (count) => {
+            instance.util.updateViewerCount(count);
+        });
+
     }
 
     init() {
@@ -36,6 +48,18 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 position: absolute;
                 right: 15px;
                 top: 0px;
+            }
+            
+            #vcviewers {
+                position: absolute;
+                right: 15px;
+                top: 45px;
+            }
+
+            .vcviewicon {
+                position: absolute;
+                right: 40px;
+                top: 49px;
             }
 
             .verticalchatmodule span {
@@ -89,26 +113,16 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
         <div class="container verticalchatmodule">
             <div id="chatbox"></div>
+            <ion-icon class="vcviewicon" name="eye"></ion-icon>
+            <span id="vcviewers"></span>
             <button class="button" id="vcclear">
                 Clear
             </button>
         </div>
-        `.split("%id").join(this.id);
+        `;
 
         this.util = new VerticalChatUtil(this);
     }
-
-    /* getDataToStore() {
-        return this.settings;
-    }
-
-    settingsDisplay = {
-        refresh_token: "password"
-    };
-
-    defaultSettings = {
-        refresh_token: ""
-    }; */
 
 };
 
@@ -120,6 +134,10 @@ class VerticalChatUtil {
         this.module.page.querySelector("#vcclear").addEventListener("click", () => {
             module.page.querySelector("#chatbox").innerHTML = "";
         });
+    }
+
+    updateViewerCount(count) {
+        this.module.page.querySelector("#vcviewers").innerText = count;
     }
 
     addMessage(sender, profilePic, color, message, id, imageLink) {
@@ -155,7 +173,7 @@ class VerticalChatUtil {
 
         this.module.page.querySelector("#chatbox").appendChild(div);
 
-        this.jumpbottom();
+        this.jumpBottom();
     }
 
     addStatus(user, profilePic, color, type) {
@@ -185,7 +203,7 @@ class VerticalChatUtil {
 
         this.module.page.querySelector("#chatbox").appendChild(div);
 
-        this.jumpbottom();
+        this.jumpBottom();
     }
 
     isHidden() {
@@ -196,7 +214,7 @@ class VerticalChatUtil {
         return (this.module.page.parentNode.scrollHeight - this.module.page.parentNode.scrollTop) < 500;
     }
 
-    jumpbottom() {
+    jumpBottom() {
         if (!this.isHidden() && this.isAtBottom()) {
             this.module.page.parentNode.scrollTo(0, this.module.page.querySelector("#chatbox").scrollHeight + 1000);
         }
