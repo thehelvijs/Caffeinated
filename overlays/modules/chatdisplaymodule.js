@@ -50,16 +50,8 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 top: 0px;
             }
             
-            #vcviewers {
-                position: absolute;
-                right: 15px;
-                top: 45px;
-            }
-
             .vcviewicon {
-                position: absolute;
-                right: 40px;
-                top: 49px;
+                padding-top: 10px;
             }
 
             .verticalchatmodule span {
@@ -113,11 +105,11 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
         <div class="container verticalchatmodule">
             <div id="chatbox"></div>
-            <ion-icon class="vcviewicon" name="eye"></ion-icon>
-            <span id="vcviewers"></span>
             <button class="button" id="vcclear">
                 Clear
             </button>
+            <ion-icon class="vcviewicon" name="eye"></ion-icon>
+            <span id="vcviewers"></span>
         </div>
         `;
 
