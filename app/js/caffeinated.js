@@ -32,7 +32,6 @@ class Caffeinated {
                 user: null,
                 modules: {},
                 repos: [
-                    __dirname + "\\..\\overlays", // Tree walk to the folder, works in the devlopment enviroment.
                     "https://caffeinated.casterlabs.co"
                 ]
             });

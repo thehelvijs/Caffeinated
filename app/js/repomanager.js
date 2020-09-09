@@ -4,12 +4,21 @@ class RepoManager {
         this.elements = [];
     }
 
-    async addRepo(repo) {
+    async addRepo(repo, useVersioned = true) {
         try {
-            repo = await RepoUtil.getRepoUrl(repo);
+            if (useVersioned) {
+                repo = await RepoUtil.getRepoUrl(repo);
+            }
+
             let modules = await (await fetch(repo + "/modules.json")).json();
 
             if (RepoUtil.matchVersion(modules.supported, modules.unsupported)) {
+                if (Array.isArray(modules.preload)) {
+                    for (let repo of modules.preload) {
+                        await this.addRepo(repo, false);
+                    }
+                }
+
                 if (Array.isArray(modules.overlays)) {
                     for (let overlay of modules.overlays) {
                         let script = document.createElement("script");
