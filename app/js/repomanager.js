@@ -4,18 +4,22 @@ class RepoManager {
         this.elements = [];
     }
 
-    async addRepo(repo, useVersioned = true) {
+    async addRepo(repo, useVersionedRepo = true) {
         try {
-            if (useVersioned) {
+            if (useVersionedRepo) {
                 repo = await RepoUtil.getRepoUrl(repo);
             }
 
             let modules = await (await fetch(repo + "/modules.json")).json();
 
-            if (RepoUtil.matchVersion(modules.supported, modules.unsupported)) {
+            if (RepoUtil.isSupported(modules.supported, modules.unsupported)) {
                 if (Array.isArray(modules.preload)) {
-                    for (let repo of modules.preload) {
-                        await this.addRepo(repo, false);
+                    for (let required of modules.preload) {
+                        if (required.endsWith("/")) {
+                            required = required.substring(required, required.length - 1);
+                        }
+                        console.log("Repo " + repo + " requires the following repo " + required + ", loading it now.");
+                        await this.addRepo(required, false);
                     }
                 }
 
@@ -41,6 +45,8 @@ class RepoManager {
                         }
                     }
                 }
+
+                this.repos.push(modules);
             } else {
                 throw "Repo " + repo + " doesn't support the current version of caffeinated";
             }
@@ -81,18 +87,18 @@ const RepoUtil = {
         });
     },
 
-    matchVersion(supported = [], unsupported = []) {
-        if (Array.isArray(supported)) {
+    isSupported(supported = [], unsupported = []) {
+        if (Array.isArray(unsupported)) {
             for (let version of unsupported) {
-                if (version.match(RepoUtil.versionToRegex(version))) {
+                if (VERSION.match(RepoUtil.versionToRegex(version))) {
                     return false;
                 }
             }
         }
 
-        if (Array.isArray(unsupported)) {
+        if (Array.isArray(supported)) {
             for (let version of supported) {
-                if (version.match(RepoUtil.versionToRegex(version))) {
+                if (VERSION.match(RepoUtil.versionToRegex(version))) {
                     return true;
                 }
             }
