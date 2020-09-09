@@ -47,11 +47,28 @@ class Caffeinated {
     }
 
     async addRepo(repo) {
+        repo = repo.replace("\\", "/");
+
+        if (repo.endsWith("/")) {
+            repo = repo.substring(repo, repo.length - 1);
+        }
+
         await this.repomanager.addRepo(repo);
+
         this.store.set("repos", this.store.get("repos").concat(repo));
     }
 
+    getRepos() {
+        return this.store.get("repos");
+    }
+
     removeRepo(repo) {
+        repo = repo.replace("\\", "/");
+
+        if (repo.endsWith("/")) {
+            repo = repo.substring(repo, repo.length - 1);
+        }
+
         this.store.set("repos", removeFromArray(this.store.get("repos"), repo));
         location.reload();
     }
