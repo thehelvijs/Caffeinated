@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.1-release";
+const VERSION = "0.4.2-release";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://live.casterlabs.co/koi");
@@ -238,8 +238,8 @@ koi.addEventListener("userupdate", (e) => {
 
     CAFFEINATED.userdata = e;
 
-    document.getElementById("casterlabs_caffeinated:settings").value = e.streamer.username;
-    CAFFEINATED.store.set("user", e.streamer.username /* + ";" + e.streamer.platform */);
+    document.getElementById("casterlabs_caffeinated:settings").value = e.streamer.username + ";" + e.streamer.platform;
+    CAFFEINATED.store.set("user", e.streamer.username + ";" + e.streamer.platform);
 });
 
 koi.addEventListener("error", (event) => {
