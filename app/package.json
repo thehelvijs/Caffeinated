@@ -12,6 +12,7 @@
     "dist": "electron-builder"
   },
   "build": {
+    "icon": "media/app_icon.icns",
     "appId": "casterlabs.caffeinated",
     "dmg": {
       "contents": [
