@@ -1,6 +1,6 @@
 {
   "name": "Caffeinated",
-  "version": "0.4.3",
+  "version": "0.5.0-release",
   "license": "MIT",
   "author": "HelvijsAdams <support@casterlabs.co>",
   "main": "main.js",
@@ -14,6 +14,7 @@
   "build": {
     "icon": "media/app_icon.icns",
     "appId": "casterlabs.caffeinated",
+    "artifactName": "Caffeinated-${version}-${os}-setup.${ext}",
     "dmg": {
       "contents": [
         {

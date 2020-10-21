@@ -17,8 +17,10 @@ a {
 }
 
 ion-icon {
-    color: white;
     pointer-events: none;
+    stroke: white;
+    color: white;
+    fill: white;
 }
 
 .box {
@@ -28,7 +30,7 @@ ion-icon {
 /* Scrollbar */
 
 ::-webkit-scrollbar {
-    width: 5px;
+    width: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -44,10 +46,6 @@ ion-icon {
 }
 
 /* Inputs */
-
-input[type=range] {
-    -webkit-appearance: none;
-}
 
 ::-webkit-slider-runnable-track {
     width: 300px;
@@ -72,11 +70,21 @@ input:focus {
     outline: none;
 }
 
-input[type=color] {
+input[type=range] {
+    -webkit-appearance: none;
+}
+
+input {
     background-color: white;
     border-radius: 6px;
     border: 1px solid #DCDCDC;
     cursor: pointer;
+    outline: none;
+}
+
+input[type=search] {
+    height: 3em;
+    width: 180px;
 }
 
 select {
@@ -93,8 +101,9 @@ input[type=number] {
     border: 1px solid #DCDCDC;
     cursor: pointer;
     font-size: 15px;
-    width: 100px;
+    width: 65px;
     cursor: auto;
+    outline: none;
 }
 
 .file-button {
@@ -109,6 +118,30 @@ input[type=number] {
 
 .file-button:focus {
     outline: none;
+}
+
+.dynamic-setting {
+    position: relative;
+}
+
+.dynamic-option {
+    background-color: #222222;
+    padding-left: 15px;
+    position: relative;
+    margin-top: 15px;
+}
+
+.dynamic-add {
+    position: absolute;
+    top: -35px;
+    right: 4px;
+    z-index: 99;
+}
+
+.dynamic-remove {
+    position: absolute;
+    top: 2px;
+    right: 4px;
 }
 
 /* Splash page */
@@ -159,6 +192,7 @@ input[type=number] {
     -webkit-app-region: drag;
     background-color: #141414;
     padding-top: 5px;
+    z-index: 999;
 }
 
 .currentpage {
@@ -184,9 +218,9 @@ input[type=number] {
     position: absolute;
     left: 0px;
     top: 0px;
-    width: 60px;
+    width: 70px;
     height: 100%;
-    z-index: 99;
+    z-index: 1000;
 }
 
 .menu-list {
@@ -196,7 +230,7 @@ input[type=number] {
 }
 
 #followers {
-    margin-top: 60px;
+    margin-top: 70px;
     padding-left: 4px;
 }
 
@@ -250,15 +284,19 @@ input[type=number] {
 .pages {
     position: absolute;
     padding-top: 40px;
-    right: 0px;
+    left: 70px;
     top: 0px;
     height: 100%;
     overflow: auto;
-    width: 430px;
+    width: calc(100% - 75px);
 }
 
 .page a:hover {
     color: lightgrey;
+}
+
+.page {
+    overflow-x: hidden;
 }
 
 /* Overlays */

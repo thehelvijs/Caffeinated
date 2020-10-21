@@ -5,24 +5,21 @@ const windowStateKeeper = require("electron-window-state");
 
 function createWindow() {
     let mainWindowState = windowStateKeeper({
-        defaultWidth: 500,
-        defaultHeight: 400,
+        defaultWidth: 600,
+        defaultHeight: 500,
         file: "main-window.json"
     });
 
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 500,
-        height: 400,
-        // maxWidth : 350,
-        // maxHeight : 250,
-        // minWidth: 350,
-        // minHeight: 250,
+        minWidth: 600,
+        minHeight: 500,
+        width: 600, // mainWindowState.width,
+        height: 500, // mainWindowState.height,
         x: mainWindowState.x,
         y: mainWindowState.y,
-        resizable: false,
         transparent: false,
-        titleBarStyle: "hidden",
+        resizable: false,
         backgroundColor: "#141414",
         icon: __dirname + "/media/app_icon.png",
         frame: false,

@@ -47,46 +47,24 @@ const FONTSELECT = {
         });
     },
 
-    apply(element, settings = { updateFont: true, selected: null }) {
+    apply(element, settings = { updateFont: true, selected: "Poppins" }) {
         const instance = this;
 
         return new Promise(async (resolve, reject) => {
-            if (element instanceof HTMLSelectElement) {
-                if (instance.fonts.length == 0) {
-                    await instance.preload();
-                }
-
-                instance.fonts.forEach((name) => {
-                    // Some browsers will not allow you to style <option> elements directly, but will allow the styling of <optgroup>'s
-                    let group = document.createElement("optgroup");
-                    let option = document.createElement("option");
-
-                    group.style = "font-family: '" + name + "';";
-                    group.appendChild(option);
-
-                    option.style = "font-family: '" + name + "';";
-                    option.innerText = name;
-
-                    element.appendChild(group);
-                });
-
-                if (settings.updateFont) {
-                    element.addEventListener("change", () => {
-                        element.style = "font-family: '" + element.value + "';";
-                    });
-
-                    // Update it initially.
-                    element.style = "font-family: '" + element.value + "';";
-                }
-
-                if (settings.selected) {
-                    element.value = settings.selected;
-                }
-
-                resolve();
-            } else {
-                reject("Element is not a valid select element");
+            // if (element instanceof HTMLSelectElement) {
+            if (instance.fonts.length == 0) {
+                await instance.preload();
             }
+
+            SELECTNSEARCH.create(instance.fonts, element);
+
+            element.value = settings.selected;
+            element.querySelector(".sns-input").setAttribute("value", settings.selected);
+
+            resolve();
+            //} else {
+            //    reject("Element is not a valid select element");
+            //}
         });
     }
 

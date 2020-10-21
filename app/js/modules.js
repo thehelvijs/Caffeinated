@@ -153,7 +153,7 @@ class Modules {
         let div = document.createElement("div");
         let label = document.createElement("label");
 
-        let formCallback = async function () {
+        let formCallback = async () => {
             let result = FORMSJS.readForm("#" + settingsSelector);
 
             module.settings = result;
@@ -179,106 +179,7 @@ class Modules {
         container.appendChild(document.createElement("br"));
 
         for (const [key, type] of Object.entries(module.settingsDisplay)) {
-            let uuid = module.namespace + ":" + module.id;
-            let name = document.createElement("label");
-            let input;
-
-            if (type === "font") {
-                input = document.createElement("select");
-            } else if (type === "select") {
-                input = document.createElement("select");
-            } else if (type === "button") {
-                input = document.createElement("button");
-
-                input.addEventListener("click", module.defaultSettings[key]);
-                input.innerText = prettifyString(key);
-                input.id = uuid;
-                input.classList = type + " data";
-                input.setAttribute("type", type);
-                input.setAttribute("name", key);
-                input.setAttribute("owner", module.id);
-
-                div.appendChild(input);
-
-                continue;
-            } else {
-                input = document.createElement("input");
-            }
-
-            name.innerText = prettifyString(key) + " ";
-
-            input.id = uuid;
-            input.classList = type + " data";
-            input.setAttribute("type", type);
-            input.setAttribute("name", key);
-            input.setAttribute("owner", module.id);
-            input.addEventListener("change", formCallback);
-
-            // Make ranges step in .1 intervals
-            if (type === "range") {
-                input.setAttribute("min", 0);
-                input.setAttribute("max", 1);
-                input.setAttribute("step", 0.01);
-            }
-
-            if (type === "font") {
-                FONTSELECT.apply(input, {
-                    updateFont: true,
-                    selected: stored[key]
-                });
-            } else if (type === "select") {
-                let values = module.defaultSettings[key];
-                let selected = stored[key];
-                let options = "";
-
-                if (Array.isArray(selected)) {
-                    selected = values[0];
-                }
-
-                // Loop and mark the selected option, TODO better way.
-                values.forEach((value) => {
-                    if (value === selected) {
-                        options = options + "<option selected>" + value + "</option>";
-                    } else {
-                        options = options + "<option>" + value + "</option>";
-                    }
-                });
-
-                stored[key] = selected; // Set the selected key
-
-                input.innerHTML = options;
-            } else if (type === "checkbox") {
-                input.checked = stored[key];
-            } else if (type !== "file") {
-                // You can't set file values, not even in Electron
-                input.value = stored[key];
-            }
-
-            // keep checkboxes inline
-            if (type !== "checkbox") {
-                name.appendChild(document.createElement("br"));
-            }
-
-            // Make file inputs appear as buttons only.
-            if (type === "file") {
-                let button = document.createElement("button");
-
-                button.classList.add("file-button");
-                button.innerText = "Select a file";
-                button.addEventListener("click", () => {
-                    input.click(); // Forward clicks to the input.
-                });
-
-                name.appendChild(button);
-
-                input.classList.add("hide");
-            }
-
-            name.appendChild(input);
-            name.appendChild(document.createElement("br"));
-            name.appendChild(document.createElement("br"));
-
-            div.appendChild(name);
+            div.appendChild(createInput(module, key, type, stored, formCallback));
         }
 
         document.getElementById("settings").appendChild(container);
@@ -301,4 +202,216 @@ class Modules {
             return Object.assign({}, module.defaultSettings);
         }
     }
+}
+
+function createDynamicOption(module, layout, values, formCallback) {
+    const display = layout.display;
+    const defaults = layout.default;
+
+    let div = document.createElement("div");
+    let remove = document.createElement("a");
+    let icon = document.createElement("ion-icon");
+
+    div.type = "dynamic";
+    div.appendChild(remove);
+    div.classList = "box dynamic-option";
+
+    icon.setAttribute("name", "remove-circle");
+
+    remove.appendChild(icon);
+    remove.classList = "menu-button dynamic-remove";
+    remove.addEventListener("click", () => {
+        div.remove();
+        formCallback();
+    });
+
+    for (const [key, type] of Object.entries(display)) {
+        div.appendChild(createInput(module, key, type, values, formCallback, defaults[key]));
+    }
+
+    return div;
+}
+
+function createInput(module, key, type, stored, formCallback, defaultValue = module.defaultSettings[key]) {
+    let uuid = module.namespace + ":" + module.id;
+    let name = document.createElement("label");
+    let input;
+
+    if (type === "dynamic") {
+        input = document.createElement("div");
+
+        let add = document.createElement("a");
+        let icon = document.createElement("ion-icon");
+
+        icon.setAttribute("name", "add-circle");
+
+        add.appendChild(icon);
+        add.classList = "menu-button dynamic-add";
+        add.addEventListener("click", () => {
+            input.appendChild(createDynamicOption(module, defaultValue, defaultValue.default, formCallback));
+            formCallback();
+        });
+
+        input.classList = "dynamic-setting data";
+        input.id = uuid;
+        input.appendChild(add);
+        input.setAttribute("type", type);
+        input.setAttribute("name", key);
+        input.setAttribute("owner", module.id);
+
+        name.innerText = prettifyString(key) + " ";
+        name.appendChild(input);
+        name.appendChild(document.createElement("br"));
+
+        if (Array.isArray(stored[key])) {
+            stored[key].forEach((dynamic) => {
+                input.appendChild(createDynamicOption(module, defaultValue, dynamic, formCallback));
+            });
+        }
+
+        return name;
+    } else if (type === "button") {
+        input = document.createElement("button");
+
+        input.addEventListener("click", defaultValue[key]);
+        input.innerText = prettifyString(key);
+        input.id = uuid;
+        input.classList = type + " data";
+        input.setAttribute("type", type);
+        input.setAttribute("name", key);
+        input.setAttribute("owner", module.id);
+
+        let div = document.createElement("div");
+
+        div.appendChild(input);
+        div.appendChild(document.createElement("br"));
+        div.appendChild(document.createElement("br"));
+
+        return div;
+    } else if (type === "search") {
+        input = document.createElement("div");
+    } else if (type === "select") {
+        input = document.createElement("select");
+    } else if (type === "font") {
+        input = document.createElement("div");
+    } else if (type === "currency") {
+        input = document.createElement("div");
+    } else {
+        input = document.createElement("input");
+    }
+
+    name.innerText = prettifyString(key) + " ";
+
+    input.id = uuid;
+    input.classList = type + " data";
+    input.setAttribute("type", type);
+    input.setAttribute("name", key);
+    input.setAttribute("owner", module.id);
+    input.addEventListener("change", formCallback);
+
+    // Make ranges step in .1 intervals
+    if (type === "range") {
+        input.setAttribute("min", 0);
+        input.setAttribute("max", 1);
+        input.setAttribute("step", 0.01);
+    }
+
+    if (type === "font") {
+        input.type = "currency";
+        let selected = stored[key];
+
+        SELECTNSEARCH.create(FONTSELECT.fonts, input);
+
+        if (Array.isArray(selected)) {
+            selected = FONTSELECT.fonts[0];
+        }
+
+        input.setAttribute("value", selected);
+        input.querySelector(".sns-input").value = selected;
+        input.classList.add("select");
+
+        stored[key] = selected; // Set the selected key
+    } else if (type === "currency") {
+        let selected = stored[key];
+
+        SELECTNSEARCH.create(CURRENCIES, input);
+
+        if (Array.isArray(selected)) {
+            selected = CURRENCIES[0];
+        }
+
+        input.setAttribute("value", selected);
+        input.querySelector(".sns-input").value = selected;
+        input.classList.add("select");
+
+        stored[key] = selected; // Set the selected key
+    } else if (type === "search") {
+        let values = Object.assign([], defaultValue);
+        let selected = stored[key];
+
+        SELECTNSEARCH.create(values, input);
+
+        if (Array.isArray(selected)) {
+            selected = values[0];
+        }
+
+        input.setAttribute("value", selected);
+        input.querySelector(".sns-input").value = selected;
+        input.classList.add("select");
+
+        stored[key] = selected; // Set the selected key
+    } else if (type === "select") {
+        input.type = "select";
+        let values = Object.assign([], defaultValue);
+        let selected = stored[key];
+        let options = "";
+
+        if (Array.isArray(selected)) {
+            selected = values[0];
+        }
+
+        // Loop and mark the selected option, TODO better way.
+        values.forEach((value) => {
+            if (value === selected) {
+                options = options + "<option selected>" + value + "</option>";
+            } else {
+                options = options + "<option>" + value + "</option>";
+            }
+        });
+
+        stored[key] = selected; // Set the selected key
+
+        input.innerHTML = options;
+    } else if (type === "checkbox") {
+        input.checked = stored[key];
+    } else if (type !== "file") {
+        // You can't set file values, not even in Electron
+        input.value = stored[key];
+    }
+
+    // keep checkboxes inline
+    if (type !== "checkbox") {
+        name.appendChild(document.createElement("br"));
+    }
+
+    // Make file inputs appear as buttons only.
+    if (type === "file") {
+        let button = document.createElement("button");
+
+        button.classList.add("file-button");
+        button.innerText = "Select a file";
+        button.addEventListener("click", () => {
+            input.click(); // Forward clicks to the input.
+        });
+
+        name.appendChild(button);
+
+        input.classList.add("hide");
+    }
+
+    name.appendChild(input);
+    name.appendChild(document.createElement("br"));
+    name.appendChild(document.createElement("br"));
+
+    return name;
 }

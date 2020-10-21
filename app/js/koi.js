@@ -88,6 +88,8 @@ class Koi {
     }
 
     addUser(user) {
+        if (this.ws.readyState != WebSocket.OPEN) return;
+
         let json = {
             request: "ADD",
             user: user
@@ -96,7 +98,22 @@ class Koi {
         this.ws.send(JSON.stringify(json));
     }
 
+    setCurrency(currency) {
+        if (this.ws.readyState != WebSocket.OPEN) return;
+
+        let json = {
+            request: "PREFERENCES",
+            preferences: {
+                currency: currency
+            }
+        };
+
+        this.ws.send(JSON.stringify(json));
+    }
+
     test(user, event) {
+        if (this.ws.readyState != WebSocket.OPEN) return;
+
         let json = {
             request: "TEST",
             test: event,
@@ -107,6 +124,8 @@ class Koi {
     }
 
     removeUser(user) {
+        if (this.ws.readyState != WebSocket.OPEN) return;
+
         let json = {
             request: "REMOVE",
             user: user

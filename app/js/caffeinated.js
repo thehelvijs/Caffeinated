@@ -5,10 +5,10 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.3-release";
+const VERSION = "0.5.0-release";
 const COLOR = "#FFFFFF";
 
-const koi = new Koi("wss://live.casterlabs.co/koi");
+const koi = new Koi("wss://api.casterlabs.co/v1/koi");
 let CONNECTED = false;
 
 console.warn("Caution, here be dragons!" + "\n\n" + "If someone tells you to paste code here, they might be trying to steal important data from you." + "\n" + "If you're good at UX, consider contributing to the Caffeinated project at " + "\n" + "https://github.com/thehelvijs/Caffeinated" + "\n");
@@ -32,7 +32,6 @@ class Caffeinated {
                 user: null,
                 modules: {},
                 repos: [
-                    // __dirname + "\\..\\overlays", // Tree walk to the folder, works in the devlopment enviroment.
                     "https://caffeinated.casterlabs.co"
                 ]
             });
@@ -43,16 +42,34 @@ class Caffeinated {
         this.store.set("version", VERSION);
 
         this.repomanager = new RepoManager();
+        this.currency = this.store.get("currency");
         this.user = this.store.get("user");
         this.userdata = null;
     }
 
     async addRepo(repo) {
+        repo = repo.replace("\\", "/");
+
+        if (repo.endsWith("/")) {
+            repo = repo.substring(repo, repo.length - 1);
+        }
+
         await this.repomanager.addRepo(repo);
+
         this.store.set("repos", this.store.get("repos").concat(repo));
     }
 
+    getRepos() {
+        return this.store.get("repos");
+    }
+
     removeRepo(repo) {
+        repo = repo.replace("\\", "/");
+
+        if (repo.endsWith("/")) {
+            repo = repo.substring(repo, repo.length - 1);
+        }
+
         this.store.set("repos", removeFromArray(this.store.get("repos"), repo));
         location.reload();
     }
@@ -79,6 +96,7 @@ class Caffeinated {
                     CAFFEINATED.reset();
                 } else {
                     CAFFEINATED.setUser(this.settings.username + ";" + this.settings.platform);
+                    CAFFEINATED.setCurrency(CURRENCY_TABLE[this.settings.currency]);
                 }
             },
 
@@ -89,7 +107,7 @@ class Caffeinated {
             settingsDisplay: {
                 username: "input",
                 platform: "select",
-                change_stream: "button"
+                currency: "currency"
             },
 
             defaultSettings: {
@@ -98,7 +116,7 @@ class Caffeinated {
                     "Caffeine",
                     "Twitch"
                 ],
-                change_stream() { }
+                currency: "USD"
             }
 
         });
@@ -202,6 +220,14 @@ class Caffeinated {
         koi.addUser(this.user);
     }
 
+    setCurrency(currency) {
+        this.currency = currency;
+
+        koi.setCurrency(this.currency);
+        setCurrencyFormatter(this.currency);
+        this.store.set("currency", this.currency);
+    }
+
     setFollowerCount(count) {
         if (count) {
             document.querySelector("#followers").innerText = count;
@@ -259,6 +285,11 @@ koi.addEventListener("error", (event) => {
 koi.addEventListener("open", () => {
     if (CAFFEINATED.user !== null) {
         koi.addUser(CAFFEINATED.user);
+    }
+
+    if (CAFFEINATED.currency !== null) {
+        koi.setCurrency(CAFFEINATED.currency);
+        setCurrencyFormatter(CAFFEINATED.currency);
     }
 
     CONNECTED = true;

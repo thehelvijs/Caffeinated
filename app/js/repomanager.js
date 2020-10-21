@@ -4,11 +4,25 @@ class RepoManager {
         this.elements = [];
     }
 
-    async addRepo(repo) {
+    async addRepo(repo, useVersionedRepo = true) {
         try {
+            if (useVersionedRepo) {
+                repo = await RepoUtil.getRepoUrl(repo);
+            }
+
             let modules = await (await fetch(repo + "/modules.json")).json();
 
-            if (RepoUtil.matchVersion(modules.supported, modules.unsupported)) {
+            if (RepoUtil.isSupported(modules.supported, modules.unsupported)) {
+                if (Array.isArray(modules.preload)) {
+                    for (let required of modules.preload) {
+                        if (required.endsWith("/")) {
+                            required = required.substring(required, required.length - 1);
+                        }
+                        console.log("Repo " + repo + " requires the following repo " + required + ", loading it now.");
+                        await this.addRepo(required, false);
+                    }
+                }
+
                 if (Array.isArray(modules.overlays)) {
                     for (let overlay of modules.overlays) {
                         let script = document.createElement("script");
@@ -31,6 +45,8 @@ class RepoManager {
                         }
                     }
                 }
+
+                this.repos.push(modules);
             } else {
                 throw "Repo " + repo + " doesn't support the current version of caffeinated";
             }
@@ -47,24 +63,42 @@ const RepoUtil = {
         return new RegExp("(" + version.replace(/[\.]/g, "\\.").replace(/[\*]/g, ".*") + ")", "g");
     },
 
+    getRepoUrl(base) {
+        return new Promise((resolve) => {
+            let versioned = base + "/" + VERSION.split("-")[0];
+
+            fetch(versioned + "/modules.json").then((response) => {
+                if (response.ok) {
+                    resolve(versioned);
+                } else {
+                    console.warn("Repo: " + base + " does not support versioned urls, using root.");
+                    resolve(base);
+                }
+            }).catch(() => {
+                console.warn("Repo: " + base + " does not support versioned urls, using root.");
+                resolve(base);
+            });;
+        });
+    },
+
     waitForScriptToLoad(script) {
         return new Promise((resolve) => {
             script.addEventListener("load", () => resolve());
         });
     },
 
-    matchVersion(supported = [], unsupported = []) {
-        if (Array.isArray(supported)) {
+    isSupported(supported = [], unsupported = []) {
+        if (Array.isArray(unsupported)) {
             for (let version of unsupported) {
-                if (version.match(RepoUtil.versionToRegex(version))) {
+                if (VERSION.match(RepoUtil.versionToRegex(version))) {
                     return false;
                 }
             }
         }
 
-        if (Array.isArray(unsupported)) {
+        if (Array.isArray(supported)) {
             for (let version of supported) {
-                if (version.match(RepoUtil.versionToRegex(version))) {
+                if (VERSION.match(RepoUtil.versionToRegex(version))) {
                     return true;
                 }
             }
