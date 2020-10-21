@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.4.2-release";
+const VERSION = "0.4.3-release";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://live.casterlabs.co/koi");
@@ -65,7 +65,6 @@ class Caffeinated {
     async init() {
         console.log("init!");
 
-        splashText("loading-fonts");
         await FONTSELECT.preload(true);
         console.log("fonts loaded!");
 
@@ -79,24 +78,27 @@ class Caffeinated {
                 if (this.settings.username == "reset") {
                     CAFFEINATED.reset();
                 } else {
-                    CAFFEINATED.setUser(this.settings.username);
+                    CAFFEINATED.setUser(this.settings.username + ";" + this.settings.platform);
                 }
+            },
+
+            getDataToStore() {
+                return this.settings;
             },
 
             settingsDisplay: {
                 username: "input",
-                reset: "button",
-                reload: "button"
+                platform: "select",
+                change_stream: "button"
             },
 
             defaultSettings: {
                 username: "",
-                reset() {
-                    CAFFEINATED.reset();
-                },
-                reload() {
-                    location.reload();
-                }
+                platform: [
+                    "Caffeine",
+                    "Twitch"
+                ],
+                change_stream() { }
             }
 
         });
@@ -238,7 +240,7 @@ koi.addEventListener("userupdate", (e) => {
 
     CAFFEINATED.userdata = e;
 
-    document.getElementById("casterlabs_caffeinated:settings").value = e.streamer.username + ";" + e.streamer.platform;
+    document.getElementById("casterlabs_caffeinated:settings").value = e.streamer.username;
     CAFFEINATED.store.set("user", e.streamer.username + ";" + e.streamer.platform);
 });
 
@@ -265,6 +267,10 @@ koi.addEventListener("open", () => {
 
 document.querySelector(".close").addEventListener("click", () => {
     electron.getCurrentWindow().close();
+});
+
+document.querySelector(".minimize").addEventListener("click", () => {
+    electron.getCurrentWindow().minimize();
 });
 
 function openLink(link) {

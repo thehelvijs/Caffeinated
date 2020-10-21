@@ -190,7 +190,7 @@ class Modules {
             } else if (type === "button") {
                 input = document.createElement("button");
 
-                input.addEventListener("click", stored[key]);
+                input.addEventListener("click", module.defaultSettings[key]);
                 input.innerText = prettifyString(key);
                 input.id = uuid;
                 input.classList = type + " data";

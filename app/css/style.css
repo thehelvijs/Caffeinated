@@ -172,6 +172,12 @@ input[type=number] {
     -webkit-app-region: no-drag;
 }
 
+.minimize {
+    position: absolute;
+    right: 30px;
+    -webkit-app-region: no-drag;
+}
+
 /* Menu */
 
 .menu {
