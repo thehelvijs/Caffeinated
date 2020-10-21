@@ -82,7 +82,6 @@ class Caffeinated {
     async init() {
         console.log("init!");
 
-        splashText("loading-fonts");
         await FONTSELECT.preload(true);
         console.log("fonts loaded!");
 

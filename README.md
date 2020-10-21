@@ -51,12 +51,15 @@ Give a follow to [Caffeinated](https://www.caffeine.tv/Caffeinated_)
 - Overlapping alerts - a delay has to be set so all alerts play after previous one has finished.
 
 ## For developers
+- Make sure you have electron-builder to compile the app
+- To install electron-builder you have to run the command ```npm  install electron-builder -g```
 ```elm
 git clone https://github.com/thehelvijs/Caffeinated  
 cd app  
 npm install  
-npm start  
+electron-builder -wl
 ```
+- MacOS builds do still need to be made the same way on macos but with ```-m``` instead of ```-wl```
 
 ## Acknowledgments
 
