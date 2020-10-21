@@ -1,14 +1,16 @@
 const CURRENCY_TABLE = {
-    "US Dollar (USD)": "USD",
-
+    // Platforms
     "Caffeine Credits": "DIGIES",
-    // "Twitch Bits": "BITS", // Some day
+    "Twitch Bits": "BITS",
 
+    // Popular (?)
+    "US Dollar (USD)": "USD",
     "Canadian Dollar (CAD)": "CAD",
     "British Pound (GBP)": "GBP",
     "Australian Dollar (AUD)": "AUD",
     "Euro (EUR)": "EUR",
 
+    // All (No I did not type this by hand)
     "United Arab Emirates Dirham (AED)": "AED",
     "Afghan Afghani (AFN)": "AFN",
     "Albanian Lek (ALL)": "ALL",
@@ -195,6 +197,6 @@ function formatAmountToLocalCurrency(amount) {
     } else if (CAFFEINATED.currency == "BITS") {
         return amount.toFixed(0);
     } else {
-        return FORMATTER.format(amount).replace(/\D00(?=\D*$)/, '');
+        return FORMATTER.format(amount).replace(/\D00(?=\D*$)/, "");
     }
 }

@@ -9,45 +9,37 @@ const FORMSJS = {
     ALLOW_FALSE: true,
 
     readForm(selector, query = document, parent = query.querySelector(selector)) {
-        if (parent) {
-            let values = {};
+        let values = {};
 
-            Array.from(parent.getElementsByClassName(this.CLASS_SELECTOR)).forEach((element) => {
-                let name = element.getAttribute(this.NAME_PROPERTY);
+        Array.from(parent.querySelectorAll("." + this.CLASS_SELECTOR)).forEach((element) => {
+            let name = element.getAttribute(this.NAME_PROPERTY);
 
-                if (name && !values[name]) {
-                    let value = this.getElementValue(element);
+            if (name && !values[name]) {
+                let value = this.getElementValue(element);
 
-                    if (this.BLANK_IS_NULL && (value != null) && (value.length == 0)) {
-                        value = null;
-                    } else if ((value === false) && !this.ALLOW_FALSE) {
-                        return;
-                    } else if (this.PARSE_NUMBERS) {
-                        let num = parseFloat(value);
+                if (this.BLANK_IS_NULL && (value != null) && (value.length == 0)) {
+                    value = null;
+                } else if ((value === false) && !this.ALLOW_FALSE) {
+                    return;
+                } else if (this.PARSE_NUMBERS) {
+                    let num = parseFloat(value);
 
-                        if (!isNaN(num)) {
-                            value = num;
-                        }
+                    if (!isNaN(num)) {
+                        value = num;
                     }
-
-                    values[name] = value;
                 }
-            });
 
-            return values;
-        } else {
-            throw "Selector resulted in no element.";
-        }
+                values[name] = value;
+            }
+        });
+
+        return values;
     },
 
     getElementValue(element) {
         let type = element.getAttribute("type");
 
         switch (type) {
-            case "currency": {
-                return CURRENCY_TABLE[element.getAttribute("value")];
-            }
-
             case "radio": {
                 if (element.checked) {
                     return element.value;
@@ -70,14 +62,8 @@ const FORMSJS = {
             case "file":
                 return element;
 
-            case "select":
-                return element.getAttribute("value");
-
-            case "font":
-                return element.getAttribute("value");
-
             default:
-                return element.value;
+                return (element instanceof HTMLDivElement) ? element.getAttribute("value") : element.value;
         }
     }
 

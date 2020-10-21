@@ -30,7 +30,7 @@ ion-icon {
 /* Scrollbar */
 
 ::-webkit-scrollbar {
-    width: 5px;
+    width: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -82,8 +82,17 @@ input {
     outline: none;
 }
 
-input[type=select] {
+input[type=search] {
     height: 3em;
+    width: 180px;
+}
+
+select {
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #DCDCDC;
+    cursor: pointer;
+    outline: none;
 }
 
 input[type=number] {
@@ -209,7 +218,7 @@ input[type=number] {
     position: absolute;
     left: 0px;
     top: 0px;
-    width: 60px;
+    width: 70px;
     height: 100%;
     z-index: 1000;
 }
@@ -221,7 +230,7 @@ input[type=number] {
 }
 
 #followers {
-    margin-top: 60px;
+    margin-top: 70px;
     padding-left: 4px;
 }
 
@@ -275,15 +284,19 @@ input[type=number] {
 .pages {
     position: absolute;
     padding-top: 40px;
-    right: 0px;
+    left: 70px;
     top: 0px;
     height: 100%;
     overflow: auto;
-    width: 430px;
+    width: calc(100% - 75px);
 }
 
 .page a:hover {
     color: lightgrey;
+}
+
+.page {
+    overflow-x: hidden;
 }
 
 /* Overlays */

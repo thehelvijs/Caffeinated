@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.5.0-pre2";
+const VERSION = "0.5.0-release";
 const COLOR = "#FFFFFF";
 
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
@@ -42,6 +42,7 @@ class Caffeinated {
         this.store.set("version", VERSION);
 
         this.repomanager = new RepoManager();
+        this.currency = this.store.get("currency");
         this.user = this.store.get("user");
         this.userdata = null;
     }
@@ -95,37 +96,28 @@ class Caffeinated {
                 if (this.settings.username == "reset") {
                     CAFFEINATED.reset();
                 } else {
-                    CAFFEINATED.setUser(this.settings.username);
-                    CAFFEINATED.setCurrency(this.settings.currency);
+                    CAFFEINATED.setUser(this.settings.username + ";" + this.settings.platform);
+                    CAFFEINATED.setCurrency(CURRENCY_TABLE[this.settings.currency]);
                 }
             },
 
             getDataToStore() {
-                return {
-                    currency: CAFFEINATED.currency
-                };
+                return this.settings;
             },
 
             settingsDisplay: {
                 username: "input",
-                currency: "currency",
-                reset: "button",
-                // reload: "button"
-            },
-
-            init() {
-                CAFFEINATED.setCurrency(this.settings.currency);
+                platform: "select",
+                currency: "currency"
             },
 
             defaultSettings: {
                 username: "",
-                currency: "USD",
-                reset() {
-                    CAFFEINATED.reset();
-                }/*,
-                reload() {
-                    location.reload();
-                }*/
+                platform: [
+                    "Caffeine",
+                    "Twitch"
+                ],
+                currency: "USD"
             }
 
         });
@@ -233,7 +225,8 @@ class Caffeinated {
         this.currency = currency;
 
         koi.setCurrency(this.currency);
-        setCurrencyFormatter(currency);
+        setCurrencyFormatter(this.currency);
+        this.store.set("currency", this.currency);
     }
 
     setFollowerCount(count) {
@@ -275,7 +268,7 @@ koi.addEventListener("userupdate", (e) => {
     CAFFEINATED.userdata = e;
 
     document.getElementById("casterlabs_caffeinated:settings").value = e.streamer.username;
-    CAFFEINATED.store.set("user", e.streamer.username /* + ";" + e.streamer.platform */);
+    CAFFEINATED.store.set("user", e.streamer.username + ";" + e.streamer.platform);
 });
 
 koi.addEventListener("error", (event) => {
@@ -297,6 +290,7 @@ koi.addEventListener("open", () => {
 
     if (CAFFEINATED.currency !== null) {
         koi.setCurrency(CAFFEINATED.currency);
+        setCurrencyFormatter(CAFFEINATED.currency);
     }
 
     CONNECTED = true;

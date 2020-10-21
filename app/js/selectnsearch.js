@@ -11,7 +11,7 @@ const SELECTNSEARCH = {
         contentDiv.classList.add("sns-contents");
         contentDiv.style.display = "none";
 
-        input.setAttribute("type", "select");
+        input.setAttribute("type", "search");
         input.classList.add("sns-input");
         input.addEventListener("focus", () => {
             SELECTNSEARCH.search(div, "");

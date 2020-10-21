@@ -33,7 +33,7 @@ function navigate(page) {
 }
 
 function splashText(text) {
-    const all = [".problems", ".reconnecting", ".loading-fonts"];
+    const all = [".problems", ".reconnecting"];
 
     anime({
         targets: all,

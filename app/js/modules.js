@@ -273,7 +273,7 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
     } else if (type === "button") {
         input = document.createElement("button");
 
-        input.addEventListener("click", stored[key]);
+        input.addEventListener("click", defaultValue[key]);
         input.innerText = prettifyString(key);
         input.id = uuid;
         input.classList = type + " data";
@@ -281,9 +281,17 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
         input.setAttribute("name", key);
         input.setAttribute("owner", module.id);
 
-        return input;
-    } else if (type === "select") {
+        let div = document.createElement("div");
+
+        div.appendChild(input);
+        div.appendChild(document.createElement("br"));
+        div.appendChild(document.createElement("br"));
+
+        return div;
+    } else if (type === "search") {
         input = document.createElement("div");
+    } else if (type === "select") {
+        input = document.createElement("select");
     } else if (type === "font") {
         input = document.createElement("div");
     } else if (type === "currency") {
@@ -309,16 +317,21 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
     }
 
     if (type === "font") {
-        input.type = "select";
-
-        FONTSELECT.apply(input, {
-            updateFont: true, selected: stored[key]
-        });
-
-        input.setAttribute("value", stored[key]);
-        input.classList.add("select");
-    } else if (type === "currency") {
         input.type = "currency";
+        let selected = stored[key];
+
+        SELECTNSEARCH.create(FONTSELECT.fonts, input);
+
+        if (Array.isArray(selected)) {
+            selected = FONTSELECT.fonts[0];
+        }
+
+        input.setAttribute("value", selected);
+        input.querySelector(".sns-input").value = selected;
+        input.classList.add("select");
+
+        stored[key] = selected; // Set the selected key
+    } else if (type === "currency") {
         let selected = stored[key];
 
         SELECTNSEARCH.create(CURRENCIES, input);
@@ -327,13 +340,12 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
             selected = CURRENCIES[0];
         }
 
-        input.setAttribute("value", CURRENCY_TABLE_INVERTED[selected]);
-        input.querySelector(".sns-input").value = CURRENCY_TABLE_INVERTED[selected];
+        input.setAttribute("value", selected);
+        input.querySelector(".sns-input").value = selected;
         input.classList.add("select");
 
         stored[key] = selected; // Set the selected key
-    } else if (type === "select") {
-        input.type = "select";
+    } else if (type === "search") {
         let values = Object.assign([], defaultValue);
         let selected = stored[key];
 
@@ -348,6 +360,28 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
         input.classList.add("select");
 
         stored[key] = selected; // Set the selected key
+    } else if (type === "select") {
+        input.type = "select";
+        let values = Object.assign([], defaultValue);
+        let selected = stored[key];
+        let options = "";
+
+        if (Array.isArray(selected)) {
+            selected = values[0];
+        }
+
+        // Loop and mark the selected option, TODO better way.
+        values.forEach((value) => {
+            if (value === selected) {
+                options = options + "<option selected>" + value + "</option>";
+            } else {
+                options = options + "<option>" + value + "</option>";
+            }
+        });
+
+        stored[key] = selected; // Set the selected key
+
+        input.innerHTML = options;
     } else if (type === "checkbox") {
         input.checked = stored[key];
     } else if (type !== "file") {
