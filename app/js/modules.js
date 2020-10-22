@@ -273,7 +273,7 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
     } else if (type === "button") {
         input = document.createElement("button");
 
-        input.addEventListener("click", defaultValue[key]);
+        input.addEventListener("click", defaultValue);
         input.innerText = prettifyString(key);
         input.id = uuid;
         input.classList = type + " data";
