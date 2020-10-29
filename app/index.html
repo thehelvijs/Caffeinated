@@ -90,7 +90,7 @@
             </span>
         </div>
         <div class="title-bar">
-            <div class="title-bar-title"><img src="media/app_icon.png"> Caffeinated</div>
+            <div class="title-bar-title"><img src="media/app_icon.png">Caffeinated</div>
             <!-- <span class="currentpage" style="opacity: 0;"></span> -->
             <a class="close" title="Close">
                 <ion-icon name="close-outline"></ion-icon>
@@ -104,13 +104,33 @@
         </div>
         <div id="content">
             <div class="menu">
-                <nav>
+                <nav class='animated bounceInDown'>
                     <ul class="menu-list" id="page-menu">
-                        <li id="menu-overlays">
-                            <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays">
+                        <!-- <li id="menu-overlays">
+                            <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays"> -->
                                 <!-- <ion-icon name="copy"></ion-icon> -->
-                                <div class="menu-button-title">Overlays</div>
+                                <!-- <div class="menu-button-title">Overlays</div>
                             </a>
+                        </li> -->
+                        <li id='menu-overlays'>
+                            <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays">
+                                <div class="menu-button-title">
+                                    Overlays <ion-icon name="chevron-down-outline" class="sub-menu-arrow"></ion-icon>
+                                </div> 
+                               
+                            </a>
+                            <div class="dropdown-container">
+                                <div class="dropdown-item">
+                                    <a href="#">Follower alert</a>
+                                    <ion-icon name="eye-outline"></ion-icon>
+                                    <ion-icon name="volume-low-outline"></ion-icon>
+                                </div>
+                                <div class="dropdown-item">
+                                    <a href="#">Donation alert</a>
+                                    <ion-icon name="eye-off-outline"></ion-icon>
+                                    <ion-icon name="volume-mute-outline"></ion-icon>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </nav>
@@ -150,8 +170,23 @@
         <script src="js/caffeinated.js"></script>
         <div id="scripts"></div>
         <script>
+
+            
             navigate("overlays");
             CAFFEINATED.init();
+            var dropdown = document.getElementsByClassName("menu-button");
+
+            for (var i = 0; i < dropdown.length; i++) {
+            dropdown[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var dropdownContent = this.nextElementSibling;
+                if (dropdownContent.style.display === "block") {
+                dropdownContent.style.display = "none";
+                } else {
+                dropdownContent.style.display = "block";
+                }
+            });
+            }
         </script>
     </footer>
 

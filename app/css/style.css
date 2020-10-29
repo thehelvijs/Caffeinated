@@ -471,3 +471,44 @@ nav ul li.active a:hover {
 	background: #141414;
 	color: #4b4b4b !important;
 }
+
+/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+.dropdown-container {
+    display: none;
+    background-color: #585858;
+    /* padding-left: 8px; */
+}
+
+nav ul li.active .dropdown-container a {
+	background: #272727;
+	color: #dddddd !important;
+}
+
+nav ul li.active .dropdown-container a:hover {
+	background: #383838;
+	color: #dddddd !important;
+}
+
+.dropdown-item {
+    list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.dropdown-item ion-icon {
+    font-size: 18px;
+    margin-top: 5px;
+    padding-left: 5px;
+}
+
+.dropdown-item ion-icon > * {
+    padding-left: 5px;
+    
+
+}
+
+.sub-menu-arrow {
+    position: absolute;
+    left: calc(var(--menu-width) - 45px);
+    top: 5px;
+}
