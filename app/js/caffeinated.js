@@ -174,37 +174,47 @@ class Caffeinated {
         });
     }
 
+    setUserName(username) { 
+        document.querySelector(".user-username").innerHTML = username;
+    }
+
+    setUserPlatform(platform) {
+        document.querySelector(".user-platform").src = "media/" + platform + ".png";
+        document.querySelector(".user-platform").setAttribute("title", platform);
+    }
+
     setUserImage(image) {
         if (image) {
             if (image != document.querySelector(".user-icon").src) {
                 document.querySelector(".user-icon").src = image;
             }
 
-            anime({
-                targets: ".placeholder-icon",
-                easing: "linear",
-                opacity: 0,
-                duration: 250,
-            });
-            anime({
-                targets: ".user-icon",
-                easing: "linear",
-                opacity: 1,
-                duration: 250,
-            });
+            // anime({
+            //     targets: ".placeholder-icon",
+            //     easing: "linear",
+            //     opacity: 0,
+            //     duration: 250,
+            // });
+            // anime({
+            //     targets: ".user-icon",
+            //     easing: "linear",
+            //     opacity: 1,
+            //     duration: 250,
+            // });
         } else {
-            anime({
-                targets: ".placeholder-icon",
-                easing: "linear",
-                opacity: 1,
-                duration: 250,
-            });
-            anime({
-                targets: ".user-icon",
-                easing: "linear",
-                opacity: 0,
-                duration: 250,
-            });
+            document.querySelector(".user-icon").src = "media/icon.png";
+            // anime({
+            //     targets: ".placeholder-icon",
+            //     easing: "linear",
+            //     opacity: 1,
+            //     duration: 250,
+            // });
+            // anime({
+            //     targets: ".user-icon",
+            //     easing: "linear",
+            //     opacity: 0,
+            //     duration: 250,
+            // });
         }
     }
 
@@ -216,6 +226,8 @@ class Caffeinated {
         this.user = user;
         this.setFollowerCount(null);
         this.setUserImage(null);
+        this.setUserName(null);
+        this.setUserPlatform(null);
 
         koi.addUser(this.user);
     }
@@ -230,7 +242,7 @@ class Caffeinated {
 
     setFollowerCount(count) {
         if (count) {
-            document.querySelector("#followers").innerText = count;
+            document.querySelector("#followers").innerText = kFormatter(count) + " followers";
 
             anime({
                 targets: "#followers",
@@ -262,7 +274,9 @@ koi.addEventListener("close", () => {
 koi.addEventListener("userupdate", (e) => {
     splashScreen(false);
     CAFFEINATED.setUserImage(e.streamer.image_link);
+    CAFFEINATED.setUserName(e.streamer.username);
     CAFFEINATED.setFollowerCount(e.streamer.follower_count);
+    CAFFEINATED.setUserPlatform(e.streamer.platform);
 
     CAFFEINATED.userdata = e;
 
@@ -304,8 +318,16 @@ document.querySelector(".minimize").addEventListener("click", () => {
     electron.getCurrentWindow().minimize();
 });
 
+document.querySelector(".minmax").addEventListener("click", () => {
+    electron.getCurrentWindow().isMaximized() ? electron.getCurrentWindow().unmaximize() : electron.getCurrentWindow().maximize();
+});
+
 function openLink(link) {
     shell.openExternal(link);
+}
+
+function kFormatter(num) {
+    return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'k' : Math.sign(num)*Math.abs(num)
 }
 
 setTimeout(() => {

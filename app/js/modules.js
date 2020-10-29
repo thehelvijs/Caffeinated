@@ -81,17 +81,23 @@ class Modules {
         let name = prettifyString(module.namespace);
         let li = document.createElement("li");
         let a = document.createElement("a");
-        let ion = document.createElement("ion-icon");
+        // let ion = document.createElement("ion-icon");
         let page = document.createElement("div");
+        let text = document.createElement("div");
 
         li.appendChild(a);
+        li.setAttribute("id", "menu-" + selector);
 
-        a.appendChild(ion);
+        // a.appendChild(ion);
         a.classList.add("menu-button");
         a.addEventListener("click", () => navigate(selector));
         a.setAttribute("title", name);
-
-        ion.setAttribute("name", module.icon);
+        
+        // ion.setAttribute("name", module.icon);
+        
+        text.classList.add("menu-button-title");
+        text.innerHTML = module.displayname;
+        a.appendChild(text);
 
         page.setAttribute("page", selector);
         page.classList.add("content");
@@ -106,7 +112,7 @@ class Modules {
 
         module.page = page;
 
-        document.querySelector("#page-menu").insertBefore(li, document.querySelector("#page-menu").firstChild);
+        document.querySelector("#page-menu").insertBefore(li, document.querySelector("#page-menu").lastChild);
         document.querySelector(".pages").appendChild(page);
     }
 

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
-
     <head>
         <meta charset="utf-8" />
         <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
         <link rel="stylesheet" href="css/style.css" />
         <link rel="stylesheet" href="css/selectnsearch.css" />
-        <title>Caffeinated</title>
+        <title>Casterlabs Caffeinated</title>
         <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
-        <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
         <style>
             /* https://tobiasahlin.com/spinkit/ */
             .spinner {
@@ -71,42 +71,6 @@
     </head>
 
     <body>
-        <div id="content" style="opacity: 0;">
-            <aside class="menu">
-                <a onclick="navigate('settings');">
-                    <img class="user-icon" style="opacity: 0;" />
-                    <img class="placeholder-icon" src="media/icon.png" style="opacity: 1;" />
-                </a>
-                <p class="menu-label" id="followers"></p>
-                <ul class="menu-list" id="page-menu">
-                    <li>
-                        <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays">
-                            <ion-icon name="copy"></ion-icon>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="menu-button" onclick="navigate('settings');" title="Caffeinated Settings">
-                            <ion-icon name="cog"></ion-icon>
-                        </a>
-                    </li>
-                </ul>
-            </aside>
-            <div class="pages">
-                <div class="content page" page="settings" id="settings">
-                    <span class="settings-version"></span>
-                </div>
-                <div class="content page" page="overlays" id="overlays"></div>
-            </div>
-        </div>
-        <div class="title-bar">
-            <span class="currentpage" style="opacity: 0;"></span>
-            <a class="close" title="Close">
-                <ion-icon name="close"></ion-icon>
-            </a>
-            <a class="minimize" title="Minimize">
-                <ion-icon src="media/minimize.svg"></ion-icon>
-            </a>
-        </div>
         <div id="splash" style="opacity: 1;">
             <img src="media/app_icon.png" class="app-icon" />
             <img src="media/caffeinated.png" class="caffeinated-logo" />
@@ -124,6 +88,52 @@
             <span class="reconnecting" style="opacity: 0;">
                 Reconnecting to Koi.
             </span>
+        </div>
+        <div class="title-bar">
+            <div class="title-bar-title"><img src="media/app_icon.png"> Caffeinated</div>
+            <!-- <span class="currentpage" style="opacity: 0;"></span> -->
+            <a class="close" title="Close">
+                <ion-icon name="close-outline"></ion-icon>
+            </a>
+            <a class="minmax" title="Minmax">
+                <ion-icon name="albums-outline"></ion-icon>
+            </a>
+            <a class="minimize" title="Minimize">
+                <ion-icon name="remove-outline"></ion-icon>
+            </a>
+        </div>
+        <div id="content">
+            <div class="menu">
+                <nav>
+                    <ul class="menu-list" id="page-menu">
+                        <li id="menu-overlays">
+                            <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays">
+                                <!-- <ion-icon name="copy"></ion-icon> -->
+                                <div class="menu-button-title">Overlays</div>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div id="menu-user">
+                    <a onclick="navigate('settings');">
+                        <img class="user-icon" src="media/icon.png"/>
+                        <div class="user-username">Set user</div>
+                        <img class="user-platform" src="media/app_icon.png"/>
+                    </a>
+                    <p class="user-followers">
+                        <span id="followers"></span>
+                    </p>
+                    <a class="user-settings" title="Settings" onclick="navigate('settings');">
+                        <ion-icon name="settings-outline"></ion-icon>
+                    </a>
+                </div>
+            </div>
+            <div class="pages">
+                <div class="content page hide" page="settings" id="settings">
+                    <span class="settings-version"></span>
+                </div>
+                <div class="content page hide" page="overlays" id="overlays"></div>
+            </div>
         </div>
     </body>
 

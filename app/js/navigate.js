@@ -2,34 +2,59 @@
 function navigate(page) {
     let selector = "[page='" + page + "']";
 
-    anime({
-        targets: ".page",
-        easing: "linear",
-        opacity: 0,
-        duration: 250
-    }).finished.then(function () {
-        Array.from(document.querySelectorAll(".page")).forEach((e) => {
-            if (e.getAttribute("page") != page) {
-                e.classList.add("hide");
-            }
-        });
+    // let isActive = false;
+    // Array.from(document.querySelectorAll(".page")).forEach((e) => {
+    //     console.log(e.getAttribute("page"))
+    //     console.log(page)
+    //     console.log()
+    //     if (!(e.getAttribute("page") == page) ) {
+    //         isActive = true;
+    //     }
+    // });
 
-        document.querySelector(selector).classList.remove("hide");
+    // console.log(document.getAttribute("page"))
 
+    if (true) {
         anime({
-            targets: selector,
+            targets: ".page",
             easing: "linear",
-            opacity: 1,
-            duration: 250
+            opacity: 0,
+            duration: 100
+        }).finished.then(function () {
+            Array.from(document.querySelectorAll(".page")).forEach((e) => {
+                if (e.getAttribute("page") != page) {
+                    e.classList.add("hide");
+                    // Remove active class from menu button
+                    try {
+                        document.getElementById("menu-" + e.getAttribute("page")).classList.remove("active");
+                    } catch (e) {}
+                }
+            });
+    
+            // Sets menu button active class 
+            // Try/catch in case if 'navigate' is triggered from outside side-menu
+            try {
+                document.getElementById("menu-" + page).classList.add("active");
+            } catch (e) {}
+    
+            document.querySelector(selector).classList.remove("hide");
+    
+            anime({
+                targets: selector,
+                easing: "linear",
+                opacity: 1,
+                duration: 100
+            });
+    
+            // let title = document.querySelector(selector).getAttribute("navbar-title");
+            // if (title) {
+            //     document.querySelector(".currentpage").innerText = title;
+            // } else {
+            //     document.querySelector(".currentpage").innerText = prettifyString(page);
+            // }
         });
-
-        let title = document.querySelector(selector).getAttribute("navbar-title");
-        if (title) {
-            document.querySelector(".currentpage").innerText = title;
-        } else {
-            document.querySelector(".currentpage").innerText = prettifyString(page);
-        }
-    });
+    }
+    
 }
 
 function splashText(text) {

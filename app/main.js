@@ -12,14 +12,14 @@ function createWindow() {
 
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        minWidth: 600,
+        minWidth: 700,
         minHeight: 500,
-        width: 600, // mainWindowState.width,
-        height: 500, // mainWindowState.height,
+        width: mainWindowState.width,
+        height: mainWindowState.height,
         x: mainWindowState.x,
         y: mainWindowState.y,
         transparent: false,
-        resizable: false,
+        resizable: true,
         backgroundColor: "#141414",
         icon: __dirname + "/media/app_icon.png",
         frame: false,
