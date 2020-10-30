@@ -113,40 +113,45 @@
                             </a>
                         </li> -->
                         <li id='menu-overlays'>
-                            <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays">
+                            <a class="menu-button">
                                 <div class="menu-button-title">
-                                    Overlays <ion-icon name="chevron-down-outline" class="sub-menu-arrow"></ion-icon>
+                                    Widgets <ion-icon name="chevron-down-outline" class="sub-menu-arrow"></ion-icon>
                                 </div> 
-                               
                             </a>
-                            <div class="dropdown-container">
-                                <div class="dropdown-item">
-                                    <a href="#">Follower alert</a>
-                                    <ion-icon name="eye-outline"></ion-icon>
-                                    <ion-icon name="volume-low-outline"></ion-icon>
-                                </div>
-                                <div class="dropdown-item">
-                                    <a href="#">Donation alert</a>
-                                    <ion-icon name="eye-off-outline"></ion-icon>
-                                    <ion-icon name="volume-mute-outline"></ion-icon>
-                                </div>
+                            <div class="dropdown-container" id="widgets">
+                                <!-- <div class="dropdown-item">
+                                    <div class="dropdown-title">
+                                        <a>Donation</a>
+                                    </div>
+                                   
+                                    <div class="dropdown-icon">
+                                        <a><ion-icon name="eye-outline" role="img" class="md hydrated" aria-label="eye outline"></ion-icon></a>
+                                        <a><ion-icon name="volume-high-outline" role="img" class="md hydrated" aria-label="volume high outline"></ion-icon></a>
+                                    </div>
+                                </div> -->
+
+                                <!-- For when widgets are dynamically added -->
+                                <!-- <div class="dropdown-item add-widget">
+                                    <a href="#"><ion-icon name="add-circle-outline"></ion-icon> <span style="position: absolute; top: 9px; left: 40px;">Add widget</span></a>
+                                </div> -->
                             </div>
                         </li>
                     </ul>
                 </nav>
-                <div id="menu-user">
-                    <a onclick="navigate('settings');">
-                        <img class="user-icon" src="media/icon.png"/>
-                        <div class="user-username">Set user</div>
-                        <img class="user-platform" src="media/app_icon.png"/>
-                    </a>
-                    <p class="user-followers">
-                        <span id="followers"></span>
-                    </p>
-                    <a class="user-settings" title="Settings" onclick="navigate('settings');">
-                        <ion-icon name="settings-outline"></ion-icon>
-                    </a>
-                </div>
+
+            </div>
+            <div id="user-bar">
+                <a onclick="navigate('settings');">
+                    <img class="user-icon" src="media/icon.png"/>
+                <div class="user-username"><ion-icon name="settings-outline"></ion-icon></div>
+                    <img class="user-platform" src="media/app_icon.png"/>
+                </a>
+                <p class="user-followers">
+                    <span id="followers"></span>
+                </p>
+                <!-- <a class="user-settings" title="Settings" onclick="navigate('settings');">
+                    <ion-icon name="settings-outline"></ion-icon>
+                </a> -->
             </div>
             <div class="pages">
                 <div class="content page hide" page="settings" id="settings">
@@ -170,23 +175,30 @@
         <script src="js/caffeinated.js"></script>
         <div id="scripts"></div>
         <script>
-
-            
-            navigate("overlays");
+            navigate("settings");
             CAFFEINATED.init();
-            var dropdown = document.getElementsByClassName("menu-button");
 
-            for (var i = 0; i < dropdown.length; i++) {
-            dropdown[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                var dropdownContent = this.nextElementSibling;
-                if (dropdownContent.style.display === "block") {
-                dropdownContent.style.display = "none";
-                } else {
-                dropdownContent.style.display = "block";
-                }
+            const contextMenu = require('electron-context-menu');
+            contextMenu({
+                prepend: (defaultActions, params, browserWindow) => [
+                    {
+                        label: 'Copy widget',
+                        // Only show it when right-clicking images
+                        // visible: params.mediaType === 'image',
+                        click: () => {
+                            console.log(params);
+                        }
+                    },
+                    {
+                        label: 'Test widget',
+                        // Only show it when right-clicking images
+                        // visible: params.mediaType === 'image',
+                        click: () => {
+                            console.log(params);
+                        }
+                    }
+                ]
             });
-            }
         </script>
     </footer>
 

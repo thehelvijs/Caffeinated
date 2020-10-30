@@ -174,8 +174,8 @@ class Caffeinated {
         });
     }
 
-    setUserName(username) { 
-        document.querySelector(".user-username").innerHTML = username;
+    setUserName(username) {
+        document.querySelector(".user-username").innerHTML = '<ion-icon name="settings-outline"></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + username;
     }
 
     setUserPlatform(platform) {
@@ -242,7 +242,9 @@ class Caffeinated {
 
     setFollowerCount(count) {
         if (count) {
-            document.querySelector("#followers").innerText = kFormatter(count) + " followers";
+            // 1000 -> 1k if space is an issue
+            // document.querySelector("#followers").innerText = kFormatter(count) + " followers";
+            document.querySelector("#followers").innerText = count + " followers";
 
             anime({
                 targets: "#followers",
@@ -309,6 +311,21 @@ koi.addEventListener("open", () => {
     CONNECTED = true;
     splashText(null);
 });
+
+/* Sub menu handler */
+var dropdown = document.getElementsByClassName("menu-button");
+
+for (var i = 0; i < dropdown.length; i++) {
+dropdown[i].addEventListener("click", function() {
+    this.classList.toggle("active-sub");
+    var dropdownContent = this.nextElementSibling;
+    if (dropdownContent.style.display === "block") {
+    dropdownContent.style.display = "none";
+    } else {
+    dropdownContent.style.display = "block";
+    }
+});
+}
 
 document.querySelector(".close").addEventListener("click", () => {
     electron.getCurrentWindow().close();

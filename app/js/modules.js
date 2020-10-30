@@ -81,19 +81,22 @@ class Modules {
         let name = prettifyString(module.namespace);
         let li = document.createElement("li");
         let a = document.createElement("a");
-        // let ion = document.createElement("ion-icon");
+        let ion = document.createElement("ion-icon");
         let page = document.createElement("div");
         let text = document.createElement("div");
 
         li.appendChild(a);
         li.setAttribute("id", "menu-" + selector);
 
-        // a.appendChild(ion);
+        a.appendChild(ion);
         a.classList.add("menu-button");
         a.addEventListener("click", () => navigate(selector));
         a.setAttribute("title", name);
         
-        // ion.setAttribute("name", module.icon);
+        // Setting hidden icon. On hide() => $("#menu-ion-icon").remove("hide")
+        ion.setAttribute("name", module.icon);
+        ion.setAttribute("id", "menu-ion-icon");
+        ion.classList.add("hide");
         
         text.classList.add("menu-button-title");
         text.innerHTML = module.displayname;
@@ -119,37 +122,73 @@ class Modules {
     initalizeModuleOverlayPage(module) {
         let linkDisplay = module.linkDisplay;
         let div = document.createElement("div");
-        let label = document.createElement("label");
-        let copy = document.createElement("button");
-        let custom = document.createElement("button");
-        // let visible = document.createElement("input");
+        let title = document.createElement("div");
+        let a = document.createElement("a");
+        let icons = document.createElement("div");
+        let ion_show = document.createElement("ion-icon");
+        let ion_mute = document.createElement("ion-icon");
+        let a_show = document.createElement("a");
+        let a_mute = document.createElement("a");
 
-        label.classList.add("overlay-id");
-        label.innerText = prettifyString(module.id);
+        title.classList.add("dropdown-title");
+        a.innerHTML = prettifyString(module.id);
+        title.appendChild(a);
 
-        /* visible.setAttribute("type", "checkbox");
-        visible.addEventListener("change", (e) => {
-            module.setWindowVisbility(e.target.checked);
-        }); */
-
-        copy.classList.add("button");
-        copy.innerText = "Copy";
-        copy.addEventListener("click", () => {
-            putInClipboard(linkDisplay.path + "?id=" + module.id);
+        icons.classList.add("dropdown-icon"); 
+        a_show.addEventListener("click", () => {
+            console.log("show/hide pressed");
         });
+        ion_show.setAttribute("name", "eye-outline");
+        a_show.appendChild(ion_show);
+        icons.appendChild(a_show);
+        
 
-        custom.classList.add("button");
-        custom.innerText = linkDisplay.option.name;
-        custom.addEventListener("click", () => {
-            linkDisplay.option.onclick(module);
+        a_mute.addEventListener("click", () => {
+            console.log("mute/unmute pressed");
         });
+        ion_mute.setAttribute("name", "volume-high-outline");
+        a_mute.appendChild(ion_mute);
+        icons.appendChild(a_mute);
+        
+        div.classList.add("reset-this");
+        div.classList.add("dropdown-item");
+        div.appendChild(title);
+        div.appendChild(icons);
 
-        // div.appendChild(visible);
-        div.appendChild(label);
-        div.appendChild(copy);
-        div.appendChild(custom);
+        document.getElementById("widgets").appendChild(div);
+        
+        // let div = document.createElement("div");
+        // let label = document.createElement("label");
+        // let copy = document.createElement("button");
+        // let custom = document.createElement("button");
+        // // let visible = document.createElement("input");
 
-        document.getElementById("overlays").appendChild(div);
+        // label.classList.add("overlay-id");
+        // label.innerText = prettifyString(module.id);
+
+        // /* visible.setAttribute("type", "checkbox");
+        // visible.addEventListener("change", (e) => {
+        //     module.setWindowVisbility(e.target.checked);
+        // }); */
+
+        // copy.classList.add("button");
+        // copy.innerText = "Copy";
+        // copy.addEventListener("click", () => {
+        //     putInClipboard(linkDisplay.path + "?id=" + module.id);
+        // });
+
+        // custom.classList.add("button");
+        // custom.innerText = linkDisplay.option.name;
+        // custom.addEventListener("click", () => {
+        //     linkDisplay.option.onclick(module);
+        // });
+
+        // // div.appendChild(visible);
+        // div.appendChild(label);
+        // div.appendChild(copy);
+        // div.appendChild(custom);
+
+        // document.getElementById("overlays").appendChild(div);
     }
 
     initalizeModuleSettingsPage(module) {

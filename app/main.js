@@ -24,7 +24,8 @@ function createWindow() {
         icon: __dirname + "/media/app_icon.png",
         frame: false,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            enableRemoteModule: true
         }
     })
 
