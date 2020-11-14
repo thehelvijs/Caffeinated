@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
     <head>
         <meta charset="utf-8" />
         <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
@@ -95,7 +96,7 @@
             <a class="close" title="Close">
                 <ion-icon name="close-outline"></ion-icon>
             </a>
-            <a class="minmax" title="Minmax">
+            <a class="minmax" title="Maximize">
                 <ion-icon name="albums-outline"></ion-icon>
             </a>
             <a class="minimize" title="Minimize">
@@ -108,15 +109,15 @@
                     <ul class="menu-list" id="page-menu">
                         <!-- <li id="menu-overlays">
                             <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays"> -->
-                                <!-- <ion-icon name="copy"></ion-icon> -->
-                                <!-- <div class="menu-button-title">Overlays</div>
+                        <!-- <ion-icon name="copy"></ion-icon> -->
+                        <!-- <div class="menu-button-title">Overlays</div>
                             </a>
                         </li> -->
                         <li id='menu-overlays'>
                             <a class="menu-button">
                                 <div class="menu-button-title">
                                     Widgets <ion-icon name="chevron-down-outline" class="sub-menu-arrow"></ion-icon>
-                                </div> 
+                                </div>
                             </a>
                             <div class="dropdown-container" id="widgets">
                                 <!-- <div class="dropdown-item">
@@ -142,9 +143,13 @@
             </div>
             <div id="user-bar">
                 <a onclick="navigate('settings');">
-                    <img class="user-icon" src="media/icon.png"/>
-                <div class="user-username"><ion-icon name="settings-outline"></ion-icon></div>
-                    <img class="user-platform" src="media/app_icon.png"/>
+                    <img class="user-icon" src="media/icon.png" />
+                    <div class="user-username">
+                        <ion-icon name="settings-outline"></ion-icon>
+                    </div>
+                </a>
+                <a onclick="openLink(CAFFEINATED.userdata.streamer.link)">
+                    <img class="user-platform" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
                 </a>
                 <p class="user-followers">
                     <span id="followers"></span>

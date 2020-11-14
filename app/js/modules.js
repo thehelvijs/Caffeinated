@@ -1,8 +1,48 @@
-class Modules {
-    constructor() {
-        this.moduleClasses = {};
-        this.modules = [];
+class ModuleHolder {
+    #module;
+    #sockets = [];
+    #elements = [];
+
+    constructor(module, elements) {
+        this.#module = module;
+        this.#elements = elements;
     }
+
+    getUUID() {
+        return this.#module.namespace + ":" + this.#module.id;
+    }
+
+    unload() {
+        MODULES.saveToStore(this.#module);
+
+        if (this.#module.onUnload) {
+            this.#module.onUnload();
+        }
+
+        this.#elements.forEach((element) => element.remove());
+    }
+
+    getElements() {
+        return this.#elements;
+    }
+
+    getSockets() {
+        return this.#sockets;
+    }
+
+    getInstance() {
+        return this.#module;
+    }
+
+    getTypes() {
+        return this.#module.type.toUpperCase().split(" ");
+    }
+
+}
+
+class Modules {
+    moduleClasses = {};
+    #modules = new Map();
 
     addIOHandler(module, channel, callback, socket) {
         let uuid = module.namespace + ":" + module.id;
@@ -10,7 +50,7 @@ class Modules {
         socket.on(uuid + " " + channel, callback);
     }
 
-    emitIO(module, channel, data, socket = module.sockets) {
+    emitIO(module, channel, data, socket = module.holder.getSockets()) {
         let uuid = module.namespace + ":" + module.id;
 
         if (Array.isArray(socket)) {
@@ -23,17 +63,13 @@ class Modules {
     }
 
     getFromUUID(target) {
-        return new Promise((resolve) => {
-            this.modules.forEach((module) => {
-                let uuid = module.namespace + ":" + module.id;
+        let holder = this.#modules.get(target);
 
-                if (uuid == target) {
-                    resolve(module);
-                }
-            });
-
-            resolve(null);
-        });
+        if (holder) {
+            return holder.getInstance();
+        } else {
+            return null;
+        }
     }
 
     saveToStore(module) {
@@ -50,26 +86,27 @@ class Modules {
 
     initalizeModule(module) {
         try {
-            const type = module.type.toUpperCase();
+            const holder = new ModuleHolder(module);
+            const types = holder.getTypes();
+
+            module.holder = holder;
 
             // Initialize pages, this is ugly yet intentional.
-            if (type.includes("OVERLAY")) {
-                this.initalizeModuleOverlayPage(module);
+            if (types.includes("OVERLAY")) {
+                this.initalizeModuleWidgetPage(module);
             }
 
-            if (type.includes("SETTINGS")) {
+            if (types.includes("SETTINGS")) {
                 this.initalizeModuleSettingsPage(module);
             }
 
-            if (type.includes("APPLICATION")) {
+            if (types.includes("APPLICATION")) {
                 this.initalizeModulePage(module);
             }
 
-            module.sockets = [];
-
             if (module.init) module.init();
 
-            this.modules.push(module);
+            this.#modules.set(holder.getUUID(), holder);
         } catch (e) {
             console.error("Unable to initalize module due to an exception:");
             console.error(e);
@@ -92,12 +129,12 @@ class Modules {
         a.classList.add("menu-button");
         a.addEventListener("click", () => navigate(selector));
         a.setAttribute("title", name);
-        
+
         // Setting hidden icon. On hide() => $("#menu-ion-icon").remove("hide")
         ion.setAttribute("name", module.icon);
         ion.setAttribute("id", "menu-ion-icon");
         ion.classList.add("hide");
-        
+
         text.classList.add("menu-button-title");
         text.innerHTML = module.displayname;
         a.appendChild(text);
@@ -119,7 +156,7 @@ class Modules {
         document.querySelector(".pages").appendChild(page);
     }
 
-    initalizeModuleOverlayPage(module) {
+    initalizeModuleWidgetPage(module) {
         let linkDisplay = module.linkDisplay;
         let div = document.createElement("div");
         let title = document.createElement("div");
@@ -134,14 +171,14 @@ class Modules {
         a.innerHTML = prettifyString(module.id);
         title.appendChild(a);
 
-        icons.classList.add("dropdown-icon"); 
+        icons.classList.add("dropdown-icon");
         a_show.addEventListener("click", () => {
             console.log("show/hide pressed");
         });
         ion_show.setAttribute("name", "eye-outline");
         a_show.appendChild(ion_show);
         icons.appendChild(a_show);
-        
+
 
         a_mute.addEventListener("click", () => {
             console.log("mute/unmute pressed");
@@ -149,14 +186,14 @@ class Modules {
         ion_mute.setAttribute("name", "volume-high-outline");
         a_mute.appendChild(ion_mute);
         icons.appendChild(a_mute);
-        
+
         div.classList.add("reset-this");
         div.classList.add("dropdown-item");
         div.appendChild(title);
         div.appendChild(icons);
 
         document.getElementById("widgets").appendChild(div);
-        
+
         // let div = document.createElement("div");
         // let label = document.createElement("label");
         // let copy = document.createElement("button");
@@ -224,7 +261,7 @@ class Modules {
         container.appendChild(document.createElement("br"));
 
         for (const [key, type] of Object.entries(module.settingsDisplay)) {
-            div.appendChild(createInput(module, key, type, stored, formCallback));
+            div.appendChild(createModuleInput(module, key, type, stored, formCallback));
         }
 
         document.getElementById("settings").appendChild(container);
@@ -249,7 +286,7 @@ class Modules {
     }
 }
 
-function createDynamicOption(module, layout, values, formCallback) {
+function createDynamicModuleOption(module, layout, values, formCallback) {
     const display = layout.display;
     const defaults = layout.default;
 
@@ -271,13 +308,13 @@ function createDynamicOption(module, layout, values, formCallback) {
     });
 
     for (const [key, type] of Object.entries(display)) {
-        div.appendChild(createInput(module, key, type, values, formCallback, defaults[key]));
+        div.appendChild(createModuleInput(module, key, type, values, formCallback, defaults[key]));
     }
 
     return div;
 }
 
-function createInput(module, key, type, stored, formCallback, defaultValue = module.defaultSettings[key]) {
+function createModuleInput(module, key, type, stored, formCallback, defaultValue = module.defaultSettings[key]) {
     let uuid = module.namespace + ":" + module.id;
     let name = document.createElement("label");
     let input;
@@ -293,7 +330,7 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
         add.appendChild(icon);
         add.classList = "menu-button dynamic-add";
         add.addEventListener("click", () => {
-            input.appendChild(createDynamicOption(module, defaultValue, defaultValue.default, formCallback));
+            input.appendChild(createDynamicModuleOption(module, defaultValue, defaultValue.default, formCallback));
             formCallback();
         });
 
@@ -310,7 +347,7 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
 
         if (Array.isArray(stored[key])) {
             stored[key].forEach((dynamic) => {
-                input.appendChild(createDynamicOption(module, defaultValue, dynamic, formCallback));
+                input.appendChild(createDynamicModuleOption(module, defaultValue, dynamic, formCallback));
             });
         }
 

@@ -5,19 +5,24 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "0.5.1-release";
-const COLOR = "#FFFFFF";
+const VERSION = "1.0.0-beta";
 
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
 let CONNECTED = false;
 
 console.warn("Caution, here be dragons!" + "\n\n" + "If someone tells you to paste code here, they might be trying to steal important data from you." + "\n" + "If you're good at UX, consider contributing to the Caffeinated project at " + "\n" + "https://github.com/thehelvijs/Caffeinated" + "\n");
 
-Array.from(document.querySelectorAll(".spinner div")).forEach((element) => {
-    element.style = "background-color: " + COLOR + ";";
-});
 document.querySelector(".settings-version").innerText = VERSION;
-document.querySelector(".settings-version").style = "color: " + COLOR + ";";
+
+let PLATFORMS = {};
+
+fetch("https://api.casterlabs.co/v1/koi/platforms")
+    .then((response) => response.json())
+    .then((data) => {
+        PLATFORMS = data;
+
+        // TODO update dropdown in settings.
+    });
 
 class Caffeinated {
     constructor() {
@@ -132,7 +137,7 @@ class Caffeinated {
         for (const [namespace, modules] of Object.entries(this.store.get("modules"))) {
             for (const [id, module] of Object.entries(modules)) {
                 try {
-                    let loaded = await MODULES.getFromUUID(namespace + ":" + id);
+                    let loaded = MODULES.getFromUUID(namespace + ":" + id);
 
                     if (!loaded) {
                         MODULES.initalizeModule(new MODULES.moduleClasses[namespace](id));
@@ -178,29 +183,36 @@ class Caffeinated {
         document.querySelector(".user-username").innerHTML = '<ion-icon name="settings-outline"></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + username;
     }
 
-    setUserPlatform(platform) {
-        document.querySelector(".user-platform").src = "media/" + platform + ".png";
-        document.querySelector(".user-platform").setAttribute("title", platform);
+    setUserPlatform(platform, link) {
+        if (platform) {
+            document.querySelector(".user-platform").src = PLATFORMS[platform].logo;
+            document.querySelector(".user-platform").setAttribute("title", link);
+        } else {
+            document.querySelector(".user-platform").src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+            document.querySelector(".user-platform").setAttribute("title", link);
+        }
     }
 
-    setUserImage(image) {
+    setUserImage(image, name) {
+        document.querySelector(".user-icon").setAttribute("title", name);
+
         if (image) {
             if (image != document.querySelector(".user-icon").src) {
                 document.querySelector(".user-icon").src = image;
-            }
 
-            // anime({
-            //     targets: ".placeholder-icon",
-            //     easing: "linear",
-            //     opacity: 0,
-            //     duration: 250,
-            // });
-            // anime({
-            //     targets: ".user-icon",
-            //     easing: "linear",
-            //     opacity: 1,
-            //     duration: 250,
-            // });
+                // anime({
+                //     targets: ".placeholder-icon",
+                //     easing: "linear",
+                //     opacity: 0,
+                //     duration: 250,
+                // });
+                // anime({
+                //     targets: ".user-icon",
+                //     easing: "linear",
+                //     opacity: 1,
+                //     duration: 250,
+                // });
+            }
         } else {
             document.querySelector(".user-icon").src = "media/icon.png";
             // anime({
@@ -225,9 +237,9 @@ class Caffeinated {
 
         this.user = user;
         this.setFollowerCount(null);
-        this.setUserImage(null);
-        this.setUserName(null);
-        this.setUserPlatform(null);
+        this.setUserImage(null, "Set username in settings");
+        this.setUserName("");
+        this.setUserPlatform(null, "");
 
         koi.addUser(this.user);
     }
@@ -266,6 +278,11 @@ class Caffeinated {
 const CAFFEINATED = new Caffeinated();
 const MODULES = new Modules();
 
+CAFFEINATED.setFollowerCount(null);
+CAFFEINATED.setUserImage(null, "Set username in settings");
+CAFFEINATED.setUserName("");
+CAFFEINATED.setUserPlatform(null, "");
+
 /* Koi */
 koi.addEventListener("close", () => {
     splashText("reconnecting");
@@ -275,10 +292,10 @@ koi.addEventListener("close", () => {
 
 koi.addEventListener("userupdate", (e) => {
     splashScreen(false);
-    CAFFEINATED.setUserImage(e.streamer.image_link);
+    CAFFEINATED.setUserImage(e.streamer.image_link, e.streamer.username);
     CAFFEINATED.setUserName(e.streamer.username);
     CAFFEINATED.setFollowerCount(e.streamer.follower_count);
-    CAFFEINATED.setUserPlatform(e.streamer.platform);
+    CAFFEINATED.setUserPlatform(e.streamer.platform, e.streamer.link);
 
     CAFFEINATED.userdata = e;
 
@@ -313,19 +330,19 @@ koi.addEventListener("open", () => {
 });
 
 /* Sub menu handler */
-var dropdown = document.getElementsByClassName("menu-button");
+Array.from(document.getElementsByClassName("menu-button")).forEach((dropdown) => {
+    dropdown.addEventListener("click", () => {
+        let dropdownContent = dropdown.nextElementSibling;
 
-for (var i = 0; i < dropdown.length; i++) {
-dropdown[i].addEventListener("click", function() {
-    this.classList.toggle("active-sub");
-    var dropdownContent = this.nextElementSibling;
-    if (dropdownContent.style.display === "block") {
-    dropdownContent.style.display = "none";
-    } else {
-    dropdownContent.style.display = "block";
-    }
+        dropdown.classList.toggle("active-sub");
+
+        if (dropdownContent.style.display === "block") {
+            dropdownContent.style.display = "none";
+        } else {
+            dropdownContent.style.display = "block";
+        }
+    });
 });
-}
 
 document.querySelector(".close").addEventListener("click", () => {
     electron.getCurrentWindow().close();
@@ -344,7 +361,7 @@ function openLink(link) {
 }
 
 function kFormatter(num) {
-    return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'k' : Math.sign(num)*Math.abs(num)
+    return Math.abs(num) > 999 ? Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) + 'k' : Math.sign(num) * Math.abs(num)
 }
 
 setTimeout(() => {

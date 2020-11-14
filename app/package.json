@@ -1,6 +1,6 @@
 {
-  "name": "Caffeinated",
-  "version": "0.5.1-release",
+  "name": "caffeinated",
+  "version": "1.0.0-release",
   "license": "MIT",
   "author": "HelvijsAdams <support@casterlabs.co>",
   "main": "main.js",
