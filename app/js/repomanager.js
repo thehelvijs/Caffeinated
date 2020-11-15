@@ -23,8 +23,8 @@ class RepoManager {
                     }
                 }
 
-                if (Array.isArray(modules.overlays)) {
-                    for (let overlay of modules.overlays) {
+                if (Array.isArray(modules.scripts)) {
+                    for (let overlay of modules.scripts) {
                         let script = document.createElement("script");
 
                         script.src = repo + "/" + overlay;
@@ -38,6 +38,16 @@ class RepoManager {
 
                 if (Array.isArray(modules.required)) {
                     for (let instance of modules.required) {
+                        let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
+
+                        if (!loaded) {
+                            MODULES.initalizeModule(new MODULES.moduleClasses[instance.namespace](instance.id));
+                        }
+                    }
+                }
+
+                if (Array.isArray(modules.simple)) {
+                    for (let instance of modules.simple) {
                         let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
 
                         if (!loaded) {

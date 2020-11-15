@@ -149,7 +149,6 @@ class Modules {
             a.setAttribute("title", module.displayname);
         }
 
-
         module.page = page;
 
         document.querySelector("#page-menu").insertBefore(li, document.querySelector("#page-menu").lastChild);
