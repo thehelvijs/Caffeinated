@@ -55,8 +55,6 @@ ion-icon {
     background: #505050;
 }
 
-/* Inputs */
-
 ::-webkit-slider-runnable-track {
     width: 300px;
     height: 2px;
@@ -76,6 +74,8 @@ ion-icon {
     cursor: pointer;
 }
 
+/* Inputs */
+
 *:focus {
     outline: none !important;
 }
@@ -84,7 +84,8 @@ input[type=range] {
     -webkit-appearance: none;
 }
 
-input {
+input,
+select {
     background-color: var(--menu-background-color) !important;
     color: var(--menu-icon-color) !important;
     border-radius: 6px;
@@ -93,36 +94,35 @@ input {
     outline: none !important;
 }
 
+select {
+    cursor: pointer;
+}
+
 input[type=search] {
     height: 3em;
     width: 180px;
 }
 
-select {
-    background-color: white;
-    border-radius: 6px;
-    border: 1px solid #DCDCDC;
+input[type=color] {
     cursor: pointer;
-    outline: none !important;
 }
 
 input[type=number] {
     background-color: white;
     border-radius: 6px;
     border: 1px solid #DCDCDC;
-    cursor: pointer;
+    cursor: auto;
     font-size: 15px;
     width: 65px;
-    cursor: auto;
     outline: none !important;
 }
 
 .file-button {
-    background-color: white;
+    background-color: var(--menu-background-color) !important;
+    color: var(--menu-icon-color) !important;
     border-radius: 6px;
     border: 1px solid #DCDCDC;
     cursor: pointer;
-    color: black;
     font-size: 15px;
     padding: 5px;
 }

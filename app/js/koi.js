@@ -2,7 +2,6 @@ class Koi {
     constructor(address) {
         this.address = address;
         this.listeners = {};
-        this.reconnect();
     }
 
     addEventListener(type, callback) {
@@ -67,16 +66,18 @@ class Koi {
                 instance.broadcast("error", json);
             } else if (json["type"] == "EVENT") {
                 let event = json["event"];
+                let type = event["event_type"];
 
-                switch (event["event_type"]) {
-                    case "CHAT": instance.broadcast("chat", event); break;
-                    case "SHARE": instance.broadcast("share", event); break;
-                    case "FOLLOW": instance.broadcast("follow", event); break;
-                    case "DONATION": instance.broadcast("donation", event); break;
-                    case "INFO": instance.broadcast("info", event["event"]); break;
+                switch (type) {
+                    case "INFO": instance.broadcast("info", event["event"]); return;
+
+                    // We still let these broadcast with _'s aswell.
                     case "STREAM_STATUS": instance.broadcast("streamstatus", event); break;
                     case "USER_UPDATE": instance.broadcast("userupdate", event); break;
+                    default: break;
                 }
+
+                instance.broadcast(type.toLowerCase(), event);
             } else {
                 instance.broadcast("message", json);
             }

@@ -5,7 +5,7 @@ const windowStateKeeper = require("electron-window-state");
 
 function createWindow() {
     let mainWindowState = windowStateKeeper({
-        defaultWidth: 600,
+        defaultWidth: 700,
         defaultHeight: 500,
         file: "main-window.json"
     });

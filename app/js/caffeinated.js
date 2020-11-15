@@ -16,14 +16,6 @@ document.querySelector(".settings-version").innerText = VERSION;
 
 let PLATFORMS = {};
 
-fetch("https://api.casterlabs.co/v1/koi/platforms")
-    .then((response) => response.json())
-    .then((data) => {
-        PLATFORMS = data;
-
-        // TODO update dropdown in settings.
-    });
-
 class Caffeinated {
     constructor() {
         FONTSELECT.endPoint = "https://www.googleapis.com/webfonts/v1/webfonts?sort=popularity&key=AIzaSyBuFeOYplWvsOlgbPeW8OfPUejzzzTCITM"; // TODO cache/proxy from Casterlabs' server
@@ -36,9 +28,7 @@ class Caffeinated {
                 port: 8091,
                 user: null,
                 modules: {},
-                repos: [
-                    "https://caffeinated.casterlabs.co"
-                ]
+                repos: []
             });
 
             console.log("reset!");
@@ -90,6 +80,14 @@ class Caffeinated {
         await FONTSELECT.preload(true);
         console.log("fonts loaded!");
 
+
+        PLATFORMS = await (await fetch("https://api.casterlabs.co/v1/koi/platforms")).json();
+        let platformsList = [];
+
+        Object.values(PLATFORMS).forEach((platform) => {
+            platformsList.push(platform.name);
+        });
+
         MODULES.initalizeModule({
             namespace: "casterlabs_caffeinated",
             type: "settings",
@@ -117,14 +115,19 @@ class Caffeinated {
 
             defaultSettings: {
                 username: "",
-                platform: [
-                    "Caffeine",
-                    "Twitch"
-                ],
+                platform: platformsList,
                 currency: "USD"
             }
-
         });
+
+        this.store.set("repos", removeFromArray(this.store.get("repos"), "https://beta.casterlabs.co/caffeinated"));
+        this.store.set("repos", removeFromArray(this.store.get("repos"), "https://caffeinated.casterlabs.co"));
+
+        if (VERSION.includes("beta")) {
+            await this.repomanager.addRepo("https://beta.casterlabs.co/caffeinated");
+        } else {
+            await this.repomanager.addRepo("https://caffeinated.casterlabs.co");
+        }
 
         for (let repo of this.store.get("repos")) {
             try {
@@ -146,9 +149,8 @@ class Caffeinated {
             }
         }
 
-        if (!this.user) {
-            splashScreen(false);
-        }
+        // Kickstart koi, a crucial part to the UI.
+        koi.reconnect();
 
         const app = express();
         const cors = require("cors");
@@ -156,27 +158,29 @@ class Caffeinated {
 
         app.use(cors());
 
-        server.listen(this.store.get("port"));
-
         this.io = require("socket.io").listen(server);
 
         this.io.on("connection", (socket) => {
             socket.on("uuid", (uuid) => {
-                MODULES.getFromUUID(uuid).then((module) => {
-                    if (module) {
-                        if (module.onConnection) module.onConnection(socket);
+                let holder = MODULES.getHolderFromUUID(uuid);
 
-                        module.sockets.push(socket);
+                if (holder) {
+                    let module = holder.getInstance();
 
-                        socket.on("disconnect", () => {
-                            removeFromArray(module.sockets, socket);
-                        });
-                    }
-                });
+                    if (module.onConnection) module.onConnection(socket);
+
+                    holder.sockets.push(socket);
+
+                    socket.on("disconnect", () => {
+                        removeFromArray(holder.sockets, socket);
+                    });
+                }
             });
 
             socket.emit("init");
         });
+
+        server.listen(this.store.get("port"));
     }
 
     setUserName(username) {
@@ -189,7 +193,7 @@ class Caffeinated {
             document.querySelector(".user-platform").setAttribute("title", link);
         } else {
             document.querySelector(".user-platform").src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
-            document.querySelector(".user-platform").setAttribute("title", link);
+            document.querySelector(".user-platform").setAttribute("title", "link");
         }
     }
 
@@ -368,4 +372,4 @@ setTimeout(() => {
     if (!CONNECTED) {
         splashText("problems");
     }
-}, 30 * 1000); // Wait 1 minute, then show connection message.
+}, 30 * 1000); // Wait 30s, then show connection message.

@@ -1,6 +1,6 @@
 class ModuleHolder {
     #module;
-    #sockets = [];
+    sockets = [];
     #elements = [];
 
     constructor(module, elements) {
@@ -26,10 +26,6 @@ class ModuleHolder {
         return this.#elements;
     }
 
-    getSockets() {
-        return this.#sockets;
-    }
-
     getInstance() {
         return this.#module;
     }
@@ -50,7 +46,7 @@ class Modules {
         socket.on(uuid + " " + channel, callback);
     }
 
-    emitIO(module, channel, data, socket = module.holder.getSockets()) {
+    emitIO(module, channel, data, socket = module.holder.sockets) {
         let uuid = module.namespace + ":" + module.id;
 
         if (Array.isArray(socket)) {
@@ -67,6 +63,16 @@ class Modules {
 
         if (holder) {
             return holder.getInstance();
+        } else {
+            return null;
+        }
+    }
+
+    getHolderFromUUID(target) {
+        let holder = this.#modules.get(target);
+
+        if (holder) {
+            return holder;
         } else {
             return null;
         }
@@ -92,16 +98,20 @@ class Modules {
             module.holder = holder;
 
             // Initialize pages, this is ugly yet intentional.
+            // Overlay's cannot have a page nor settings box,
+            // the module is given it's page with the settings attributes filled (if requested)
             if (types.includes("OVERLAY")) {
                 this.initalizeModuleWidgetPage(module);
-            }
 
-            if (types.includes("SETTINGS")) {
-                this.initalizeModuleSettingsPage(module);
-            }
-
-            if (types.includes("APPLICATION")) {
-                this.initalizeModulePage(module);
+                if (types.includes("SETTINGS")) {
+                    this.initalizeModuleSettingsPage(module, module.page);
+                }
+            } else {
+                if (types.includes("SETTINGS")) {
+                    this.initalizeModuleSettingsPage(module);
+                } else if (types.includes("APPLICATION")) {
+                    this.initalizeModulePage(module);
+                }
             }
 
             if (module.init) module.init();
@@ -114,21 +124,18 @@ class Modules {
     }
 
     initalizeModulePage(module) {
-        let selector = module.namespace;
-        let name = prettifyString(module.namespace);
+        this.createPage(module);
+
+        let selector = module.namespace + "-" + module.id;
+        let name = module.displayname ? module.displayname : prettifyString(module.id);
+
         let li = document.createElement("li");
         let a = document.createElement("a");
         let ion = document.createElement("ion-icon");
-        let page = document.createElement("div");
         let text = document.createElement("div");
 
         li.appendChild(a);
         li.setAttribute("id", "menu-" + selector);
-
-        a.appendChild(ion);
-        a.classList.add("menu-button");
-        a.addEventListener("click", () => navigate(selector));
-        a.setAttribute("title", name);
 
         // Setting hidden icon. On hide() => $("#menu-ion-icon").remove("hide")
         ion.setAttribute("name", module.icon);
@@ -136,98 +143,82 @@ class Modules {
         ion.classList.add("hide");
 
         text.classList.add("menu-button-title");
-        text.innerHTML = module.displayname;
+        text.innerHTML = name;
+
+        a.classList.add("menu-button");
+        a.addEventListener("click", () => navigate(selector));
+        a.setAttribute("title", name);
+        a.appendChild(ion);
         a.appendChild(text);
 
-        page.setAttribute("page", selector);
-        page.classList.add("content");
-        page.classList.add("page");
-        page.classList.add("hide");
-
-        if (module.displayname) {
-            page.setAttribute("navbar-title", module.displayname);
-            a.setAttribute("title", module.displayname);
-        }
-
-        module.page = page;
-
         document.querySelector("#page-menu").insertBefore(li, document.querySelector("#page-menu").lastChild);
-        document.querySelector(".pages").appendChild(page);
     }
 
     initalizeModuleWidgetPage(module) {
-        let linkDisplay = module.linkDisplay;
+        this.createPage(module);
+
+        let selector = module.namespace + "-" + module.id;
+        let name = module.displayname ? module.displayname : prettifyString(module.id);
+
         let div = document.createElement("div");
         let title = document.createElement("div");
         let a = document.createElement("a");
         let icons = document.createElement("div");
-        let ion_show = document.createElement("ion-icon");
-        let ion_mute = document.createElement("ion-icon");
-        let a_show = document.createElement("a");
-        let a_mute = document.createElement("a");
+
+        a.innerHTML = name;
+        a.addEventListener("click", () => navigate(selector));
 
         title.classList.add("dropdown-title");
-        a.innerHTML = prettifyString(module.id);
         title.appendChild(a);
 
         icons.classList.add("dropdown-icon");
-        a_show.addEventListener("click", () => {
-            console.log("show/hide pressed");
-        });
-        ion_show.setAttribute("name", "eye-outline");
-        a_show.appendChild(ion_show);
-        icons.appendChild(a_show);
 
+        if (module.widgetDisplay) {
+            for (const display of module.widgetDisplay) {
+                let peeper = document.createElement("a");
+                let ion = document.createElement("ion-icon");
 
-        a_mute.addEventListener("click", () => {
-            console.log("mute/unmute pressed");
-        });
-        ion_mute.setAttribute("name", "volume-high-outline");
-        a_mute.appendChild(ion_mute);
-        icons.appendChild(a_mute);
+                ion.setAttribute("name", display.icon);
 
-        div.classList.add("reset-this");
+                peeper.appendChild(ion);
+                peeper.setAttribute("title", display.name);
+                peeper.addEventListener("click", () => {
+                    display.onclick(module);
+                });
+
+                icons.appendChild(peeper);
+            }
+        }
+
         div.classList.add("dropdown-item");
         div.appendChild(title);
         div.appendChild(icons);
 
         document.getElementById("widgets").appendChild(div);
-
-        // let div = document.createElement("div");
-        // let label = document.createElement("label");
-        // let copy = document.createElement("button");
-        // let custom = document.createElement("button");
-        // // let visible = document.createElement("input");
-
-        // label.classList.add("overlay-id");
-        // label.innerText = prettifyString(module.id);
-
-        // /* visible.setAttribute("type", "checkbox");
-        // visible.addEventListener("change", (e) => {
-        //     module.setWindowVisbility(e.target.checked);
-        // }); */
-
-        // copy.classList.add("button");
-        // copy.innerText = "Copy";
-        // copy.addEventListener("click", () => {
-        //     putInClipboard(linkDisplay.path + "?id=" + module.id);
-        // });
-
-        // custom.classList.add("button");
-        // custom.innerText = linkDisplay.option.name;
-        // custom.addEventListener("click", () => {
-        //     linkDisplay.option.onclick(module);
-        // });
-
-        // // div.appendChild(visible);
-        // div.appendChild(label);
-        // div.appendChild(copy);
-        // div.appendChild(custom);
-
-        // document.getElementById("overlays").appendChild(div);
     }
 
-    initalizeModuleSettingsPage(module) {
+    createPage(module) {
+        let selector = module.namespace + "-" + module.id;
+        let name = module.displayname ? module.displayname : prettifyString(module.id);
+
+        let page = document.createElement("div");
+        let text = document.createElement("div");
+
+        text.classList.add("menu-button-title");
+        text.innerHTML = name;
+
+        page.setAttribute("page", selector);
+        page.setAttribute("navbar-title", name);
+        page.classList.add("content");
+        page.classList.add("page");
+        page.classList.add("hide");
+
+        module.page = page;
+
+        document.querySelector(".pages").appendChild(page);
+    }
+
+    initalizeModuleSettingsPage(module, parent = document.getElementById("settings")) {
         const settingsSelector = module.namespace + "_" + module.id;
         let stored = this.getStoredValues(module);
         let container = document.createElement("div");
@@ -263,7 +254,7 @@ class Modules {
             div.appendChild(createModuleInput(module, key, type, stored, formCallback));
         }
 
-        document.getElementById("settings").appendChild(container);
+        parent.appendChild(container);
 
         module.settings = stored;
     }
