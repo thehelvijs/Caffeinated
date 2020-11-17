@@ -169,6 +169,7 @@
 
     <footer>
         <script src="js/util.js"></script>
+        <script src="js/windowmanager.js"></script>
         <script src="js/currencies.js"></script>
         <script src="js/selectnsearch.js"></script>
         <script src="js/forms.js"></script>
@@ -178,37 +179,36 @@
         <script src="js/modules.js"></script>
         <script src="js/repomanager.js"></script>
         <script src="js/caffeinated.js"></script>
-        <div id="scripts"></div>
         <script>
+            window.addEventListener("beforeunload", () => {
+                const current = electron.getCurrentWindow();
+
+                BrowserWindow.getAllWindows().forEach((window) => {
+                    if (window !== current) {
+                        window.close();
+                    }
+                });
+            });
+
             navigate("settings");
             CAFFEINATED.init();
 
-            // This will be replaced with an event fire.
-            // e.g element.addEventListener("altclick", (e) => {})
             /*
             const contextMenu = require('electron-context-menu');
             contextMenu({
                 prepend: (defaultActions, params, browserWindow) => [
                     {
-                        label: 'Copy widget',
-                        // Only show it when right-clicking images
-                        // visible: params.mediaType === 'image',
+                        label: 'Test',
                         click: () => {
                             console.log(params);
-                        }
-                    },
-                    {
-                        label: 'Test widget',
-                        // Only show it when right-clicking images
-                        // visible: params.mediaType === 'image',
-                        click: () => {
-                            console.log(params);
+                            console.log(defaultActions);
                         }
                     }
                 ]
             });
             */
         </script>
+        <div id="scripts"></div>
     </footer>
 
 </html>
