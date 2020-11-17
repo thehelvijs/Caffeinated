@@ -123,10 +123,12 @@ class Caffeinated {
         this.store.set("repos", removeFromArray(this.store.get("repos"), "https://beta.casterlabs.co/caffeinated"));
         this.store.set("repos", removeFromArray(this.store.get("repos"), "https://caffeinated.casterlabs.co"));
 
-        if (VERSION.includes("beta")) {
-            await this.repomanager.addRepo("https://beta.casterlabs.co/caffeinated");
-        } else {
-            await this.repomanager.addRepo("https://caffeinated.casterlabs.co");
+        if (!this.store.get("dev")) {
+            if (VERSION.includes("beta")) {
+                await this.repomanager.addRepo("https://beta.casterlabs.co/caffeinated");
+            } else {
+                await this.repomanager.addRepo("https://caffeinated.casterlabs.co");
+            }
         }
 
         for (let repo of this.store.get("repos")) {
@@ -181,6 +183,12 @@ class Caffeinated {
         });
 
         server.listen(this.store.get("port"));
+    }
+
+    setDevEnviroment(value) {
+        this.store.set("dev", value);
+
+        location.reload();
     }
 
     setUserName(username) {
