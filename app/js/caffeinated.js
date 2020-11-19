@@ -5,7 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "1.0.0-beta";
+const VERSION = "1.0.0-beta-NOV18,20";
 
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
 let CONNECTED = false;
@@ -297,7 +297,7 @@ CAFFEINATED.setUserPlatform(null, "");
 
 /* Koi */
 koi.addEventListener("close", () => {
-    splashText("reconnecting");
+    splashText("Reconnecting to Casterlabs.");
     splashScreen(true);
     koi.reconnect();
 });
@@ -378,6 +378,11 @@ function kFormatter(num) {
 
 setTimeout(() => {
     if (!CONNECTED) {
-        splashText("problems");
+        splashText(`
+        Having problems?
+        <a onclick="openLink('https://twitter.com/casterlabs');">
+            Tweet at us.
+        </a>
+        `);
     }
 }, 30 * 1000); // Wait 30s, then show connection message.
