@@ -5,16 +5,16 @@ const express = require("express");
 const Store = require("electron-store");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "1.0.0-beta-NOV18,20";
-
+const VERSION = "1.0.0-beta-Nov20'20";
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
+
+let baseRepo = "https://caffeinated.casterlabs.co";
 let CONNECTED = false;
+let PLATFORMS = {};
 
 console.warn("Caution, here be dragons!" + "\n\n" + "If someone tells you to paste code here, they might be trying to steal important data from you." + "\n" + "If you're good at UX, consider contributing to the Caffeinated project at " + "\n" + "https://github.com/thehelvijs/Caffeinated" + "\n");
 
 document.querySelector(".settings-version").innerText = VERSION;
-
-let PLATFORMS = {};
 
 class Caffeinated {
     constructor() {
@@ -125,10 +125,10 @@ class Caffeinated {
 
         if (!this.store.get("dev")) {
             if (VERSION.includes("beta")) {
-                await this.repomanager.addRepo("https://beta.casterlabs.co/caffeinated");
-            } else {
-                await this.repomanager.addRepo("https://caffeinated.casterlabs.co");
+                baseRepo = "https://beta.casterlabs.co/caffeinated";
             }
+
+            await this.repomanager.addRepo(baseRepo);
         }
 
         for (let repo of this.store.get("repos")) {
