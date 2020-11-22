@@ -77,9 +77,7 @@ class Caffeinated {
     async init() {
         console.log("init!");
 
-        await FONTSELECT.preload(true);
-        console.log("fonts loaded!");
-
+        FONTSELECT.preload();
 
         PLATFORMS = await (await fetch("https://api.casterlabs.co/v1/koi/platforms")).json();
         let platformsList = [];

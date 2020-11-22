@@ -309,7 +309,23 @@ function createModuleInput(module, key, type, stored, formCallback, defaultValue
     let name = document.createElement("label");
     let input;
 
-    if (type === "dynamic") {
+    if (type === "rich") {
+        input = document.createElement("div");
+
+        input.id = uuid;
+        input.classList = type + " data";
+        input.setAttribute("type", type);
+        input.setAttribute("name", key);
+        input.setAttribute("owner", module.id);
+
+        name.innerText = prettifyString(key) + " ";
+        name.appendChild(input);
+        name.appendChild(document.createElement("br"));
+
+        QuillUtil.createEditor(input, stored[key], formCallback);
+
+        return name;
+    } else if (type === "dynamic") {
         input = document.createElement("div");
 
         let add = document.createElement("a");

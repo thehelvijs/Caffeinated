@@ -59,6 +59,9 @@ const FORMSJS = {
             case "checkbox":
                 return element.checked;
 
+            case "rich":
+                return element.firstChild.innerHTML;
+
             case "file":
                 return element;
 

@@ -1,8 +1,8 @@
 const SELECTNSEARCH = {
 
     create(contents = [], div = document.createElement("div")) {
-        let input = document.createElement("input");
-        let contentDiv = document.createElement("div");
+        const input = document.createElement("input");
+        const contentDiv = document.createElement("div");
 
         div.appendChild(input);
         div.appendChild(contentDiv);

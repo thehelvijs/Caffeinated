@@ -3,7 +3,7 @@ const FONTSELECT = {
     endPoint: "",
     fonts: [],
 
-    preload(quickload = true) {
+    preload() {
         const instance = this;
 
         return new Promise((resolve, reject) => {
@@ -22,26 +22,21 @@ const FONTSELECT = {
                         }
                     });
 
-                    // Prevent lagging.
-                    /*
-                   if (quickload) resolve();
+                    for (let font of toload) {
+                        let name = font.family;
+                        let url = null;
 
-                   // Asynchronously load fonts one by one (to prevent lag)
-                   for (let font of toload) {
-                       let name = font.family;
-                       let url = null;
+                        if (font.files.hasOwnProperty("regular")) {
+                            url = font.files.regular;
+                        } else {
+                            url = Object.entries(font.files)[0][1]; // Get the entries, get the first entry, get the link.
+                        }
 
-                       if (font.files.hasOwnProperty("regular")) {
-                           url = font.files.regular;
-                       } else {
-                           url = Object.entries(font.files)[0][1]; // Get the entries, get the first entry, get the link.
-                       }
+                        const face = new FontFace(name, "url(" + url.replace("http:", "https:") + ")");
 
-                       await FONTSELECTUTIL.loadFont(name, url);
-                   }
+                        document.fonts.add(face);
+                    }
 
-                   // Resolving twice (Assuming quickload = false), is safe.
-                   */
                     resolve();
                 });
         });
@@ -69,16 +64,3 @@ const FONTSELECT = {
     }
 
 };
-
-const FONTSELECTUTIL = {
-    loadFont(name, url) {
-        return new Promise((resolve) => {
-            const font = new FontFace(name, "url(" + url.replace("http:", "https:") + ")");
-
-            document.fonts.add(font);
-
-            font.loaded.then(resolve);
-            font.load();
-        });
-    }
-}
