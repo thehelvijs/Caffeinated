@@ -60,7 +60,7 @@ const FORMSJS = {
                 return element.checked;
 
             case "rich":
-                return element.firstChild.innerHTML;
+                return element.lastChild.firstChild.innerHTML;
 
             case "file":
                 return element;

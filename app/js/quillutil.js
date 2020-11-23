@@ -8,6 +8,7 @@ const QuillUtil = {
         return new Promise((resolve) => {
             const element = document.createElement("input");
 
+            element.value = "#e94b4b";
             element.setAttribute("type", "color");
             element.addEventListener("change", () => {
                 resolve(element.value);
@@ -18,45 +19,54 @@ const QuillUtil = {
     },
 
     createEditor(element, value, callback) {
-        const quill = new Quill(element, {
-            modules: {
-                toolbar: {
-                    container: [
-                        // [{ "font": QuillUtil.fonts }],
-                        [{ "size": QuillUtil.fontSizes }],
-                        [{ "align": [] }],
-                        [{ "color": QuillUtil.colors }, { "background": QuillUtil.colors }],
-                        ["bold", "italic", "underline"],
-                        ["clean"]
-                    ],
-                    handlers: {
-                        "color": (value) => {
-                            if (value == "custom-color") {
-                                QuillUtil.getCustomColor().then((color) => {
-                                    this.quill.format("color", color);
-                                });
-                            } else {
-                                this.quill.format("color", value);
-                            }
-                        },
-                        "background": (value) => {
-                            if (value == "custom-color") {
-                                QuillUtil.getCustomColor().then((color) => {
-                                    this.quill.format("background", color);
-                                });
-                            } else {
-                                this.quill.format("background", value);
+        const inner = document.createElement("div");
+
+        inner.classList.add("rich-editor");
+
+        element.appendChild(inner);
+
+        element.addEventListener("DOMNodeInsertedIntoDocument", () => {
+            const quill = new Quill(inner, {
+                modules: {
+                    toolbar: {
+                        container: [
+                            // [{ "font": QuillUtil.fonts }],
+                            [{ "size": QuillUtil.fontSizes }],
+                            [{ "align": [] }],
+                            [{ "color": QuillUtil.colors }, { "background": QuillUtil.colors }],
+                            ["bold", "italic", "underline"],
+                            ["clean"]
+                        ],
+                        handlers: {
+                            "color": (value) => {
+                                if (value == "custom-color") {
+                                    QuillUtil.getCustomColor().then((color) => {
+                                        quill.format("color", color);
+                                    });
+                                } else {
+                                    quill.format("color", value);
+                                }
+                            },
+                            "background": (value) => {
+                                if (value == "custom-color") {
+                                    QuillUtil.getCustomColor().then((color) => {
+                                        quill.format("background", color);
+                                    });
+                                } else {
+                                    quill.format("background", value);
+                                }
                             }
                         }
                     }
-                }
-            },
-            placeholder: "",
-            theme: "snow"
-        });
+                },
+                placeholder: "",
+                theme: "snow"
+            });
 
-        quill.root.innerHTML = value;
-        quill.root.addEventListener("blur", callback);
+            quill.format("color", "#FFFFFF");
+            quill.root.innerHTML = value;
+            quill.root.addEventListener("blur", callback);
+        });
     }
 
 };

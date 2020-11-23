@@ -306,7 +306,7 @@ function createDynamicModuleOption(module, layout, values, formCallback) {
 
 function createModuleInput(module, key, type, stored, formCallback, defaultValue = module.defaultSettings[key]) {
     let uuid = module.namespace + ":" + module.id;
-    let name = document.createElement("label");
+    let name = document.createElement("span");
     let input;
 
     if (type === "rich") {

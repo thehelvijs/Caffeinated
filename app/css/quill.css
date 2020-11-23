@@ -1,3 +1,19 @@
+.rich-editor {
+    height: 75px;
+}
+
+.ql-snow .ql-stroke {
+    stroke: whitesmoke;
+}
+
+.ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill {
+    fill: whitesmoke;
+}
+
+.ql-picker-label {
+    color: whitesmoke;
+}
+
 .ql-picker.ql-size .ql-picker-label::before, .ql-picker.ql-size .ql-picker-item::before {
     content: attr(data-value) !important;
 }
