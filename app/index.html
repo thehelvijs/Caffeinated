@@ -86,7 +86,7 @@
             <span class="splash-message" style="opacity: 0;"></span>
         </div>
         <div class="title-bar">
-            <div class="title-bar-title"><img src="media/app_icon.png">Caffeinated</div>
+            <div class="title-bar-title"><img class="version-hover" src="media/app_icon.png" />Caffeinated</div>
             <!-- <span class="currentpage" style="opacity: 0;"></span> -->
             <a class="close" title="Close">
                 <ion-icon name="close-outline"></ion-icon>
@@ -154,10 +154,11 @@
                 </a> -->
             </div>
             <div class="pages">
-                <div class="content page hide" page="settings" id="settings">
-                    <span class="settings-version"></span>
-                </div>
+                <div class="content page hide" page="settings" id="settings"></div>
                 <div class="content page hide" page="overlays" id="overlays"></div>
+                <div class="content page hide" page="welcome" id="welcome">
+                    <!-- TODO Jake, welcome screen. -->
+                </div>
             </div>
         </div>
     </body>
@@ -186,7 +187,7 @@
             });
 
             navigate("settings");
-            CAFFEINATED.init();
+            CAFFEINATED.update();
 
             /*
             const contextMenu = require('electron-context-menu');

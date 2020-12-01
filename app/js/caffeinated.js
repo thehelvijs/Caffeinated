@@ -3,9 +3,11 @@ const shell = require("electron").shell;
 const dialog = electron.dialog;
 const express = require("express");
 const Store = require("electron-store");
+const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "1.0.0-beta-Nov20'20";
+const VERSION = "1.0.0-beta-Nov30'20";
+const PROTOCOLVERSION = 1;
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
 
 let baseRepo = "https://caffeinated.casterlabs.co";
@@ -13,8 +15,6 @@ let CONNECTED = false;
 let PLATFORMS = {};
 
 console.warn("Caution, here be dragons!" + "\n\n" + "If someone tells you to paste code here, they might be trying to steal important data from you." + "\n" + "If you're good at UX, consider contributing to the Caffeinated project at " + "\n" + "https://github.com/thehelvijs/Caffeinated" + "\n");
-
-document.querySelector(".settings-version").innerText = VERSION;
 
 class Caffeinated {
     constructor() {
@@ -28,13 +28,18 @@ class Caffeinated {
                 port: 8091,
                 user: null,
                 modules: {},
-                repos: []
+                repos: [],
+                cleared: []
             });
 
             console.log("reset!");
         }
 
         this.store.set("version", VERSION);
+
+        if (!this.store.get("channel")) {
+            this.store.set("channel", "STABLE");
+        }
 
         this.repomanager = new RepoManager();
         this.currency = this.store.get("currency");
@@ -52,6 +57,14 @@ class Caffeinated {
         await this.repomanager.addRepo(repo);
 
         this.store.set("repos", this.store.get("repos").concat(repo));
+    }
+
+    triggerEvent(name, callback) {
+        if (!this.store.get("cleared").contains(name)) {
+            this.store.set("cleared", this.store.get("cleared").concat(name));
+
+            callback();
+        }
     }
 
     getRepos() {
@@ -72,6 +85,51 @@ class Caffeinated {
     reset() {
         this.store.clear();
         location.reload();
+    }
+
+    async update() {
+        if (__dirname.includes("app.asar") && process.platform.includes("win")) { // Cannot autoupdate on mac. (yet)
+            splashText("Checking for updates.");
+
+            try {
+                const updates = await (await fetch("https://api.casterlabs.co/v1/caffeinated/updates")).json();
+                const channel = updates[this.store.get("channel")];
+
+                console.log(updates);
+
+                if (channel.protocol_version > PROTOCOLVERSION) {
+                    splashText("Update found! Downloading update");
+
+                    ipcRenderer.send("download-update", {
+                        url: channel.asar_url,
+                        updates: updates
+                    });
+                } else {
+                    splashText("You're up-to-date! 😄");
+                    await sleep(1000);
+                    splashText(null);
+                    this.init();
+                }
+            } catch (e) {
+                let left = 5;
+
+                setTimeout(() => CAFFEINATED.update(), 5000);
+
+                while (left > 0) {
+                    splashText(`Update failed, retrying in ${left} seconds.`);
+
+                    left--;
+
+                    await sleep(1000);
+                }
+            }
+        } else {
+            splashText("Skipping update check... (DEV_OVERRIDE)");
+
+            await sleep(1000);
+
+            this.init();
+        }
     }
 
     async init() {
@@ -122,7 +180,7 @@ class Caffeinated {
         this.store.set("repos", removeFromArray(this.store.get("repos"), "https://caffeinated.casterlabs.co"));
 
         if (!this.store.get("dev")) {
-            if (VERSION.includes("beta")) {
+            if (VERSION.includes("beta") || (this.store.get("channel") === "BETA")) {
                 baseRepo = "https://beta.casterlabs.co/caffeinated";
             }
 
@@ -148,6 +206,17 @@ class Caffeinated {
                 } catch (e) { } // Ignore, module not loaded because it's not present
             }
         }
+
+        setTimeout(() => {
+            if (!CONNECTED) {
+                splashText(`
+                Having problems?
+                <a onclick="openLink('https://twitter.com/casterlabs');">
+                    Tweet at us.
+                </a>
+                `);
+            }
+        }, 30 * 1000); // Wait 30s, then show connection message.
 
         // Kickstart koi, a crucial part to the UI.
         koi.reconnect();
@@ -302,6 +371,7 @@ koi.addEventListener("close", () => {
 
 koi.addEventListener("userupdate", (e) => {
     splashScreen(false);
+    triggerWelcome();
     CAFFEINATED.setUserImage(e.streamer.image_link, e.streamer.username);
     CAFFEINATED.setUserName(e.streamer.username);
     CAFFEINATED.setFollowerCount(e.streamer.follower_count);
@@ -319,6 +389,7 @@ koi.addEventListener("error", (event) => {
     switch (error) {
         case "USER_ID_INVALID": {
             splashScreen(false);
+            triggerWelcome();
             CAFFEINATED.store.delete("user");
             CAFFEINATED.user = null;
         }
@@ -328,6 +399,9 @@ koi.addEventListener("error", (event) => {
 koi.addEventListener("open", () => {
     if (CAFFEINATED.user !== null) {
         koi.addUser(CAFFEINATED.user);
+    } else {
+        splashScreen(false);
+        triggerWelcome();
     }
 
     if (CAFFEINATED.currency !== null) {
@@ -340,7 +414,7 @@ koi.addEventListener("open", () => {
 });
 
 /* Sub menu handler */
-Array.from(document.getElementsByClassName("menu-button")).forEach((dropdown) => {
+Array.from(document.querySelectorAll(".menu-button")).forEach((dropdown) => {
     dropdown.addEventListener("click", () => {
         let dropdownContent = dropdown.nextElementSibling;
 
@@ -366,21 +440,38 @@ document.querySelector(".minmax").addEventListener("click", () => {
     electron.getCurrentWindow().isMaximized() ? electron.getCurrentWindow().unmaximize() : electron.getCurrentWindow().maximize();
 });
 
+Array.from(document.querySelectorAll(".version-hover")).forEach((element) => {
+    element.setAttribute("title", "Caffeinated " + VERSION);
+});
+
 function openLink(link) {
     shell.openExternal(link);
 }
 
 function kFormatter(num) {
-    return Math.abs(num) > 999 ? Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) + 'k' : Math.sign(num) * Math.abs(num)
+    if (num >= 1000000000000) {
+        return (num / 1000000000000).toFixed(1) + "t";
+    } else if (num >= 1000000000) {
+        return (num / 1000000000).toFixed(1) + "b";
+    } else if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + "m";
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + "k";
+    } else {
+        return num;
+    }
 }
 
-setTimeout(() => {
-    if (!CONNECTED) {
-        splashText(`
-        Having problems?
-        <a onclick="openLink('https://twitter.com/casterlabs');">
-            Tweet at us.
-        </a>
-        `);
-    }
-}, 30 * 1000); // Wait 30s, then show connection message.
+function sleep(millis) {
+    return new Promise((resolve) => setTimeout(resolve, millis));
+}
+
+function triggerWelcome() {
+    // CAFFEINATED.triggerEvent("welcome", () => {
+
+    navigate("welcome");
+    // TODO Jake
+    // Don't remove the comments, I'll do that -Lcyx
+
+    //});
+}

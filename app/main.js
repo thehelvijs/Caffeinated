@@ -1,7 +1,34 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
+const electronDl = require("electron-dl");
+const { exec } = require("child_process");
+const fs = require("fs");
 const path = require("path");
 const windowStateKeeper = require("electron-window-state");
+
+const WINDOWS_UPDATE_SCRIPT = `
+@echo off
+
+:loop
+    cls
+    echo Updating Caffeinated...
+    title Updating Caffeinated...
+
+    tasklist | find /i "caffeinated" >nul 2>&1
+
+    if ERRORLEVEL 1 (
+        GOTO continue
+    ) else (
+        timeout /t 1 /nobreak
+        goto loop
+    )
+
+:continue
+    del .\\resources\\app.asar
+    rename .\\resources\\update.asar app.asar
+    cmd /c start "" ".\\caffeinated.exe"
+    exit
+`;
 
 function createWindow() {
     let mainWindowState = windowStateKeeper({
@@ -29,10 +56,32 @@ function createWindow() {
         }
     })
 
+    ipcMain.on("download-update", async (event, { updates, url }) => {
+        console.log("Downloading update from: " + url);
+        const directory = __dirname.replace("app.asar", "");
+
+        await electronDl.download(mainWindow, url, {
+            directory: directory,
+            filename: "update.asar"
+        });
+
+        if (process.platform.includes("win")) {
+            fs.writeFile("updater.bat", WINDOWS_UPDATE_SCRIPT, () => {
+                execute("cmd /c start updater.bat");
+
+                app.exit(0);
+            });
+        }
+    });
+
     // and load the index.html of the app.
     mainWindow.loadFile("index.html")
 
     mainWindowState.manage(mainWindow);
+}
+
+function execute(command) {
+    exec(command, (error, stdout, stderr) => { });
 }
 
 // Disable web cache.
