@@ -88,9 +88,9 @@ class Caffeinated {
     }
 
     async update() {
-        if (process.platform.includes("win")) {
-            this.init();
-        } else if (__dirname.includes("app.asar")) { // Cannot autoupdate on mac. (yet)
+        if (!process.platform.includes("win")) {
+            this.init(); // Cannot autoupdate on mac. (yet)
+        } else if (__dirname.includes("app.asar")) {
             splashText("Checking for updates.");
 
             try {
@@ -108,7 +108,7 @@ class Caffeinated {
                     });
                 } else {
                     splashText("You're up-to-date! 😄");
-                    await sleep(1500);
+                    await sleep(2000);
                     splashText(null);
                     this.init();
                 }
