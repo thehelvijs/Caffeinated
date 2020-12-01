@@ -6,8 +6,8 @@ const Store = require("electron-store");
 const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "1.0.0-beta-Nov30'20";
-const PROTOCOLVERSION = 1;
+const VERSION = "1.0.0-beta-Dec01'20";
+const PROTOCOLVERSION = 2;
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
 
 let baseRepo = "https://caffeinated.casterlabs.co";
@@ -88,7 +88,9 @@ class Caffeinated {
     }
 
     async update() {
-        if (__dirname.includes("app.asar") && process.platform.includes("win")) { // Cannot autoupdate on mac. (yet)
+        if (process.platform.includes("win")) {
+            this.init();
+        } else if (__dirname.includes("app.asar")) { // Cannot autoupdate on mac. (yet)
             splashText("Checking for updates.");
 
             try {
@@ -106,7 +108,7 @@ class Caffeinated {
                     });
                 } else {
                     splashText("You're up-to-date! 😄");
-                    await sleep(1000);
+                    await sleep(1500);
                     splashText(null);
                     this.init();
                 }
@@ -469,9 +471,11 @@ function sleep(millis) {
 function triggerWelcome() {
     // CAFFEINATED.triggerEvent("welcome", () => {
 
-    navigate("welcome");
+    // navigate("welcome");
     // TODO Jake
     // Don't remove the comments, I'll do that -Lcyx
+
+    // Code here
 
     //});
 }
