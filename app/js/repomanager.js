@@ -24,10 +24,23 @@ class RepoManager {
                 }
 
                 if (Array.isArray(modules.scripts)) {
-                    for (let overlay of modules.scripts) {
+                    for (let script of modules.scripts) {
                         let script = document.createElement("script");
 
-                        script.src = repo + "/" + overlay;
+                        script.src = repo + "/" + script;
+                        script.setAttribute("repo", modules.name);
+
+                        this.elements.push(script);
+                        document.querySelector("#scripts").appendChild(script);
+                        await RepoUtil.waitForScriptToLoad(script);
+                    }
+                }
+
+                if (Array.isArray(modules.external)) {
+                    for (let external of modules.external) {
+                        let script = document.createElement("script");
+
+                        script.src = external;
                         script.setAttribute("repo", modules.name);
 
                         this.elements.push(script);

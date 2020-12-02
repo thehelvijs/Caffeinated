@@ -104,6 +104,8 @@ class Modules {
                 this.initalizeModuleWidgetPage(module);
 
                 if (types.includes("SETTINGS")) {
+                    module.page.classList.add("widget-settings-page");
+
                     this.initalizeModuleSettingsPage(module, module.page);
                 }
             } else {
@@ -209,9 +211,7 @@ class Modules {
 
         page.setAttribute("page", selector);
         page.setAttribute("navbar-title", name);
-        page.classList.add("content");
-        page.classList.add("page");
-        page.classList.add("hide");
+        page.classList = "content page hide";
 
         module.page = page;
 

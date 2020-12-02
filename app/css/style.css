@@ -429,6 +429,10 @@ input[type=number] {
     overflow-x: hidden;
 }
 
+.widget-settings-page {
+    padding-top: 20px;
+}
+
 /* Overlays */
 
 #overlays button {
