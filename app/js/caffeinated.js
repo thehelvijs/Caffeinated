@@ -6,7 +6,7 @@ const Store = require("electron-store");
 const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const PROTOCOLVERSION = 4;
+const PROTOCOLVERSION = 5;
 const VERSION = "1.0." + PROTOCOLVERSION + "-beta";
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
 
@@ -36,10 +36,7 @@ class Caffeinated {
         }
 
         this.store.set("version", VERSION);
-
-        if (!this.store.get("channel")) {
-            this.store.set("channel", "STABLE");
-        }
+        this.store.set("protocol_version", PROTOCOLVERSION);
 
         this.repomanager = new RepoManager();
         this.currency = this.store.get("currency");
@@ -85,53 +82,6 @@ class Caffeinated {
     reset() {
         this.store.clear();
         location.reload();
-    }
-
-    async update() {
-        if (!process.platform.includes("win")) {
-            this.init(); // Cannot autoupdate on mac. (yet)
-        } else if (__dirname.includes("app.asar")) {
-            splashText("Checking for updates.");
-
-            try {
-                const updates = await (await fetch("https://api.casterlabs.co/v1/caffeinated/updates")).json();
-                const channel = updates[this.store.get("channel")];
-
-                console.log(updates);
-
-                if (channel.protocol_version > PROTOCOLVERSION) {
-                    splashText("Update found! Downloading update");
-
-                    ipcRenderer.send("download-update", {
-                        url: channel.asar_url,
-                        updates: updates
-                    });
-                } else {
-                    splashText("You're up-to-date! 😄");
-                    await sleep(2000);
-                    splashText(null);
-                    this.init();
-                }
-            } catch (e) {
-                let left = 5;
-
-                setTimeout(() => CAFFEINATED.update(), 5000);
-
-                while (left > 0) {
-                    splashText(`Update failed, retrying in ${left} seconds.`);
-
-                    left--;
-
-                    await sleep(1000);
-                }
-            }
-        } else {
-            splashText("Skipping update check... (DEV_OVERRIDE)");
-
-            await sleep(1000);
-
-            this.init();
-        }
     }
 
     async init() {
