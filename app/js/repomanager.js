@@ -24,10 +24,10 @@ class RepoManager {
                 }
 
                 if (Array.isArray(modules.scripts)) {
-                    for (let script of modules.scripts) {
+                    for (let src of modules.scripts) {
                         let script = document.createElement("script");
 
-                        script.src = repo + "/" + script;
+                        script.src = repo + "/" + src;
                         script.setAttribute("repo", modules.name);
 
                         this.elements.push(script);

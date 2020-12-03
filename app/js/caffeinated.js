@@ -6,8 +6,8 @@ const Store = require("electron-store");
 const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const VERSION = "1.0.0-beta-Dec02'20";
-const PROTOCOLVERSION = 3;
+const PROTOCOLVERSION = 4;
+const VERSION = "1.0." + PROTOCOLVERSION + "-beta";
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
 
 let baseRepo = "https://caffeinated.casterlabs.co";
