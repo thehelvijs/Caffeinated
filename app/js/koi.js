@@ -22,7 +22,7 @@ class Koi {
         if (listeners) {
             listeners.forEach((callback) => {
                 try {
-                    callback(data);
+                    callback(Object.assign({}, data));
                 } catch (e) {
                     console.error("An event listener produced an exception: ");
                     console.error(e);

@@ -6,8 +6,8 @@ const Store = require("electron-store");
 const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const PROTOCOLVERSION = 6;
-const VERSION = "1.0." + PROTOCOLVERSION + "-pre1";
+const PROTOCOLVERSION = 7;
+const VERSION = "1.0." + PROTOCOLVERSION + "-pre2";
 
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
 
@@ -176,10 +176,10 @@ class Caffeinated {
         setTimeout(() => {
             if (!CONNECTED) {
                 splashText(`
-                Having problems?
-                <a onclick="openLink('https://twitter.com/casterlabs');">
-                    Tweet at us.
-                </a>
+                    Having problems?
+                    <a onclick="openLink('https://twitter.com/casterlabs');">
+                        Tweet at us.
+                    </a>
                 `);
             }
         }, 30 * 1000); // Wait 30s, then show connection message.
