@@ -76,21 +76,43 @@ ion-icon {
 
 /* Inputs */
 
-*:focus {
+input[type=search]::-webkit-search-decoration,
+input[type=search]::-webkit-search-cancel-button,
+input[type=search]::-webkit-search-results-button,
+input[type=search]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+}
+
+input:focus,
+select:focus,
+.file-button:focus,
+input:active,
+select:active,
+.file-button:active,
+input:hover,
+select:hover,
+.file-button:hover {
     outline: none !important;
+    border: 1px solid #DCDCDC !important;
 }
 
 input[type=range] {
     -webkit-appearance: none;
 }
 
-input, select {
+input,
+select {
     background-color: var(--menu-background-color) !important;
     color: var(--menu-icon-color) !important;
     border-radius: 6px;
-    border: 1px solid #DCDCDC;
+    border: 1px solid #4a4a4a;
     cursor: auto;
     outline: none !important;
+}
+
+input[type=checkbox] {
+    margin-left: 8px;
+    transform: translateY(1px);
 }
 
 select {
@@ -108,8 +130,6 @@ input[type=color] {
 
 input[type=number] {
     background-color: white;
-    border-radius: 6px;
-    border: 1px solid #DCDCDC;
     cursor: auto;
     font-size: 15px;
     width: 65px;
@@ -120,7 +140,7 @@ input[type=number] {
     background-color: var(--menu-background-color) !important;
     color: var(--menu-icon-color) !important;
     border-radius: 6px;
-    border: 1px solid #DCDCDC;
+    border: 1px solid #4a4a4a;
     cursor: pointer;
     font-size: 15px;
     padding: 5px;

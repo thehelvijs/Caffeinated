@@ -204,10 +204,6 @@ class Modules {
         let name = module.displayname ? module.displayname : prettifyString(module.id);
 
         let page = document.createElement("div");
-        let text = document.createElement("div");
-
-        text.classList.add("menu-button-title");
-        text.innerHTML = name;
 
         page.setAttribute("page", selector);
         page.setAttribute("navbar-title", name);
@@ -220,6 +216,7 @@ class Modules {
 
     initalizeModuleSettingsPage(module, parent = document.getElementById("settings")) {
         const settingsSelector = module.namespace + "_" + module.id;
+        let name = module.displayname ? module.displayname : prettifyString(module.id);
         let stored = this.getStoredValues(module);
         let container = document.createElement("div");
         let div = document.createElement("div");
@@ -240,7 +237,12 @@ class Modules {
         };
 
         label.classList.add("settings-label");
-        label.innerText = prettifyString(module.id);
+        label.innerText = name;
+
+        if (module.displayname) {
+            label.setAttribute("lang", module.displayname);
+            label.classList.add("translatable");
+        }
 
         div.classList.add("box");
         div.id = settingsSelector;
@@ -251,12 +253,24 @@ class Modules {
         container.appendChild(document.createElement("br"));
 
         for (const [key, type] of Object.entries(module.settingsDisplay)) {
-            div.appendChild(createModuleInput(module, key, type, stored, formCallback));
+            let data = type;
+
+            if (typeof data === "string") {
+                data = {
+                    display: prettifyString(key),
+                    type: type,
+                    isLang: false
+                };
+            }
+
+            div.appendChild(createModuleInput(module, key, data, stored, formCallback));
         }
 
         parent.appendChild(container);
 
         module.settings = stored;
+
+        translate(parent);
     }
 
     getStoredValues(module) {
@@ -298,14 +312,29 @@ function createDynamicModuleOption(module, layout, values, formCallback) {
     });
 
     for (const [key, type] of Object.entries(display)) {
-        div.appendChild(createModuleInput(module, key, type, values, formCallback, defaults[key]));
+        let data = type;
+
+        if (typeof data === "string") {
+            data = {
+                display: prettifyString(key),
+                type: type,
+                isLang: false
+            };
+        }
+
+        div.appendChild(createModuleInput(module, key, data, values, formCallback, defaults[key]));
     }
 
     return div;
 }
 
-function createModuleInput(module, key, type, stored, formCallback, defaultValue = module.defaultSettings[key]) {
-    let uuid = module.namespace + ":" + module.id;
+function createModuleInput(module, key, data, stored, formCallback, defaultValue = module.defaultSettings[key]) {
+    const uuid = module.namespace + ":" + module.id;
+    const displayname = data.display;
+    const isLang = data.isLang;
+    const type = data.type;
+
+    let container = document.createElement("span");
     let name = document.createElement("span");
     let input;
 
@@ -318,13 +347,20 @@ function createModuleInput(module, key, type, stored, formCallback, defaultValue
         input.setAttribute("name", key);
         input.setAttribute("owner", module.id);
 
-        name.innerText = prettifyString(key) + " ";
-        name.appendChild(input);
-        name.appendChild(document.createElement("br"));
+        name.innerText = displayname;
+
+        if (isLang) {
+            name.setAttribute("lang", displayname);
+            name.classList.add("translatable");
+        }
+
+        container.appendChild(name);
+        container.appendChild(input);
+        container.appendChild(document.createElement("br"));
 
         QuillUtil.createEditor(input, stored[key], formCallback);
 
-        return name;
+        return container;
     } else if (type === "dynamic") {
         input = document.createElement("div");
 
@@ -347,9 +383,16 @@ function createModuleInput(module, key, type, stored, formCallback, defaultValue
         input.setAttribute("name", key);
         input.setAttribute("owner", module.id);
 
-        name.innerText = prettifyString(key) + " ";
-        name.appendChild(input);
-        name.appendChild(document.createElement("br"));
+        name.innerText = displayname;
+
+        if (isLang) {
+            name.setAttribute("lang", displayname);
+            name.classList.add("translatable");
+        }
+
+        container.appendChild(name);
+        container.appendChild(input);
+        container.appendChild(document.createElement("br"));
 
         if (Array.isArray(stored[key])) {
             stored[key].forEach((dynamic) => {
@@ -357,17 +400,22 @@ function createModuleInput(module, key, type, stored, formCallback, defaultValue
             });
         }
 
-        return name;
+        return container;
     } else if (type === "button") {
         input = document.createElement("button");
 
         input.addEventListener("click", defaultValue);
-        input.innerText = prettifyString(key);
+        input.innerText = displayname;
         input.id = uuid;
         input.classList = type + " data";
         input.setAttribute("type", type);
         input.setAttribute("name", key);
         input.setAttribute("owner", module.id);
+
+        if (isLang) {
+            input.setAttribute("lang", displayname);
+            container.classList.add("translatable");
+        }
 
         let div = document.createElement("div");
 
@@ -388,7 +436,14 @@ function createModuleInput(module, key, type, stored, formCallback, defaultValue
         input = document.createElement("input");
     }
 
-    name.innerText = prettifyString(key) + " ";
+    name.innerText = displayname;
+
+    if (isLang) {
+        name.setAttribute("lang", displayname);
+        name.classList.add("translatable");
+    }
+
+    container.appendChild(name);
 
     input.id = uuid;
     input.classList = type + " data";
@@ -479,7 +534,7 @@ function createModuleInput(module, key, type, stored, formCallback, defaultValue
 
     // keep checkboxes inline
     if (type !== "checkbox") {
-        name.appendChild(document.createElement("br"));
+        container.appendChild(document.createElement("br"));
     }
 
     // Make file inputs appear as buttons only.
@@ -492,14 +547,14 @@ function createModuleInput(module, key, type, stored, formCallback, defaultValue
             input.click(); // Forward clicks to the input.
         });
 
-        name.appendChild(button);
+        container.appendChild(button);
 
         input.classList.add("hide");
     }
 
-    name.appendChild(input);
-    name.appendChild(document.createElement("br"));
-    name.appendChild(document.createElement("br"));
+    container.appendChild(input);
+    container.appendChild(document.createElement("br"));
+    container.appendChild(document.createElement("br"));
 
-    return name;
+    return container;
 }

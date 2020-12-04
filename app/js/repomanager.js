@@ -86,8 +86,8 @@ class RepoManager {
 }
 
 const RepoUtil = {
-    versionToRegex(version) {
-        return new RegExp("(" + version.replace(/[\.]/g, "\\.").replace(/[\*]/g, ".*") + ")", "g");
+    matchToRegex(str) {
+        return new RegExp("(" + str.replace(/[\.]/g, "\\.").replace(/[\*]/g, ".*") + ")", "g");
     },
 
     getRepoUrl(base) {
@@ -117,7 +117,7 @@ const RepoUtil = {
     isSupported(supported = [], unsupported = []) {
         if (Array.isArray(unsupported)) {
             for (let version of unsupported) {
-                if (VERSION.match(RepoUtil.versionToRegex(version))) {
+                if (VERSION.match(RepoUtil.matchToRegex(version))) {
                     return false;
                 }
             }
@@ -125,7 +125,7 @@ const RepoUtil = {
 
         if (Array.isArray(supported)) {
             for (let version of supported) {
-                if (VERSION.match(RepoUtil.versionToRegex(version))) {
+                if (VERSION.match(RepoUtil.matchToRegex(version))) {
                     return true;
                 }
             }

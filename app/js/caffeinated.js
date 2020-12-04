@@ -6,8 +6,9 @@ const Store = require("electron-store");
 const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const PROTOCOLVERSION = 5;
-const VERSION = "1.0." + PROTOCOLVERSION + "-beta";
+const PROTOCOLVERSION = 6;
+const VERSION = "1.0." + PROTOCOLVERSION + "-pre1";
+
 const koi = new Koi("wss://api.casterlabs.co/v1/koi");
 
 let baseRepo = "https://caffeinated.casterlabs.co";
@@ -97,6 +98,7 @@ class Caffeinated {
         });
 
         MODULES.initalizeModule({
+            displayname: "caffeinated.settings.title",
             namespace: "casterlabs_caffeinated",
             type: "settings",
             persist: true,
@@ -116,9 +118,21 @@ class Caffeinated {
             },
 
             settingsDisplay: {
-                username: "input",
-                platform: "select",
-                currency: "currency"
+                username: {
+                    display: "caffeinated.settings.username",
+                    type: "input",
+                    isLang: true
+                },
+                platform: {
+                    display: "caffeinated.settings.platform",
+                    type: "select",
+                    isLang: true
+                },
+                currency: {
+                    display: "caffeinated.settings.currency",
+                    type: "currency",
+                    isLang: true
+                }
             },
 
             defaultSettings: {
