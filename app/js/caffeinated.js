@@ -435,11 +435,8 @@ function sleep(millis) {
 function triggerWelcome() {
     // CAFFEINATED.triggerEvent("welcome", () => {
 
-    // navigate("welcome");
-    // TODO Jake
-    // Don't remove the comments, I'll do that -Lcyx
+    // document.querySelector("#welcome-get-started").classList.remove("hide");
 
-    // Code here
 
     //});
 }
