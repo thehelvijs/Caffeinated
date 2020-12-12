@@ -299,9 +299,7 @@ class Caffeinated {
 
     setFollowerCount(count) {
         if (count) {
-            // 1000 -> 1k if space is an issue
-            // document.querySelector("#followers").innerText = kFormatter(count) + " followers";
-            document.querySelector("#followers").innerText = count + " followers";
+            document.querySelector("#followers").innerText = kFormatter(count, 1) + " followers";
 
             anime({
                 targets: "#followers",
@@ -414,18 +412,37 @@ function openLink(link) {
     shell.openExternal(link);
 }
 
-function kFormatter(num) {
-    if (num >= 1000000000000) {
-        return (num / 1000000000000).toFixed(1) + "t";
-    } else if (num >= 1000000000) {
-        return (num / 1000000000).toFixed(1) + "b";
-    } else if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + "m";
-    } else if (num >= 1000) {
-        return (num / 1000).toFixed(1) + "k";
+function kFormatter(num, decimalPlaces = 1, threshold = 1000) {
+    const negative = num < 0;
+    let shortened;
+    let mult;
+
+    num = Math.abs(num);
+
+    if ((num >= threshold) && (num >= 1000)) {
+        if (num >= 1000000000000) {
+            shortened = "Over 1";
+            mult = "t";
+        } else if (num >= 1000000000) {
+            shortened = (num / 1000000000).toFixed(decimalPlaces);
+            mult = "b";
+        } else if (num >= 1000000) {
+            shortened = (num / 1000000).toFixed(decimalPlaces);
+            mult = "m";
+        } else if (num >= 1000) {
+            shortened = (num / 1000).toFixed(decimalPlaces);
+            mult = "k";
+        }
     } else {
-        return num;
+        shortened = num.toFixed(decimalPlaces);
+        mult = "";
     }
+
+    if (shortened.includes(".")) {
+        shortened = shortened.replace(/\.?0+$/, '');
+    }
+
+    return (negative ? "-" : "") + shortened + mult;
 }
 
 function sleep(millis) {
