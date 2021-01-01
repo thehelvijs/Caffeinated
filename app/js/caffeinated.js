@@ -6,12 +6,11 @@ const Store = require("electron-store");
 const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const PROTOCOLVERSION = 7;
-const VERSION = "1.0." + PROTOCOLVERSION + "-pre2";
+const PROTOCOLVERSION = 8;
+const VERSION = "1.0-alpha2";
 
-const koi = new Koi("wss://api.casterlabs.co/v1/koi");
+const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
-let baseRepo = "https://caffeinated.casterlabs.co";
 let CONNECTED = false;
 let PLATFORMS = {};
 
@@ -40,8 +39,8 @@ class Caffeinated {
         this.store.set("protocol_version", PROTOCOLVERSION);
 
         this.repomanager = new RepoManager();
-        this.currency = this.store.get("currency");
-        this.user = this.store.get("user");
+
+        this.token = this.store.get("token");
         this.userdata = null;
     }
 
@@ -104,54 +103,25 @@ class Caffeinated {
             persist: true,
             id: "settings",
 
-            onSettingsUpdate() {
-                if (this.settings.username == "reset") {
-                    CAFFEINATED.reset();
-                } else {
-                    CAFFEINATED.setUser(this.settings.username + ";" + this.settings.platform);
-                    CAFFEINATED.setCurrency(CURRENCY_TABLE[this.settings.currency]);
-                }
-            },
-
-            getDataToStore() {
-                return this.settings;
-            },
-
             settingsDisplay: {
-                username: {
-                    display: "caffeinated.settings.username",
-                    type: "input",
-                    isLang: true
-                },
-                platform: {
-                    display: "caffeinated.settings.platform",
-                    type: "select",
-                    isLang: true
-                },
-                currency: {
-                    display: "caffeinated.settings.currency",
-                    type: "currency",
+                signout: {
+                    display: "caffeinated.settings.signout",
+                    type: "button",
                     isLang: true
                 }
             },
 
             defaultSettings: {
-                username: "",
-                platform: platformsList,
-                currency: "USD"
+                signout: () => {
+                    CAFFEINATED.setToken(null)
+                }
             }
         });
 
         this.store.set("repos", removeFromArray(this.store.get("repos"), "https://beta.casterlabs.co/caffeinated"));
         this.store.set("repos", removeFromArray(this.store.get("repos"), "https://caffeinated.casterlabs.co"));
 
-        if (!this.store.get("dev")) {
-            if (VERSION.includes("beta") || (this.store.get("channel") === "BETA")) {
-                baseRepo = "https://beta.casterlabs.co/caffeinated";
-            }
-
-            await this.repomanager.addRepo(baseRepo);
-        }
+        await this.repomanager.addRepo(__dirname + "/modules", false);
 
         for (let repo of this.store.get("repos")) {
             try {
@@ -184,9 +154,6 @@ class Caffeinated {
             }
         }, 30 * 1000); // Wait 30s, then show connection message.
 
-        // Kickstart koi, a crucial part to the UI.
-        koi.reconnect();
-
         const app = express();
         const cors = require("cors");
         const server = require("http").createServer(app);
@@ -216,6 +183,9 @@ class Caffeinated {
         });
 
         server.listen(this.store.get("port"));
+
+        // Kickstart koi, a crucial part to the UI.
+        koi.reconnect();
     }
 
     setDevEnviroment(value) {
@@ -225,7 +195,7 @@ class Caffeinated {
     }
 
     setUserName(username) {
-        document.querySelector(".user-username").innerHTML = '<ion-icon name="settings-outline"></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + username;
+        document.querySelector(".user-username").innerHTML = '<ion-icon name="settings-outline"></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + username;
     }
 
     setUserPlatform(platform, link) {
@@ -275,30 +245,27 @@ class Caffeinated {
         }
     }
 
-    setUser(user) {
-        if (this.user !== null) {
-            koi.removeUser(this.user);
+    setToken(token) {
+        if (token) {
+
+            this.token = token;
+            CAFFEINATED.store.set("token", this.token);
+
+            loginScreen("SUCCESS");
+
+            this.setFollowerCount(null);
+            this.setUserImage(null, "Set username in settings");
+            this.setUserName("");
+            this.setUserPlatform(null, "");
+
+            koi.reconnect();
+        } else {
+            this.signOut();
         }
-
-        this.user = user;
-        this.setFollowerCount(null);
-        this.setUserImage(null, "Set username in settings");
-        this.setUserName("");
-        this.setUserPlatform(null, "");
-
-        koi.addUser(this.user);
-    }
-
-    setCurrency(currency) {
-        this.currency = currency;
-
-        koi.setCurrency(this.currency);
-        setCurrencyFormatter(this.currency);
-        this.store.set("currency", this.currency);
     }
 
     setFollowerCount(count) {
-        if (count) {
+        if (count && (count >= 0)) {
             document.querySelector("#followers").innerText = kFormatter(count, 1) + " followers";
 
             anime({
@@ -316,6 +283,25 @@ class Caffeinated {
             });
         }
     }
+
+    signOut() {
+        fetch("https://api.casterlabs.co/v2/natsukashii/revoke", {
+            headers: new Headers({
+                authorization: "Bearer " + CAFFEINATED.token
+            })
+        }).finally(() => {
+            this.token = null;
+            CAFFEINATED.store.delete("token");
+
+            this.setFollowerCount(null);
+            this.setUserImage(null, "Set username in settings");
+            this.setUserName("");
+            this.setUserPlatform(null, "");
+
+            koi.reconnect();
+        });
+    }
+
 }
 
 const CAFFEINATED = new Caffeinated();
@@ -333,44 +319,35 @@ koi.addEventListener("close", () => {
     koi.reconnect();
 });
 
-koi.addEventListener("userupdate", (e) => {
+koi.addEventListener("user_update", (e) => {
     splashScreen(false);
-    triggerWelcome();
+    loginScreen("SUCCESS");
+
     CAFFEINATED.setUserImage(e.streamer.image_link, e.streamer.username);
-    CAFFEINATED.setUserName(e.streamer.username);
-    CAFFEINATED.setFollowerCount(e.streamer.follower_count);
+    CAFFEINATED.setUserName("&nbsp;" + e.streamer.username);
+    CAFFEINATED.setFollowerCount(e.streamer.followers_count);
     CAFFEINATED.setUserPlatform(e.streamer.platform, e.streamer.link);
 
     CAFFEINATED.userdata = e;
-
-    document.getElementById("casterlabs_caffeinated:settings").value = e.streamer.username;
-    CAFFEINATED.store.set("user", e.streamer.username + ";" + e.streamer.platform);
 });
 
 koi.addEventListener("error", (event) => {
     let error = event.error;
 
     switch (error) {
-        case "USER_ID_INVALID": {
+        case "AUTH_INVALID": {
             splashScreen(false);
-            triggerWelcome();
-            CAFFEINATED.store.delete("user");
-            CAFFEINATED.user = null;
+            triggerLogin();
+            CAFFEINATED.store.delete("token");
+            CAFFEINATED.token = null;
         }
     }
 });
 
 koi.addEventListener("open", () => {
-    if (CAFFEINATED.user !== null) {
-        koi.addUser(CAFFEINATED.user);
-    } else {
+    if (!CAFFEINATED.token) {
+        triggerLogin();
         splashScreen(false);
-        triggerWelcome();
-    }
-
-    if (CAFFEINATED.currency !== null) {
-        koi.setCurrency(CAFFEINATED.currency);
-        setCurrencyFormatter(CAFFEINATED.currency);
     }
 
     CONNECTED = true;
@@ -449,11 +426,141 @@ function sleep(millis) {
     return new Promise((resolve) => setTimeout(resolve, millis));
 }
 
-function triggerWelcome() {
-    // CAFFEINATED.triggerEvent("welcome", () => {
+function loginScreen(screen) {
+    if (!document.querySelector("#login").classList.contains("hide")) {
+        const buttons = document.querySelector("#login-buttons");
+        const waiting = document.querySelector("#login-waiting");
 
-    // document.querySelector("#welcome-get-started").classList.remove("hide");
+        const loginCaffeine = document.querySelector("#login-caffeine");
+        const mfaCaffeine = document.querySelector("#mfa-caffeine");
 
+        anime({
+            targets: [buttons, waiting, loginCaffeine],
+            easing: "linear",
+            opacity: 0,
+            duration: 175
+        }).finished.then(() => {
+            buttons.classList.add("hide");
+            waiting.classList.add("hide");
+            loginCaffeine.classList.add("hide");
 
-    //});
+            if (screen === "SUCCESS") {
+                anime({
+                    targets: "#login",
+                    easing: "linear",
+                    opacity: 1,
+                    duration: 175
+                }).finished.then(() => {
+                    document.querySelector("#login").classList.add("hide");
+                });
+            } else if (screen === "NONE") {
+                buttons.classList.remove("hide");
+
+                anime({
+                    targets: buttons,
+                    easing: "linear",
+                    opacity: 1,
+                    duration: 175
+                });
+            } else if (screen === "CAFFEINE") {
+                loginCaffeine.classList.remove("hide");
+
+                anime({
+                    targets: loginCaffeine,
+                    easing: "linear",
+                    opacity: 1,
+                    duration: 175
+                });
+            } else if (screen === "CAFFEINE_MFA") {
+                mfaCaffeine.classList.remove("hide");
+
+                anime({
+                    targets: mfaCaffeine,
+                    easing: "linear",
+                    opacity: 1,
+                    duration: 175
+                });
+            } else {
+                splashScreen(false);
+                waiting.classList.remove("hide");
+                anime({
+                    targets: waiting,
+                    easing: "linear",
+                    opacity: 1,
+                    duration: 175
+                });
+            }
+
+            if (screen === "TWITCH") {
+                const auth = new AuthCallback("caffeinated_twitch");
+
+                // 15min timeout
+                auth.awaitAuthMessage((15 * 1000) * 60).then((token) => {
+                    CAFFEINATED.setToken(token);
+                }).catch((reason) => {
+                    console.error("Could not await for token: " + reason);
+                    loginScreen("NONE");
+                });
+
+                openLink("https://id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https://casterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email&state=" + auth.getStateString());
+            }
+        });
+    }
+}
+
+function triggerLogin() {
+    document.querySelector("#login").classList.remove("hide");
+    loginScreen("NONE");
+}
+
+function loginCaffeine() {
+    const username = document.querySelector("#login-caffeine-username");
+    const password = document.querySelector("#login-caffeine-password");
+    const mfa = document.querySelector("#login-caffeine-mfa");
+
+    const loginPayload = {
+        account: {
+            username: username.value,
+            password: password.value
+        },
+        mfa: {
+            otp: mfa.value
+        }
+    }
+
+    loginScreen("WAITING");
+
+    fetch("https://api.caffeine.tv/v1/account/signin", {
+        method: "POST",
+        body: JSON.stringify(loginPayload),
+        headers: new Headers({
+            "Content-Type": "application/json"
+        })
+    }).then((result) => result.json()).then((response) => {
+        if (response.hasOwnProperty("next")) {
+            loginScreen("CAFFEINE_MFA");
+        } else if (response.hasOwnProperty("errors")) {
+            loginScreen("CAFFEINE");
+        } else {
+            const refreshToken = response.refresh_token;
+
+            username.value = "";
+            password.value = "";
+            mfa.value = "";
+
+            fetch("https://api.casterlabs.co/v2/platforms/caffeine/authorize?refresh_token=" + refreshToken).then((nResult) => nResult.json()).then((nResponse) => {
+                if (nResponse.data) {
+                    CAFFEINATED.setToken(nResponse.data.token);
+                } else {
+                    loginScreen("CAFFEINE");
+                }
+            });
+        }
+    }).catch(() => {
+        loginScreen("CAFFEINE");
+    });
+}
+
+function isPlatform(expected) {
+    return CAFFEINATED.userdata.streamer.platform == expected;
 }

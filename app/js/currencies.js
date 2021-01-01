@@ -1,7 +1,7 @@
 const CURRENCY_TABLE = {
     // Platforms
-    "Caffeine Credits": "DIGIES",
-    "Twitch Bits": "BITS",
+    "Caffeine Credits": "CAFFEINE_CREDITS",
+    "Twitch Bits": "TWITCH_BITS",
 
     // Popular (?)
     "US Dollar (USD)": "USD",
@@ -171,32 +171,116 @@ const CURRENCY_TABLE = {
 
 const CURRENCIES = [];
 const CURRENCY_TABLE_INVERTED = {};
-const PSUEDO_CURRENCIES = ["DIGIES", "BITS"];
-let FORMATTER = new Intl.NumberFormat(navigator.languages[0], {
-    style: "currency",
-    currency: "USD",
-});
+const PSUEDO_CURRENCIES = ["CAFFEINE_CREDITS", "TWITCH_BITS", "DEFAULT"];
 
 Object.entries(CURRENCY_TABLE).forEach((currency) => {
     CURRENCY_TABLE_INVERTED[currency[1]] = currency[0];
     CURRENCIES.push(currency[0]);
 });
 
-function setCurrencyFormatter(currency) {
-    if (!PSUEDO_CURRENCIES.includes(currency)) {
-        FORMATTER = new Intl.NumberFormat(navigator.languages[0], {
+function formatCurrency(amount, currency) {
+    amount = parseFloat(amount);
+
+    if (currency === "CAFFEINE_CREDITS") {
+        return `
+            <span>
+                <svg viewBox="0 0 16 16" fill="#C6F" style="height: .8em; width: auto; transform: translateY(.075em);">
+                    <g fill-rule="evenodd">
+                        <path d="M8 0a8 8 0 110 16A8 8 0 018 0zm0 .667a7.333 7.333 0 100 14.666A7.333 7.333 0 008 .667z"></path>
+                        <circle cx="8" cy="8" r="6"></circle>
+                    </g>
+                </svg>
+                ${amount.toFixed(0)}
+            </span>
+        `;
+    } else if (currency === "TWITCH_BITS") {
+        let color;
+
+        // https://assets.help.twitch.tv/article/img/2449458-01.gif
+        if (amount >= 10000) {
+            color = "red";
+        } else if (amount >= 5000) {
+            color = "blue";
+        } else if (amount >= 1000) {
+            color = "green";
+        } else if (amount >= 100) {
+            color = "purple";
+        } else {
+            color = "gray";
+        }
+
+        return `
+            <span>
+                <img style="display: inline-block; height: 1em; width: auto; transform: translateY(.1em);" src="https://static-cdn.jtvnw.net/bits/dark/animated/${color}/4" />
+                ${amount.toFixed(0)}
+            </span>
+        `;
+    } else {
+        const formatter = new Intl.NumberFormat(navigator.languages[0], {
             style: "currency",
             currency: currency,
         });
+
+        let parts = formatter.formatToParts(amount);
+
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+
+            // Remove fraction and (optionally) decimal if there are traling 0's
+            if (part.type === "fraction") {
+                if (part.value.match(/^0*$/)) {
+                    parts.splice(i, 1);
+
+                    if (parts[i - 1] && (parts[i - 1].type === "decimal")) {
+                        parts.splice(i - 1);
+                    }
+                }
+
+                break;
+            }
+        }
+
+        let joined = "";
+
+        parts.forEach((part) => {
+            joined = joined + part.value;
+        });
+
+        return `<span>${joined}</span>`;
     }
 }
 
-function formatAmountToLocalCurrency(amount) {
-    if (CAFFEINATED.currency == "DIGIES") {
-        return "•" + amount.toFixed(0);
-    } else if (CAFFEINATED.currency == "BITS") {
-        return amount.toFixed(0);
+async function convertAndFormatCurrency(amount, from, to) {
+    if (to.toUpperCase() === "DEFAULT") to = from;
+
+    const result = await convertCurrency(amount, from, to);
+
+    return formatCurrency(result, to);
+}
+
+async function convertCurrency(amount, from, to) {
+    if (to.toUpperCase() === "DEFAULT") {
+        return amount;
     } else {
-        return FORMATTER.format(amount).replace(/\D00(?=\D*$)/, "");
+        let result;
+        let usd;
+
+        if (from === "CAFFEINE_CREDITS") {
+            usd = amount / 91; // Something we figured out, no official source for this though.
+        } else if (from === "TWITCH_BITS") {
+            usd = amount / 100; // https://twitchbitstousd.com/
+        } else {
+            usd = await CurrencyConverter(amount, from, "USD");
+        }
+
+        if (to === "CAFFEINE_CREDITS") {
+            result = usd * 91; // Something we figured out, no official source for this though.
+        } else if (to === "TWITCH_BITS") {
+            result = usd * 100; // https://twitchbitstousd.com/
+        } else {
+            result = await CurrencyConverter(usd, "USD", to);
+        }
+
+        return result;
     }
 }

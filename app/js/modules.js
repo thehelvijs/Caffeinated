@@ -414,7 +414,7 @@ function createModuleInput(module, key, data, stored, formCallback, defaultValue
 
         if (isLang) {
             input.setAttribute("lang", displayname);
-            container.classList.add("translatable");
+            input.classList.add("translatable");
         }
 
         let div = document.createElement("div");
@@ -481,13 +481,15 @@ function createModuleInput(module, key, data, stored, formCallback, defaultValue
 
         if (Array.isArray(selected)) {
             selected = CURRENCIES[0];
+
+            stored[key] = selected; // Set the selected key
         }
+
+        selected = CURRENCY_TABLE_INVERTED[selected];
 
         input.setAttribute("value", selected);
         input.querySelector(".sns-input").value = selected;
         input.classList.add("select");
-
-        stored[key] = selected; // Set the selected key
     } else if (type === "search") {
         let values = Object.assign([], defaultValue);
         let selected = stored[key];

@@ -41,7 +41,9 @@ ion-icon {
     text-align: center;
 }
 
-.welcome {
+/* Logins */
+
+#login {
     position: fixed;
     top: 0;
     left: 0;
@@ -50,6 +52,14 @@ ion-icon {
     width: 100vw;
     background-color: #141414;
     padding-top: var(--title-bar-height);
+}
+
+.login-element {
+    width: 40vw;
+}
+
+#login-buttons .button {
+    width: 200px;
 }
 
 /* Scrollbar */
@@ -109,6 +119,10 @@ select:hover,
 .file-button:hover {
     outline: none !important;
     border: 1px solid #DCDCDC !important;
+}
+
+input::-webkit-input-placeholder {
+    color: #A5A5A5 !important;
 }
 
 input[type=range] {
@@ -411,9 +425,8 @@ input[type=number] {
 
 .user-platform {
     position: absolute;
-    width: 15px;
+    width: auto;
     height: 15px;
-    border-radius: 50%;
     left: 5px;
     bottom: 5px;
 }

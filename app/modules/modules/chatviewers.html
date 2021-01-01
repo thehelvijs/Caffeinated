@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+        <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+        <style>
+            html {
+                color: whitesmoke;
+                background-color: #141414;
+                font-family: "Roboto", sans-serif;
+            }
+
+            * {
+                -webkit-app-region: drag;
+            }
+
+            .title-bar {
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                height: 30px;
+                width: 100%;
+                background-color: #141414;
+                padding-top: 5px;
+            }
+
+            .title-bar span {
+                margin-left: 15px;
+            }
+
+            #viewers {
+                padding-top: 30px;
+                -webkit-app-region: no-drag;
+            }
+
+            #close * {
+                position: fixed;
+                right: 8px;
+                top: 8px;
+                -webkit-app-region: no-drag;
+            }
+
+            .count {
+                position: fixed;
+                right: 8px;
+                top: 42.5px;
+                text-align: right;
+            }
+
+            .eyeicon {
+                transform: translate(0px, 1.5px);
+            }
+
+            img {
+                border-radius: 50%;
+                object-fit: cover;
+                height: 22px;
+                width: 22px;
+                margin-right: 5px;
+                vertical-align: bottom;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="viewers"></div>
+        <div class="title-bar">
+            <span>Viewers</span>
+        </div>
+        <a id="close" title="Close">
+            <ion-icon name="close"></ion-icon>
+        </a>
+        <div class="count">
+            <ion-icon class="eyeicon" name="eye"></ion-icon>
+            <span id="viewerCount">0</span>
+        </div>
+    </body>
+
+    <footer>
+        <script>
+            const viewersElement = document.querySelector("#viewers");
+            const viewerCountElement = document.querySelector("#viewerCount");
+
+            document.querySelector("#close").addEventListener("click", () => {
+                require("electron").remote.getCurrentWindow().close();
+            });
+
+            function setViewerCount(count) {
+                viewerCountElement.innerText = count;
+            }
+
+            function setViewers(viewers) {
+                viewersElement.innerHTML = "";
+
+                viewers.forEach((viewer) => {
+                    let div = document.createElement("div");
+                    let username = document.createElement("span");
+                    let pfp = document.createElement("img");
+
+                    username.innerText = viewer.user;
+
+                    pfp.src = viewer.image;
+
+                    div.appendChild(pfp);
+                    div.appendChild(username);
+
+                    viewersElement.appendChild(div);
+                });
+            }
+        </script>
+    </footer>
+
+</html>

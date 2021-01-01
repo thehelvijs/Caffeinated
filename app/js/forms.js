@@ -65,6 +65,12 @@ const FORMSJS = {
             case "file":
                 return element;
 
+            case "currency":
+                return (element.getAttribute("value").toUpperCase() == "DEFAULT") ? "DEFAULT" : CURRENCY_TABLE[element.getAttribute("value")];
+
+            case "number":
+                return parseFloat(element.value);
+
             default:
                 return (element instanceof HTMLDivElement) ? element.getAttribute("value") : element.value;
         }

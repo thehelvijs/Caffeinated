@@ -1,9 +1,7 @@
 let LANGUAGES = {
     "en-*": {
-        "caffeinated.settings.username": "Username",
-        "caffeinated.settings.platform": "Platform",
-        "caffeinated.settings.currency": "Currency",
-        "caffeinated.settings.title": "Settings"
+        "caffeinated.settings.title": "Settings",
+        "caffeinated.settings.signout": "Sign out"
     }
 };
 
@@ -58,7 +56,7 @@ function translate(parent = document) {
         const key = element.getAttribute("lang");
         const translated = lang[key];
 
-        element.innerText = translated ? translated : key;
-        element.setAttribute("title", translated ? translated : key);
+        element.innerText = (translated !== undefined) ? translated : key;
+        element.setAttribute("title", (translated !== undefined) ? translated : key);
     });
 }

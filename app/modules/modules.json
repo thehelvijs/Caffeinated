@@ -1,0 +1,66 @@
+{
+    "supported": [
+        "1.*-*"
+    ],
+    "unsupported": [
+        "0.4.*-*",
+        "0.5.*-*"
+    ],
+    "version": "1.0.0",
+    "name": "Caffeinated Beta Repo",
+    "scripts": [
+        "modules/donationmodule.js",
+        "modules/followermodule.js",
+        "modules/chatmodule.js",
+        "modules/goalmodule.js",
+        "modules/creditmodule.js",
+        "modules/chatdisplaymodule.js",
+        "modules/companionmodule.js",
+        "modules/rainmodule.js",
+        "modules/nowplayingmodule.js"
+    ],
+    "simple": [
+        {
+            "namespace": "casterlabs_companion",
+            "id": "casterlabs_companion"
+        },
+        {
+            "namespace": "casterlabs_chat",
+            "id": "chat"
+        },
+        {
+            "namespace": "casterlabs_donation",
+            "id": "donation"
+        },
+        {
+            "namespace": "casterlabs_goal",
+            "id": "donation_goal"
+        },
+        {
+            "namespace": "casterlabs_rain",
+            "id": "emoji_rain"
+        },
+        {
+            "namespace": "casterlabs_follower",
+            "id": "follower"
+        },
+        {
+            "namespace": "casterlabs_goal",
+            "id": "follower_goal"
+        },
+        {
+            "namespace": "casterlabs_now_playing",
+            "id": "now_playing"
+        }
+    ],
+    "required": [
+        {
+            "namespace": "casterlabs_credits",
+            "id": "casterlabs_credits"
+        },
+        {
+            "namespace": "casterlabs_chat_display",
+            "id": "chat_display"
+        }
+    ]
+}
