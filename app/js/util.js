@@ -70,3 +70,10 @@ function removeFromArray(array, item) {
 
     return array;
 }
+
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}

@@ -41,10 +41,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         koi.addEventListener("viewer_list", (event) => {
             this.viewersList = event.viewers;
 
-            if (this.util.viewersWindow != null) {
-                this.util.viewersWindow.webContents.executeJavaScript("setViewerCount(" + this.viewersList.length + ");");
-                this.util.viewersWindow.webContents.executeJavaScript("setViewers(" + JSON.stringify(this.viewersList) + ");");
-            }
+            this.util.updateViewers();
         });
 
     }
@@ -280,11 +277,28 @@ class VerticalChatUtil {
             .replace(/>/g, "&gt;");
     }
 
+    updateViewers() {
+        if (this.viewersWindow) {
+            this.viewersWindow.webContents.executeJavaScript("setViewerCount(" + this.module.viewersList.length + ");");
+            this.viewersWindow.webContents.executeJavaScript("setViewers(" + JSON.stringify(this.module.viewersList) + ");");
+        }
+    }
+
     createWindow() {
         if (!this.viewersWindow) {
+            const mainWindowState = windowStateKeeper({
+                defaultWidth: 200,
+                defaultHeight: 500,
+                file: "caffeinated-viewers-popout-window.json"
+            });
+
             this.viewersWindow = new BrowserWindow({
-                width: 200,
-                height: 500,
+                minWidth: 200,
+                minHeight: 500,
+                width: mainWindowState.width,
+                height: mainWindowState.height,
+                x: mainWindowState.x,
+                y: mainWindowState.y,
                 resizable: true,
                 transparent: false,
                 show: false,
@@ -301,13 +315,14 @@ class VerticalChatUtil {
             });
 
             this.viewersWindow.once("ready-to-show", () => {
-                this.viewersWindow.webContents.executeJavaScript("setViewerCount(" + this.module.viewersList.length + ");");
-                this.viewersWindow.webContents.executeJavaScript("setViewers(" + this.module.viewersList + ");");
+                this.updateViewers();
 
                 this.viewersWindow.show();
             });
 
-            this.viewersWindow.loadURL(__dirname + "/modules/modules/chatviewers.html");
+            this.viewersWindow.loadFile(__dirname + "/modules/modules/chatviewers.html");
+
+            mainWindowState.manage(this.viewersWindow);
         }
     }
 

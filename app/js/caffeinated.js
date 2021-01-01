@@ -5,6 +5,7 @@ const express = require("express");
 const Store = require("electron-store");
 const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
+const windowStateKeeper = require("electron-window-state");
 
 const PROTOCOLVERSION = 9;
 const VERSION = "1.0-alpha3";
@@ -198,8 +199,18 @@ class Caffeinated {
         location.reload();
     }
 
-    setUserName(username) {
-        document.querySelector(".user-username").innerHTML = '<ion-icon name="settings-outline"></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + username;
+    setUserName(username, badges) {
+        const element = document.querySelector(".user-username");
+
+        element.innerHTML = '<ion-icon name="settings-outline"></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;';
+
+        if (username) {
+            element.innerHTML += "&nbsp;&nbsp;" + escapeHtml(username);
+
+            badges.forEach((badge) => {
+                element.innerHTML += `<img style="height: 1.1em; transform: translateY(.225em); padding-left: 3px;" src=${badge} />`;
+            })
+        }
     }
 
     setUserPlatform(platform, link) {
@@ -208,7 +219,7 @@ class Caffeinated {
             document.querySelector(".user-platform").setAttribute("title", link);
         } else {
             document.querySelector(".user-platform").src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
-            document.querySelector(".user-platform").setAttribute("title", "link");
+            document.querySelector(".user-platform").setAttribute("title", "");
         }
     }
 
@@ -258,7 +269,7 @@ class Caffeinated {
             loginScreen("SUCCESS");
 
             this.setFollowerCount(null);
-            this.setUserImage(null, "Set username in settings");
+            this.setUserImage(null, "");
             this.setUserName("");
             this.setUserPlatform(null, "");
 
@@ -298,7 +309,7 @@ class Caffeinated {
             CAFFEINATED.store.delete("token");
 
             this.setFollowerCount(null);
-            this.setUserImage(null, "Set username in settings");
+            this.setUserImage(null, "");
             this.setUserName("");
             this.setUserPlatform(null, "");
 
@@ -312,7 +323,7 @@ const CAFFEINATED = new Caffeinated();
 const MODULES = new Modules();
 
 CAFFEINATED.setFollowerCount(null);
-CAFFEINATED.setUserImage(null, "Set username in settings");
+CAFFEINATED.setUserImage(null, "");
 CAFFEINATED.setUserName("");
 CAFFEINATED.setUserPlatform(null, "");
 
@@ -328,7 +339,7 @@ koi.addEventListener("user_update", (e) => {
     loginScreen("SUCCESS");
 
     CAFFEINATED.setUserImage(e.streamer.image_link, e.streamer.username);
-    CAFFEINATED.setUserName("&nbsp;" + e.streamer.username);
+    CAFFEINATED.setUserName(e.streamer.username, e.streamer.badges);
     CAFFEINATED.setFollowerCount(e.streamer.followers_count);
     CAFFEINATED.setUserPlatform(e.streamer.platform, e.streamer.link);
 

@@ -2,49 +2,69 @@
 <html>
 
     <head>
+        <title>Caffeinated Viewers Popout</title>
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
         <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
         <style>
             html {
                 color: whitesmoke;
                 background-color: #141414;
-                font-family: "Roboto", sans-serif;
+                font-weight: 400;
+                font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
             }
 
             * {
                 -webkit-app-region: drag;
             }
 
+            ion-icon {
+                pointer-events: none !important;
+            }
+
             .title-bar {
                 position: fixed;
                 top: 0px;
                 left: 0px;
-                height: 30px;
+                height: 25px;
                 width: 100%;
-                background-color: #141414;
+                background-color: #272727;
                 padding-top: 5px;
+                color: rgb(133, 133, 133);
+                user-select: none;
+                font-size: 1em;
             }
 
-            .title-bar span {
-                margin-left: 15px;
+            .title-icon {
+                margin-left: 5px;
+                margin-right: 1px;
+                height: 20px;
+                width: 20px;
             }
 
             #viewers {
                 padding-top: 30px;
-                -webkit-app-region: no-drag;
             }
 
-            #close * {
+            .viewer {
+                margin-bottom: 5px;
+            }
+
+            #close {
+                cursor: pointer;
                 position: fixed;
                 right: 8px;
                 top: 8px;
                 -webkit-app-region: no-drag;
             }
 
+            #close ion-icon {
+                -webkit-app-region: no-drag;
+            }
+
             .count {
                 position: fixed;
                 right: 8px;
-                top: 42.5px;
+                top: 40px;
                 text-align: right;
             }
 
@@ -60,13 +80,18 @@
                 margin-right: 5px;
                 vertical-align: bottom;
             }
+
+            .pfp {
+                transform: translateY(1px);
+            }
         </style>
     </head>
 
     <body>
         <div id="viewers"></div>
         <div class="title-bar">
-            <span>Viewers</span>
+            <img class="title-icon" src="../../media/app_icon.png" />
+            Caffeinated
         </div>
         <a id="close" title="Close">
             <ion-icon name="close"></ion-icon>
@@ -101,9 +126,11 @@
                     username.innerText = viewer.username;
 
                     pfp.src = viewer.image_link;
+                    pfp.classList = "pfp";
 
                     div.appendChild(pfp);
                     div.appendChild(username);
+                    div.classList = "viewer";
 
                     viewersElement.appendChild(div);
                 });
