@@ -247,6 +247,8 @@ input[type=number] {
     overflow-y: auto;
     overflow-x: hidden;
     opacity: 0;
+    top: var(--title-bar-height);
+    left: 0;
 }
 
 /* Title bar */

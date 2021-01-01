@@ -6,15 +6,19 @@ const Store = require("electron-store");
 const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 
-const PROTOCOLVERSION = 8;
-const VERSION = "1.0-alpha2";
+const PROTOCOLVERSION = 9;
+const VERSION = "1.0-alpha3";
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
 let CONNECTED = false;
 let PLATFORMS = {};
 
-console.warn("Caution, here be dragons!" + "\n\n" + "If someone tells you to paste code here, they might be trying to steal important data from you." + "\n" + "If you're good at UX, consider contributing to the Caffeinated project at " + "\n" + "https://github.com/thehelvijs/Caffeinated" + "\n");
+console.warn(`
+Caution, here be dragons!
+If someone tells you to paste code here, they might be trying to steal important data from you.
+If you're good at UX, consider contributing to the Caffeinated project at https://github.com/thehelvijs/Caffeinated
+`);
 
 class Caffeinated {
     constructor() {

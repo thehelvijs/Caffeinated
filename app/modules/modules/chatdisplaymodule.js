@@ -8,6 +8,8 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         this.icon = "chatbox";
         this.displayname = "Chat";
 
+        this.viewersList = [];
+
         koi.addEventListener("chat", (event) => {
             this.util.addMessage(event);
         });
@@ -29,19 +31,19 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         });
 
         koi.addEventListener("viewer_join", (event) => {
-            this.util.addStatus(event.viewer, event.viewer.image_link, event.color, "join");
+            this.util.addStatus(event.viewer.username, event.viewer.image_link, event.color, "join");
         });
 
         koi.addEventListener("viewer_leave", (event) => {
-            this.util.addStatus(event.viewer, event.viewer.image_link, event.color, "leave");
+            this.util.addStatus(event.viewer.username, event.viewer.image_link, event.color, "leave");
         });
 
-        koi.addEventListener("viewer_list", (viewers) => {
-            this.util.viewersList = viewers;
+        koi.addEventListener("viewer_list", (event) => {
+            this.viewersList = event.viewers;
 
             if (this.util.viewersWindow != null) {
-                this.util.viewersWindow.webContents.executeJavaScript("setViewerCount(" + viewers.length + ");");
-                this.util.viewersWindow.webContents.executeJavaScript("setViewers(" + JSON.stringify(viewers) + ");");
+                this.util.viewersWindow.webContents.executeJavaScript("setViewerCount(" + this.viewersList.length + ");");
+                this.util.viewersWindow.webContents.executeJavaScript("setViewers(" + JSON.stringify(this.viewersList) + ");");
             }
         });
 
@@ -218,6 +220,17 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 height: 20px;
                 width: auto;
             }
+
+            #vcjumpdown {
+                position: fixed;
+                bottom: 100px;
+                right: 30px;
+            }
+
+            #vcjumpdown ion-icon {
+                width: 40px;
+                height: 40px;
+            }
         </style>
         <div class="container verticalchatmodule">
             <ul id="chatbox"></ul>
@@ -230,13 +243,9 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                     Viewers
                 </button>
             </div>
-        </div>
-        <div class="modal" id="timeout_modal">
-            <div class="modal-background"></div>
-                <div class="modal-content">
-
-                </div>
-            <button class="modal-close is-large" aria-label="close" id="timeout_modal_close"></button>
+            <a id="vcjumpdown" title="Jump to bottom" style="opacity: 0;">
+                <ion-icon name="arrow-down-circle"></ion-icon>
+            </a>
         </div>
         `;
 
@@ -254,15 +263,14 @@ class VerticalChatUtil {
             this.createWindow();
         });
 
-        this.module.page.querySelector("#timeout_modal_close").addEventListener("click", () => {
-            this.module.page.querySelector("#timeout_modal").classList.remove("is-active");
+        this.module.page.querySelector("#vcjumpdown").addEventListener("click", () => {
+            this.jumpDown();
         });
 
-        window.addEventListener("beforeunload", () => {
-            if (this.viewersWindow != null) {
-                this.viewersWindow.close();
-            }
+        this.module.page.parentNode.addEventListener("scroll", () => {
+            this.checkJumpButton();
         });
+
     }
 
     escapeHtml(unsafe) {
@@ -293,13 +301,13 @@ class VerticalChatUtil {
             });
 
             this.viewersWindow.once("ready-to-show", () => {
-                this.viewersWindow.show();
-
                 this.viewersWindow.webContents.executeJavaScript("setViewerCount(" + this.module.viewersList.length + ");");
                 this.viewersWindow.webContents.executeJavaScript("setViewers(" + this.module.viewersList + ");");
+
+                this.viewersWindow.show();
             });
 
-            this.viewersWindow.loadURL("https://caffeinated.casterlabs.co/modules/chatviewers.html");
+            this.viewersWindow.loadURL(__dirname + "/modules/modules/chatviewers.html");
         }
     }
 
@@ -395,17 +403,11 @@ class VerticalChatUtil {
 
         msg.appendChild(div);
 
+        /*
         // Make this only available on Caffeine.
         if (isPlatform("CAFFEINE")) {
             let tooltipbtn = document.createElement("div");
-            let timeoutbtn = document.createElement("a");
             let upvotebtn = document.createElement("a");
-
-            timeoutbtn.innerHTML = '<ion-icon name="alert"></ion-icon>';
-            timeoutbtn.title = "Timeout";
-            timeoutbtn.addEventListener("click", () => {
-                this.timeoutCaffeine(event.sender);
-            })
 
             upvotebtn.innerHTML = '<ion-icon name="arrow-up"></ion-icon>';
             upvotebtn.title = "Upvote";
@@ -415,17 +417,17 @@ class VerticalChatUtil {
 
             tooltipbtn.classList.add("tooltipbtn");
             tooltipbtn.appendChild(upvotebtn);
-            // tooltipbtn.appendChild(timeoutbtn); // TODO
 
             tooltip.appendChild(tooltipbtn);
             tooltip.classList.add("tip");
 
             msg.appendChild(tooltip);
         }
+        */
 
         this.module.page.querySelector("#chatbox").appendChild(msg);
 
-        this.jumpBottom();
+        this.tryJump();
     }
 
 
@@ -459,7 +461,7 @@ class VerticalChatUtil {
 
         this.module.page.querySelector("#chatbox").appendChild(msg);
 
-        this.jumpBottom();
+        this.tryJump();
     }
 
     isHidden() {
@@ -467,11 +469,51 @@ class VerticalChatUtil {
     }
 
     isAtBottom() {
-        return (this.module.page.parentNode.scrollHeight - this.module.page.parentNode.scrollTop) < 750;
+        const scrollOffset = this.module.page.parentNode.scrollHeight - this.module.page.parentNode.scrollTop;
+        const height = this.module.page.parentNode.offsetHeight;
+
+        return (scrollOffset - height) < 50;
     }
 
-    jumpBottom() {
-        if (!this.isHidden() && this.isAtBottom()) {
+    tryJump() {
+        if (!this.isHidden()) {
+            const jump = this.module.page.querySelector("#vcjumpdown");
+
+            this.checkJumpButton();
+
+            if (this.isAtBottom()) {
+                this.jumpDown();
+            }
+        }
+    }
+
+    checkJumpButton() {
+        if (!this.isHidden()) {
+            const jump = this.module.page.querySelector("#vcjumpdown");
+
+            if (this.isAtBottom()) {
+                anime({
+                    targets: jump,
+                    easing: "linear",
+                    opacity: 0,
+                    duration: 100
+                }).finished.then(() => {
+                    jump.classList.add("hide");
+                });
+            } else {
+                jump.classList.remove("hide");
+                anime({
+                    targets: jump,
+                    easing: "linear",
+                    opacity: 1,
+                    duration: 100
+                });
+            }
+        }
+    }
+
+    jumpDown() {
+        if (!this.isHidden()) {
             this.module.page.parentNode.scrollTo(0, this.module.page.querySelector("#chatbox").scrollHeight + 1000);
         }
     }
