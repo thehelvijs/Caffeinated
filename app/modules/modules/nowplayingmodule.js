@@ -108,7 +108,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
                 }
             });
 
-            if (response.error) {
+            if ((response.status == 401) || response.error) {
                 this.accessToken = null;
                 this.check();
             } else if (response.status == 200) {

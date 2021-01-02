@@ -334,16 +334,16 @@ koi.addEventListener("close", () => {
     koi.reconnect();
 });
 
-koi.addEventListener("user_update", (e) => {
+koi.addEventListener("user_update", (event) => {
     splashScreen(false);
     loginScreen("SUCCESS");
 
-    CAFFEINATED.setUserImage(e.streamer.image_link, e.streamer.username);
-    CAFFEINATED.setUserName(e.streamer.username, e.streamer.badges);
-    CAFFEINATED.setFollowerCount(e.streamer.followers_count);
-    CAFFEINATED.setUserPlatform(e.streamer.platform, e.streamer.link);
+    CAFFEINATED.setUserImage(event.streamer.image_link, event.streamer.username);
+    CAFFEINATED.setUserName(event.streamer.username, event.streamer.badges);
+    CAFFEINATED.setFollowerCount(event.streamer.followers_count);
+    CAFFEINATED.setUserPlatform(event.streamer.platform, event.streamer.link);
 
-    CAFFEINATED.userdata = e;
+    CAFFEINATED.userdata = event;
 });
 
 koi.addEventListener("error", (event) => {

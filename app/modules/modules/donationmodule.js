@@ -43,10 +43,13 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
     init() {
         koi.addEventListener("donation", (event) => {
             event.donations.forEach((donation) => {
-                donation.display = convertAndFormatCurrency(donation.amount, donation.currency, this.settings.currency);
-            });
+                const converted = Object.assign({
+                    image: donation.image,
+                    animated_image: donation.animated_image
+                }, event);
 
-            MODULES.emitIO(this, "event", event);
+                MODULES.emitIO(this, "event", converted);
+            });
         });
 
         this.audio_file = this.settings.audio_file;
@@ -71,8 +74,8 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
 
     settingsDisplay = {
         font: "font",
-        currency: "currency",
-        text: "rich",
+        font_size: "number",
+        text_color: "color",
         volume: "range",
         text_to_speech_voice: "select",
         audio: "select",
@@ -83,12 +86,12 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
 
     defaultSettings = {
         font: "Poppins",
-        currency: "Default",
-        text: "<p>%username% just donated %amount%!<br>%message%</p>",
+        font_size: "16",
+        text_color: "#FFFFFF",
         volume: 1,
         text_to_speech_voice: ["Brian", "Russell", "Nicole", "Amy", "Salli", "Joanna", "Matthew", "Ivy", "Joey"],
         audio: ["Custom Audio", "Text To Speech", "Custom Audio & Text To Speech", "None"],
-        image: ["Custom Image", "Donation Image", "None"],
+        image: ["Custom Image", "Animated Donation Image", "Donation Image", "None"],
         audio_file: "",
         image_file: ""
     };
