@@ -76,7 +76,7 @@ class Koi {
                 } else {
                     if ((event.id === "") && (type === "DONATION")) { // We detect test events by seeing if the message id is empty.
                         event.donations.forEach((donation) => {
-                            donation.amount = 9;
+                            // donation.amount = 10; // For testing.
 
                             // TODO keep this up-to-date with new platforms.
                             if (isPlatform("CAFFEINE")) {

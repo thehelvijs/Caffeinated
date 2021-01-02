@@ -208,7 +208,7 @@ class Caffeinated {
             element.innerHTML += "&nbsp;&nbsp;" + escapeHtml(username);
 
             badges.forEach((badge) => {
-                element.innerHTML += `<img style="height: 1.1em; transform: translateY(.225em); padding-left: 3px;" src=${badge} />`;
+                element.innerHTML += `<img style="height: 1.1em; transform: translateY(.25em); padding-left: 3px;" src=${badge} />`;
             })
         }
     }

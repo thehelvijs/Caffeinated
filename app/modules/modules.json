@@ -17,7 +17,12 @@
         "modules/chatdisplaymodule.js",
         "modules/companionmodule.js",
         "modules/rainmodule.js",
-        "modules/nowplayingmodule.js"
+        "modules/nowplayingmodule.js",
+        "modules/viewcounter.js",
+        "modules/recentfollow.js",
+        "modules/recentdonation.js",
+        "modules/topdonation.js",
+        "modules/donationticker.js"
     ],
     "simple": [
         {
@@ -37,6 +42,18 @@
             "id": "donation_goal"
         },
         {
+            "namespace": "casterlabs_recent_donation",
+            "id": "recent_donation"
+        },
+        {
+            "namespace": "casterlabs_top_donation",
+            "id": "top_donation"
+        },
+        {
+            "namespace": "casterlabs_donation_ticker",
+            "id": "donation_ticker"
+        },
+        {
             "namespace": "casterlabs_rain",
             "id": "emoji_rain"
         },
@@ -49,8 +66,16 @@
             "id": "follower_goal"
         },
         {
+            "namespace": "casterlabs_recent_follow",
+            "id": "recent_follow"
+        },
+        {
             "namespace": "casterlabs_now_playing",
             "id": "now_playing"
+        },
+        {
+            "namespace": "casterlabs_view_counter",
+            "id": "viewer_counter"
         }
     ],
     "required": [

@@ -1,4 +1,6 @@
 const CURRENCY_TABLE = {
+    "Default": "DEFAULT",
+
     // Platforms
     "Caffeine Credits": "CAFFEINE_CREDITS",
     "Twitch Bits": "TWITCH_BITS",
@@ -180,6 +182,10 @@ Object.entries(CURRENCY_TABLE).forEach((currency) => {
 
 function formatCurrency(amount, currency) {
     amount = parseFloat(amount);
+
+    if (currency == "DEFAULT") {
+        currency = "USD";
+    }
 
     if (currency === "CAFFEINE_CREDITS") {
         return `
