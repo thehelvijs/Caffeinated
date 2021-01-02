@@ -7,6 +7,7 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
         this.id = id;
         this.kinoko = new Kinoko();
         this.messageHistory = {};
+        this.viewersList = [];
 
         this.defaultSettings.reset_link = () => {
             this.uuid = generateUUID();
@@ -72,31 +73,36 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
         });
 
         koi.addEventListener("viewer_join", (event) => {
-            this.sendEvent("join", event);
+            this.sendEvent("join", event.viewer);
         });
 
         koi.addEventListener("viewer_leave", (event) => {
-            this.sendEvent("leave", event);
+            this.sendEvent("leave", event.viewer);
         });
 
-        koi.addEventListener("viewers_list", (viewers) => {
-            this.sendEvent("viewers", viewers);
-            this.sendEvent("viewcount", viewers.length);
+        koi.addEventListener("viewer_list", (event) => {
+            this.viewersList = event.viewers;
+
+            this.sendEvent("viewers", event.viewers);
+            this.sendEvent("viewcount", event.viewers.length);
         });
     }
 
     sendAll() {
-        this.sendEvent("user_update", CAFFEINATED.userdata, true);
-        this.sendEvent("stream_status", this.streamStatus, true);
-        /*
-                this.sendEvent("viewcount", STREAM_INTEGRATION.viewerCount, true);
-                this.sendEvent("viewers", Object.values(STREAM_INTEGRATION.viewers), true);
-                // Send join messages
-                Object.values(STREAM_INTEGRATION.viewers).forEach((viewer) => {
-                    this.sendEvent("join", viewer, true);
-                });
-        */
-        this.sendEvent("message_history", Object.values(this.messageHistory), true);
+        if (CAFFEINATED.userdata) {
+            this.sendEvent("user_update", CAFFEINATED.userdata, true);
+
+            this.sendEvent("stream_status", this.streamStatus, true);
+
+            this.sendEvent("viewcount", this.viewersList.length, true);
+            this.sendEvent("viewers", this.viewersList, true);
+            // Send join messages
+            this.viewersList.forEach((viewer) => {
+                this.sendEvent("join", viewer, true);
+            });
+
+            this.sendEvent("message_history", Object.values(this.messageHistory), true);
+        }
     }
 
     sendEvent(type, event, isCatchup = false) {

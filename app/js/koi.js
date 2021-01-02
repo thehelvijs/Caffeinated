@@ -2,6 +2,7 @@ class Koi {
     constructor(address) {
         this.address = address;
         this.listeners = {};
+        this.credentialCallbacks = [];
     }
 
     addEventListener(type, callback) {
@@ -65,7 +66,15 @@ class Koi {
                 this.ws.send(JSON.stringify({
                     type: "KEEP_ALIVE"
                 }));
+            } else if (json["type"] == "CREDENTIALS") {
+                this.credentialCallbacks.forEach((callback) => callback.resolve(json));
+                this.credentialCallbacks = [];
             } else if (json["type"] == "ERROR") {
+                if (json.error === "AUTH_INVALID") {
+                    this.credentialCallbacks.forEach((callback) => callback.reject());
+                    this.credentialCallbacks = [];
+                }
+
                 this.broadcast("error", json);
             } else if (json["type"] == "EVENT") {
                 const event = json["event"];
@@ -93,6 +102,19 @@ class Koi {
                 this.broadcast("message", json);
             }
         };
+    }
+
+    getCredentials() {
+        return new Promise((resolve, reject) => {
+            this.credentialCallbacks.push({
+                resolve: resolve,
+                reject: reject
+            });
+
+            this.ws.send(JSON.stringify({
+                type: "CREDENTIALS"
+            }));
+        });
     }
 
     isAlive() {

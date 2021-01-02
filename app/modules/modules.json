@@ -22,13 +22,11 @@
         "modules/recentfollow.js",
         "modules/recentdonation.js",
         "modules/topdonation.js",
-        "modules/donationticker.js"
+        "modules/donationticker.js",
+        "caffeine/caffeinebroadcastimagemodule.js",
+        "caffeine/caffeinegamepickermodule.js"
     ],
     "simple": [
-        {
-            "namespace": "casterlabs_companion",
-            "id": "casterlabs_companion"
-        },
         {
             "namespace": "casterlabs_chat",
             "id": "chat"
@@ -79,6 +77,18 @@
         }
     ],
     "required": [
+        {
+            "namespace": "caffeine_game_picker",
+            "id": "caffeine_game_picker"
+        },
+        {
+            "namespace": "caffeine_broadcast_image",
+            "id": "caffeine_broadcast_image"
+        },
+        {
+            "namespace": "casterlabs_companion",
+            "id": "casterlabs_companion"
+        },
         {
             "namespace": "casterlabs_credits",
             "id": "casterlabs_credits"

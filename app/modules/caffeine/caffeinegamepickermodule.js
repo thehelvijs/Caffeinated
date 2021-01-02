@@ -31,42 +31,50 @@ MODULES.moduleClasses["caffeine_game_picker"] = class {
 
             form.append("broadcast[game_id]", CAFFEINE_GAMES[this.settings.game]);
 
-            fetch("https://api.caffeine.tv/v1/users/" + CAFFEINE.credential.caid, {
-                method: "GET"
-            }).then((response) => response.json()).then((user) => {
-                if (instance.schedule != -1) {
-                    clearInterval(instance.schedule);
-                    instance.schedule = -1;
-                }
+            fetch("https://api.caffeine.tv/v1/users/" + CAFFEINATED.userdata.streamer.UUID)
+                .then((response) => response.json())
+                .then((profileData) => {
+                    if (instance.schedule != -1) {
+                        clearInterval(instance.schedule);
+                        instance.schedule = -1;
+                    }
 
-                let task = () => {
-                    fetch("https://api.caffeine.tv/v1/broadcasts/" + user.user.broadcast_id, {
-                        method: "PATCH",
-                        headers: {
-                            "Authorization": "Bearer " + CAFFEINE.credential.access_token
-                        },
-                        body: form
-                    });
-                };
+                    let task = () => {
+                        koi.getCredentials().then((credentials) => {
+                            fetch("https://api.caffeine.tv/v1/broadcasts/" + profileData.user.broadcast_id, {
+                                method: "PATCH",
+                                headers: {
+                                    "Authorization": credentials.authorization
+                                },
+                                body: form
+                            });
+                        }).catch(() => {
+                            clearInterval(instance.schedule);
+                        });
+                    };
 
-                task();
+                    task();
 
-                instance.schedule = setInterval(task, (15 * 60) * 1000);
-            });
+                    instance.schedule = setInterval(task, (15 * 60) * 1000);
+                });
         };
     }
 
     init() {
         const div = document.getElementById(this.namespace + "_" + this.id).parentElement;
 
-        STREAM_INTEGRATION.addEventListener("platform", (platform) => {
+        koi.addEventListener("user_update", (event) => {
             // Hide the Caffeine settings box if not on Caffeine
-            if (platform == "CAFFEINE") {
+            if (event.streamer.platform == "CAFFEINE") {
                 div.classList.remove("hide");
             } else {
                 div.classList.add("hide");
             }
         });
+
+        if (CAFFEINATED.userdata && (CAFFEINATED.userdata.platform != "CAFFEINE")) {
+            div.classList.add("hide");
+        }
     }
 
     settingsDisplay = {
