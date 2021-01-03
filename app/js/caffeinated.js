@@ -7,8 +7,8 @@ const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 11;
-const VERSION = "1.0-beta2";
+const PROTOCOLVERSION = 12;
+const VERSION = "1.0-beta3";
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
@@ -40,8 +40,12 @@ class Caffeinated {
             console.log("reset!");
         }
 
-        this.store.set("version", VERSION);
-        this.store.set("protocol_version", PROTOCOLVERSION);
+        if (this.store.get("dev")) {
+            this.store.set("protocol_version", -1);
+        } else {
+            this.store.set("version", VERSION);
+            this.store.set("protocol_version", PROTOCOLVERSION);
+        }
 
         this.repomanager = new RepoManager();
 
@@ -329,9 +333,14 @@ CAFFEINATED.setUserPlatform(null, "");
 
 /* Koi */
 koi.addEventListener("close", () => {
-    splashText("Reconnecting to Casterlabs.");
-    splashScreen(true);
     koi.reconnect();
+
+    setTimeout(() => {
+        if (!CONNECTED) {
+            splashText("Reconnecting to Casterlabs.");
+            splashScreen(true);
+        }
+    }, 2000);
 });
 
 koi.addEventListener("user_update", (event) => {

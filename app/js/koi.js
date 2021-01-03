@@ -33,75 +33,79 @@ class Koi {
     }
 
     reconnect() {
-        if (this.ws && !this.ws.CLOSED) {
+        if (this.ws && (this.ws.readyState != WebSocket.CLOSED)) {
             this.ws.close();
-        }
+        } else {
+            try {
+                this.ws = new WebSocket(this.address);
 
-        this.ws = new WebSocket(this.address);
-
-        this.ws.onerror = () => {
-            setTimeout(() => this.reconnect, 1000);
-        }
-
-        this.ws.onopen = () => {
-            this.broadcast("open");
-
-            if (CAFFEINATED.token) {
-                this.ws.send(JSON.stringify({
-                    type: "LOGIN",
-                    token: CAFFEINATED.token
-                }));
-            }
-        };
-
-        this.ws.onclose = () => {
-            this.broadcast("close");
-        };
-
-        this.ws.onmessage = (payload) => {
-            const raw = payload.data;
-            const json = JSON.parse(raw);
-
-            if (json["type"] == "KEEP_ALIVE") {
-                this.ws.send(JSON.stringify({
-                    type: "KEEP_ALIVE"
-                }));
-            } else if (json["type"] == "CREDENTIALS") {
-                this.credentialCallbacks.forEach((callback) => callback.resolve(json));
-                this.credentialCallbacks = [];
-            } else if (json["type"] == "ERROR") {
-                if (json.error === "AUTH_INVALID") {
-                    this.credentialCallbacks.forEach((callback) => callback.reject());
-                    this.credentialCallbacks = [];
+                this.ws.onerror = () => {
+                    setTimeout(() => this.reconnect, 1000);
                 }
 
-                this.broadcast("error", json);
-            } else if (json["type"] == "EVENT") {
-                const event = json["event"];
-                const type = event["event_type"];
+                this.ws.onopen = () => {
+                    this.broadcast("open");
 
-                if (type === "INFO") {
-                    this.broadcast("info", event["event"]);
-                } else {
-                    if ((event.id === "") && (type === "DONATION")) { // We detect test events by seeing if the message id is empty.
-                        event.donations.forEach((donation) => {
-                            // donation.amount = 10; // For testing.
-
-                            // TODO keep this up-to-date with new platforms.
-                            if (isPlatform("CAFFEINE")) {
-                                donation.currency = "CAFFEINE_CREDITS";
-                                donation.image = "https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png";
-                                donation.animated_image = "https://assets.caffeine.tv/digital-items/praise_preview.062e1659faa201a6c9fb0f4599bfa8ef.png";
-                            }
-                        });
+                    if (CAFFEINATED.token) {
+                        this.ws.send(JSON.stringify({
+                            type: "LOGIN",
+                            token: CAFFEINATED.token
+                        }));
                     }
+                };
 
-                    this.broadcast(type.toLowerCase(), event);
-                }
-            } else {
-                this.broadcast("message", json);
+                this.ws.onclose = () => {
+                    this.broadcast("close");
+                };
+
+                this.ws.onmessage = (payload) => {
+                    const raw = payload.data;
+                    const json = JSON.parse(raw);
+
+                    if (json["type"] == "KEEP_ALIVE") {
+                        this.ws.send(JSON.stringify({
+                            type: "KEEP_ALIVE"
+                        }));
+                    } else if (json["type"] == "CREDENTIALS") {
+                        this.credentialCallbacks.forEach((callback) => callback.resolve(json));
+                        this.credentialCallbacks = [];
+                    } else if (json["type"] == "ERROR") {
+                        if (json.error === "AUTH_INVALID") {
+                            this.credentialCallbacks.forEach((callback) => callback.reject());
+                            this.credentialCallbacks = [];
+                        }
+
+                        this.broadcast("error", json);
+                    } else if (json["type"] == "EVENT") {
+                        const event = json["event"];
+                        const type = event["event_type"];
+
+                        if (type === "INFO") {
+                            this.broadcast("info", event["event"]);
+                        } else {
+                            if ((event.id === "") && (type === "DONATION")) { // We detect test events by seeing if the message id is empty.
+                                event.donations.forEach((donation) => {
+                                    // donation.amount = 10; // For testing.
+
+                                    // TODO keep this up-to-date with new platforms.
+                                    if (isPlatform("CAFFEINE")) {
+                                        donation.currency = "CAFFEINE_CREDITS";
+                                        donation.image = "https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png";
+                                        donation.animated_image = "https://assets.caffeine.tv/digital-items/praise_preview.062e1659faa201a6c9fb0f4599bfa8ef.png";
+                                    }
+                                });
+                            }
+
+                            this.broadcast(type.toLowerCase(), event);
+                        }
+                    } else {
+                        this.broadcast("message", json);
+                    }
+                };
+            } catch (e) {
+                this.reconnect();
             }
-        };
+        }
     }
 
     getCredentials() {

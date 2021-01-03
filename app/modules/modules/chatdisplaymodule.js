@@ -44,6 +44,10 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
             this.util.updateViewers();
         });
 
+        koi.addEventListener("close", () => {
+            this.util.addStatus("", "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==", "#FFFFFF", "connection_lost");
+        });
+
     }
 
     init() {
@@ -464,6 +468,7 @@ class VerticalChatUtil {
             case "leave": text.innerText = "left the stream."; break;
             case "join": text.innerText = "joined the stream."; break;
             case "follow": text.innerText = "started following."; break;
+            case "connection_lost": text.innerText = "Connection lost, reconnecting."; break;
         }
 
         div.classList.add("vcchatmessage");
