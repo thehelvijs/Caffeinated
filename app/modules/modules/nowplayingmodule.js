@@ -6,28 +6,6 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
         this.type = "overlay settings";
         this.id = id;
 
-        this.uuid = generateUUID();
-        this.kinoko = new Kinoko();
-
-        this.kinoko.on("message", async (data) => {
-            if (data.startsWith("token:")) {
-                const code = data.split(":")[1];
-                const authResult = await (await fetch("https://api.casterlabs.co/proxy/spotify/token?code=" + code)).json();
-
-                if (!authResult.error) {
-                    this.statusElement.innerText = "Logging in";
-
-                    this.refreshToken = authResult.refresh_token;
-
-                    MODULES.saveToStore(this);
-                } else {
-                    this.settings.token = null;
-                    this.statusElement.innerText = "Login with Spotify";
-                }
-            }
-        });
-
-        this.kinoko.connect("auth_redirect:" + this.uuid + ":spotify", "parent");
     }
 
     widgetDisplay = [
@@ -39,6 +17,22 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
             }
         }
     ]
+
+    async setToken(code) {
+        const response = await fetch("https://api.casterlabs.co/proxy/spotify/token?code=" + code);
+        const authResult = await response.json();
+
+        if (!authResult.error) {
+            this.statusElement.innerText = "Logging in";
+
+            this.refreshToken = authResult.refresh_token;
+
+            MODULES.saveToStore(this);
+        } else {
+            this.settings.token = null;
+            this.statusElement.innerText = "Login with Spotify";
+        }
+    }
 
     getDataToStore() {
         return Object.assign({
@@ -153,9 +147,14 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
                 this.accessToken = null;
                 this.statusElement.innerText = "Login with Spotify";
             } else {
-                const link = "https://accounts.spotify.com/en/authorize?client_id=dff9da1136b0453983ff40e3e5e20397&response_type=code&scope=user-read-playback-state&redirect_uri=https:%2F%2Fcasterlabs.co%2Fauth%3Ftype%3Dspotify&state=";
+                const auth = new AuthCallback("caffeinated_twitch");
 
-                openLink(link + this.uuid);
+                // 15min timeout
+                auth.awaitAuthMessage((15 * 1000) * 60).then((token) => {
+                    this.setToken(token);
+                }).catch((reason) => { /* Ignored. */ });
+
+                openLink("https://accounts.spotify.com/en/authorize?client_id=dff9da1136b0453983ff40e3e5e20397&response_type=code&scope=user-read-playback-state&redirect_uri=https:%2F%2Fcasterlabs.co%2Fauth%3Ftype%3Dcaffeinated_spotify&state=" + auth.getStateString());
             }
         },
         background: ["Blur", "Clear", "Solid"],
