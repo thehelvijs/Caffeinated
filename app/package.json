@@ -15,26 +15,6 @@
     "icon": "media/app_icon.icns",
     "appId": "casterlabs.caffeinated",
     "artifactName": "Caffeinated-${version}-${os}-setup.${ext}",
-    "dmg": {
-      "contents": [
-        {
-          "x": 110,
-          "y": 150
-        },
-        {
-          "x": 240,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
-    },
-    "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ]
-    },
     "win": {
       "icon": "media/app_icon.ico",
       "target": [

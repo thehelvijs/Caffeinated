@@ -3,6 +3,7 @@ const CURRENCY_TABLE = {
 
     // Platforms
     "Caffeine Credits": "CAFFEINE_CREDITS",
+    "Caffeine Gold": "CAFFEINE_GOLD",
     "Twitch Bits": "TWITCH_BITS",
 
     // Popular (?)
@@ -173,7 +174,7 @@ const CURRENCY_TABLE = {
 
 const CURRENCIES = [];
 const CURRENCY_TABLE_INVERTED = {};
-const PSUEDO_CURRENCIES = ["CAFFEINE_CREDITS", "TWITCH_BITS", "DEFAULT"];
+const PSUEDO_CURRENCIES = ["CAFFEINE_CREDITS", "CAFFEINE_GOLD", "TWITCH_BITS", "DEFAULT"];
 
 Object.entries(CURRENCY_TABLE).forEach((currency) => {
     CURRENCY_TABLE_INVERTED[currency[1]] = currency[0];
@@ -190,7 +191,19 @@ function formatCurrency(amount, currency) {
     if (currency === "CAFFEINE_CREDITS") {
         return `
             <span>
-                <svg viewBox="0 0 16 16" fill="#C6F" style="height: .8em; width: auto; transform: translateY(.075em);">
+                <svg viewBox="0 0 16 16" fill="#C6F" style="height: .85em; width: auto; transform: translateY(.075em);">
+                    <g fill-rule="evenodd">
+                        <path d="M8 0a8 8 0 110 16A8 8 0 018 0zm0 .667a7.333 7.333 0 100 14.666A7.333 7.333 0 008 .667z"></path>
+                        <circle cx="8" cy="8" r="6"></circle>
+                    </g>
+                </svg>
+                ${amount.toFixed(0)}
+            </span>
+        `;
+    } else if (currency === "CAFFEINE_GOLD") {
+        return `
+            <span>
+                <svg viewBox="0 0 16 16" fill="#FC0" style="height: .85em; width: auto; transform: translateY(.075em);">
                     <g fill-rule="evenodd">
                         <path d="M8 0a8 8 0 110 16A8 8 0 018 0zm0 .667a7.333 7.333 0 100 14.666A7.333 7.333 0 008 .667z"></path>
                         <circle cx="8" cy="8" r="6"></circle>
@@ -273,6 +286,8 @@ async function convertCurrency(amount, from, to) {
 
         if (from === "CAFFEINE_CREDITS") {
             usd = amount / 91; // Something we figured out, no official source for this though.
+        } else if (from === "CAFFEINE_GOLD") {
+            usd = (amount * 3) / 91;
         } else if (from === "TWITCH_BITS") {
             usd = amount / 100; // https://twitchbitstousd.com/
         } else {
@@ -281,6 +296,8 @@ async function convertCurrency(amount, from, to) {
 
         if (to === "CAFFEINE_CREDITS") {
             result = usd * 91; // Something we figured out, no official source for this though.
+        } else if (to === "CAFFEINE_GOLD") {
+            result = (usd * 91) / 3;
         } else if (to === "TWITCH_BITS") {
             result = usd * 100; // https://twitchbitstousd.com/
         } else {
