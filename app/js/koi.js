@@ -121,6 +121,20 @@ class Koi {
         });
     }
 
+    upvote(messageId) {
+        this.ws.send(JSON.stringify({
+            type: "UPVOTE",
+            message_id: messageId
+        }));
+    }
+
+    sendMessage(message) {
+        this.ws.send(JSON.stringify({
+            type: "CHAT",
+            message: message
+        }));
+    }
+
     isAlive() {
         return this.ws.readyState == this.ws.OPEN;
     }

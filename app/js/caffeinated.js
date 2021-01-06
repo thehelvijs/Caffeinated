@@ -7,8 +7,8 @@ const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 14;
-const VERSION = "1.0-beta5";
+const PROTOCOLVERSION = 15;
+const VERSION = "1.0-beta6";
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
@@ -333,6 +333,7 @@ CAFFEINATED.setUserPlatform(null, "");
 
 /* Koi */
 koi.addEventListener("close", () => {
+    CONNECTED = false;
     koi.reconnect();
 
     setTimeout(() => {
@@ -526,7 +527,7 @@ function loginScreen(screen) {
                     loginScreen("NONE");
                 });
 
-                openLink("https://id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https://casterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email&state=" + auth.getStateString());
+                openLink("https://id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https://casterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email chat:read chat:edit&state=" + auth.getStateString());
             }
         });
     }
@@ -536,6 +537,12 @@ function triggerLogin() {
     document.querySelector("#login").classList.remove("hide");
     loginScreen("NONE");
 }
+
+document.querySelector("#login-caffeine-password").addEventListener("keyup", (e) => {
+    if (e.code == "Enter") {
+        loginCaffeine();
+    }
+});
 
 function loginCaffeine() {
     const username = document.querySelector("#login-caffeine-username");

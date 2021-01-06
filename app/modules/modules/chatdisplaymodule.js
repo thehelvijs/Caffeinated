@@ -50,11 +50,16 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         this.page.innerHTML = `
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet" />
         <style>
-            .buttons {
+            .vcbuttons {
                 position: fixed;
                 right: 10px;
-                bottom: 5px;
+                bottom: 0px;
+                left: var(--menu-width);
                 z-index: 1000;
+                background-color: #141414;
+                display: flex;
+                padding-top: 7px;
+                justify-content: center;
             }
 
             .upvote-1 {
@@ -77,7 +82,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 color: #FFFFFF;
             }
 
-            .buttons .item {
+            .vcbuttons .item {
                 height: 30px;
                 font-size: 15px;
                 padding-top: 0;
@@ -85,7 +90,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 -webkit-app-region: no-drag;
             }
             
-            .buttons input {
+            .vcbuttons input {
                 width: 300px;
                 margin-bottom: 8px;
                 margin-right: 2px;
@@ -201,7 +206,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 left: 0;
                 right: 0;
                 z-index: 1;
-                width: 63px;
+                width: 40px;
                 height: 30px;
             }
 
@@ -231,11 +236,11 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         </style>
         <div class="container verticalchatmodule">
             <ul id="chatbox"></ul>
-            <div class="buttons">
-                <!-- <input class="input item" id="vcmessage" />
+            <div class="vcbuttons">
+                <input class="input item" id="vcmessage" />
                 <button class="button item" id="vcsend">
                     Send
-                </button> -->
+                </button>
                 <button class="button item" id="vcopen">
                     Viewers
                 </button>
@@ -256,12 +261,26 @@ class VerticalChatUtil {
     constructor(module) {
         this.module = module;
 
+        const messageInput = this.module.page.querySelector("#vcmessage");
+
         this.module.page.querySelector("#vcopen").addEventListener("click", () => {
             this.createWindow();
         });
 
         this.module.page.querySelector("#vcjumpdown").addEventListener("click", () => {
             this.jumpDown();
+        });
+
+        messageInput.addEventListener("keyup", (e) => {
+            if (e.key == "Enter") {
+                koi.sendMessage(messageInput.value);
+                messageInput.value = "";
+            }
+        });
+
+        this.module.page.querySelector("#vcsend").addEventListener("click", () => {
+            koi.sendMessage(messageInput.value);
+            messageInput.value = "";
         });
 
         this.module.page.parentNode.addEventListener("scroll", () => {
@@ -326,7 +345,6 @@ class VerticalChatUtil {
         }
     }
 
-    // Upvotes are coming.
     messageUpvote(event) {
         let element = document.querySelector("[vc_message_id='" + event.id + "']");
 
@@ -418,16 +436,14 @@ class VerticalChatUtil {
 
         msg.appendChild(div);
 
-        /*
-        // Make this only available on Caffeine.
         if (isPlatform("CAFFEINE")) {
             let tooltipbtn = document.createElement("div");
             let upvotebtn = document.createElement("a");
 
-            upvotebtn.innerHTML = '<ion-icon name="arrow-up"></ion-icon>';
+            upvotebtn.innerHTML = `<ion-icon name="arrow-up"></ion-icon>`;
             upvotebtn.title = "Upvote";
             upvotebtn.addEventListener("click", () => {
-                CAFFEINE.upvoteMessage(event.streamer.UUID, event.id);
+                koi.upvote(event.id);
             });
 
             tooltipbtn.classList.add("tooltipbtn");
@@ -438,7 +454,6 @@ class VerticalChatUtil {
 
             msg.appendChild(tooltip);
         }
-        */
 
         this.module.page.querySelector("#chatbox").appendChild(msg);
 
