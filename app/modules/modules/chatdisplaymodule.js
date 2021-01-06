@@ -298,7 +298,6 @@ class VerticalChatUtil {
 
     updateViewers() {
         if (this.viewersWindow) {
-            this.viewersWindow.webContents.executeJavaScript("setViewerCount(" + this.module.viewersList.length + ");");
             this.viewersWindow.webContents.executeJavaScript("setViewers(" + JSON.stringify(this.module.viewersList) + ");");
         }
     }

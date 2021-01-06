@@ -7,8 +7,8 @@ const { app, ipcRenderer } = require("electron");
 const { ipcMain, BrowserWindow } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 15;
-const VERSION = "1.0-beta6";
+const PROTOCOLVERSION = 16;
+const VERSION = "1.0-beta7";
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
