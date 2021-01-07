@@ -174,7 +174,7 @@ const CURRENCY_TABLE = {
 
 const CURRENCIES = [];
 const CURRENCY_TABLE_INVERTED = {};
-const PSUEDO_CURRENCIES = ["CAFFEINE_CREDITS", "CAFFEINE_GOLD", "TWITCH_BITS", "DEFAULT"];
+const PSUEDO_CURRENCIES = ["CAFFEINE_CREDITS", "CAFFEINE_GOLD", "TWITCH_BITS", "TWITCH BITS", "DEFAULT"];
 
 Object.entries(CURRENCY_TABLE).forEach((currency) => {
     CURRENCY_TABLE_INVERTED[currency[1]] = currency[0];
@@ -212,7 +212,7 @@ function formatCurrency(amount, currency) {
                 ${amount.toFixed(0)}
             </span>
         `;
-    } else if (currency === "TWITCH_BITS") {
+    } else if ((currency === "TWITCH_BITS") || (currency === "TWITCH BITS")) {
         let color;
 
         // https://assets.help.twitch.tv/article/img/2449458-01.gif
@@ -288,7 +288,7 @@ async function convertCurrency(amount, from, to) {
             usd = amount / 91; // Something we figured out, no official source for this though.
         } else if (from === "CAFFEINE_GOLD") {
             usd = (amount * 3) / 91;
-        } else if (from === "TWITCH_BITS") {
+        } else if ((from === "TWITCH_BITS") || (from === "TWITCH BITS")) {
             usd = amount / 100; // https://twitchbitstousd.com/
         } else {
             usd = await CurrencyConverter(amount, from, "USD");
@@ -298,7 +298,7 @@ async function convertCurrency(amount, from, to) {
             result = usd * 91; // Something we figured out, no official source for this though.
         } else if (to === "CAFFEINE_GOLD") {
             result = (usd * 91) / 3;
-        } else if (to === "TWITCH_BITS") {
+        } else if ((to === "TWITCH_BITS") || (to === "TWITCH BITS")) {
             result = usd * 100; // https://twitchbitstousd.com/
         } else {
             result = await CurrencyConverter(usd, "USD", to);

@@ -56,7 +56,7 @@ class RepoManager {
                         if (!loaded) {
                             let module = new MODULES.moduleClasses[instance.namespace](instance.id, repo);
 
-                            MODULES.initalizeModule(module);
+                            await MODULES.initalizeModule(module);
 
                             module.persist = true;
                         }
@@ -68,7 +68,7 @@ class RepoManager {
                         let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
 
                         if (!loaded) {
-                            MODULES.initalizeModule(new MODULES.moduleClasses[instance.namespace](instance.id, repo));
+                            await MODULES.initalizeModule(new MODULES.moduleClasses[instance.namespace](instance.id, repo));
                         }
                     }
                 }

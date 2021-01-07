@@ -7,11 +7,12 @@
     --menu-background-color: #202020;
     --menu-border-color: #383838;
     --title-bar-height: 30px;
+    --background-color: #141414;
 }
 
 html {
     color: whitesmoke;
-    background-color: #141414;
+    background-color: var(--background-color);
     height: 100%;
     width: 100%;
     overflow: hidden;
@@ -50,7 +51,7 @@ ion-icon {
     bottom: 0;
     z-index: 99;
     width: 100vw;
-    background-color: #141414;
+    background-color: var(--background-color);
     padding-top: var(--title-bar-height);
 }
 
@@ -93,7 +94,7 @@ ion-icon {
     height: 12px;
     width: 12px;
     border-radius: 500%;
-    background: #141414;
+    background: var(--background-color);
     border: 2px solid #515151;
     margin-top: -5px;
     cursor: pointer;
@@ -386,7 +387,7 @@ input[type=number] {
     box-sizing: border-box;
     display: inline-block;
     background-color: #DCDCDC;
-    color: #141414;
+    color: var(--background-color);
     border-radius: 3rem;
     text-align: center;
     font-size: 12px;
@@ -397,7 +398,7 @@ input[type=number] {
 
 .user-username ion-icon {
     position: absolute;
-    color: #141414 !important;
+    color: var(--background-color) !important;
     font-size: 18px !important;
     top: 1px;
 }
@@ -478,10 +479,17 @@ input[type=number] {
 
 .page {
     overflow-x: hidden;
+    margin-bottom: 0 !important;
 }
 
 .widget-settings-page {
     padding-top: 20px;
+}
+
+.moduleframe {
+    display: block;
+    height: calc(100vh - var(--title-bar-height));
+    width: 100%;
 }
 
 /* Overlays */
@@ -522,12 +530,12 @@ nav ul li .menu-button:hover {
 }
 
 nav ul li.active .menu-button {
-    background: #141414;
+    background: var(--background-color);
     color: #dddddd !important;
 }
 
 nav ul li.active .menu-button:hover {
-    background: #141414;
+    background: var(--background-color);
     color: #4b4b4b !important;
 }
 

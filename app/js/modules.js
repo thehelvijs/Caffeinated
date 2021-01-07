@@ -90,7 +90,7 @@ class Modules {
         }
     }
 
-    initalizeModule(module) {
+    async initalizeModule(module) {
         try {
             const holder = new ModuleHolder(module);
             const types = holder.getTypes();
@@ -113,6 +113,10 @@ class Modules {
                     this.initalizeModuleSettingsPage(module);
                 } else if (types.includes("APPLICATION")) {
                     this.initalizeModulePage(module);
+
+                    if (module.pageSrc) {
+                        await this.createContentFrame(module.page, module.pageSrc);
+                    }
                 }
             }
 
@@ -123,6 +127,30 @@ class Modules {
             console.error("Unable to initalize module due to an exception:");
             console.error(e);
         }
+    }
+
+    createContentFrame(page, src) {
+        return new Promise((resolve) => {
+            const frame = document.createElement("iframe");
+
+            frame.classList = "moduleframe";
+
+            page.appendChild(frame);
+
+            frame.addEventListener("load", resolve);
+
+            fetch(src)
+                .then((response) => response.text())
+                .then((contents) => {
+                    frame.contentDocument.open();
+                    frame.contentDocument.write(contents);
+                    frame.contentDocument.close();
+                }).catch((err) => {
+                    frame.contentDocument.open();
+                    frame.contentDocument.write("An error occurred whilst loading " + src);
+                    frame.contentDocument.close();
+                });
+        })
     }
 
     initalizeModulePage(module) {

@@ -12,7 +12,7 @@ MODULES.moduleClasses["casterlabs_credits"] = class {
     init() {
         this.page.innerHTML = `
             <p style="text-align:center">
-                Caffeinated? Feel free to support the project <a style="color:#e94b4b" onclick="openLink('https://ko-fi.com/casterlabs')">here</a>.
+                Loving Caffeinated? Feel free to support the project <a style="color:#e94b4b" onclick="openLink('https://ko-fi.com/casterlabs')">here</a>.
             </p>
             <p style="text-align:center">
                 Looking for a custom made overlay design?<br />Get your own at <a style="color:#ff94db" onclick="openLink('https://reyana.org')">Reyana.org <img style="height: .85em; vertical-align: middle;" src="https://assets.casterlabs.co/butterfly.png" /></a>

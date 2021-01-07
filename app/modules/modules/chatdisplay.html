@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" />
+        <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
+        <style>
+            /* Making everything match Caffeinated */
+            :root {
+                --casterlabs: #e94b4b;
+                --menu-width: 200px;
+                --user-bar-height: 55px;
+                --menu-icon-color: #DCDCDC;
+                --menu-icon-color-hover: #7a7a7a;
+                --menu-background-color: #202020;
+                --menu-border-color: #383838;
+                --title-bar-height: 30px;
+                --background-color: #141414;
+            }
+
+            ion-icon {
+                pointer-events: none !important;
+                stroke: white !important;
+                color: white !important;
+                fill: white !important;
+                transition: 0.2s linear;
+            }
+
+            html {
+                background-color: var(--background-color);
+                overflow: hidden;
+            }
+
+            span {
+                color: white;
+                font-family: "Inter", sans-serif;
+            }
+
+            input[type=search]::-webkit-search-decoration,
+            input[type=search]::-webkit-search-cancel-button,
+            input[type=search]::-webkit-search-results-button,
+            input[type=search]::-webkit-search-results-decoration {
+                -webkit-appearance: none;
+            }
+
+            input:focus,
+            input:active,
+            input:hover {
+                outline: none !important;
+                border: 1px solid #DCDCDC !important;
+            }
+
+            input::-webkit-input-placeholder {
+                color: #A5A5A5 !important;
+            }
+
+            input {
+                background-color: var(--menu-background-color) !important;
+                color: var(--menu-icon-color) !important;
+                border-radius: 6px;
+                border: 1px solid #4a4a4a;
+                cursor: auto;
+                outline: none !important;
+            }
+
+            /* Scrollbar */
+
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #444444;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #AAAAAA;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #505050;
+            }
+
+            ::-webkit-slider-runnable-track {
+                width: 300px;
+                height: 2px;
+                border: none;
+                border-radius: 3px;
+            }
+
+            ::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                border: none;
+                height: 12px;
+                width: 12px;
+                border-radius: 500%;
+                background: var(--background-color);
+                border: 2px solid #515151;
+                margin-top: -5px;
+                cursor: pointer;
+            }
+
+            /* Buttons */
+
+            .vcbuttons {
+                position: fixed;
+                right: 10px;
+                bottom: 0px;
+                left: 0;
+                z-index: 1000;
+                background-color: var(--background-color);
+                display: flex;
+                padding-top: 7px;
+                justify-content: center;
+            }
+
+            .vcbuttons .item {
+                height: 30px;
+                font-size: 15px;
+                padding-top: 0;
+                padding-bottom: calc(.2em - 1px);
+                -webkit-app-region: no-drag;
+            }
+
+            .vcbuttons input {
+                width: 300px;
+                margin-bottom: 8px;
+                margin-right: 2px;
+            }
+
+            /* Chat */
+
+            #chatbox {
+                padding-top: 15px;
+                overflow-y: auto;
+                height: calc(100vh - 45px);
+                list-style: none;
+            }
+
+            ul>li {
+                height: auto;
+                position: relative;
+                list-style: none;
+            }
+
+            ul li ul {
+                display: none;
+            }
+
+            ul li a {
+                display: inline-block;
+                height: 100%;
+                text-decoration: none;
+                color: white !important;
+            }
+
+            ul li:hover>.vcchatmessage {
+                background-color: #4d4d4d;
+            }
+
+            ul li:hover ul {
+                display: block;
+            }
+
+            ul.tip {
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                display: none;
+                background-color: #4d4d4d;
+                position: absolute;
+                padding: 0;
+                height: auto;
+                left: 25px;
+                bottom: 100%;
+                z-index: 1;
+                width: fit-content;
+                height: 30px;
+            }
+
+            .tooltipbtn {
+                font-size: 20px;
+                margin-left: 10px;
+                margin-top: 3px;
+            }
+
+            .tooltipbtn:last-child {
+                margin-right: 10px;
+            }
+
+            .vctext::before {
+                content: "\00a0";
+            }
+
+            .vctext {
+                border-radius: 1px;
+            }
+
+            .vctext::after {
+                content: "\00a0";
+            }
+
+            .vcstatus {
+                position: relative;
+                font-style: italic;
+                display: flex;
+                align-items: center;
+            }
+
+            .vcstatus .vctext {
+                color: #D0D0D0;
+            }
+
+            .vcchatmessage {
+                position: relative;
+                display: flex;
+                align-items: center;
+                border-radius: 8px;
+                cursor: default;
+                padding-bottom: 2px;
+            }
+
+            .vcusername {
+                padding-right: 5px;
+            }
+
+            .vcprofile {
+                border-radius: 50%;
+                object-fit: cover;
+                height: 22px;
+                width: 22px;
+                margin: 1px 3px;
+                vertical-align: bottom;
+            }
+
+            .vcimage {
+                border-radius: 50%;
+                object-fit: cover;
+                height: 22px;
+                width: auto;
+                margin: 1px;
+                vertical-align: bottom;
+            }
+
+            .vcbadge {
+                padding-left: 5px;
+                transform: translateY(5px);
+                height: 20px;
+                width: auto;
+            }
+
+            /* Upvotes */
+
+            .upvote-1 {
+                /* 1+ */
+                color: #FF00FF;
+            }
+
+            .upvote-2 {
+                /* 10+ */
+                color: #00FF00;
+            }
+
+            .upvote-3 {
+                /* 100+ */
+                color: #FFFF00;
+            }
+
+            .upvote-4 {
+                /* 1000+ */
+                color: #FFFFFF;
+            }
+
+            /* Misc */
+
+            #vcjumpdown {
+                position: fixed;
+                bottom: 100px;
+                right: 30px;
+            }
+
+            #vcjumpdown ion-icon {
+                width: 40px;
+                height: 40px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <ul id="chatbox"></ul>
+        <div class="vcbuttons">
+            <input class="input item" id="vcmessage" />
+            <button class="button item" id="vcsend">
+                Send
+            </button>
+            <button class="button item" id="vcopen">
+                Viewers
+            </button>
+        </div>
+        <a id="vcjumpdown" title="Jump to bottom" style="opacity: 0;">
+            <ion-icon name="arrow-down-circle"></ion-icon>
+        </a>
+    </body>
+
+</html>

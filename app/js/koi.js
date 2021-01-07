@@ -80,24 +80,20 @@ class Koi {
                         const event = json["event"];
                         const type = event["event_type"];
 
-                        if (type === "INFO") {
-                            this.broadcast("info", event["event"]);
-                        } else {
-                            if ((event.id === "") && (type === "DONATION")) { // We detect test events by seeing if the message id is empty.
-                                event.donations.forEach((donation) => {
-                                    // donation.amount = 10; // For testing.
+                        if ((event.id === "") && (type === "DONATION")) { // We detect test events by seeing if the message id is empty.
+                            event.donations.forEach((donation) => {
+                                // donation.amount = 10; // For testing.
 
-                                    // TODO keep this up-to-date with new platforms.
-                                    if (isPlatform("CAFFEINE")) {
-                                        donation.currency = "CAFFEINE_CREDITS";
-                                        donation.image = "https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png";
-                                        donation.animated_image = "https://assets.caffeine.tv/digital-items/praise_preview.062e1659faa201a6c9fb0f4599bfa8ef.png";
-                                    }
-                                });
-                            }
-
-                            this.broadcast(type.toLowerCase(), event);
+                                // TODO keep this up-to-date with new platforms.
+                                if (isPlatform("CAFFEINE")) {
+                                    donation.currency = "CAFFEINE_CREDITS";
+                                    donation.image = "https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png";
+                                    donation.animated_image = "https://assets.caffeine.tv/digital-items/praise_preview.062e1659faa201a6c9fb0f4599bfa8ef.png";
+                                }
+                            });
                         }
+
+                        this.broadcast(type.toLowerCase(), event);
                     } else {
                         this.broadcast("message", json);
                     }
