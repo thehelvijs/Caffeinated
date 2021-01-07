@@ -106,16 +106,16 @@ class Modules {
                 if (types.includes("SETTINGS")) {
                     module.page.classList.add("widget-settings-page");
 
-                    this.initalizeModuleSettingsPage(module, module.page);
+                    await this.initalizeModuleSettingsPage(module, module.page);
                 }
             } else {
                 if (types.includes("SETTINGS")) {
-                    this.initalizeModuleSettingsPage(module);
+                    await this.initalizeModuleSettingsPage(module);
                 } else if (types.includes("APPLICATION")) {
                     this.initalizeModulePage(module);
 
                     if (module.pageSrc) {
-                        await this.createContentFrame(module.page, module.pageSrc);
+                        await this.createContentFrame(module.page, module.pageSrc, "moduleframe");
                     }
                 }
             }
@@ -131,28 +131,33 @@ class Modules {
         }
     }
 
-    createContentFrame(page, src) {
-        return new Promise((resolve) => {
+    createContentFrame(page, src, classList) {
+        return new Promise(async (resolve) => {
             const frame = document.createElement("iframe");
+            const contents = await this.loadContents(src);
 
-            frame.classList = "moduleframe";
+            frame.classList = classList;
 
             page.appendChild(frame);
 
-            frame.addEventListener("load", resolve);
+            frame.addEventListener("load", () => resolve(frame));
 
+            frame.contentDocument.open();
+            frame.contentDocument.write(contents);
+            frame.contentDocument.close();
+        });
+    }
+
+    loadContents(src) {
+        return new Promise((resolve) => {
             fetch(src)
                 .then((response) => response.text())
                 .then((contents) => {
-                    frame.contentDocument.open();
-                    frame.contentDocument.write(contents);
-                    frame.contentDocument.close();
+                    resolve(contents);
                 }).catch((err) => {
-                    frame.contentDocument.open();
-                    frame.contentDocument.write("An error occurred whilst loading " + src);
-                    frame.contentDocument.close();
+                    resolve("An error occurred whilst loading " + src);
                 });
-        })
+        });
     }
 
     initalizeModulePage(module) {
@@ -256,7 +261,7 @@ class Modules {
         document.querySelector(".pages").appendChild(page);
     }
 
-    initalizeModuleSettingsPage(module, parent = document.getElementById("settings")) {
+    async initalizeModuleSettingsPage(module, parent = document.getElementById("settings")) {
         const settingsSelector = module.namespace + "_" + module.id;
         let name = module.displayname ? module.displayname : prettifyString(module.id);
         let stored = this.getStoredValues(module);
@@ -305,7 +310,7 @@ class Modules {
                 };
             }
 
-            div.appendChild(createModuleInput(module, key, data, stored, formCallback));
+            div.appendChild(await createModuleInput(module, key, data, stored, formCallback));
         }
 
         parent.appendChild(container);
@@ -332,7 +337,7 @@ class Modules {
     }
 }
 
-function createDynamicModuleOption(module, layout, values, formCallback) {
+async function createDynamicModuleOption(module, layout, values, formCallback) {
     const display = layout.display;
     const defaults = layout.default;
 
@@ -364,13 +369,13 @@ function createDynamicModuleOption(module, layout, values, formCallback) {
             };
         }
 
-        div.appendChild(createModuleInput(module, key, data, values, formCallback, defaults[key]));
+        div.appendChild(await createModuleInput(module, key, data, values, formCallback, defaults[key]));
     }
 
     return div;
 }
 
-function createModuleInput(module, key, data, stored, formCallback, defaultValue = module.defaultSettings[key]) {
+async function createModuleInput(module, key, data, stored, formCallback, defaultValue = module.defaultSettings[key]) {
     const uuid = module.namespace + ":" + module.id;
     const displayname = data.display;
     const isLang = data.isLang;
@@ -380,7 +385,42 @@ function createModuleInput(module, key, data, stored, formCallback, defaultValue
     let name = document.createElement("span");
     let input;
 
-    if (type === "rich") {
+    if (type === "iframe-src") {
+        input = document.createElement("div");
+
+        input.id = uuid;
+        input.classList = type + " data";
+        input.setAttribute("type", type);
+        input.setAttribute("name", key);
+        input.setAttribute("owner", module.id);
+
+        const frame = document.createElement("iframe");
+        const contents = await MODULES.loadContents(defaultValue);
+
+        let loaded = false;
+
+        input.appendChild(frame);
+
+        frame.classList = "settingsframe";
+        frame.style = `height: ${data.height}`;
+        frame.addEventListener("load", () => {
+            if (!loaded) {
+                loaded = true;
+
+                frame.contentDocument.open();
+                frame.contentDocument.write(contents);
+                frame.contentDocument.close();
+
+                if (module.onFrameLoad) {
+                    module.onFrameLoad(frame);
+                }
+            }
+        });
+
+        container.appendChild(input);
+
+        return container;
+    } else if (type === "rich") {
         input = document.createElement("div");
 
         input.id = uuid;

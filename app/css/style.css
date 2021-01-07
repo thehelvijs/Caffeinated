@@ -19,7 +19,7 @@ html {
 }
 
 .hide {
-    display: none;
+    display: none !important;
 }
 
 a {
@@ -489,6 +489,11 @@ input[type=number] {
 .moduleframe {
     display: block;
     height: calc(100vh - var(--title-bar-height));
+    width: 100%;
+}
+
+.settingsframe {
+    display: block;
     width: 100%;
 }
 

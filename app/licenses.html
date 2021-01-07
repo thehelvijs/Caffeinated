@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
+        <style>
+            /* Misc */
+
+            html {
+                background-color: #181818;
+                overflow: hidden;
+            }
+
+            span {
+                color: #DDDDDD !important;
+            }
+
+            a {
+                color: #DDDDDD;
+            }
+
+            /* Scrollbar */
+
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #444444;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #AAAAAA;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #505050;
+            }
+
+            ::-webkit-slider-runnable-track {
+                width: 300px;
+                height: 2px;
+                border: none;
+                border-radius: 3px;
+            }
+
+            ::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                border: none;
+                height: 12px;
+                width: 12px;
+                border-radius: 500%;
+                background: #181818;
+                border: 2px solid #515151;
+                margin-top: -5px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+
+    <body>
+    </body>
+
+    <footer>
+        <script>
+            const LIBRARIES = [
+                {
+                    name: "Bulma",
+                    author: "Jeremy Thomas",
+                    link: "https://bulma.io/",
+                    license_link: "https://github.com/jgthms/bulma/blob/master/LICENSE",
+                    license_type: "MIT"
+                },
+                {
+                    name: "Bulmaswatch",
+                    author: "Jenil Gogari",
+                    link: "https://github.com/jenil/bulmaswatch/",
+                    license_link: "https://github.com/jenil/bulmaswatch/blob/gh-pages/LICENSE",
+                    license_type: "MIT"
+                },
+                {
+                    name: "anime",
+                    author: "Julian Garnier",
+                    link: "https://animejs.com/",
+                    license_link: "https://github.com/juliangarnier/anime/blob/master/LICENSE.md",
+                    license_type: "MIT"
+                },
+                {
+                    name: "Ionicons",
+                    author: "Ionic",
+                    link: "https://ionicons.com/",
+                    license_link: "https://github.com/ionic-team/ionicons/blob/master/LICENSE",
+                    license_type: "MIT"
+                },
+                {
+                    name: "Quill",
+                    author: "Quill",
+                    link: "https://quilljs.com/",
+                    license_link: "https://github.com/quilljs/quill/blob/master/LICENSE",
+                    license_type: "BSD 3-Clause"
+                },
+                {
+                    name: "Electron",
+                    author: "GitHub Inc.",
+                    link: "https://electronjs.org/",
+                    license_link: "https://github.com/electron/electron/blob/master/LICENSE",
+                    license_type: "MIT"
+                },
+                {
+                    name: "CurrencyConvert.js",
+                    author: "Casterlabs",
+                    link: "https://github.com/Casterlabs/CurrencyConvert.js",
+                    license_link: "https://github.com/Casterlabs/CurrencyConvert.js/blob/main/LICENSE",
+                    license_type: "GNU General Public License v3.0"
+                },
+                {
+                    name: "FormsJS",
+                    author: "e3ndr",
+                    link: "https://github.com/e3ndr/FormsJS",
+                    license_link: "https://github.com/e3ndr/FormsJS/blob/master/LICENSE",
+                    license_type: "MIT"
+                },
+                {
+                    name: "FontSelect",
+                    author: "e3ndr",
+                    link: "https://github.com/e3ndr/FontSelect",
+                    license_link: "https://github.com/e3ndr/FontSelect/blob/master/LICENSE",
+                    license_type: "MIT"
+                },
+                {
+                    name: "cors",
+                    author: "expressjs",
+                    link: "https://github.com/expressjs/cors",
+                    license_link: "https://github.com/expressjs/cors/blob/master/LICENSE",
+                    license_type: "MIT"
+                },
+                {
+                    name: "electron-store",
+                    author: "Sindre Sorhus",
+                    link: "https://github.com/sindresorhus/electron-store/",
+                    license_link: "https://github.com/sindresorhus/electron-store/blob/master/license",
+                    license_type: "MIT"
+                },
+                {
+                    name: "electron-window-state",
+                    author: "mawie81",
+                    link: "https://github.com/mawie81/electron-window-state",
+                    license_link: "https://github.com/mawie81/electron-window-state/blob/master/license",
+                    license_type: "MIT"
+                },
+                {
+                    name: "Express",
+                    author: "expressjs",
+                    link: "https://expressjs.com/",
+                    license_link: "https://github.com/expressjs/express/blob/master/LICENSE",
+                    license_type: "MIT"
+                },
+                {
+                    name: "Socket.io",
+                    author: "socket.io",
+                    link: "https://socket.io/",
+                    license_link: "https://github.com/socketio/socket.io/blob/master/LICENSE",
+                    license_type: "MIT"
+                }
+            ];
+
+            LIBRARIES.forEach((library) => {
+                const div = document.createElement("div");
+
+                const name = document.createElement("a");
+
+                name.innerText = library.name;
+                name.addEventListener("click", () => openLink(library.link));
+
+                const license = document.createElement("a");
+
+                license.innerText = library.license_type;
+                license.addEventListener("click", () => openLink(library.license_link));
+
+                div.appendChild(name);
+                div.appendChild(document.createTextNode(" • "));
+                div.appendChild(license);
+
+                document.body.appendChild(div);
+            });
+
+        </script>
+    </footer>
+
+</html>

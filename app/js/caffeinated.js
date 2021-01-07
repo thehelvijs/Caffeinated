@@ -152,6 +152,30 @@ class Caffeinated {
             }
         }
 
+        MODULES.initalizeModule({
+            displayname: "caffeinated.opensource.title",
+            namespace: "casterlabs_caffeinated",
+            type: "settings",
+            persist: true,
+            id: "opensource",
+
+            onFrameLoad(frame) {
+                frame.contentWindow.openLink = openLink;
+            },
+
+            settingsDisplay: {
+                content: {
+                    type: "iframe-src",
+                    height: "340px",
+                    isLang: false
+                }
+            },
+
+            defaultSettings: {
+                content: __dirname + "/licenses.html"
+            }
+        });
+
         setTimeout(() => {
             if (!CONNECTED) {
                 splashText(`

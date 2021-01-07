@@ -3,6 +3,8 @@ let LANGUAGES = {
         "caffeinated.internal.widgets": "Widgets",
         "caffeinated.internal.followers_count_text": "followers",
 
+        "caffeinated.opensource.title": "Opensource Libraries Used",
+
         "caffeinated.settings.title": "Settings",
         "caffeinated.settings.signout": "Sign out",
 
@@ -40,7 +42,7 @@ function getLangKey(lang = navigator.language) {
     for (const code of Object.keys(LANGUAGES)) {
         const regex = RepoUtil.matchToRegex(code);
 
-        if (lang.match(regex).length !== 0) {
+        if (lang.match(regex)) {
             return code;
         }
     }
