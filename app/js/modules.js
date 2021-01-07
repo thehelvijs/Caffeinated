@@ -120,6 +120,8 @@ class Modules {
                 }
             }
 
+            translate(module.page);
+
             if (module.init) module.init();
 
             this.#modules.set(holder.getUUID(), holder);
@@ -173,7 +175,12 @@ class Modules {
         ion.classList.add("hide");
 
         text.classList.add("menu-button-title");
-        text.innerHTML = name;
+        text.innerText = name;
+
+        if (module.displayname) {
+            text.classList.add("translatable");
+            text.setAttribute("lang", module.displayname);
+        }
 
         a.classList.add("menu-button");
         a.addEventListener("click", () => navigate(selector));
@@ -182,6 +189,8 @@ class Modules {
         a.appendChild(text);
 
         document.querySelector("#page-menu").insertBefore(li, document.querySelector("#page-menu").lastChild);
+
+        translate(li);
     }
 
     initalizeModuleWidgetPage(module) {
@@ -195,8 +204,13 @@ class Modules {
         let a = document.createElement("a");
         let icons = document.createElement("div");
 
-        a.innerHTML = name;
+        a.innerText = name;
         a.addEventListener("click", () => navigate(selector));
+
+        if (module.displayname) {
+            a.classList = "translatable";
+            a.setAttribute("lang", name);
+        }
 
         title.classList.add("dropdown-title");
         title.appendChild(a);

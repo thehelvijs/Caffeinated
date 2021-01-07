@@ -285,7 +285,10 @@ class Caffeinated {
 
     setFollowerCount(count) {
         if (count && (count >= 0)) {
-            document.querySelector("#followers").innerText = kFormatter(count, 1) + " followers";
+            const formatted = kFormatter(count, 1);
+            const followers_count_text = getTranslation("caffeinated.internal.followers_count_text");
+
+            document.querySelector("#followers").innerText = `${formatted} ${followers_count_text}`;
 
             anime({
                 targets: "#followers",

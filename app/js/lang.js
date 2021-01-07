@@ -1,7 +1,28 @@
 let LANGUAGES = {
     "en-*": {
+        "caffeinated.internal.widgets": "Widgets",
+        "caffeinated.internal.followers_count_text": "followers",
+
         "caffeinated.settings.title": "Settings",
-        "caffeinated.settings.signout": "Sign out"
+        "caffeinated.settings.signout": "Sign out",
+
+        "caffeinated.credit.title": "Support Us",
+
+        "caffeinated.chatdisplay.title": "Chat",
+
+        "caffeinated.caffeinebroadcastimage.title": "Caffeine Broadcast Thumbnail",
+        "caffeinated.caffeinebroadcastimage.new_thumbnail": "New thumbnail",
+        "caffeinated.caffeinebroadcastimage.update": "Upload",
+
+        "caffeinated.caffeinegamepicker.title": "Caffeine Game Picker",
+        "caffeinated.caffeinegamepicker.game": "Selected Game",
+        "caffeinated.caffeinegamepicker.update": "Update",
+
+        "caffeinated.companion.title": "Casterlabs Companion",
+        "caffeinated.companion.enabled": "Enabled",
+        "caffeinated.companion.open": "Open this link on your device",
+        "caffeinated.companion.reset": "Rest Link",
+
     }
 };
 
@@ -17,9 +38,9 @@ function absorbLang(newLang) {
 
 function getLangKey(lang = navigator.language) {
     for (const code of Object.keys(LANGUAGES)) {
-        let regex = RepoUtil.matchToRegex(code);
+        const regex = RepoUtil.matchToRegex(code);
 
-        if (lang.match(regex)) {
+        if (lang.match(regex).length !== 0) {
             return code;
         }
     }
@@ -30,23 +51,27 @@ function getLangKey(lang = navigator.language) {
 function getSupportedLanguage(langs = navigator.languages) {
     const stored = CAFFEINATED.store.get("language");
 
-    if (stored != null) {
-        let code = getLangKey(stored);
+    if (stored) {
+        const code = getLangKey(stored);
 
-        if (code != null) {
+        if (code) {
             return code;
         } // Otherwise, figure it out based on what the OS gives us.
     }
 
     for (const lang of langs) {
-        let code = getLangKey(lang);
+        const code = getLangKey(lang);
 
-        if (code != null) {
+        if (code) {
             return code;
         }
     }
 
-    return "en-*";
+    if (CAFFEINATED.store.get("experimental_no_translation_default")) {
+        return "";
+    } else {
+        return "en-*";
+    }
 }
 
 function translate(parent = document) {
@@ -56,7 +81,18 @@ function translate(parent = document) {
         const key = element.getAttribute("lang");
         const translated = lang[key];
 
-        element.innerText = (translated !== undefined) ? translated : key;
-        element.setAttribute("title", (translated !== undefined) ? translated : key);
+        const result = (translated !== undefined) ? translated : key;
+
+        element.innerText = result;
+        element.setAttribute("title", result);
     });
+}
+
+function getTranslation(key) {
+    const lang = LANGUAGES[getSupportedLanguage()];
+
+    const translated = lang[key];
+    const result = (translated !== undefined) ? translated : key;
+
+    return result;
 }

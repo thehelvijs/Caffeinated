@@ -3,10 +3,10 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_chat_display";
+        this.displayname = "caffeinated.chatdisplay.title";
         this.type = "application";
         this.id = id;
         this.icon = "chatbox";
-        this.displayname = "Chat";
 
         // Where the magic happens
         this.pageSrc = __dirname + "/modules/modules/chatdisplay.html";

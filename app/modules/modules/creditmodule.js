@@ -3,14 +3,16 @@ MODULES.moduleClasses["casterlabs_credits"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_credits";
+        this.displayname = "caffeinated.credit.title";
         this.type = "application";
         this.id = id;
         this.icon = "star";
-        this.displayname = "Support Us";
+
     }
 
     init() {
         this.page.innerHTML = `
+            <br />
             <p style="text-align:center">
                 Loving Caffeinated? Feel free to support the project <a style="color:#e94b4b" onclick="openLink('https://ko-fi.com/casterlabs')">here</a>.
             </p>
@@ -21,6 +23,7 @@ MODULES.moduleClasses["casterlabs_credits"] = class {
                 ★ Our Supporters ★
             </h5>
             <div style="text-align:center;max-height:100%;overflow:auto;" id="supporters"></div>
+            <br />
         `;
 
         setInterval(this.update, 15000); // Every 15s

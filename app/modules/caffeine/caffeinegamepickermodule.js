@@ -15,6 +15,7 @@ MODULES.moduleClasses["caffeine_game_picker"] = class {
 
     constructor(id) {
         this.namespace = "caffeine_game_picker";
+        this.displayname = "caffeinated.caffeinegamepicker.title";
         this.type = "settings";
         this.id = id;
 
@@ -78,8 +79,16 @@ MODULES.moduleClasses["caffeine_game_picker"] = class {
     }
 
     settingsDisplay = {
-        game: "search",
-        update: "button"
+        game: {
+            display: "caffeinated.caffeinegamepicker.game",
+            type: "search",
+            isLang: true
+        },
+        update: {
+            display: "caffeinated.caffeinegamepicker.update",
+            type: "button",
+            isLang: true
+        }
     };
 
     defaultSettings = {

@@ -3,6 +3,7 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_companion";
+        this.displayname = "caffeinated.companion.title";
         this.type = "settings";
         this.id = id;
         this.kinoko = new Kinoko();
@@ -136,7 +137,7 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
     }
 
     setLinkText() {
-        document.querySelector("#casterlabs_companion_casterlabs_companion").querySelector("[name='Open on your device']").value = "casterlabs.co/companion?key=" + this.uuid;
+        document.querySelector("#casterlabs_companion_casterlabs_companion").querySelector("[name='open']").value = "casterlabs.co/companion?key=" + this.uuid;
     }
 
     init() {
@@ -148,7 +149,7 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
             MODULES.saveToStore(this);
         }
 
-        document.querySelector("#casterlabs_companion_" + this.id).querySelector("[name='Open on your device']").setAttribute("readonly", "");
+        document.querySelector("#casterlabs_companion_" + this.id).querySelector("[name='open']").setAttribute("readonly", "");
 
 
         this.setLinkText();
@@ -162,14 +163,26 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
     }
 
     settingsDisplay = {
-        enabled: "checkbox",
-        "Open on your device": "input",
-        reset_link: "button"
+        enabled: {
+            display: "caffeinated.companion.enabled",
+            type: "checkbox",
+            isLang: true
+        },
+        open: {
+            display: "caffeinated.companion.open",
+            type: "input",
+            isLang: true
+        },
+        reset_link: {
+            display: "caffeinated.companion.reset",
+            type: "button",
+            isLang: true
+        }
     };
 
     defaultSettings = {
         enabled: false,
-        "Open on your device": "",
+        open: "",
         // reset_link: () => {}
     };
 

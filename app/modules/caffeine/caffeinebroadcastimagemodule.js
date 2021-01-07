@@ -3,6 +3,7 @@ MODULES.moduleClasses["caffeine_broadcast_image"] = class {
 
     constructor(id) {
         this.namespace = "caffeine_broadcast_image";
+        this.displayname = "caffeinated.caffeinebroadcastimage.title";
         this.type = "settings";
         this.id = id;
 
@@ -70,8 +71,16 @@ MODULES.moduleClasses["caffeine_broadcast_image"] = class {
     }
 
     settingsDisplay = {
-        new_thumbnail: "file",
-        update: "button"
+        new_thumbnail: {
+            display: "caffeinated.caffeinebroadcastimage.new_thumbnail",
+            type: "file",
+            isLang: true
+        },
+        update: {
+            display: "caffeinated.caffeinebroadcastimage.update",
+            type: "button",
+            isLang: true
+        }
     };
 
     defaultSettings = {
