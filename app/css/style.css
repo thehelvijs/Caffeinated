@@ -63,6 +63,15 @@ ion-icon {
     width: 200px;
 }
 
+.service-disclaimer {
+    position: absolute;
+    color: #777777;
+    left: 50vw;
+    bottom: 50px;
+    width: 370px;
+    transform: translateX(-50%);
+}
+
 /* Scrollbar */
 
 ::-webkit-scrollbar {

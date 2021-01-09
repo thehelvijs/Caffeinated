@@ -160,20 +160,25 @@
                 <br />
                 <div id="login-buttons">
                     <span class="subtitle is-3">
-                        Log in to Casterlabs
+                        Welcome to Casterlabs
                     </span>
                     <!-- <sub><i>ITALICS</i> <b>BOLD <i>VARIETY</i></b></sub> New merch? -->
-                    <br />
                     <br />
                     <br />
                     <a class="button" onclick="loginScreen('TWITCH');" style="overflow: hidden; background-color: #7d2bf9;">
                         <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 12.5px; top: 7.5px;" />
                         <span style="padding-left: 1.75em; z-index: 2;">Login with Twitch</span>
                     </a>
+                    <br />
                     <a class="button" onclick="loginScreen('CAFFEINE');" style="overflow: hidden; background-color: #0000FF;">
                         <img src="https://assets.casterlabs.co/caffeine/logo.png" style="height: 2.5em; position: absolute; left: 5px;" />
                         <span style="padding-left: 1.75em; z-index: 2;">Login with Caffeine</span>
                     </a>
+                    <div class="service-disclaimer">
+                        <span>
+                            By logging in, you agree to our <a onclick="openLink('https:\/\/casterlabs.co/terms-of-service');">Terms of Service</a> and acknowledge that our <a onclick="openLink('https:\/\/casterlabs.co/privacy-policy')">Privacy Policy</a> applies to you.
+                        </span>
+                    </div>
                 </div>
                 <div id="login-waiting" class="hide">
                     <div class="spinner">
@@ -189,6 +194,9 @@
                     </a>
                 </div>
                 <div id="login-caffeine" class="hide">
+                    <span class="subtitle is-3">
+                        Log in with Caffeine
+                    </span>
                     <br />
                     <br />
                     <input id="login-caffeine-username" type="input" placeholder="Username" class="input login-element" />
@@ -202,9 +210,19 @@
                             Want to go back?
                         </sup>
                     </a>
+                    <div class="service-disclaimer">
+                        <span>
+                            By logging in, you agree to our <a onclick="openLink('https:\/\/casterlabs.co/terms-of-service')">Terms of Service</a> and acknowledge that our <a onclick="openLink('https:\/\/casterlabs.co/privacy-policy')">Privacy Policy</a> applies to you.
+                        </span>
+                    </div>
                 </div>
                 <div id="mfa-caffeine" class="hide">
+                    <span class="subtitle is-3">
+                        Caffeine Two-Factor
+                    </span>
                     <br />
+                    <br />
+                    <input style="z-index: -9999; opacity: 0;" type="input" class="input" /> <!-- Spacer -->
                     <br />
                     <input id="login-caffeine-mfa" type="input" placeholder="2 Factor Code" class="input login-element" />
                     <br />
@@ -215,6 +233,11 @@
                             Want to go back?
                         </sup>
                     </a>
+                    <div class="service-disclaimer">
+                        <span>
+                            By logging in, you agree to our <a onclick="openLink('https:\/\/casterlabs.co/terms-of-service')">Terms of Service</a> and acknowledge that our <a onclick="openLink('https:\/\/casterlabs.co/privacy-policy')">Privacy Policy</a> applies to you.
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

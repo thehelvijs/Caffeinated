@@ -487,7 +487,7 @@ function loginScreen(screen) {
         const mfaCaffeine = document.querySelector("#mfa-caffeine");
 
         anime({
-            targets: [buttons, waiting, loginCaffeine],
+            targets: [buttons, waiting, loginCaffeine, mfaCaffeine],
             easing: "linear",
             opacity: 0,
             duration: 175
@@ -566,6 +566,12 @@ function triggerLogin() {
 }
 
 document.querySelector("#login-caffeine-password").addEventListener("keyup", (e) => {
+    if (e.code == "Enter") {
+        loginCaffeine();
+    }
+});
+
+document.querySelector("#login-caffeine-mfa").addEventListener("keyup", (e) => {
     if (e.code == "Enter") {
         loginCaffeine();
     }
