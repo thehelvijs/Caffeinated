@@ -3,8 +3,12 @@
 
     <head>
         <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
+        <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
         <style>
-            /* Misc */
+            :root {
+                --text-color: #ECECEC;
+            }
 
             html {
                 background-color: #181818;
@@ -12,11 +16,60 @@
             }
 
             span {
-                color: #DDDDDD !important;
+                color: var(--text-color) !important;
             }
 
             a {
-                color: #DDDDDD;
+                color: var(--text-color);
+            }
+
+            ion-icon {
+                pointer-events: none !important;
+                stroke: var(--text-color) !important;
+                color: var(--text-color) !important;
+                fill: var(--text-color) !important;
+                transition: 0.2s linear;
+            }
+
+            .dropdown {
+                width: 100vw;
+            }
+
+            .dropdown-trigger {
+                width: 100% !important;
+            }
+
+            .dropdown-trigger .button {
+                width: 100% !important;
+            }
+
+            .dropdown-menu {
+                width: 100% !important;
+            }
+
+            .dropdown-content {
+                background-color: #1D1D1D;
+                width: 100% !important;
+                padding-bottom: 15px;
+            }
+
+            /* Libraries */
+
+            .library {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            /* Developers */
+
+            .developer {
+                padding-left: 15px;
+                padding-right: 15px;
+                padding-bottom: 10px;
+            }
+
+            .developer-role {
+                padding-left: 35px;
             }
 
             /* Scrollbar */
@@ -59,6 +112,40 @@
     </head>
 
     <body>
+        <div class="dropdown is-hoverable">
+            <div class="dropdown-trigger">
+                <button class="button has-text-centered" aria-haspopup="true" aria-controls="dropdown-menu">
+                    <span>
+                        Opensource Libaries
+                    </span>
+                    <span class="icon is-small">
+                        <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                    </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content" id="libraries">
+                    <!-- Dynamic -->
+                </div>
+            </div>
+        </div>
+        <div class="dropdown is-hoverable">
+            <div class="dropdown-trigger">
+                <button class="button has-text-centered" aria-haspopup="true" aria-controls="dropdown-menu">
+                    <span>
+                        Developers
+                    </span>
+                    <span class="icon is-small">
+                        <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                    </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content" id="developers">
+                    <!-- Dynamic -->
+                </div>
+            </div>
+        </div>
     </body>
 
     <footer>
@@ -164,6 +251,26 @@
                 }
             ];
 
+            const DEVELOPERS = [
+                {
+                    name: "Helvijs Adams",
+                    role: "Product Design, Frontend Developer",
+                    link: "https://helvijs.dev/",
+                },
+                {
+                    name: "JustJake",
+                    role: "Product Design",
+                    link: "https://justjake.tv/",
+                },
+                {
+                    name: "Lcyx",
+                    role: "Backend Developer, Client Framework Magician",
+                    link: "https://e3ndr.xyz/",
+                }
+            ];
+
+            // Let's-a-go!
+
             LIBRARIES.forEach((library) => {
                 const div = document.createElement("div");
 
@@ -180,8 +287,30 @@
                 div.appendChild(name);
                 div.appendChild(document.createTextNode(" • "));
                 div.appendChild(license);
+                div.classList = "library";
 
-                document.body.appendChild(div);
+                document.querySelector("#libraries").appendChild(div);
+            });
+
+            DEVELOPERS.forEach((developer) => {
+                const div = document.createElement("div");
+
+                const name = document.createElement("a");
+
+                name.innerText = developer.name;
+                name.addEventListener("click", () => openLink(developer.link));
+
+                const role = document.createElement("span");
+
+                role.innerText = developer.role;
+                role.classList = "developer-role";
+
+                div.appendChild(name);
+                div.appendChild(document.createElement("br"));
+                div.appendChild(role);
+                div.classList = "developer";
+
+                document.querySelector("#developers").appendChild(div);
             });
 
         </script>

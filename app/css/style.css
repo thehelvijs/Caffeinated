@@ -2,12 +2,16 @@
     --casterlabs: #e94b4b;
     --menu-width: 200px;
     --user-bar-height: 55px;
+    --title-bar-height: 30px;
+
+    --theme: #e94b4b;
     --menu-icon-color: #DCDCDC;
     --menu-icon-color-hover: #7a7a7a;
     --menu-background-color: #202020;
     --menu-border-color: #383838;
-    --title-bar-height: 30px;
     --background-color: #141414;
+    --box-background-color: #181818;
+    --dynamic-option-background-color: #222222;
 }
 
 html {
@@ -28,14 +32,14 @@ a {
 
 ion-icon {
     pointer-events: none !important;
-    stroke: white !important;
-    color: white !important;
-    fill: white !important;
+    stroke: var(--menu-icon-color) !important;
+    color: var(--menu-icon-color) !important;
+    fill: var(--menu-icon-color) !important;
     transition: 0.2s linear;
 }
 
 .box {
-    background-color: #181818;
+    background-color: var(--box-background-color);
 }
 
 .center-text {
@@ -194,7 +198,7 @@ input[type=number] {
 }
 
 .dynamic-option {
-    background-color: #222222;
+    background-color: var(--dynamic-option-background-color);
     padding-left: 15px;
     position: relative;
     margin-top: 15px;
@@ -566,12 +570,12 @@ nav ul li .dropdown-title a {
     border-bottom: 0 !important;
     border-top: 1px solid var(--menu-border-color);
     background: #272727;
-    color: #dddddd !important;
+    color: var(--menu-icon-color) !important;
 }
 
 nav ul li .dropdown-title a:hover {
     background: #383838;
-    color: #dddddd !important;
+    color: var(--menu-icon-color) !important;
 }
 
 /* nav ul li .dropdown-container .add-widget a {

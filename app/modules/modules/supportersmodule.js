@@ -1,9 +1,9 @@
 
-MODULES.moduleClasses["casterlabs_credits"] = class {
+MODULES.moduleClasses["casterlabs_supporters"] = class {
 
     constructor(id) {
-        this.namespace = "casterlabs_credits";
-        this.displayname = "caffeinated.credit.title";
+        this.namespace = "casterlabs_supporters";
+        this.displayname = "caffeinated.supporters.title";
         this.type = "application";
         this.id = id;
         this.icon = "star";

@@ -3,12 +3,12 @@ let LANGUAGES = {
         "caffeinated.internal.widgets": "Widgets",
         "caffeinated.internal.followers_count_text": "followers",
 
-        "caffeinated.opensource.title": "Opensource Libraries Used",
+        "caffeinated.credits.title": "Credits",
 
         "caffeinated.settings.title": "Settings",
         "caffeinated.settings.signout": "Sign out",
 
-        "caffeinated.credit.title": "Support Us",
+        "caffeinated.supporters.title": "Support Us",
 
         "caffeinated.chatdisplay.title": "Chat",
 

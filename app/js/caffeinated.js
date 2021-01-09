@@ -15,11 +15,21 @@ const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 let CONNECTED = false;
 let PLATFORMS = {};
 
-console.warn(`
+console.log("%c                                                 ", `
+    line-height:      100px;
+    background-image: url("https://assets.casterlabs.co/logo/casterlabs_full_white.png");
+    background-size:  cover;
+`);
+
+console.log(`%c
 Caution, here be dragons!
 If someone tells you to paste code here, they might be trying to steal important data from you.
-If you're good at UX, consider contributing to the Caffeinated project at https://github.com/thehelvijs/Caffeinated
-`);
+
+
+
+Check out our skinning guide! https://github.com/thehelvijs/Caffeinated/wiki/Skinning-Guide`, "font - size: 18px;");
+
+console.log("\n\n");
 
 class Caffeinated {
     constructor() {
@@ -36,8 +46,6 @@ class Caffeinated {
                 repos: [],
                 cleared: []
             });
-
-            console.log("reset!");
         }
 
         if (this.store.get("dev")) {
@@ -94,8 +102,6 @@ class Caffeinated {
     }
 
     async init() {
-        console.log("init!");
-
         FONTSELECT.preload();
 
         PLATFORMS = await (await fetch("https://api.casterlabs.co/v1/koi/platforms")).json();
@@ -153,11 +159,11 @@ class Caffeinated {
         }
 
         MODULES.initalizeModule({
-            displayname: "caffeinated.opensource.title",
-            namespace: "casterlabs_caffeinated",
+            displayname: "caffeinated.credits.title",
+            namespace: "casterlabs_credits",
             type: "settings",
             persist: true,
-            id: "opensource",
+            id: "credits",
 
             onFrameLoad(frame) {
                 frame.contentWindow.openLink = openLink;
@@ -166,13 +172,13 @@ class Caffeinated {
             settingsDisplay: {
                 content: {
                     type: "iframe-src",
-                    height: "340px",
+                    height: "400px",
                     isLang: false
                 }
             },
 
             defaultSettings: {
-                content: __dirname + "/licenses.html"
+                content: __dirname + "/credits.html"
             }
         });
 
