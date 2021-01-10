@@ -24,7 +24,8 @@
         "modules/topdonation.js",
         "modules/donationticker.js",
         "caffeine/caffeinebroadcastimagemodule.js",
-        "caffeine/caffeinegamepickermodule.js"
+        "caffeine/caffeinegamepickermodule.js",
+        "modules/botmodule.js"
     ],
     "simple": [
         {
@@ -84,6 +85,10 @@
         {
             "namespace": "caffeine_broadcast_image",
             "id": "caffeine_broadcast_image"
+        },
+        {
+            "namespace": "casterlabs_bot",
+            "id": "chat_bot"
         },
         {
             "namespace": "casterlabs_companion",

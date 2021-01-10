@@ -453,8 +453,8 @@ async function createModuleInput(module, key, data, stored, formCallback, defaul
 
         add.appendChild(icon);
         add.classList = "menu-button dynamic-add";
-        add.addEventListener("click", () => {
-            input.appendChild(createDynamicModuleOption(module, defaultValue, defaultValue.default, formCallback));
+        add.addEventListener("click", async () => {
+            input.appendChild(await createDynamicModuleOption(module, defaultValue, defaultValue.default, formCallback));
             formCallback();
         });
 
@@ -477,8 +477,8 @@ async function createModuleInput(module, key, data, stored, formCallback, defaul
         container.appendChild(document.createElement("br"));
 
         if (Array.isArray(stored[key])) {
-            stored[key].forEach((dynamic) => {
-                input.appendChild(createDynamicModuleOption(module, defaultValue, dynamic, formCallback));
+            stored[key].forEach(async (dynamic) => {
+                input.appendChild(await createDynamicModuleOption(module, defaultValue, dynamic, formCallback));
             });
         }
 
