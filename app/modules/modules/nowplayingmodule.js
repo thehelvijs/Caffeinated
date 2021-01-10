@@ -45,6 +45,10 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
             background: this.settings.background,
             image_style: this.settings.image_style
         }, socket);
+
+        if (this.event) {
+            MODULES.emitIO(this, "event", this.event, socket);
+        }
     }
 
     init() {
@@ -117,7 +121,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
                         artists.push(artist.name);
                     });
 
-                    MODULES.emitIO(this, "event", {
+                    this.broadcast({
                         title: title,
                         artist: artists.join(", "),
                         image: image
@@ -125,6 +129,23 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
                 }
             }
         }
+    }
+
+    broadcast(event) {
+        if (this.event) {
+            // Don't re-notify
+            if (this.event.title == event.title) {
+                return;
+            }
+        }
+
+        this.event = event;
+
+        if (this.settings.announce) {
+            koi.sendMessage(`Now playing: ${event.title} - ${event.artist}`);
+        }
+
+        MODULES.emitIO(this, "event", this.event);
     }
 
     onSettingsUpdate() {
@@ -135,6 +156,10 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
         login: {
             display: "Login with Spotify",
             type: "button"
+        },
+        announce: {
+            display: "Announce song",
+            type: "checkbox"
         },
         background: "select",
         image_style: "select"
@@ -157,6 +182,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
                 openLink("https://accounts.spotify.com/en/authorize?client_id=dff9da1136b0453983ff40e3e5e20397&response_type=code&scope=user-read-playback-state&redirect_uri=https:%2F%2Fcasterlabs.co%2Fauth%3Ftype%3Dcaffeinated_spotify&state=" + auth.getStateString());
             }
         },
+        announce: false,
         background: ["Blur", "Clear", "Solid"],
         image_style: ["Left", "Right", "None"]
     };
