@@ -12,23 +12,31 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
     }
 
     init() {
-        const instance = this;
-
         koi.addEventListener("chat", (event) => {
-            const message = event.message.toLowerCase();
+            if (this.settings.enabled) {
+                const message = event.message.toLowerCase();
 
-            // We add a character to hide this account's messages, but still allow the broadcaster to run commands
-            if (!message.includes("\u200D")) {
-                for (const command of this.settings.commands) {
-                    if (command.type = "Command") {
-                        if (message.startsWith(command.trigger.toLowerCase())) {
-                            this.sendMessage(command.reply);
-                            break;
-                        }
-                    } else { // Trigger
-                        if (message.includes(command.trigger.toLowerCase())) {
-                            this.sendMessage(command.reply);
-                            break;
+                // We add a character to hide this account's messages, but still allow the broadcaster to run commands
+                if (!message.includes("\u200D")) {
+                    for (const command of this.settings.commands) {
+                        if (command.type = "Command") {
+                            if (message.startsWith(command.trigger.toLowerCase())) {
+                                if (command.mention) {
+                                    this.sendMessage("@" + event.sender.username + " " + command.reply);
+                                } else {
+                                    this.sendMessage(command.reply);
+                                }
+                                break;
+                            }
+                        } else { // Trigger
+                            if (message.includes(command.trigger.toLowerCase())) {
+                                if (command.mention) {
+                                    this.sendMessage("@" + event.sender.username + " " + command.reply);
+                                } else {
+                                    this.sendMessage(command.reply);
+                                }
+                                break;
+                            }
                         }
                     }
                 }
@@ -37,11 +45,15 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
     }
 
     sendMessage(message) {
-        // We have to add some invisible characters to trick Caffeine's chat system into not hiding the broadcaster's messages.
         if (isPlatform("CAFFEINE")) {
-            const length = Math.min(75, message.length);
+            const length = Math.min(75 - 1, message.length);
 
+            // We have to add some invisible characters to trick Caffeine's chat system into not hiding the broadcaster's messages.
             message = message.substring(0, length) + this.getRandomJoiner();
+        } else if (isPlatform("TWITCH")) {
+            const length = Math.min(500 - 1, message.length);
+
+            message = message.substring(0, length);
         }
 
         message += "\u200D";
@@ -50,7 +62,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
     }
 
     getRandomJoiner() {
-        const rand = Math.floor(Math.random() * 4);
+        const rand = Math.floor(Math.random() * 5);
 
         let result = "";
 
@@ -62,6 +74,11 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
     }
 
     settingsDisplay = {
+        enabled: {
+            display: "Enabled",
+            type: "checkbox",
+            isLang: false // TODO
+        },
         commands: {
             display: "Commands",
             type: "dynamic",
@@ -70,6 +87,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
     };
 
     defaultSettings = {
+        enabled: false,
         commands: {
             display: {
                 type: {
@@ -82,6 +100,11 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                     type: "input",
                     isLang: false
                 },
+                mention: {
+                    display: "Mention",
+                    type: "checkbox",
+                    isLang: false // TODO
+                },
                 reply: {
                     display: "Reply",
                     type: "input",
@@ -91,7 +114,8 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
             default: {
                 type: ["Command", "Keyword"],
                 trigger: "!casterlabs",
-                reply: "Casterlabs is a free stream widget service! Grab it from casterlabs.co"
+                mention: false,
+                reply: "Casterlabs is a free stream widget service!"
             }
         }
     };

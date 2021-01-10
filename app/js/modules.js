@@ -454,7 +454,7 @@ async function createModuleInput(module, key, data, stored, formCallback, defaul
         add.appendChild(icon);
         add.classList = "menu-button dynamic-add";
         add.addEventListener("click", async () => {
-            input.appendChild(await createDynamicModuleOption(module, defaultValue, defaultValue.default, formCallback));
+            input.appendChild(await createDynamicModuleOption(module, defaultValue, Object.assign({}, defaultValue.default), formCallback));
             formCallback();
         });
 
