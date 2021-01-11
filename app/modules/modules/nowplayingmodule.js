@@ -3,9 +3,9 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_now_playing";
+        this.displayname = "Spotify"
         this.type = "overlay settings";
         this.id = id;
-
     }
 
     widgetDisplay = [

@@ -13,35 +13,47 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
 
     init() {
         koi.addEventListener("chat", (event) => {
-            if (this.settings.enabled) {
-                const message = event.message.toLowerCase();
+            this.processCommand(event)
+        });
 
-                // We add a character to hide this account's messages, but still allow the broadcaster to run commands
-                if (!message.includes("\u200D")) {
-                    for (const command of this.settings.commands) {
-                        if (command.type = "Command") {
-                            if (message.startsWith(command.trigger.toLowerCase())) {
-                                if (command.mention) {
-                                    this.sendMessage("@" + event.sender.username + " " + command.reply);
-                                } else {
-                                    this.sendMessage(command.reply);
-                                }
-                                break;
-                            }
-                        } else { // Trigger
-                            if (message.includes(command.trigger.toLowerCase())) {
-                                if (command.mention) {
-                                    this.sendMessage("@" + event.sender.username + " " + command.reply);
-                                } else {
-                                    this.sendMessage(command.reply);
-                                }
-                                break;
-                            }
+        koi.addEventListener("donation", (event) => {
+            if (this.settings.donation_callout) {
+                this.sendMessage(`@${event.sender.username} ${this.settings.donation_callout}`);
+            }
+
+            this.processCommand(event);
+        });
+
+        koi.addEventListener("follow", (event) => {
+            if (this.settings.follow_callout) {
+                this.sendMessage(`@${event.follower.username} ${this.settings.follow_callout}`);
+            }
+        });
+    }
+
+    processCommand(event) {
+        if (this.settings.enabled) {
+            const message = event.message.toLowerCase();
+
+            // We add a character to hide this account's messages, but still allow the broadcaster to run commands.
+            if (!message.includes("\u200D")) {
+                for (const command of this.settings.commands) {
+                    const trigger = command.trigger.toLowerCase();
+
+                    if (
+                        ((command.type == "Command") && message.startsWith(trigger)) ||
+                        ((command.type == "Keyword") && message.includes(trigger))
+                    ) {
+                        if (command.mention) {
+                            this.sendMessage(`@${event.sender.username} ${command.reply}`);
+                        } else {
+                            this.sendMessage(command.reply);
                         }
+                        break;
                     }
                 }
             }
-        });
+        }
     }
 
     sendMessage(message) {
@@ -83,6 +95,16 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
             display: "Commands",
             type: "dynamic",
             isLang: false // TODO
+        },
+        follow_callout: {
+            display: "Follow Callout (Leave blank to disable)",
+            type: "input",
+            isLang: false // TODO
+        },
+        donation_callout: {
+            display: "Donation Callout (Leave blank to disable)",
+            type: "input",
+            isLang: false // TODO
         }
     };
 
@@ -109,15 +131,17 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                     display: "Reply",
                     type: "input",
                     isLang: false
-                },
+                }
             },
             default: {
                 type: ["Command", "Keyword"],
                 trigger: "!casterlabs",
-                mention: false,
+                mention: true,
                 reply: "Casterlabs is a free stream widget service!"
             }
-        }
+        },
+        follow_callout: "Thanks for the follow!",
+        donation_callout: "Thanks for the support!"
     };
 
 };
