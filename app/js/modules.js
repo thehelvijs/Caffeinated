@@ -189,7 +189,6 @@ class Modules {
 
         a.classList.add("menu-button");
         a.addEventListener("click", () => navigate(selector));
-        a.setAttribute("title", name);
         a.appendChild(ion);
         a.appendChild(text);
 
