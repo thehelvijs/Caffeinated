@@ -9,19 +9,19 @@ MODULES.moduleClasses["casterlabs_rain"] = class {
 
     widgetDisplay = [
         {
-            name: "Copy",
-            icon: "copy",
-            onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/emoji.html?id=" + instance.id);
-            }
-        },
-        {
             name: "Test",
             icon: "dice",
             onclick(instance) {
                 MODULES.emitIO(instance, "event", {
                     message: "🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉"
                 });
+            }
+        },
+        {
+            name: "Copy",
+            icon: "copy",
+            onclick(instance) {
+                putInClipboard("https://caffeinated.casterlabs.co/emoji.html?id=" + instance.id);
             }
         }
     ]

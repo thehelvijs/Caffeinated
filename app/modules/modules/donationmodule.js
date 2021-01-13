@@ -10,17 +10,17 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
 
     widgetDisplay = [
         {
-            name: "Copy",
-            icon: "copy",
-            onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/donation.html?id=" + instance.id);
-            }
-        },
-        {
             name: "Test",
             icon: "dice",
             onclick(instance) {
                 koi.test("donation");
+            }
+        },
+        {
+            name: "Copy",
+            icon: "copy",
+            onclick(instance) {
+                putInClipboard("https://caffeinated.casterlabs.co/donation.html?id=" + instance.id);
             }
         }
     ]

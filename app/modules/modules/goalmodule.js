@@ -13,13 +13,6 @@ MODULES.moduleClasses["casterlabs_goal"] = class {
 
     widgetDisplay = [
         {
-            name: "Copy",
-            icon: "copy",
-            onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/goal.html?id=" + instance.id);
-            }
-        },
-        {
             name: "Reset",
             icon: "trash",
             async onclick(instance) {
@@ -27,6 +20,13 @@ MODULES.moduleClasses["casterlabs_goal"] = class {
 
                 instance.sendUpdates();
                 MODULES.saveToStore(instance);
+            }
+        },
+        {
+            name: "Copy",
+            icon: "copy",
+            onclick(instance) {
+                putInClipboard("https://caffeinated.casterlabs.co/goal.html?id=" + instance.id);
             }
         }
     ]

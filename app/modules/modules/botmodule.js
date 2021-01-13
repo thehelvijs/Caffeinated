@@ -12,45 +12,53 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
     }
 
     init() {
+        this.limitFields();
+
+        koi.addEventListener("user_update", () => this.limitFields());
+
         koi.addEventListener("chat", (event) => {
-            this.processCommand(event)
+            if (this.settings.enabled) {
+                this.processCommand(event);
+            }
         });
 
         koi.addEventListener("donation", (event) => {
-            if (this.settings.donation_callout) {
-                this.sendMessage(`@${event.sender.username} ${this.settings.donation_callout}`);
-            }
+            if (this.settings.enabled) {
+                if (this.settings.donation_callout) {
+                    this.sendMessage(`@${event.sender.username} ${this.settings.donation_callout}`);
+                }
 
-            this.processCommand(event);
+                this.processCommand(event);
+            }
         });
 
         koi.addEventListener("follow", (event) => {
-            if (this.settings.follow_callout) {
-                this.sendMessage(`@${event.follower.username} ${this.settings.follow_callout}`);
+            if (this.settings.enabled) {
+                if (this.settings.follow_callout) {
+                    this.sendMessage(`@${event.follower.username} ${this.settings.follow_callout}`);
+                }
             }
         });
     }
 
     processCommand(event) {
-        if (this.settings.enabled) {
-            const message = event.message.toLowerCase();
+        const message = event.message.toLowerCase();
 
-            // We add a character to hide this account's messages, but still allow the broadcaster to run commands.
-            if (!message.includes("\u200D")) {
-                for (const command of this.settings.commands) {
-                    const trigger = command.trigger.toLowerCase();
+        // We add a character to hide this account's messages, but still allow the broadcaster to run commands.
+        if (!message.includes("\u200D")) {
+            for (const command of this.settings.commands) {
+                const trigger = command.trigger.toLowerCase();
 
-                    if (
-                        ((command.type == "Command") && message.startsWith(trigger)) ||
-                        ((command.type == "Keyword") && message.includes(trigger))
-                    ) {
-                        if (command.mention) {
-                            this.sendMessage(`@${event.sender.username} ${command.reply}`);
-                        } else {
-                            this.sendMessage(command.reply);
-                        }
-                        break;
+                if (
+                    ((command.type == "Command") && message.startsWith(trigger)) ||
+                    ((command.type == "Keyword") && message.includes(trigger))
+                ) {
+                    if (command.mention) {
+                        this.sendMessage(`@${event.sender.username} ${command.reply}`);
+                    } else {
+                        this.sendMessage(command.reply);
                     }
+                    break;
                 }
             }
         }
@@ -83,6 +91,20 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         }
 
         return result;
+    }
+
+    limitFields() {
+        Array.from(this.page.querySelectorAll("[name=reply][owner=chat_bot]")).forEach((element) => {
+            if (isPlatform("CAFFEINE")) {
+                element.setAttribute("maxlength", 75 - 1);
+            } else if (isPlatform("TWITCH")) {
+                element.setAttribute("maxlength", 500 - 1);
+            }
+        })
+    }
+
+    onSettingsUpdate() {
+        this.limitFields();
     }
 
     settingsDisplay = {
@@ -129,7 +151,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 },
                 reply: {
                     display: "Reply",
-                    type: "input",
+                    type: "textarea",
                     isLang: false
                 }
             },

@@ -247,10 +247,11 @@ class Modules {
     }
 
     createPage(module) {
-        let selector = module.namespace + "-" + module.id;
-        let name = module.displayname ? module.displayname : prettifyString(module.id);
+        const selector = module.namespace + "-" + module.id;
 
-        let page = document.createElement("div");
+        const name = module.displayname ? module.displayname : prettifyString(module.id);
+
+        const page = document.createElement("div");
 
         page.setAttribute("page", selector);
         page.setAttribute("navbar-title", name);
@@ -263,14 +264,17 @@ class Modules {
 
     async initalizeModuleSettingsPage(module, parent = document.getElementById("settings")) {
         const settingsSelector = module.namespace + "_" + module.id;
-        let name = module.displayname ? module.displayname : prettifyString(module.id);
-        let stored = this.getStoredValues(module);
-        let container = document.createElement("div");
-        let div = document.createElement("div");
-        let label = document.createElement("label");
 
-        let formCallback = async () => {
-            let result = FORMSJS.readForm("#" + settingsSelector);
+        const name = module.displayname ? module.displayname : prettifyString(module.id);
+        const stored = this.getStoredValues(module);
+        const container = document.createElement("div");
+        const div = document.createElement("div");
+        const label = document.createElement("label");
+
+        module.page = container;
+
+        const formCallback = async () => {
+            const result = FORMSJS.readForm("#" + settingsSelector);
 
             module.settings = result;
 
@@ -321,7 +325,7 @@ class Modules {
     }
 
     getStoredValues(module) {
-        let stored = CAFFEINATED.store.get("modules." + module.namespace + "." + module.id);
+        const stored = CAFFEINATED.store.get("modules." + module.namespace + "." + module.id);
 
         if (stored) {
             for (const [key, value] of Object.entries(module.defaultSettings)) {
@@ -341,9 +345,9 @@ async function createDynamicModuleOption(module, layout, values, formCallback) {
     const display = layout.display;
     const defaults = layout.default;
 
-    let div = document.createElement("div");
-    let remove = document.createElement("a");
-    let icon = document.createElement("ion-icon");
+    const div = document.createElement("div");
+    const remove = document.createElement("a");
+    const icon = document.createElement("ion-icon");
 
     div.type = "dynamic";
     div.appendChild(remove);
@@ -359,7 +363,7 @@ async function createDynamicModuleOption(module, layout, values, formCallback) {
     });
 
     for (const [key, type] of Object.entries(display)) {
-        let data = type;
+        const data = type;
 
         if (typeof data === "string") {
             data = {
@@ -385,7 +389,11 @@ async function createModuleInput(module, key, data, stored, formCallback, defaul
     let name = document.createElement("span");
     let input;
 
-    if (type === "iframe-src") {
+    if (type === "textarea") {
+        input = document.createElement("textarea");
+
+        input.setAttribute("rows", 3);
+    } else if (type === "iframe-src") {
         input = document.createElement("div");
 
         input.id = uuid;

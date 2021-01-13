@@ -172,7 +172,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
                 this.accessToken = null;
                 this.statusElement.innerText = "Login with Spotify";
             } else {
-                const auth = new AuthCallback("caffeinated_twitch");
+                const auth = new AuthCallback("caffeinated_spotify");
 
                 // 15min timeout
                 auth.awaitAuthMessage((15 * 1000) * 60).then((token) => {

@@ -10,18 +10,18 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     widgetDisplay = [
         {
-            name: "Copy",
-            icon: "copy",
-            onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/donationticker.html?id=" + instance.id);
-            }
-        },
-        {
             name: "Reset",
             icon: "trash",
             onclick(instance) {
                 instance.raised = 0;
                 instance.update();
+            }
+        },
+        {
+            name: "Copy",
+            icon: "copy",
+            onclick(instance) {
+                putInClipboard("https://caffeinated.casterlabs.co/donationticker.html?id=" + instance.id);
             }
         }
     ]

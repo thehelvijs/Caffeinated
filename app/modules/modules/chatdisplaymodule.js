@@ -223,20 +223,19 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
 
         if (isPlatform("CAFFEINE")) {
             if (event.id !== "") {
-                const tooltipbtn = this.contentDocument.createElement("li");
+                const upvotetooltip = this.contentDocument.createElement("li");
                 const upvotebtn = this.contentDocument.createElement("a");
 
                 upvotebtn.innerHTML = `<ion-icon name="arrow-up"></ion-icon>`;
                 upvotebtn.title = "Upvote";
                 upvotebtn.addEventListener("click", () => {
                     koi.upvote(event.id);
-                    tooltipbtn.remove();
+                    upvotetooltip.remove();
                 });
 
-                tooltipbtn.classList.add("tooltipbtn");
-                tooltipbtn.appendChild(upvotebtn);
-
-                tooltip.appendChild(tooltipbtn);
+                upvotetooltip.appendChild(upvotebtn);
+                upvotetooltip.classList.add("tooltipbtn");
+                tooltip.appendChild(upvotetooltip);
             }
         }
 
@@ -250,11 +249,11 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
 
 
     addStatus(user, profilePic, color, type) {
-        let div = this.contentDocument.createElement("div");
-        let pfp = this.contentDocument.createElement("img");
-        let username = this.contentDocument.createElement("span");
-        let text = this.contentDocument.createElement("span");
-        let msg = this.contentDocument.createElement("li");
+        const div = this.contentDocument.createElement("div");
+        const pfp = this.contentDocument.createElement("img");
+        const username = this.contentDocument.createElement("span");
+        const text = this.contentDocument.createElement("span");
+        const msg = this.contentDocument.createElement("li");
 
         pfp.src = profilePic;
         pfp.classList.add("vcprofile");

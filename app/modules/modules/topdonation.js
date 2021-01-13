@@ -10,13 +10,6 @@ MODULES.moduleClasses["casterlabs_top_donation"] = class {
 
     widgetDisplay = [
         {
-            name: "Copy",
-            icon: "copy",
-            onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/display.html?namespace=" + instance.namespace + "&id=" + instance.id);
-            }
-        },
-        {
             name: "Reset",
             icon: "trash",
             async onclick(instance) {
@@ -25,6 +18,13 @@ MODULES.moduleClasses["casterlabs_top_donation"] = class {
 
                 instance.update();
                 MODULES.saveToStore(instance);
+            }
+        },
+        {
+            name: "Copy",
+            icon: "copy",
+            onclick(instance) {
+                putInClipboard("https://caffeinated.casterlabs.co/display.html?namespace=" + instance.namespace + "&id=" + instance.id);
             }
         }
     ]
