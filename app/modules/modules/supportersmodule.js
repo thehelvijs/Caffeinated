@@ -33,17 +33,17 @@ MODULES.moduleClasses["casterlabs_supporters"] = class {
 
     update() {
         fetch("https://caffeinated.casterlabs.co/supporters.json").then((response) => response.json()).then((donations) => {
-            let div = document.querySelector("#supporters");
+            const div = document.querySelector("#supporters");
 
             div.innerHTML = "";
 
             donations.forEach((donation) => {
-                let span = document.createElement("span");
+                const text = document.createElement("pre");
 
-                span.innerHTML = donation;
+                text.innerHTML = donation;
+                text.style = "padding: 0; margin: 0;";
 
-                div.appendChild(span);
-                div.appendChild(document.createElement("br"));
+                div.appendChild(text);
             });
         });
     }

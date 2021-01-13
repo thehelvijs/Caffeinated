@@ -22,6 +22,10 @@ html {
     overflow: hidden;
 }
 
+pre {
+    background-color: transparent;
+}
+
 .hide {
     display: none !important;
 }
