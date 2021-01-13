@@ -23,7 +23,7 @@ let LANGUAGES = {
         "caffeinated.companion.title": "Casterlabs Companion",
         "caffeinated.companion.enabled": "Enabled",
         "caffeinated.companion.open": "Open this link on your device",
-        "caffeinated.companion.reset": "Rest Link",
+        "caffeinated.companion.reset": "Reset Link",
 
     }
 };
