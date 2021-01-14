@@ -132,6 +132,16 @@ function generateUUID() {
     });
 }
 
+function generateUnsafePassword(len = 32) {
+    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    return Array(len)
+        .fill(chars)
+        .map((x) => {
+            return x[Math.floor(Math.random() * x.length)]
+        }).join("");
+}
+
 class AuthCallback {
 
     constructor(type = "unknown") {

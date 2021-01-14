@@ -25,7 +25,8 @@
         "modules/donationticker.js",
         "caffeine/caffeinebroadcastimagemodule.js",
         "caffeine/caffeinegamepickermodule.js",
-        "modules/botmodule.js"
+        "modules/botmodule.js",
+        "ko-fi/kofimodule.js"
     ],
     "simple": [
         {
@@ -89,6 +90,10 @@
         {
             "namespace": "casterlabs_bot",
             "id": "chat_bot"
+        },
+        {
+            "namespace": "kofi_integration",
+            "id": "ko-fi_integration"
         },
         {
             "namespace": "casterlabs_companion",
