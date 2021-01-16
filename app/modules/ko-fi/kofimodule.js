@@ -20,7 +20,8 @@ MODULES.moduleClasses["kofi_integration"] = class {
 
                 const id = isTest ? data.kofi_transaction_id : "";
                 const currency = isTest ? data.currency : "USD";
-                const message = isTest ? data.message : "Test from Ko-fi"
+                const message = isTest ? data.message : "Test from Ko-fi";
+                const amount = isTest ? 0 : parseFloat(data.amount);
 
                 // TODO subs
 
@@ -29,7 +30,7 @@ MODULES.moduleClasses["kofi_integration"] = class {
                         {
                             "animated_image": "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
                             "currency": currency,
-                            "amount": parseFloat(data.amount),
+                            "amount": amount,
                             "image": "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
                         }
                     ],
