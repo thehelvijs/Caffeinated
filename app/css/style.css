@@ -212,6 +212,11 @@ input[type=number] {
     margin-top: 15px;
 }
 
+/* Was easier than fixing the JS */
+.dynamic-option>span:last-child>br:last-child {
+    display: none;
+}
+
 .dynamic-add {
     position: absolute;
     top: -35px;
