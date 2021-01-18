@@ -169,12 +169,12 @@
                     <!-- <sub><i>ITALICS</i> <b>BOLD <i>VARIETY</i></b></sub> New merch? -->
                     <br />
                     <br />
-                    <a class="button" onclick="loginScreen('TWITCH');" style="overflow: hidden; background-color: #7d2bf9;">
+                    <a class="button" onclick="UI.loginScreen('TWITCH');" style="overflow: hidden; background-color: #7d2bf9;">
                         <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 12.5px; top: 7.5px;" />
                         <span style="padding-left: 1.75em; z-index: 2;">Login with Twitch</span>
                     </a>
                     <br />
-                    <a class="button" onclick="loginScreen('CAFFEINE');" style="overflow: hidden; background-color: #0000FF;">
+                    <a class="button" onclick="UI.loginScreen('CAFFEINE');" style="overflow: hidden; background-color: #0000FF;">
                         <img src="https://assets.casterlabs.co/caffeine/logo.png" style="height: 2.5em; position: absolute; left: 5px;" />
                         <span style="padding-left: 1.75em; z-index: 2;">Login with Caffeine</span>
                     </a>
@@ -191,11 +191,18 @@
                         <div class="bounce3"></div>
                     </div>
                     <br />
-                    <a onclick="loginScreen('NONE');">
+                    <a onclick="UI.loginScreen('NONE');">
                         <sup>
                             Want to go back?
                         </sup>
                     </a>
+                </div>
+                <div id="login-success" class="hide">
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
                 </div>
                 <div id="login-caffeine" class="hide">
                     <span class="subtitle is-3">
@@ -207,9 +214,9 @@
                     <br />
                     <input id="login-caffeine-password" type="password" placeholder="Password" class="input login-element" />
                     <br />
-                    <input type="submit" value="Signin" class="button login-element" onclick="loginCaffeine()" />
+                    <input type="submit" value="Signin" class="button login-element" onclick="UI.loginCaffeine()" />
                     <br />
-                    <a onclick="loginScreen('NONE');">
+                    <a onclick="UI.loginScreen('NONE');">
                         <sup>
                             Want to go back?
                         </sup>
@@ -230,9 +237,9 @@
                     <br />
                     <input id="login-caffeine-mfa" type="input" placeholder="2 Factor Code" class="input login-element" />
                     <br />
-                    <input type="submit" value="Signin" class="button login-element" onclick="loginCaffeine()" />
+                    <input type="submit" value="Signin" class="button login-element" onclick="UI.loginCaffeine()" />
                     <br />
-                    <a onclick="loginScreen('NONE');">
+                    <a onclick="UI.loginScreen('NONE');">
                         <sup>
                             Want to go back?
                         </sup>

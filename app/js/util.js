@@ -1,4 +1,45 @@
 
+function openLink(link) {
+    shell.openExternal(link);
+}
+
+function kFormatter(num, decimalPlaces = 1, threshold = 1000) {
+    const negative = num < 0;
+    let shortened;
+    let mult;
+
+    num = Math.abs(num);
+
+    if ((num >= threshold) && (num >= 1000)) {
+        if (num >= 1000000000000) {
+            shortened = "Over 1";
+            mult = "t";
+        } else if (num >= 1000000000) {
+            shortened = (num / 1000000000).toFixed(decimalPlaces);
+            mult = "b";
+        } else if (num >= 1000000) {
+            shortened = (num / 1000000).toFixed(decimalPlaces);
+            mult = "m";
+        } else if (num >= 1000) {
+            shortened = (num / 1000).toFixed(decimalPlaces);
+            mult = "k";
+        }
+    } else {
+        shortened = num.toFixed(decimalPlaces);
+        mult = "";
+    }
+
+    if (shortened.includes(".")) {
+        shortened = shortened.replace(/\.?0+$/, '');
+    }
+
+    return (negative ? "-" : "") + shortened + mult;
+}
+
+function sleep(millis) {
+    return new Promise((resolve) => setTimeout(resolve, millis));
+}
+
 function prettifyString(str) {
     let splitStr = str.split("_");
 
