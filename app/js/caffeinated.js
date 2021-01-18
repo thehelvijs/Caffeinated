@@ -438,17 +438,6 @@ CAFFEINATED.setUserImage(null, "");
 CAFFEINATED.setUserName("");
 CAFFEINATED.setUserPlatform(null, "");
 
-/* Make reloads relaunch */
-
-globalShortcut.register("CommandOrControl+R", () => {
-    if (CAFFEINATED.isDevEnviroment) {
-        location.reload();
-    } else {
-        app.relaunch();
-        app.exit();
-    }
-});
-
 /* Koi */
 koi.addEventListener("close", () => {
     CONNECTED = false;
