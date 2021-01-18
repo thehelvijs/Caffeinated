@@ -3,8 +3,8 @@ const shell = require("electron").shell;
 const dialog = electron.dialog;
 const express = require("express");
 const Store = require("electron-store");
-const { app, ipcRenderer } = require("electron");
-const { ipcMain, BrowserWindow } = require("electron").remote;
+const { ipcRenderer } = require("electron");
+const { app, ipcMain, BrowserWindow } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
 const PROTOCOLVERSION = 22;
@@ -48,8 +48,19 @@ class Caffeinated {
             });
         }
 
-        if (this.store.get("dev")) {
+        if (!this.store.has("cleared_events")) {
+            this.store.set("cleared_events", []);
+        }
+
+        this.isDevEnviroment = !location.href.includes(".asar") || this.store.get("force_dev");
+
+        if (this.isDevEnviroment) {
+            this.store.set("cleared_events", []);
             this.store.set("protocol_version", -1);
+
+            this.triggerBanner("dev", (element) => {
+                element.innerHTML = "DEVELOPER MODE";
+            }, "rebeccapurple");
         } else {
             this.store.set("version", VERSION);
             this.store.set("protocol_version", PROTOCOLVERSION);
@@ -59,6 +70,7 @@ class Caffeinated {
 
         this.token = this.store.get("token");
         this.userdata = null;
+
     }
 
     async addRepo(repo) {
@@ -73,11 +85,27 @@ class Caffeinated {
         this.store.set("repos", this.store.get("repos").concat(repo));
     }
 
-    triggerEvent(name, callback) {
-        if (!this.store.get("cleared").contains(name)) {
-            this.store.set("cleared", this.store.get("cleared").concat(name));
+    triggerBanner(name, callback, color = "rebeccapurple") {
+        if (!this.store.get("cleared_events").includes(name)) {
+            const banner = document.createElement("div");
+            const content = document.createElement("div");
+            const dismiss = document.createElement("a");
 
-            callback();
+            dismiss.innerHTML = `<ion-icon name="close-sharp"></ion-icon>`;
+            dismiss.classList = "banner-close";
+            dismiss.addEventListener("click", () => {
+                banner.remove();
+                this.store.set("cleared_events", this.store.get("cleared_events").concat(name));
+            });
+
+            banner.classList = "banner";
+            banner.style.backgroundColor = color;
+            banner.appendChild(content);
+            banner.appendChild(dismiss);
+
+            document.querySelector("#banners").appendChild(banner);
+
+            callback(content);
         }
     }
 
@@ -103,6 +131,8 @@ class Caffeinated {
 
     async init() {
         FONTSELECT.preload();
+
+        setInterval(() => this.checkForUpdates(), (10 * 60) * 1000); // 10 Minutes
 
         PLATFORMS = await (await fetch("https://api.casterlabs.co/v1/koi/platforms")).json();
         let platformsList = [];
@@ -227,10 +257,52 @@ class Caffeinated {
         koi.reconnect();
     }
 
-    setDevEnviroment(value) {
-        this.store.set("dev", value);
+    forceDevEnviroment(value) {
+        this.store.set("force_dev", value);
 
         location.reload();
+    }
+
+    setChannel(value) {
+        this.store.set("channel", value);
+
+        this.checkForUpdates();
+    }
+
+    getChannel() {
+        return this.store.get("channel");
+    }
+
+    async checkForUpdates(force = false) {
+        const LAUNCHER_VERSION = this.store.get("launcher_version");
+        const CHANNEL = this.store.get("channel");
+
+        const updates = await (await fetch("https://api.casterlabs.co/v1/caffeinated/updates")).json();
+        const launcher = updates["launcher-" + LAUNCHER_VERSION];
+        const channel = launcher[CHANNEL];
+
+        if (channel) {
+            if (!this.isDevEnviroment) {
+                const latestProtocol = channel.protocol_version
+
+                if ((PROTOCOLVERSION < latestProtocol) || force) {
+                    // An update is available
+                    this.triggerBanner("protocol-update-" + latestProtocol, (element) => {
+                        element.innerHTML = `
+                            <span>
+                                An update is available.
+                            </span>
+                            <a style="margin-left: 5px; color: white; text-decoration: underline;" onclick="app.relaunch(); app.exit();">
+                                Restart
+                            </a>
+                        `;
+                    }, "#06d6a0");
+                }
+            }
+        } else {
+            this.store.set("channel", "STABLE");
+            console.warn("Changed update channel to STABLE as the previous one was invalid.")
+        }
     }
 
     setUserName(username, badges) {

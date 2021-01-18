@@ -50,6 +50,20 @@ ion-icon {
     text-align: center;
 }
 
+/* Banners */
+
+.banner {
+    height: 25px;
+    text-align: center;
+    position: relative;
+}
+
+.banner-close {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+}
+
 /* Logins */
 
 #login {
@@ -271,7 +285,7 @@ input[type=number] {
     position: absolute;
     width: 100%;
     height: 100%;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
     opacity: 0;
     top: var(--title-bar-height);
@@ -358,10 +372,9 @@ input[type=number] {
 .menu {
     /* display: table-cell; */
     position: fixed;
-    top: var(--title-bar-height);
     left: 0;
     width: var(--menu-width);
-    height: calc(100% - var(--user-bar-height) - var(--title-bar-height));
+    height: calc(100% - var(--title-bar-height));
     background-color: var(--menu-background-color);
     overflow-y: auto !important;
 }
