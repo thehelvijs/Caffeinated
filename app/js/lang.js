@@ -12,13 +12,12 @@ let LANGUAGES = {
 
         "caffeinated.chatdisplay.title": "Chat",
 
-        "caffeinated.caffeinebroadcastimage.title": "Caffeine Broadcast Thumbnail",
-        "caffeinated.caffeinebroadcastimage.new_thumbnail": "New thumbnail",
-        "caffeinated.caffeinebroadcastimage.update": "Upload",
-
-        "caffeinated.caffeinegamepicker.title": "Caffeine Game Picker",
-        "caffeinated.caffeinegamepicker.game": "Selected Game",
-        "caffeinated.caffeinegamepicker.update": "Update",
+        "caffeine.integration.title": "Caffeine",
+        "caffeine.integration.new_thumbnail": "New thumbnail",
+        "caffeine.integration.rating_selector": "Content Rating",
+        "caffeine.integration.title_selector": "Title",
+        "caffeine.integration.game_selector": "Selected Game",
+        "caffeine.integration.update": "Update",
 
         "caffeinated.companion.title": "Casterlabs Companion",
         "caffeinated.companion.enabled": "Enabled",
