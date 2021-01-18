@@ -632,5 +632,9 @@ function loginCaffeine() {
 }
 
 function isPlatform(expected) {
-    return CAFFEINATED.userdata.streamer.platform == expected;
+    if (CAFFEINATED.userdata) {
+        return CAFFEINATED.userdata.streamer.platform == expected;
+    } else {
+        return false;
+    }
 }

@@ -14,7 +14,9 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
     init() {
         this.limitFields();
 
-        koi.addEventListener("user_update", () => this.limitFields());
+        koi.addEventListener("user_update", () => {
+            setTimeout(() => this.limitFields(), 100);
+        });
 
         koi.addEventListener("chat", (event) => {
             if (this.settings.enabled) {
@@ -44,63 +46,48 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
     processCommand(event) {
         const message = event.message.toLowerCase();
 
-        // We add a character to hide this account's messages, but still allow the broadcaster to run commands.
-        if (!message.includes("\u200D")) {
-            for (const command of this.settings.commands) {
-                const trigger = command.trigger.toLowerCase();
+        for (const command of this.settings.commands) {
+            const trigger = command.trigger.toLowerCase();
 
-                if (
-                    ((command.type == "Command") && message.startsWith(trigger)) ||
-                    ((command.type == "Keyword") && message.includes(trigger))
-                ) {
-                    if (command.mention) {
-                        this.sendMessage(`@${event.sender.username} ${command.reply}`);
-                    } else {
-                        this.sendMessage(command.reply);
-                    }
-                    break;
-                }
+            if (
+                ((command.type == "Command") && message.startsWith(trigger)) ||
+                // So we do normal detection, then check to see if the sender is the streamer.
+                ((command.type == "Keyword") && message.includes(trigger) &&
+                    (
+                        // Then, we check the contents of the message against it to ensure we're not 
+                        // spamming the streamer's own account with replys
+                        (event.sender.UUID != event.streamer.UUID) || !message.endsWith(command.reply.toLowerCase())
+                    )
+                )
+            ) {
+                this.sendMessage(`@${event.sender.username} ${command.reply}`);
+                return;
             }
         }
     }
 
     sendMessage(message) {
-        if (isPlatform("CAFFEINE")) {
-            const length = Math.min(75 - 1, message.length);
-
-            // We have to add some invisible characters to trick Caffeine's chat system into not hiding the broadcaster's messages.
-            message = message.substring(0, length) + this.getRandomJoiner();
-        } else if (isPlatform("TWITCH")) {
-            const length = Math.min(500 - 1, message.length);
-
-            message = message.substring(0, length);
-        }
-
-        message += "\u200D";
-
-        koi.sendMessage(message);
-    }
-
-    getRandomJoiner() {
-        const rand = Math.floor(Math.random() * 5);
-
-        let result = "";
-
-        for (let i = 0; i < rand; i++) {
-            result += "\u200D"; // Zero Width Joiner
-        }
-
-        return result;
+        koi.sendMessage(message.substring(0, this.getMaxLength()));
     }
 
     limitFields() {
+        // It's 10 less to help fit in the mention
+        const max = this.getMaxLength() - 10;
+
         Array.from(this.page.querySelectorAll("[name=reply][owner=chat_bot]")).forEach((element) => {
-            if (isPlatform("CAFFEINE")) {
-                element.setAttribute("maxlength", 75 - 1);
-            } else if (isPlatform("TWITCH")) {
-                element.setAttribute("maxlength", 500 - 1);
-            }
-        })
+            element.setAttribute("maxlength", max);
+        });
+
+        this.page.querySelector("[name=follow_callout][owner=chat_bot]").setAttribute("maxlength", max);
+        this.page.querySelector("[name=donation_callout][owner=chat_bot]").setAttribute("maxlength", max);
+    }
+
+    getMaxLength() {
+        if (isPlatform("CAFFEINE")) {
+            return 80;
+        } else if (isPlatform("TWITCH")) {
+            return 500;
+        }
     }
 
     onSettingsUpdate() {
@@ -143,11 +130,6 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                     display: "Trigger",
                     type: "input",
                     isLang: false
-                },
-                mention: {
-                    display: "Mention",
-                    type: "checkbox",
-                    isLang: false // TODO
                 },
                 reply: {
                     display: "Reply",
