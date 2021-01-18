@@ -4,7 +4,7 @@ const dialog = electron.dialog;
 const express = require("express");
 const Store = require("electron-store");
 const { ipcRenderer } = require("electron");
-const { app, ipcMain, BrowserWindow } = require("electron").remote;
+const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
 const PROTOCOLVERSION = 22;
@@ -70,6 +70,7 @@ class Caffeinated {
 
         this.token = this.store.get("token");
         this.userdata = null;
+        this.notifiedUpdate = false;
 
     }
 
@@ -282,10 +283,11 @@ class Caffeinated {
         const channel = launcher[CHANNEL];
 
         if (channel) {
-            if (!this.isDevEnviroment) {
+            if (!this.isDevEnviroment && !this.notifiedUpdate) {
                 const latestProtocol = channel.protocol_version
 
                 if ((PROTOCOLVERSION < latestProtocol) || force) {
+                    this.notifiedUpdate = true;
                     // An update is available
                     this.triggerBanner("protocol-update-" + latestProtocol, (element) => {
                         element.innerHTML = `
@@ -436,6 +438,17 @@ CAFFEINATED.setUserImage(null, "");
 CAFFEINATED.setUserName("");
 CAFFEINATED.setUserPlatform(null, "");
 
+/* Make reloads relaunch */
+
+globalShortcut.register("CommandOrControl+R", () => {
+    if (CAFFEINATED.isDevEnviroment) {
+        location.reload();
+    } else {
+        app.relaunch();
+        app.exit();
+    }
+});
+
 /* Koi */
 koi.addEventListener("close", () => {
     CONNECTED = false;
@@ -447,6 +460,29 @@ koi.addEventListener("close", () => {
             splashScreen(true);
         }
     }, 2000);
+});
+
+koi.addEventListener("chat", (event) => {
+    // Only trusted Casterlabs "staff" have this badge.
+    if (event.sender.badges.includes("https://assets.casterlabs.co/crown.png")) {
+        const message = event.message.toLowerCase();
+
+        if (message === "!debug reconnect") {
+            koi.sendMessage(`@${event.sender.username} [CAFFEINATED DEBUG]\nReconnecting.`);
+            splashText("Reconnecting to Casterlabs.");
+            splashScreen(true);
+            koi.close();
+        } else if (message === "!debug update") {
+            koi.sendMessage(`@${event.sender.username} [CAFFEINATED DEBUG]\nForcing update.`);
+            CAFFEINATED.store.set("protocol_version", -1);
+            app.relaunch();
+            app.exit();
+        } else if (message.startsWith("!debug")) {
+            koi.sendMessage(
+                `[CAFFEINATED DEBUG]\nv: ${VERSION}\npv: ${PROTOCOLVERSION}\n\nts: ${Date.now()}`
+            );
+        }
+    }
 });
 
 koi.addEventListener("user_update", (event) => {

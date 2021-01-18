@@ -125,6 +125,10 @@ class Koi {
     }
 
     sendMessage(message) {
+        if (isPlatform("TWITCH")) {
+            message = message.replace(/\n/gm, " ");
+        }
+
         this.ws.send(JSON.stringify({
             type: "CHAT",
             message: message
