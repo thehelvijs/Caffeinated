@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Caffeinated Viewers Popout</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+        <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+        <style>
+            html {
+                color: whitesmoke;
+                background-color: #141414;
+                font-weight: 400;
+                font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+                height: 100%;
+            }
+
+            body {
+                margin: 0;
+                height: 100%;
+                overflow: hidden;
+            }
+
+            * {
+                -webkit-app-region: drag;
+            }
+
+            ion-icon {
+                pointer-events: none !important;
+            }
+
+            .title-bar {
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                height: 25px;
+                width: 100%;
+                background-color: #272727;
+                padding-top: 5px;
+                color: rgb(133, 133, 133);
+                user-select: none;
+                font-size: 1em;
+            }
+
+            .title-icon {
+                margin-left: 5px;
+                margin-right: 1px;
+                height: 20px;
+                width: 20px;
+            }
+
+            #viewers {
+                position: absolute;
+                top: 30px;
+                padding-top: 5px;
+                bottom: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+                left: 5px;
+                right: 0;
+                -webkit-app-region: no-drag !important;
+            }
+
+            .viewer {
+                margin-bottom: 5px;
+                -webkit-app-region: no-drag !important;
+            }
+
+            #close {
+                cursor: pointer;
+                position: fixed;
+                right: 8px;
+                top: 6px;
+                -webkit-app-region: no-drag !important;
+            }
+
+            #close ion-icon {
+                -webkit-app-region: no-drag !important;
+            }
+
+            .count {
+                position: fixed;
+                right: 15px;
+                top: 37px;
+                text-align: right;
+            }
+
+            #viewerCount {
+                -webkit-app-region: no-drag !important;
+            }
+
+            .eyeicon {
+                transform: translate(1.5px, 2.75px);
+            }
+
+            img {
+                border-radius: 50%;
+                object-fit: cover;
+                height: 22px;
+                width: 22px;
+                margin-right: 5px;
+                vertical-align: bottom;
+            }
+
+            .pfp img {
+                transform: translateY(1px);
+                -webkit-app-region: no-drag !important;
+            }
+
+            .username {
+                -webkit-app-region: no-drag !important;
+            }
+
+            .pfp {
+                -webkit-app-region: no-drag !important;
+            }
+
+            /* Scrollbar */
+
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #444444;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #AAAAAA;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #505050;
+            }
+
+            ::-webkit-slider-runnable-track {
+                width: 300px;
+                height: 2px;
+                border: none;
+                border-radius: 3px;
+            }
+
+            ::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                border: none;
+                height: 12px;
+                width: 12px;
+                border-radius: 500%;
+                background: #141414;
+                border: 2px solid #515151;
+                margin-top: -5px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="viewers"></div>
+        <div class="title-bar">
+            <img class="title-icon" src="../../media/app_icon.png" />
+            Caffeinated
+        </div>
+        <a id="close" title="Close">
+            <ion-icon name="close"></ion-icon>
+        </a>
+        <div class="count">
+            <ion-icon class="eyeicon" name="eye"></ion-icon>
+            <span id="viewerCount">0</span>
+        </div>
+    </body>
+
+    <footer>
+        <script>
+            const { remote, shell } = require("electron");
+
+            const viewersElement = document.querySelector("#viewers");
+            const viewerCountElement = document.querySelector("#viewerCount");
+
+            document.querySelector("#close").addEventListener("click", () => {
+                remote.getCurrentWindow().close();
+            });
+
+            function setViewers(viewers) {
+                viewersElement.innerHTML = "";
+
+                viewerCountElement.innerText = viewers.length;
+
+                console.log(viewers)
+
+                viewers.forEach((viewer) => {
+                    const div = document.createElement("div");
+                    const username = document.createElement("span");
+                    const pfp = document.createElement("img");
+                    const pfpLink = document.createElement("a");
+
+                    username.innerText = viewer.username;
+                    username.classList = "username";
+
+                    pfp.src = viewer.image_link;
+
+                    pfpLink.appendChild(pfp);
+                    pfpLink.classList = "pfp";
+
+                    if (viewer.UUID !== "Anonymous") {
+                        pfpLink.setAttribute("title", "Click to open channel in your web browser");
+                        pfpLink.addEventListener("click", () => openLink(viewer.link));
+
+                        username.setAttribute("title", "Click to open channel in your web browser");
+                        username.addEventListener("click", () => openLink(viewer.link));
+                    }
+
+                    div.appendChild(pfpLink);
+                    div.appendChild(username);
+                    div.classList = "viewer";
+
+                    viewersElement.appendChild(div);
+                });
+            }
+
+
+            function openLink(link) {
+                shell.openExternal(link);
+            }
+
+        </script>
+    </footer>
+
+</html>

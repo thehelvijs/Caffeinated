@@ -1,15 +1,33 @@
-/* Misc */
+:root {
+    --casterlabs: #e94b4b;
+    --menu-width: 200px;
+    --user-bar-height: 55px;
+    --title-bar-height: 30px;
+
+    --theme: #e94b4b;
+    --menu-icon-color: #DCDCDC;
+    --menu-icon-color-hover: #7a7a7a;
+    --menu-background-color: #202020;
+    --menu-border-color: #383838;
+    --background-color: #141414;
+    --box-background-color: #181818;
+    --dynamic-option-background-color: #222222;
+}
 
 html {
     color: whitesmoke;
-    background-color: #141414;
+    background-color: var(--background-color);
     height: 100%;
     width: 100%;
     overflow: hidden;
 }
 
+pre {
+    background-color: transparent;
+}
+
 .hide {
-    display: none;
+    display: none !important;
 }
 
 a {
@@ -17,14 +35,63 @@ a {
 }
 
 ion-icon {
-    pointer-events: none;
-    stroke: white;
-    color: white;
-    fill: white;
+    pointer-events: none !important;
+    stroke: var(--menu-icon-color) !important;
+    color: var(--menu-icon-color) !important;
+    fill: var(--menu-icon-color) !important;
+    transition: 0.2s linear;
 }
 
 .box {
-    background-color: #181818;
+    background-color: var(--box-background-color);
+}
+
+.center-text {
+    text-align: center;
+}
+
+/* Banners */
+
+.banner {
+    height: 25px;
+    text-align: center;
+    position: relative;
+}
+
+.banner-close {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+}
+
+/* Logins */
+
+#login {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 99;
+    width: 100vw;
+    background-color: var(--background-color);
+    padding-top: var(--title-bar-height);
+}
+
+.login-element {
+    width: 40vw;
+}
+
+#login-buttons .button {
+    width: 200px;
+}
+
+.service-disclaimer {
+    position: absolute;
+    color: #777777;
+    left: 50vw;
+    bottom: 50px;
+    width: 370px;
+    transform: translateX(-50%);
 }
 
 /* Scrollbar */
@@ -34,18 +101,16 @@ ion-icon {
 }
 
 ::-webkit-scrollbar-track {
-    background: #AAAAAA;
+    background: #444444;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #444444;
+    background: #AAAAAA;
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: #505050;
 }
-
-/* Inputs */
 
 ::-webkit-slider-runnable-track {
     width: 300px;
@@ -60,58 +125,94 @@ ion-icon {
     height: 12px;
     width: 12px;
     border-radius: 500%;
-    background: #141414;
+    background: var(--background-color);
     border: 2px solid #515151;
     margin-top: -5px;
     cursor: pointer;
 }
 
-input:focus {
-    outline: none;
+/* Inputs */
+
+input[type=search]::-webkit-search-decoration,
+input[type=search]::-webkit-search-cancel-button,
+input[type=search]::-webkit-search-results-button,
+input[type=search]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+}
+
+input:focus,
+input:active,
+input:hover,
+select:focus,
+select:active,
+select:hover,
+textarea:focus,
+textarea:active,
+textarea:hover,
+.file-button:focus,
+.file-button:active,
+.file-button:hover {
+    outline: none !important;
+    border: 1px solid #DCDCDC !important;
+}
+
+input::-webkit-input-placeholder {
+    color: #A5A5A5 !important;
 }
 
 input[type=range] {
     -webkit-appearance: none;
 }
 
-input {
-    background-color: white;
-    border-radius: 6px;
-    border: 1px solid #DCDCDC;
-    cursor: pointer;
-    outline: none;
+input,
+select,
+textarea {
+    background-color: var(--menu-background-color) !important;
+    color: var(--menu-icon-color) !important;
+    border-radius: 6px !important;
+    border: 1px solid #4a4a4a;
+    cursor: auto;
+    outline: none !important;
+    height: 2.5em;
 }
 
-input[type=search] {
-    height: 3em;
-    width: 180px;
+input[type=checkbox] {
+    margin-left: 8px;
+    transform: translateY(1px);
 }
 
 select {
-    background-color: white;
-    border-radius: 6px;
-    border: 1px solid #DCDCDC;
     cursor: pointer;
-    outline: none;
+}
+
+input[type=search] {
+    height: 3em !important;
+    width: 180px;
+}
+
+input[type=range] {
+    height: 4px !important;
+}
+
+input[type=color] {
+    cursor: pointer;
+    width: 53px;
 }
 
 input[type=number] {
     background-color: white;
-    border-radius: 6px;
-    border: 1px solid #DCDCDC;
-    cursor: pointer;
+    cursor: auto;
     font-size: 15px;
     width: 65px;
-    cursor: auto;
-    outline: none;
+    outline: none !important;
 }
 
 .file-button {
-    background-color: white;
+    background-color: var(--menu-background-color) !important;
+    color: var(--menu-icon-color) !important;
     border-radius: 6px;
-    border: 1px solid #DCDCDC;
+    border: 1px solid #4a4a4a;
     cursor: pointer;
-    color: black;
     font-size: 15px;
     padding: 5px;
 }
@@ -125,10 +226,15 @@ input[type=number] {
 }
 
 .dynamic-option {
-    background-color: #222222;
+    background-color: var(--dynamic-option-background-color);
     padding-left: 15px;
     position: relative;
     margin-top: 15px;
+}
+
+/* Was easier than fixing the JS */
+.dynamic-option>span:last-child>br:last-child {
+    display: none;
 }
 
 .dynamic-add {
@@ -162,7 +268,7 @@ input[type=number] {
 }
 
 #splash a {
-    color: lightgrey;
+    color: rgb(160, 160, 160);
 }
 
 .app-icon {
@@ -181,23 +287,60 @@ input[type=number] {
     right: 0px;
 }
 
+#content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    opacity: 0;
+    top: var(--title-bar-height);
+    left: 0;
+}
+
 /* Title bar */
 
 .title-bar {
     position: absolute;
     top: 0px;
     width: 100%;
-    height: 30px;
+    height: var(--title-bar-height);
     margin-top: 0px;
     -webkit-app-region: drag;
-    background-color: #141414;
+    background-color: #272727;
     padding-top: 5px;
-    z-index: 999;
+    z-index: 100;
+}
+
+.title-bar ion-icon {
+    color: white !important;
+}
+
+.title-bar-title {
+    position: absolute;
+    left: 30px;
+    top: 2px;
+    text-align: left;
+    width: 100%;
+    color: rgb(133, 133, 133);
+    user-select: none;
+}
+
+.title-bar-title img {
+    width: 20px;
+    position: absolute;
+    top: 2px;
+    left: -25px;
+    -webkit-app-region: no-drag;
 }
 
 .currentpage {
     position: absolute;
-    left: 70px;
+    top: 2px;
+    text-align: center;
+    width: 100%;
+    color: rgb(189, 189, 189);
+    user-select: none;
 }
 
 .close {
@@ -206,47 +349,134 @@ input[type=number] {
     -webkit-app-region: no-drag;
 }
 
+.close:hover ion-icon {
+    color: var(--menu-icon-color-hover) !important;
+}
+
+.minmax {
+    position: absolute;
+    right: 40px;
+    -webkit-app-region: no-drag;
+}
+
+.minmax:hover ion-icon {
+    color: var(--menu-icon-color-hover) !important;
+}
+
 .minimize {
     position: absolute;
-    right: 30px;
+    right: 70px;
     -webkit-app-region: no-drag;
+}
+
+.minimize:hover ion-icon {
+    color: var(--menu-icon-color-hover) !important;
 }
 
 /* Menu */
 
 .menu {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    width: 70px;
-    height: 100%;
-    z-index: 1000;
+    /* display: table-cell; */
+    position: fixed;
+    left: 0;
+    width: var(--menu-width);
+    height: calc(100% - var(--title-bar-height));
+    background-color: var(--menu-background-color);
+    overflow-y: auto !important;
 }
 
 .menu-list {
     position: absolute;
-    bottom: 0px;
-    font-size: 25px;
+    top: 0;
+    width: 100%;
+    overflow-y: auto !important;
 }
 
-#followers {
-    margin-top: 70px;
-    padding-left: 4px;
+.menu-button {
+    font-size: 18px;
+}
+
+.menu-button-title {
+    display: inline;
+    position: relative;
+    margin-top: -50px;
+}
+
+#user-bar {
+    position: fixed;
+    background-color: #1b1b1b;
+    height: var(--user-bar-height);
+    width: var(--menu-width);
+    bottom: 0;
+    border-top: 1px solid #646464;
 }
 
 .user-icon {
-    position: absolute;
     border-radius: 50%;
     object-fit: cover;
-    padding: 5px;
-    top: 0px;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 7px;
+    left: 5px;
 }
 
-.placeholder-icon {
+.user-username {
     position: absolute;
-    border-radius: 50%;
-    padding: 5px;
-    top: 0px;
+    max-width: calc(var(--menu-width) - 65px);
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+    left: 55px;
+    top: 10px;
+    box-sizing: border-box;
+    display: inline-block;
+    background-color: #DCDCDC;
+    color: var(--background-color);
+    border-radius: 3rem;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    padding: .01rem .45rem .2rem;
+    line-height: inherit;
+}
+
+.user-username ion-icon {
+    position: absolute;
+    color: var(--background-color) !important;
+    font-size: 18px !important;
+    top: 1px;
+}
+
+.user-followers {
+    font-size: 11px;
+    color: white;
+    position: absolute;
+    left: 56px;
+    top: 33px;
+}
+
+.user-settings {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 25px !important;
+}
+
+.user-settings ion-icon {
+    color: var(--menu-icon-color) !important;
+}
+
+.user-settings:hover ion-icon {
+    color: var(--menu-icon-color-hover) !important;
+}
+
+.user-platform {
+    position: absolute;
+    width: auto;
+    height: 15px;
+    left: 5px;
+    bottom: 5px;
 }
 
 .menu-label {
@@ -282,13 +512,10 @@ input[type=number] {
 /* Pages */
 
 .pages {
-    position: absolute;
-    padding-top: 40px;
-    left: 70px;
-    top: 0px;
-    height: 100%;
-    overflow: auto;
-    width: calc(100% - 75px);
+    padding-left: 220px;
+    height: calc(100% - var(--title-bar-height));
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .page a:hover {
@@ -297,6 +524,22 @@ input[type=number] {
 
 .page {
     overflow-x: hidden;
+    margin-bottom: 0 !important;
+}
+
+.widget-settings-page {
+    padding-top: 20px;
+}
+
+.moduleframe {
+    display: block;
+    height: calc(100vh - var(--title-bar-height));
+    width: 100%;
+}
+
+.settingsframe {
+    display: block;
+    width: 100%;
 }
 
 /* Overlays */
@@ -313,4 +556,105 @@ input[type=number] {
     line-height: 35px;
     width: 175px;
     display: inline-block;
+}
+
+/* Side menu */
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li .menu-button {
+    border-radius: 0 !important;
+    background-color: var(--menu-background-color);
+    padding: 10px 15px;
+    border-bottom: 1px solid #383838;
+    transition: 0.2s linear;
+}
+
+nav ul li .menu-button:hover {
+    background: #6d6d6d;
+    color: #dddddd !important;
+}
+
+nav ul li.active .menu-button {
+    background: var(--background-color);
+    color: #dddddd !important;
+}
+
+nav ul li.active .menu-button:hover {
+    background: var(--background-color);
+    color: #4b4b4b !important;
+}
+
+/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+
+.dropdown-container {
+    display: none;
+    background-color: #585858;
+    padding-left: 8px;
+}
+
+nav ul li .dropdown-title a {
+    border-radius: 0 !important;
+    border-bottom: 0 !important;
+    border-top: 1px solid var(--menu-border-color);
+    background: #272727;
+    color: var(--menu-icon-color) !important;
+}
+
+nav ul li .dropdown-title a:hover {
+    background: #383838;
+    color: var(--menu-icon-color) !important;
+}
+
+/* nav ul li .dropdown-container .add-widget a {
+    padding-top: 10px;
+	background: #e94b4b !important;
+	color: #dddddd !important;
+}
+
+nav ul li .dropdown-container .add-widget a:hover {
+	background: #4b4b4b !important;
+	color: #dddddd !important;
+} */
+
+nav ul li .dropdown-item {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li .dropdown-icon {
+    position: absolute !important;
+    top: -2px !important;
+    right: 0 !important;
+    display: inline-block !important;
+    font-size: 18px;
+    padding-right: 5px;
+}
+
+nav ul li .dropdown-icon a:hover {
+    background-color: inherit;
+}
+
+nav ul li .dropdown-icon a {
+    display: inline-block !important;
+    position: relative;
+}
+
+nav ul li .dropdown-icon a ion-icon {
+    margin: 0 -10px 0 -10px;
+}
+
+nav ul li .dropdown-icon a:hover ion-icon {
+    color: var(--menu-icon-color-hover) !important;
+}
+
+.sub-menu-arrow {
+    position: absolute;
+    left: calc(var(--menu-width) - 45px);
+    top: 5px;
 }

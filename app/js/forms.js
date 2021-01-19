@@ -59,8 +59,17 @@ const FORMSJS = {
             case "checkbox":
                 return element.checked;
 
+            case "rich":
+                return element.lastChild.firstChild.innerHTML;
+
             case "file":
                 return element;
+
+            case "currency":
+                return (element.getAttribute("value").toUpperCase() == "DEFAULT") ? "DEFAULT" : CURRENCY_TABLE[element.getAttribute("value")];
+
+            case "number":
+                return parseFloat(element.value);
 
             default:
                 return (element instanceof HTMLDivElement) ? element.getAttribute("value") : element.value;

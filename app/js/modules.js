@@ -1,8 +1,44 @@
-class Modules {
-    constructor() {
-        this.moduleClasses = {};
-        this.modules = [];
+class ModuleHolder {
+    #module;
+    sockets = [];
+    #elements = [];
+
+    constructor(module, elements) {
+        this.#module = module;
+        this.#elements = elements;
     }
+
+    getUUID() {
+        return this.#module.namespace + ":" + this.#module.id;
+    }
+
+    unload() {
+        MODULES.saveToStore(this.#module);
+
+        if (this.#module.onUnload) {
+            this.#module.onUnload();
+        }
+
+        this.#elements.forEach((element) => element.remove());
+    }
+
+    getElements() {
+        return this.#elements;
+    }
+
+    getInstance() {
+        return this.#module;
+    }
+
+    getTypes() {
+        return this.#module.type.toUpperCase().split(" ");
+    }
+
+}
+
+class Modules {
+    moduleClasses = {};
+    #modules = new Map();
 
     addIOHandler(module, channel, callback, socket) {
         let uuid = module.namespace + ":" + module.id;
@@ -10,7 +46,7 @@ class Modules {
         socket.on(uuid + " " + channel, callback);
     }
 
-    emitIO(module, channel, data, socket = module.sockets) {
+    emitIO(module, channel, data, socket = module.holder.sockets) {
         let uuid = module.namespace + ":" + module.id;
 
         if (Array.isArray(socket)) {
@@ -23,17 +59,23 @@ class Modules {
     }
 
     getFromUUID(target) {
-        return new Promise((resolve) => {
-            this.modules.forEach((module) => {
-                let uuid = module.namespace + ":" + module.id;
+        let holder = this.#modules.get(target);
 
-                if (uuid == target) {
-                    resolve(module);
-                }
-            });
+        if (holder) {
+            return holder.getInstance();
+        } else {
+            return null;
+        }
+    }
 
-            resolve(null);
-        });
+    getHolderFromUUID(target) {
+        let holder = this.#modules.get(target);
+
+        if (holder) {
+            return holder;
+        } else {
+            return null;
+        }
     }
 
     saveToStore(module) {
@@ -48,113 +90,190 @@ class Modules {
         }
     }
 
-    initalizeModule(module) {
+    async initalizeModule(module) {
         try {
-            const type = module.type.toUpperCase();
+            const holder = new ModuleHolder(module);
+            const types = holder.getTypes();
+
+            module.holder = holder;
 
             // Initialize pages, this is ugly yet intentional.
-            if (type.includes("OVERLAY")) {
-                this.initalizeModuleOverlayPage(module);
+            // Overlay's cannot have a page nor settings box,
+            // the module is given it's page with the settings attributes filled (if requested)
+            if (types.includes("OVERLAY")) {
+                this.initalizeModuleWidgetPage(module);
+
+                if (types.includes("SETTINGS")) {
+                    module.page.classList.add("widget-settings-page");
+
+                    await this.initalizeModuleSettingsPage(module, module.page);
+                }
+            } else {
+                if (types.includes("SETTINGS")) {
+                    await this.initalizeModuleSettingsPage(module);
+                } else if (types.includes("APPLICATION")) {
+                    this.initalizeModulePage(module);
+
+                    if (module.pageSrc) {
+                        await this.createContentFrame(module.page, module.pageSrc, "moduleframe");
+                    }
+                }
             }
 
-            if (type.includes("SETTINGS")) {
-                this.initalizeModuleSettingsPage(module);
-            }
-
-            if (type.includes("APPLICATION")) {
-                this.initalizeModulePage(module);
-            }
-
-            module.sockets = [];
+            translate(module.page);
 
             if (module.init) module.init();
 
-            this.modules.push(module);
+            this.#modules.set(holder.getUUID(), holder);
         } catch (e) {
             console.error("Unable to initalize module due to an exception:");
             console.error(e);
         }
     }
 
+    createContentFrame(page, src, classList) {
+        return new Promise(async (resolve) => {
+            const frame = document.createElement("iframe");
+            const contents = await this.loadContents(src);
+
+            frame.classList = classList;
+
+            page.appendChild(frame);
+
+            frame.addEventListener("load", () => resolve(frame));
+
+            frame.contentDocument.open();
+            frame.contentDocument.write(contents);
+            frame.contentDocument.close();
+        });
+    }
+
+    loadContents(src) {
+        return new Promise((resolve) => {
+            fetch(src)
+                .then((response) => response.text())
+                .then((contents) => {
+                    resolve(contents);
+                }).catch((err) => {
+                    resolve("An error occurred whilst loading " + src);
+                });
+        });
+    }
+
     initalizeModulePage(module) {
-        let selector = module.namespace;
-        let name = prettifyString(module.namespace);
+        this.createPage(module);
+
+        let selector = module.namespace + "-" + module.id;
+        let name = module.displayname ? module.displayname : prettifyString(module.id);
+
         let li = document.createElement("li");
         let a = document.createElement("a");
         let ion = document.createElement("ion-icon");
-        let page = document.createElement("div");
+        let text = document.createElement("div");
 
         li.appendChild(a);
+        li.setAttribute("id", "menu-" + selector);
 
-        a.appendChild(ion);
-        a.classList.add("menu-button");
-        a.addEventListener("click", () => navigate(selector));
-        a.setAttribute("title", name);
-
+        // Setting hidden icon. On hide() => $("#menu-ion-icon").remove("hide")
         ion.setAttribute("name", module.icon);
+        ion.setAttribute("id", "menu-ion-icon");
+        ion.classList.add("hide");
 
-        page.setAttribute("page", selector);
-        page.classList.add("content");
-        page.classList.add("page");
-        page.classList.add("hide");
+        text.classList.add("menu-button-title");
+        text.innerText = name;
 
         if (module.displayname) {
-            page.setAttribute("navbar-title", module.displayname);
-            a.setAttribute("title", module.displayname);
+            text.classList.add("translatable");
+            text.setAttribute("lang", module.displayname);
         }
 
+        a.classList.add("menu-button");
+        a.addEventListener("click", () => navigate(selector));
+        a.appendChild(ion);
+        a.appendChild(text);
+
+        document.querySelector("#page-menu").insertBefore(li, document.querySelector("#page-menu").lastChild);
+
+        translate(li);
+    }
+
+    initalizeModuleWidgetPage(module) {
+        this.createPage(module);
+
+        let selector = module.namespace + "-" + module.id;
+        let name = module.displayname ? module.displayname : prettifyString(module.id);
+
+        let div = document.createElement("div");
+        let title = document.createElement("div");
+        let a = document.createElement("a");
+        let icons = document.createElement("div");
+
+        a.innerText = name;
+        a.addEventListener("click", () => navigate(selector));
+
+        if (module.displayname) {
+            a.classList = "translatable";
+            a.setAttribute("lang", name);
+        }
+
+        title.classList.add("dropdown-title");
+        title.appendChild(a);
+
+        icons.classList.add("dropdown-icon");
+
+        if (module.widgetDisplay) {
+            for (const display of module.widgetDisplay) {
+                let peeper = document.createElement("a");
+                let ion = document.createElement("ion-icon");
+
+                ion.setAttribute("name", display.icon);
+
+                peeper.appendChild(ion);
+                peeper.setAttribute("title", display.name);
+                peeper.addEventListener("click", () => {
+                    display.onclick(module);
+                });
+
+                icons.appendChild(peeper);
+            }
+        }
+
+        div.classList.add("dropdown-item");
+        div.appendChild(title);
+        div.appendChild(icons);
+
+        document.getElementById("widgets").appendChild(div);
+    }
+
+    createPage(module) {
+        const selector = module.namespace + "-" + module.id;
+
+        const name = module.displayname ? module.displayname : prettifyString(module.id);
+
+        const page = document.createElement("div");
+
+        page.setAttribute("page", selector);
+        page.setAttribute("navbar-title", name);
+        page.classList = "content page hide";
 
         module.page = page;
 
-        document.querySelector("#page-menu").insertBefore(li, document.querySelector("#page-menu").firstChild);
         document.querySelector(".pages").appendChild(page);
     }
 
-    initalizeModuleOverlayPage(module) {
-        let linkDisplay = module.linkDisplay;
-        let div = document.createElement("div");
-        let label = document.createElement("label");
-        let copy = document.createElement("button");
-        let custom = document.createElement("button");
-        // let visible = document.createElement("input");
-
-        label.classList.add("overlay-id");
-        label.innerText = prettifyString(module.id);
-
-        /* visible.setAttribute("type", "checkbox");
-        visible.addEventListener("change", (e) => {
-            module.setWindowVisbility(e.target.checked);
-        }); */
-
-        copy.classList.add("button");
-        copy.innerText = "Copy";
-        copy.addEventListener("click", () => {
-            putInClipboard(linkDisplay.path + "?id=" + module.id);
-        });
-
-        custom.classList.add("button");
-        custom.innerText = linkDisplay.option.name;
-        custom.addEventListener("click", () => {
-            linkDisplay.option.onclick(module);
-        });
-
-        // div.appendChild(visible);
-        div.appendChild(label);
-        div.appendChild(copy);
-        div.appendChild(custom);
-
-        document.getElementById("overlays").appendChild(div);
-    }
-
-    initalizeModuleSettingsPage(module) {
+    async initalizeModuleSettingsPage(module, parent = document.getElementById("settings")) {
         const settingsSelector = module.namespace + "_" + module.id;
-        let stored = this.getStoredValues(module);
-        let container = document.createElement("div");
-        let div = document.createElement("div");
-        let label = document.createElement("label");
 
-        let formCallback = async () => {
-            let result = FORMSJS.readForm("#" + settingsSelector);
+        const name = module.displayname ? module.displayname : prettifyString(module.id);
+        const stored = this.getStoredValues(module);
+        const container = document.createElement("div");
+        const div = document.createElement("div");
+        const label = document.createElement("label");
+
+        module.page = container;
+
+        const formCallback = async () => {
+            const result = FORMSJS.readForm("#" + settingsSelector);
 
             module.settings = result;
 
@@ -168,7 +287,12 @@ class Modules {
         };
 
         label.classList.add("settings-label");
-        label.innerText = prettifyString(module.id);
+        label.innerText = name;
+
+        if (module.displayname) {
+            label.setAttribute("lang", module.displayname);
+            label.classList.add("translatable");
+        }
 
         div.classList.add("box");
         div.id = settingsSelector;
@@ -179,16 +303,28 @@ class Modules {
         container.appendChild(document.createElement("br"));
 
         for (const [key, type] of Object.entries(module.settingsDisplay)) {
-            div.appendChild(createInput(module, key, type, stored, formCallback));
+            let data = type;
+
+            if (typeof data === "string") {
+                data = {
+                    display: prettifyString(key),
+                    type: type,
+                    isLang: false
+                };
+            }
+
+            div.appendChild(await createModuleInput(module, key, data, stored, formCallback));
         }
 
-        document.getElementById("settings").appendChild(container);
+        parent.appendChild(container);
 
         module.settings = stored;
+
+        translate(parent);
     }
 
     getStoredValues(module) {
-        let stored = CAFFEINATED.store.get("modules." + module.namespace + "." + module.id);
+        const stored = CAFFEINATED.store.get("modules." + module.namespace + "." + module.id);
 
         if (stored) {
             for (const [key, value] of Object.entries(module.defaultSettings)) {
@@ -204,13 +340,13 @@ class Modules {
     }
 }
 
-function createDynamicOption(module, layout, values, formCallback) {
+async function createDynamicModuleOption(module, layout, values, formCallback) {
     const display = layout.display;
     const defaults = layout.default;
 
-    let div = document.createElement("div");
-    let remove = document.createElement("a");
-    let icon = document.createElement("ion-icon");
+    const div = document.createElement("div");
+    const remove = document.createElement("a");
+    const icon = document.createElement("ion-icon");
 
     div.type = "dynamic";
     div.appendChild(remove);
@@ -226,18 +362,95 @@ function createDynamicOption(module, layout, values, formCallback) {
     });
 
     for (const [key, type] of Object.entries(display)) {
-        div.appendChild(createInput(module, key, type, values, formCallback, defaults[key]));
+        const data = type;
+
+        if (typeof data === "string") {
+            data = {
+                display: prettifyString(key),
+                type: type,
+                isLang: false
+            };
+        }
+
+        div.appendChild(await createModuleInput(module, key, data, values, formCallback, defaults[key]));
     }
 
     return div;
 }
 
-function createInput(module, key, type, stored, formCallback, defaultValue = module.defaultSettings[key]) {
-    let uuid = module.namespace + ":" + module.id;
-    let name = document.createElement("label");
+async function createModuleInput(module, key, data, stored, formCallback, defaultValue = module.defaultSettings[key]) {
+    const uuid = module.namespace + ":" + module.id;
+    const displayname = data.display;
+    const isLang = data.isLang;
+    const type = data.type;
+
+    let container = document.createElement("span");
+    let name = document.createElement("span");
     let input;
 
-    if (type === "dynamic") {
+    if (type === "textarea") {
+        input = document.createElement("textarea");
+
+        input.setAttribute("rows", 3);
+    } else if (type === "iframe-src") {
+        input = document.createElement("div");
+
+        input.id = uuid;
+        input.classList = type + " data";
+        input.setAttribute("type", type);
+        input.setAttribute("name", key);
+        input.setAttribute("owner", module.id);
+
+        const frame = document.createElement("iframe");
+        const contents = await MODULES.loadContents(defaultValue);
+
+        let loaded = false;
+
+        input.appendChild(frame);
+
+        frame.classList = "settingsframe";
+        frame.style = `height: ${data.height}`;
+        frame.addEventListener("load", () => {
+            if (!loaded) {
+                loaded = true;
+
+                frame.contentDocument.open();
+                frame.contentDocument.write(contents);
+                frame.contentDocument.close();
+
+                if (module.onFrameLoad) {
+                    module.onFrameLoad(frame);
+                }
+            }
+        });
+
+        container.appendChild(input);
+
+        return container;
+    } else if (type === "rich") {
+        input = document.createElement("div");
+
+        input.id = uuid;
+        input.classList = type + " data";
+        input.setAttribute("type", type);
+        input.setAttribute("name", key);
+        input.setAttribute("owner", module.id);
+
+        name.innerText = displayname;
+
+        if (isLang) {
+            name.setAttribute("lang", displayname);
+            name.classList.add("translatable");
+        }
+
+        container.appendChild(name);
+        container.appendChild(input);
+        container.appendChild(document.createElement("br"));
+
+        QuillUtil.createEditor(input, stored[key], formCallback);
+
+        return container;
+    } else if (type === "dynamic") {
         input = document.createElement("div");
 
         let add = document.createElement("a");
@@ -247,8 +460,8 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
 
         add.appendChild(icon);
         add.classList = "menu-button dynamic-add";
-        add.addEventListener("click", () => {
-            input.appendChild(createDynamicOption(module, defaultValue, defaultValue.default, formCallback));
+        add.addEventListener("click", async () => {
+            input.appendChild(await createDynamicModuleOption(module, defaultValue, Object.assign({}, defaultValue.default), formCallback));
             formCallback();
         });
 
@@ -259,27 +472,39 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
         input.setAttribute("name", key);
         input.setAttribute("owner", module.id);
 
-        name.innerText = prettifyString(key) + " ";
-        name.appendChild(input);
-        name.appendChild(document.createElement("br"));
+        name.innerText = displayname;
+
+        if (isLang) {
+            name.setAttribute("lang", displayname);
+            name.classList.add("translatable");
+        }
+
+        container.appendChild(name);
+        container.appendChild(input);
+        container.appendChild(document.createElement("br"));
 
         if (Array.isArray(stored[key])) {
-            stored[key].forEach((dynamic) => {
-                input.appendChild(createDynamicOption(module, defaultValue, dynamic, formCallback));
+            stored[key].forEach(async (dynamic) => {
+                input.appendChild(await createDynamicModuleOption(module, defaultValue, dynamic, formCallback));
             });
         }
 
-        return name;
+        return container;
     } else if (type === "button") {
         input = document.createElement("button");
 
         input.addEventListener("click", defaultValue);
-        input.innerText = prettifyString(key);
+        input.innerText = displayname;
         input.id = uuid;
         input.classList = type + " data";
         input.setAttribute("type", type);
         input.setAttribute("name", key);
         input.setAttribute("owner", module.id);
+
+        if (isLang) {
+            input.setAttribute("lang", displayname);
+            input.classList.add("translatable");
+        }
 
         let div = document.createElement("div");
 
@@ -300,7 +525,14 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
         input = document.createElement("input");
     }
 
-    name.innerText = prettifyString(key) + " ";
+    name.innerText = displayname;
+
+    if (isLang) {
+        name.setAttribute("lang", displayname);
+        name.classList.add("translatable");
+    }
+
+    container.appendChild(name);
 
     input.id = uuid;
     input.classList = type + " data";
@@ -338,13 +570,15 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
 
         if (Array.isArray(selected)) {
             selected = CURRENCIES[0];
+
+            stored[key] = selected; // Set the selected key
         }
+
+        selected = CURRENCY_TABLE_INVERTED[selected];
 
         input.setAttribute("value", selected);
         input.querySelector(".sns-input").value = selected;
         input.classList.add("select");
-
-        stored[key] = selected; // Set the selected key
     } else if (type === "search") {
         let values = Object.assign([], defaultValue);
         let selected = stored[key];
@@ -391,7 +625,7 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
 
     // keep checkboxes inline
     if (type !== "checkbox") {
-        name.appendChild(document.createElement("br"));
+        container.appendChild(document.createElement("br"));
     }
 
     // Make file inputs appear as buttons only.
@@ -404,14 +638,14 @@ function createInput(module, key, type, stored, formCallback, defaultValue = mod
             input.click(); // Forward clicks to the input.
         });
 
-        name.appendChild(button);
+        container.appendChild(button);
 
         input.classList.add("hide");
     }
 
-    name.appendChild(input);
-    name.appendChild(document.createElement("br"));
-    name.appendChild(document.createElement("br"));
+    container.appendChild(input);
+    container.appendChild(document.createElement("br"));
+    container.appendChild(document.createElement("br"));
 
-    return name;
+    return container;
 }

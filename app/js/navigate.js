@@ -2,83 +2,54 @@
 function navigate(page) {
     let selector = "[page='" + page + "']";
 
-    anime({
-        targets: ".page",
-        easing: "linear",
-        opacity: 0,
-        duration: 250
-    }).finished.then(function () {
-        Array.from(document.querySelectorAll(".page")).forEach((e) => {
-            if (e.getAttribute("page") != page) {
-                e.classList.add("hide");
-            }
-        });
-
-        document.querySelector(selector).classList.remove("hide");
-
-        anime({
-            targets: selector,
-            easing: "linear",
-            opacity: 1,
-            duration: 250
-        });
-
-        let title = document.querySelector(selector).getAttribute("navbar-title");
-        if (title) {
-            document.querySelector(".currentpage").innerText = title;
-        } else {
-            document.querySelector(".currentpage").innerText = prettifyString(page);
+    // Check if already active page is navigated (to stop double loading content)
+    let isActive = false;
+    Array.from(document.querySelectorAll(".page")).forEach((e) => {
+        if (!(e.classList.contains("hide")) && e.getAttribute("page") == page) {
+            isActive = true;
         }
     });
-}
 
-function splashText(text) {
-    const all = [".problems", ".reconnecting"];
+    if (!isActive) {
+        anime({
+            targets: ".page",
+            easing: "linear",
+            opacity: 0,
+            duration: 100
+        }).finished.then(() => {
+            Array.from(document.querySelectorAll(".page")).forEach((e) => {
+                if (e.getAttribute("page") != page) {
+                    e.classList.add("hide");
+                    // Remove active class from menu button
+                    try {
+                        document.getElementById("menu-" + e.getAttribute("page")).classList.remove("active");
+                    } catch (e) { }
+                }
+            });
 
-    anime({
-        targets: all,
-        easing: "linear",
-        opacity: 0,
-        duration: 500
-    }).finished.then(function () {
-        all.forEach((selector) => {
-            document.querySelector(selector).classList.add("hide");
-        });
+            // Sets menu button active class 
+            // Try/catch in case if 'navigate' is triggered from outside side-menu
+            try {
+                document.getElementById("menu-" + page).classList.add("active");
+            } catch (e) { }
 
-        if (all.includes("." + text)) {
-            let show = {
-                targets: "." + text,
+            document.querySelector(selector).classList.remove("hide");
+
+            anime({
+                targets: selector,
                 easing: "linear",
                 opacity: 1,
-                duration: 500
-            };
+                duration: 100
+            });
 
-            document.querySelector("." + text).classList.remove("hide");
-            anime(show);
-        }
-    });
-}
-
-function splashScreen(show) {
-    anime({
-        targets: [".currentpage", "#content"],
-        easing: "linear",
-        opacity: show ? 0 : 1,
-        duration: 500
-    });
-
-    anime({
-        targets: "#splash",
-        easing: "linear",
-        opacity: show ? 1 : 0,
-        duration: 500
-    }).finished.then(function () {
-        if (show) {
-            document.querySelector("#splash").classList.remove("hide");
-            document.querySelector("#content").classList.add("hide");
-        } else {
-            document.querySelector("#splash").classList.add("hide");
-            document.querySelector("#content").classList.remove("hide");
-        }
-    });
+            // (Helvijs) Title is not needed as there is active menu button
+            // But once menu hiding is added, the title could be on top of content page
+            // let title = document.querySelector(selector).getAttribute("navbar-title");
+            // if (title) {
+            //     document.querySelector(".currentpage").innerText = title;
+            // } else {
+            //     document.querySelector(".currentpage").innerText = prettifyString(page);
+            // }
+        });
+    }
 }

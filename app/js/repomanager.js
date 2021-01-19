@@ -23,11 +23,24 @@ class RepoManager {
                     }
                 }
 
-                if (Array.isArray(modules.overlays)) {
-                    for (let overlay of modules.overlays) {
+                if (Array.isArray(modules.scripts)) {
+                    for (let src of modules.scripts) {
                         let script = document.createElement("script");
 
-                        script.src = repo + "/" + overlay;
+                        script.src = repo + "/" + src;
+                        script.setAttribute("repo", modules.name);
+
+                        this.elements.push(script);
+                        document.querySelector("#scripts").appendChild(script);
+                        await RepoUtil.waitForScriptToLoad(script);
+                    }
+                }
+
+                if (Array.isArray(modules.external)) {
+                    for (let external of modules.external) {
+                        let script = document.createElement("script");
+
+                        script.src = external;
                         script.setAttribute("repo", modules.name);
 
                         this.elements.push(script);
@@ -41,7 +54,21 @@ class RepoManager {
                         let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
 
                         if (!loaded) {
-                            MODULES.initalizeModule(new MODULES.moduleClasses[instance.namespace](instance.id));
+                            let module = new MODULES.moduleClasses[instance.namespace](instance.id, repo);
+
+                            await MODULES.initalizeModule(module);
+
+                            module.persist = true;
+                        }
+                    }
+                }
+
+                if (Array.isArray(modules.simple)) {
+                    for (let instance of modules.simple) {
+                        let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
+
+                        if (!loaded) {
+                            await MODULES.initalizeModule(new MODULES.moduleClasses[instance.namespace](instance.id, repo));
                         }
                     }
                 }
@@ -59,8 +86,8 @@ class RepoManager {
 }
 
 const RepoUtil = {
-    versionToRegex(version) {
-        return new RegExp("(" + version.replace(/[\.]/g, "\\.").replace(/[\*]/g, ".*") + ")", "g");
+    matchToRegex(str) {
+        return new RegExp("(" + str.replace(/[\.]/g, "\\.").replace(/[\*]/g, ".*") + ")", "g");
     },
 
     getRepoUrl(base) {
@@ -90,7 +117,7 @@ const RepoUtil = {
     isSupported(supported = [], unsupported = []) {
         if (Array.isArray(unsupported)) {
             for (let version of unsupported) {
-                if (VERSION.match(RepoUtil.versionToRegex(version))) {
+                if (VERSION.match(RepoUtil.matchToRegex(version))) {
                     return false;
                 }
             }
@@ -98,7 +125,7 @@ const RepoUtil = {
 
         if (Array.isArray(supported)) {
             for (let version of supported) {
-                if (VERSION.match(RepoUtil.versionToRegex(version))) {
+                if (VERSION.match(RepoUtil.matchToRegex(version))) {
                     return true;
                 }
             }

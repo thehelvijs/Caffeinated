@@ -1,0 +1,34 @@
+.rich-editor {
+    height: 75px;
+}
+
+.ql-snow .ql-stroke {
+    stroke: whitesmoke;
+}
+
+.ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill {
+    fill: whitesmoke;
+}
+
+.ql-picker-label {
+    color: whitesmoke;
+}
+
+.ql-picker.ql-size .ql-picker-label::before, .ql-picker.ql-size .ql-picker-item::before {
+    content: attr(data-value) !important;
+}
+
+.ql-color .ql-picker-options [data-value=custom-color], .ql-background .ql-picker-options [data-value=custom-color] {
+    background: none !important;
+    width: 100% !important;
+    height: 20px !important;
+    text-align: center;
+}
+
+.ql-color .ql-picker-options [data-value=custom-color]:before, .ql-background .ql-picker-options [data-value=custom-color]:before {
+    content: "Custom Color";
+}
+
+.ql-color .ql-picker-options [data-value=custom-color]:hover, .ql-background .ql-picker-options [data-value=custom-color]:hover {
+    border-color: transparent !important;
+}

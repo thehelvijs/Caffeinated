@@ -3,27 +3,33 @@
 
     <head>
         <meta charset="utf-8" />
-        <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
-        <link rel="stylesheet" href="css/style.css" />
-        <link rel="stylesheet" href="css/selectnsearch.css" />
-        <title>Caffeinated</title>
+
+        <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" class="bulma-style-sheet" />
+        <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css" class="quill-snow-style-sheet" />
+
+        <link rel="stylesheet" href="css/style.css" class="caffeinated-style-sheet" />
+        <link rel="stylesheet" href="css/selectnsearch.css" class="selectnsearch-style-sheet" />
+        <link rel="stylesheet" href="css/quill.css" class="quill-style-sheet" />
+
+        <title>Casterlabs Caffeinated</title>
         <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
-        <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
+        <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+        <script src="https://casterlabs.github.io/CurrencyConvert.js/currencyconvert.js"></script>
+        <!-- https://tobiasahlin.com/spinkit/ -->
         <style>
-            /* https://tobiasahlin.com/spinkit/ */
             .spinner {
                 margin: 100px auto 0;
                 width: 70px;
                 text-align: center;
-                bottom: 100px;
-                position: fixed;
-                transform: translateX(-50%);
-                left: 50%;
             }
 
-            .spinner div {
+            .spinner>div {
                 width: 18px;
                 height: 18px;
+                background-color: #333;
+
                 border-radius: 100%;
                 display: inline-block;
                 -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
@@ -45,11 +51,11 @@
                 0%,
                 80%,
                 100% {
-                    -webkit-transform: scale(0);
+                    -webkit-transform: scale(0)
                 }
 
                 40% {
-                    -webkit-transform: scale(1);
+                    -webkit-transform: scale(1.0)
                 }
             }
 
@@ -63,86 +69,236 @@
                 }
 
                 40% {
-                    -webkit-transform: scale(1);
-                    transform: scale(1);
+                    -webkit-transform: scale(1.0);
+                    transform: scale(1.0);
                 }
             }
         </style>
     </head>
 
     <body>
-        <div id="content" style="opacity: 0;">
-            <aside class="menu">
-                <a onclick="navigate('settings');">
-                    <img class="user-icon" style="opacity: 0;" />
-                    <img class="placeholder-icon" src="media/icon.png" style="opacity: 1;" />
-                </a>
-                <p class="menu-label" id="followers"></p>
-                <ul class="menu-list" id="page-menu">
-                    <li>
-                        <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays">
-                            <ion-icon name="copy"></ion-icon>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="menu-button" onclick="navigate('settings');" title="Caffeinated Settings">
-                            <ion-icon name="cog"></ion-icon>
-                        </a>
-                    </li>
-                </ul>
-            </aside>
-            <div class="pages">
-                <div class="content page" page="settings" id="settings">
-                    <span class="settings-version"></span>
-                </div>
-                <div class="content page" page="overlays" id="overlays"></div>
-            </div>
-        </div>
-        <div class="title-bar">
-            <span class="currentpage" style="opacity: 0;"></span>
-            <a class="close" title="Close">
-                <ion-icon name="close"></ion-icon>
-            </a>
-            <a class="minimize" title="Minimize">
-                <ion-icon src="media/minimize.svg"></ion-icon>
-            </a>
-        </div>
         <div id="splash" style="opacity: 1;">
             <img src="media/app_icon.png" class="app-icon" />
             <img src="media/caffeinated.png" class="caffeinated-logo" />
-            <div class="spinner">
-                <div class="bounce1"></div>
-                <div class="bounce2"></div>
-                <div class="bounce3"></div>
+            <span class="splash-message" style="opacity: 0;"></span>
+        </div>
+        <div class="title-bar">
+            <div class="title-bar-title">
+                <img class="version-hover" src="media/app_icon.png" />Caffeinated
             </div>
-            <span class="problems" style="opacity: 0;">
-                Having problems?
-                <a onclick="openLink('https:\/\/twitter.com/casterlabs');">
-                    Tweet at us.
-                </a>
-            </span>
-            <span class="reconnecting" style="opacity: 0;">
-                Reconnecting to Koi.
-            </span>
+            <!-- <span class="currentpage" style="opacity: 0;"></span> -->
+            <a class="close" title="Close">
+                <ion-icon name="close"></ion-icon>
+            </a>
+            <a class="minmax" title="Maximize">
+                <ion-icon name="albums-outline"></ion-icon>
+            </a>
+            <a class="minimize" title="Minimize">
+                <ion-icon name="remove"></ion-icon>
+            </a>
+        </div>
+        <div id="content">
+            <div id="banners">
+            </div>
+            <div class="menu">
+                <nav>
+                    <ul class="menu-list" id="page-menu">
+                        <!-- <li id="menu-overlays">
+                            <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays"> -->
+                        <!-- <ion-icon name="copy"></ion-icon> -->
+                        <!-- <div class="menu-button-title">Overlays</div>
+                            </a>
+                        </li> -->
+                        <li id="menu-overlays">
+                            <a class="menu-button">
+                                <div class="menu-button-title">
+                                    <span class="translatable" lang="caffeinated.internal.widgets">Widgets</span>
+                                    <ion-icon name="chevron-down-outline" class="sub-menu-arrow"></ion-icon>
+                                </div>
+                            </a>
+                            <div class="dropdown-container" id="widgets">
+                                <!-- <div class="dropdown-item">
+                                    <div class="dropdown-title">
+                                        <a>Donation</a>
+                                    </div>
+                                   
+                                    <div class="dropdown-icon">
+                                        <a><ion-icon name="eye-outline" role="img" class="md hydrated" aria-label="eye outline"></ion-icon></a>
+                                        <a><ion-icon name="volume-high-outline" role="img" class="md hydrated" aria-label="volume high outline"></ion-icon></a>
+                                    </div>
+                                </div> -->
+
+                                <!-- For when widgets are dynamically added -->
+                                <!-- <div class="dropdown-item add-widget">
+                                    <a href="#"><ion-icon name="add-circle-outline"></ion-icon> <span style="position: absolute; top: 9px; left: 40px;">Add widget</span></a>
+                                </div> -->
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+                <div id="user-bar">
+                    <a onclick="navigate('settings');">
+                        <img class="user-icon" src="media/icon.png" />
+                        <div class="user-username">
+                            <ion-icon name="settings-outline"></ion-icon>
+                        </div>
+                    </a>
+                    <a onclick="openLink(CAFFEINATED.userdata.streamer.link)">
+                        <img class="user-platform" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
+                    </a>
+                    <p class="user-followers">
+                        <span id="followers"></span>
+                    </p>
+                    <!-- <a class="user-settings" title="Settings" onclick="navigate('settings');">
+                        <ion-icon name="settings-outline"></ion-icon>
+                    </a> -->
+                </div>
+            </div>
+            <div class="pages">
+                <div class="content page widget-settings-page hide" page="settings" id="settings"></div>
+            </div>
+            <div id="login" class="center-text hide">
+                <br />
+                <br />
+                <br />
+                <br />
+                <div id="login-buttons">
+                    <span class="subtitle is-3">
+                        Welcome to Casterlabs
+                    </span>
+                    <!-- <sub><i>ITALICS</i> <b>BOLD <i>VARIETY</i></b></sub> New merch? -->
+                    <br />
+                    <br />
+                    <a class="button" onclick="UI.loginScreen('TWITCH');" style="overflow: hidden; background-color: #7d2bf9;">
+                        <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 12.5px; top: 7.5px;" />
+                        <span style="padding-left: 1.75em; z-index: 2;">Login with Twitch</span>
+                    </a>
+                    <br />
+                    <a class="button" onclick="UI.loginScreen('CAFFEINE');" style="overflow: hidden; background-color: #0000FF;">
+                        <img src="https://assets.casterlabs.co/caffeine/logo.png" style="height: 2.5em; position: absolute; left: 5px;" />
+                        <span style="padding-left: 1.75em; z-index: 2;">Login with Caffeine</span>
+                    </a>
+                    <div class="service-disclaimer">
+                        <span>
+                            By logging in, you agree to our <a onclick="openLink('https:\/\/casterlabs.co/terms-of-service');">Terms of Service</a> and acknowledge that our <a onclick="openLink('https:\/\/casterlabs.co/privacy-policy')">Privacy Policy</a> applies to you.
+                        </span>
+                    </div>
+                </div>
+                <div id="login-waiting" class="hide">
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                    <br />
+                    <a onclick="UI.loginScreen('NONE');">
+                        <sup>
+                            Want to go back?
+                        </sup>
+                    </a>
+                </div>
+                <div id="login-success" class="hide">
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                </div>
+                <div id="login-caffeine" class="hide">
+                    <span class="subtitle is-3">
+                        Log in with Caffeine
+                    </span>
+                    <br />
+                    <br />
+                    <input id="login-caffeine-username" type="input" placeholder="Username" class="input login-element" />
+                    <br />
+                    <input id="login-caffeine-password" type="password" placeholder="Password" class="input login-element" />
+                    <br />
+                    <input type="submit" value="Signin" class="button login-element" onclick="UI.loginCaffeine()" />
+                    <br />
+                    <a onclick="UI.loginScreen('NONE');">
+                        <sup>
+                            Want to go back?
+                        </sup>
+                    </a>
+                    <div class="service-disclaimer">
+                        <span>
+                            By logging in, you agree to our <a onclick="openLink('https:\/\/casterlabs.co/terms-of-service')">Terms of Service</a> and acknowledge that our <a onclick="openLink('https:\/\/casterlabs.co/privacy-policy')">Privacy Policy</a> applies to you.
+                        </span>
+                    </div>
+                </div>
+                <div id="mfa-caffeine" class="hide">
+                    <span class="subtitle is-3">
+                        Caffeine Two-Factor
+                    </span>
+                    <br />
+                    <br />
+                    <input style="z-index: -9999; opacity: 0;" type="input" class="input" /> <!-- Spacer -->
+                    <br />
+                    <input id="login-caffeine-mfa" type="input" placeholder="2 Factor Code" class="input login-element" />
+                    <br />
+                    <input type="submit" value="Signin" class="button login-element" onclick="UI.loginCaffeine()" />
+                    <br />
+                    <a onclick="UI.loginScreen('NONE');">
+                        <sup>
+                            Want to go back?
+                        </sup>
+                    </a>
+                    <div class="service-disclaimer">
+                        <span>
+                            By logging in, you agree to our <a onclick="openLink('https:\/\/casterlabs.co/terms-of-service')">Terms of Service</a> and acknowledge that our <a onclick="openLink('https:\/\/casterlabs.co/privacy-policy')">Privacy Policy</a> applies to you.
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 
     <footer>
         <script src="js/util.js"></script>
+        <script src="js/kinoko.js"></script>
+        <script src="js/lang.js"></script>
         <script src="js/currencies.js"></script>
         <script src="js/selectnsearch.js"></script>
         <script src="js/forms.js"></script>
         <script src="js/fontselect.js"></script>
+        <script src="js/quillutil.js"></script>
         <script src="js/koi.js"></script>
         <script src="js/navigate.js"></script>
         <script src="js/modules.js"></script>
         <script src="js/repomanager.js"></script>
         <script src="js/caffeinated.js"></script>
-        <div id="scripts"></div>
         <script>
-            navigate("overlays");
+
+            window.addEventListener("beforeunload", () => {
+                const current = electron.getCurrentWindow();
+
+                BrowserWindow.getAllWindows().forEach((window) => {
+                    if (window !== current) {
+                        window.close();
+                    }
+                });
+            });
+
+            navigate("settings");
             CAFFEINATED.init();
+
+            /*
+            const contextMenu = require('electron-context-menu');
+            contextMenu({
+                prepend: (defaultActions, params, browserWindow) => [
+                    {
+                        label: 'Test',
+                        click: () => {
+                            console.log(params);
+                            console.log(defaultActions);
+                        }
+                    }
+                ]
+            });
+            */
         </script>
+        <div id="scripts"></div>
     </footer>
 
 </html>

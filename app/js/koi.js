@@ -2,7 +2,7 @@ class Koi {
     constructor(address) {
         this.address = address;
         this.listeners = {};
-        this.reconnect();
+        this.credentialCallbacks = [];
     }
 
     addEventListener(type, callback) {
@@ -18,12 +18,12 @@ class Koi {
     }
 
     broadcast(type, data) {
-        let listeners = this.listeners[type.toLowerCase()];
+        const listeners = this.listeners[type.toLowerCase()];
 
         if (listeners) {
             listeners.forEach((callback) => {
                 try {
-                    callback(data);
+                    callback(Object.assign({}, data));
                 } catch (e) {
                     console.error("An event listener produced an exception: ");
                     console.error(e);
@@ -33,105 +33,119 @@ class Koi {
     }
 
     reconnect() {
-        if (this.ws && !this.ws.CLOSED) {
+        if (this.ws && (this.ws.readyState != WebSocket.CLOSED)) {
             this.ws.close();
-        }
+        } else {
+            try {
+                this.ws = new WebSocket(this.address);
 
-        const instance = this;
+                this.ws.onerror = () => {
+                    setTimeout(() => this.reconnect, 1000);
+                }
 
-        this.ws = new WebSocket(this.address);
+                this.ws.onopen = () => {
+                    this.broadcast("open");
 
-        this.ws.onerror = function () {
-            setTimeout(() => instance.reconnect, 1000);
-        }
-
-        this.ws.onopen = function () {
-            instance.broadcast("open");
-        };
-
-        this.ws.onclose = function () {
-            instance.broadcast("close");
-        };
-
-        this.ws.onmessage = function (message) {
-            let raw = message.data;
-            let json = JSON.parse(raw);
-
-            if (json["type"] == "KEEP_ALIVE") {
-                let json = {
-                    request: "KEEP_ALIVE"
+                    if (CAFFEINATED.token) {
+                        this.ws.send(JSON.stringify({
+                            type: "LOGIN",
+                            token: CAFFEINATED.token
+                        }));
+                    }
                 };
 
-                this.send(JSON.stringify(json));
-            } else if (json["type"] == "ERROR") {
-                instance.broadcast("error", json);
-            } else if (json["type"] == "EVENT") {
-                let event = json["event"];
+                this.ws.onclose = () => {
+                    this.broadcast("close");
+                };
 
-                switch (event["event_type"]) {
-                    case "CHAT": instance.broadcast("chat", event); break;
-                    case "SHARE": instance.broadcast("share", event); break;
-                    case "FOLLOW": instance.broadcast("follow", event); break;
-                    case "DONATION": instance.broadcast("donation", event); break;
-                    case "INFO": instance.broadcast("info", event["event"]); break;
-                    case "STREAM_STATUS": instance.broadcast("streamstatus", event); break;
-                    case "USER_UPDATE": instance.broadcast("userupdate", event); break;
-                }
-            } else {
-                instance.broadcast("message", json);
+                this.ws.onmessage = (payload) => {
+                    const raw = payload.data;
+                    const json = JSON.parse(raw);
+
+                    if (json["type"] == "KEEP_ALIVE") {
+                        this.ws.send(JSON.stringify({
+                            type: "KEEP_ALIVE"
+                        }));
+                    } else if (json["type"] == "CREDENTIALS") {
+                        this.credentialCallbacks.forEach((callback) => callback.resolve(json));
+                        this.credentialCallbacks = [];
+                    } else if (json["type"] == "ERROR") {
+                        if (json.error === "AUTH_INVALID") {
+                            this.credentialCallbacks.forEach((callback) => callback.reject());
+                            this.credentialCallbacks = [];
+                        }
+
+                        this.broadcast("error", json);
+                    } else if (json["type"] == "EVENT") {
+                        const event = json["event"];
+                        const type = event["event_type"];
+
+                        if ((event.id === "") && (type === "DONATION")) { // We detect test events by seeing if the message id is empty.
+                            event.donations.forEach((donation) => {
+                                // donation.amount = 10; // For testing.
+
+                                // TODO keep this up-to-date with new platforms.
+                                if (isPlatform("CAFFEINE")) {
+                                    donation.currency = "CAFFEINE_CREDITS";
+                                    donation.image = "https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png";
+                                    donation.animated_image = "https://assets.caffeine.tv/digital-items/praise_preview.062e1659faa201a6c9fb0f4599bfa8ef.png";
+                                }
+                            });
+                        }
+
+                        this.broadcast(type.toLowerCase(), event);
+                    } else {
+                        this.broadcast("message", json);
+                    }
+                };
+            } catch (e) {
+                this.reconnect();
             }
-        };
+        }
+    }
+
+    getCredentials() {
+        return new Promise((resolve, reject) => {
+            this.credentialCallbacks.push({
+                resolve: resolve,
+                reject: reject
+            });
+
+            this.ws.send(JSON.stringify({
+                type: "CREDENTIALS"
+            }));
+        });
+    }
+
+    upvote(messageId) {
+        this.ws.send(JSON.stringify({
+            type: "UPVOTE",
+            message_id: messageId
+        }));
+    }
+
+    sendMessage(message) {
+        if (isPlatform("TWITCH")) {
+            message = message.replace(/\n/gm, " ");
+        }
+
+        this.ws.send(JSON.stringify({
+            type: "CHAT",
+            message: message
+        }));
     }
 
     isAlive() {
         return this.ws.readyState == this.ws.OPEN;
     }
 
-    addUser(user) {
+    test(event) {
         if (this.ws.readyState != WebSocket.OPEN) return;
 
-        let json = {
-            request: "ADD",
-            user: user
-        };
-
-        this.ws.send(JSON.stringify(json));
-    }
-
-    setCurrency(currency) {
-        if (this.ws.readyState != WebSocket.OPEN) return;
-
-        let json = {
-            request: "PREFERENCES",
-            preferences: {
-                currency: currency
-            }
-        };
-
-        this.ws.send(JSON.stringify(json));
-    }
-
-    test(user, event) {
-        if (this.ws.readyState != WebSocket.OPEN) return;
-
-        let json = {
-            request: "TEST",
-            test: event,
-            user: user
-        };
-
-        this.ws.send(JSON.stringify(json));
-    }
-
-    removeUser(user) {
-        if (this.ws.readyState != WebSocket.OPEN) return;
-
-        let json = {
-            request: "REMOVE",
-            user: user
-        };
-
-        this.ws.send(JSON.stringify(json));
+        this.ws.send(JSON.stringify({
+            type: "TEST",
+            eventType: event.toUpperCase()
+        }));
     }
 
     close() {

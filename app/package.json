@@ -1,6 +1,6 @@
 {
-  "name": "Caffeinated",
-  "version": "0.5.1-release",
+  "name": "caffeinated",
+  "version": "1.0.0-beta",
   "license": "MIT",
   "author": "HelvijsAdams <support@casterlabs.co>",
   "main": "main.js",
@@ -14,35 +14,13 @@
   "build": {
     "icon": "media/app_icon.icns",
     "appId": "casterlabs.caffeinated",
-    "artifactName": "Caffeinated-${version}-${os}-setup.${ext}",
-    "dmg": {
-      "contents": [
-        {
-          "x": 110,
-          "y": 150
-        },
-        {
-          "x": 240,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
-    },
-    "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ]
-    },
     "win": {
       "icon": "media/app_icon.ico",
       "target": [
         {
-          "target": "NSIS",
+          "target": "dir",
           "arch": [
-            "x64",
-            "ia32"
+            "x64"
           ]
         }
       ]
@@ -53,8 +31,6 @@
     "electron-store": "^5.1.1",
     "electron-window-state": "^5.0.3",
     "express": "^4.17.1",
-    "jquery": "^3.5.1",
-    "node-static": "^0.7.11",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {

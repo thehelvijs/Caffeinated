@@ -1,0 +1,106 @@
+{
+    "supported": [
+        "1.*-*"
+    ],
+    "unsupported": [
+        "0.4.*-*",
+        "0.5.*-*"
+    ],
+    "version": "1.0.0",
+    "name": "Caffeinated Beta Repo",
+    "scripts": [
+        "modules/donationmodule.js",
+        "modules/followermodule.js",
+        "modules/chatmodule.js",
+        "modules/goalmodule.js",
+        "modules/supportersmodule.js",
+        "modules/chatdisplaymodule.js",
+        "modules/companionmodule.js",
+        "modules/rainmodule.js",
+        "modules/nowplayingmodule.js",
+        "modules/viewcounter.js",
+        "modules/recentfollow.js",
+        "modules/recentdonation.js",
+        "modules/topdonation.js",
+        "modules/donationticker.js",
+        "caffeine/caffeinemodule.js",
+        "modules/botmodule.js",
+        "ko-fi/kofimodule.js"
+    ],
+    "simple": [
+        {
+            "namespace": "casterlabs_chat",
+            "id": "chat"
+        },
+        {
+            "namespace": "casterlabs_donation",
+            "id": "donation"
+        },
+        {
+            "namespace": "casterlabs_goal",
+            "id": "donation_goal"
+        },
+        {
+            "namespace": "casterlabs_recent_donation",
+            "id": "recent_donation"
+        },
+        {
+            "namespace": "casterlabs_top_donation",
+            "id": "top_donation"
+        },
+        {
+            "namespace": "casterlabs_donation_ticker",
+            "id": "donation_ticker"
+        },
+        {
+            "namespace": "casterlabs_rain",
+            "id": "emoji_rain"
+        },
+        {
+            "namespace": "casterlabs_follower",
+            "id": "follower"
+        },
+        {
+            "namespace": "casterlabs_goal",
+            "id": "follower_goal"
+        },
+        {
+            "namespace": "casterlabs_recent_follow",
+            "id": "recent_follow"
+        },
+        {
+            "namespace": "casterlabs_now_playing",
+            "id": "now_playing"
+        },
+        {
+            "namespace": "casterlabs_view_counter",
+            "id": "viewer_counter"
+        }
+    ],
+    "required": [
+        {
+            "namespace": "caffeine_integration",
+            "id": "caffeine_integration"
+        },
+        {
+            "namespace": "casterlabs_bot",
+            "id": "chat_bot"
+        },
+        {
+            "namespace": "kofi_integration",
+            "id": "ko-fi_integration"
+        },
+        {
+            "namespace": "casterlabs_companion",
+            "id": "casterlabs_companion"
+        },
+        {
+            "namespace": "casterlabs_supporters",
+            "id": "casterlabs_supporters"
+        },
+        {
+            "namespace": "casterlabs_chat_display",
+            "id": "chat_display"
+        }
+    ]
+}
