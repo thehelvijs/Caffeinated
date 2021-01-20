@@ -47,12 +47,14 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
         }
 
         koi.addEventListener("donation", async (event) => {
-            for (const donation of event.donations) {
-                this.amount += (await convertCurrency(donation.amount, donation.currency, "USD"));
-            }
+            if (!event.isTest) {
+                for (const donation of event.donations) {
+                    this.amount += (await convertCurrency(donation.amount, donation.currency, "USD"));
+                }
 
-            this.update();
-            MODULES.saveToStore(this);
+                this.update();
+                MODULES.saveToStore(this);
+            }
         });
     }
 

@@ -191,7 +191,7 @@ function formatCurrency(amount, currency) {
     if (currency === "CAFFEINE_CREDITS") {
         return `
             <span>
-                <svg viewBox="0 0 16 16" fill="#C6F" style="height: .85em; width: auto; transform: translateY(.075em);">
+                <svg viewBox="0 0 16 16" fill="#C6F" style="height: .85em; width: auto; transform: translateY(.15em);">
                     <g fill-rule="evenodd">
                         <path d="M8 0a8 8 0 110 16A8 8 0 018 0zm0 .667a7.333 7.333 0 100 14.666A7.333 7.333 0 008 .667z"></path>
                         <circle cx="8" cy="8" r="6"></circle>
@@ -203,7 +203,7 @@ function formatCurrency(amount, currency) {
     } else if (currency === "CAFFEINE_GOLD") {
         return `
             <span>
-                <svg viewBox="0 0 16 16" fill="#FC0" style="height: .85em; width: auto; transform: translateY(.075em);">
+                <svg viewBox="0 0 16 16" fill="#FC0" style="height: .85em; width: auto; transform: translateY(.15em);">
                     <g fill-rule="evenodd">
                         <path d="M8 0a8 8 0 110 16A8 8 0 018 0zm0 .667a7.333 7.333 0 100 14.666A7.333 7.333 0 008 .667z"></path>
                         <circle cx="8" cy="8" r="6"></circle>

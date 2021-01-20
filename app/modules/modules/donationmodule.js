@@ -42,14 +42,19 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
 
     init() {
         koi.addEventListener("donation", (event) => {
-            event.donations.forEach((donation) => {
+            for (const donation of event.donations) {
                 const converted = Object.assign({
                     image: donation.image,
                     animated_image: donation.animated_image
                 }, event);
 
                 MODULES.emitIO(this, "event", converted);
-            });
+
+                // Only alert once for Caffeine props
+                if (event.sender.platform == "CAFFEINE") {
+                    return;
+                }
+            }
         });
 
         this.audio_file = this.settings.audio_file;

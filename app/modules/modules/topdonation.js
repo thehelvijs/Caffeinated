@@ -49,18 +49,20 @@ MODULES.moduleClasses["casterlabs_top_donation"] = class {
         }
 
         koi.addEventListener("donation", async (event) => {
-            let amount = 0;
+            if (!event.isTest) {
+                let amount = 0;
 
-            for (const donation of event.donations) {
-                amount += (await convertCurrency(donation.amount, donation.currency, "USD"));
-            }
+                for (const donation of event.donations) {
+                    amount += (await convertCurrency(donation.amount, donation.currency, "USD"));
+                }
 
-            if (amount >= this.amount) {
-                this.username = event.sender.username;
-                this.amount = amount;
+                if (amount >= this.amount) {
+                    this.username = event.sender.username;
+                    this.amount = amount;
 
-                this.update();
-                MODULES.saveToStore(this);
+                    this.update();
+                    MODULES.saveToStore(this);
+                }
             }
         });
     }

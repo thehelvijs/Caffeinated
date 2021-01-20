@@ -80,17 +80,29 @@ class Koi {
                         const event = json["event"];
                         const type = event["event_type"];
 
-                        if ((event.id === "") && (type === "DONATION")) { // We detect test events by seeing if the message id is empty.
-                            event.donations.forEach((donation) => {
-                                // donation.amount = 10; // For testing.
+                        if ((type === "DONATION") && (event.sender.platform === "CASTERLABS_SYSTEM")) {
+                            event.isTest = true;
 
+                            event.donations.forEach((donation) => {
                                 // TODO keep this up-to-date with new platforms.
                                 if (isPlatform("CAFFEINE")) {
+                                    event.sender.platform = "CAFFEINE"; // Internally we detect Caffeine props and display the image via the platform
+
+                                    donation.amount = 9;
                                     donation.currency = "CAFFEINE_CREDITS";
                                     donation.image = "https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png";
                                     donation.animated_image = "https://assets.caffeine.tv/digital-items/praise_preview.062e1659faa201a6c9fb0f4599bfa8ef.png";
+                                } else if (isPlatform("TWITCH")) {
+                                    donation.amount = 100;
+                                    donation.currency = "TWITCH_BITS";
+                                    donation.image = "https://static-cdn.jtvnw.net/bits/dark/static/purple/4";
+                                    donation.animated_image = "https://static-cdn.jtvnw.net/bits/dark/animated/purple/4";
                                 }
                             });
+                        } else if ((type === "FOLLOW") && (event.follower.platform === "CASTERLABS_SYSTEM")) {
+                            event.isTest = true;
+                        } else if ((type === "CHAT") && (event.sender.platform === "CASTERLABS_SYSTEM")) {
+                            event.isTest = true;
                         }
 
                         this.broadcast(type.toLowerCase(), event);

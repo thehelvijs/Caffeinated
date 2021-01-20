@@ -46,10 +46,12 @@ MODULES.moduleClasses["casterlabs_recent_follow"] = class {
         }
 
         koi.addEventListener("follow", (event) => {
-            this.username = event.follower.username;
+            if (!event.isTest) {
+                this.username = event.follower.username;
 
-            this.update();
-            MODULES.saveToStore(this);
+                this.update();
+                MODULES.saveToStore(this);
+            }
         });
     }
 

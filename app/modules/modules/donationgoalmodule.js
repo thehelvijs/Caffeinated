@@ -1,14 +1,10 @@
 
-MODULES.moduleClasses["casterlabs_goal"] = class {
+MODULES.moduleClasses["casterlabs_donation_goal"] = class {
 
     constructor(id) {
-        this.namespace = "casterlabs_goal";
+        this.namespace = "casterlabs_donation_goal";
         this.type = "overlay settings";
         this.id = id;
-
-        if (this.id.includes("follow")) {
-            delete this.settingsDisplay.currency;
-        }
     }
 
     widgetDisplay = [
@@ -48,46 +44,42 @@ MODULES.moduleClasses["casterlabs_goal"] = class {
 
         if (!this.amount) this.amount = 0;
 
-        if (this.id.includes("follow")) {
-            koi.addEventListener("user_update", (event) => {
-                this.amount = event.streamer.followers_count;
-
-                this.sendUpdates();
-                MODULES.saveToStore(this);
-            });
-        } else {
-            koi.addEventListener("donation", async (event) => {
+        koi.addEventListener("donation", async (event) => {
+            if (!event.isTest) {
                 for (const donation of event.donations) {
                     this.amount += (await convertCurrency(donation.amount, donation.currency, "USD"));
                 }
 
                 this.sendUpdates();
                 MODULES.saveToStore(this);
-            });
-        }
+            }
+        });
     }
 
-    onSettingsUpdate() {
+    async onSettingsUpdate() {
+        const current = parseFloat(this.page.querySelector("[name=current_amount]").value);
+
+        this.amount = (await convertCurrency(current, this.settings.currency, "USD"));
+
         this.sendUpdates();
     }
 
     async sendUpdates(socket) {
         MODULES.emitIO(this, "config", this.settings, socket);
 
-        if (this.id.includes("follow")) {
-            MODULES.emitIO(this, "amount", this.amount, socket);
-            MODULES.emitIO(this, "display", this.amount, socket);
-            MODULES.emitIO(this, "goaldisplay", this.settings.goal_amount, socket);
-        } else {
-            MODULES.emitIO(this, "amount", (await convertCurrency(this.amount, "USD", this.settings.currency)), socket);
-            MODULES.emitIO(this, "display", (await convertAndFormatCurrency(this.amount, "USD", this.settings.currency)), socket);
-            MODULES.emitIO(this, "goaldisplay", formatCurrency(this.settings.goal_amount, this.settings.currency), socket);
-        }
+        const convertedAmount = (await convertCurrency(this.amount, "USD", this.settings.currency));
+
+        this.page.querySelector("[name=current_amount]").value = convertedAmount;
+
+        MODULES.emitIO(this, "amount", convertedAmount, socket);
+        MODULES.emitIO(this, "display", (await convertAndFormatCurrency(this.amount, "USD", this.settings.currency)), socket);
+        MODULES.emitIO(this, "goaldisplay", formatCurrency(this.settings.goal_amount, this.settings.currency), socket);
     }
 
     settingsDisplay = {
         title: "input",
         currency: "currency",
+        current_amount: "number",
         goal_amount: "number",
         text_color: "color",
         bar_color: "color"
@@ -96,6 +88,7 @@ MODULES.moduleClasses["casterlabs_goal"] = class {
     defaultSettings = {
         title: "",
         currency: "USD",
+        current_amount: "10",
         goal_amount: "10",
         text_color: "#FFFFFF",
         bar_color: "#31F8FF"

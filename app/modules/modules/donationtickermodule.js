@@ -38,8 +38,10 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
     init() {
         const instance = this;
         koi.addEventListener("donation", (event) => {
-            instance.raised += event.usd_equivalent;
-            instance.update();
+            if (!event.isTest) {
+                instance.raised += event.usd_equivalent;
+                instance.update();
+            }
         });
     }
 

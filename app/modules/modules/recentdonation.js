@@ -45,17 +45,19 @@ MODULES.moduleClasses["casterlabs_recent_donation"] = class {
         this.username = this.settings.username;
 
         koi.addEventListener("donation", async (event) => {
-            let amount = 0;
+            if (!event.isTest) {
+                let amount = 0;
 
-            for (const donation of event.donations) {
-                amount += (await convertCurrency(donation.amount, donation.currency, "USD"));
+                for (const donation of event.donations) {
+                    amount += (await convertCurrency(donation.amount, donation.currency, "USD"));
+                }
+
+                this.username = event.sender.username;
+                this.amount = amount;
+
+                this.update();
+                MODULES.saveToStore(this);
             }
-
-            this.username = event.sender.username;
-            this.amount = amount;
-
-            this.update();
-            MODULES.saveToStore(this);
         });
     }
 

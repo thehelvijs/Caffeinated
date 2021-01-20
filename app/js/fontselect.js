@@ -4,9 +4,17 @@ const FONTSELECT = {
     fonts: [],
 
     preload() {
-        const instance = this;
-
         return new Promise((resolve, reject) => {
+            require("font-list").getFonts().then((fonts) => {
+                fonts.forEach((font) => {
+                    const name = font.replace(/\"/g, "");
+
+                    if (!this.fonts.includes(name)) {
+                        this.fonts.push(name);
+                    }
+                })
+            });
+
             fetch(this.endPoint).then((response) => response.json())
                 .catch(reject)
                 .then(async (fonts) => {
@@ -14,17 +22,17 @@ const FONTSELECT = {
 
                     // Quickly get a list of fonts ready for the caller.
                     fonts.items.forEach((font) => {
-                        let name = font.family;
+                        const name = font.family;
 
-                        if (!instance.fonts.includes(name)) {
-                            instance.fonts.push(name);
+                        if (!this.fonts.includes(name)) {
+                            this.fonts.push(name);
                             toload.push(font);
                         }
                     });
 
-                    for (let font of toload) {
-                        let name = font.family;
-                        let url = null;
+                    for (const font of toload) {
+                        const name = font.family;
+                        let url;
 
                         if (font.files.hasOwnProperty("regular")) {
                             url = font.files.regular;
@@ -43,15 +51,13 @@ const FONTSELECT = {
     },
 
     apply(element, settings = { updateFont: true, selected: "Poppins" }) {
-        const instance = this;
-
         return new Promise(async (resolve, reject) => {
             // if (element instanceof HTMLSelectElement) {
-            if (instance.fonts.length == 0) {
-                await instance.preload();
+            if (this.fonts.length == 0) {
+                await this.preload();
             }
 
-            SELECTNSEARCH.create(instance.fonts, element);
+            SELECTNSEARCH.create(this.fonts, element);
 
             element.value = settings.selected;
             element.querySelector(".sns-input").setAttribute("value", settings.selected);

@@ -12,7 +12,8 @@
         "modules/donationmodule.js",
         "modules/followermodule.js",
         "modules/chatmodule.js",
-        "modules/goalmodule.js",
+        "modules/followergoalmodule.js",
+        "modules/donationgoalmodule.js",
         "modules/supportersmodule.js",
         "modules/chatdisplaymodule.js",
         "modules/companionmodule.js",
@@ -37,7 +38,7 @@
             "id": "donation"
         },
         {
-            "namespace": "casterlabs_goal",
+            "namespace": "casterlabs_donation_goal",
             "id": "donation_goal"
         },
         {
@@ -61,7 +62,7 @@
             "id": "follower"
         },
         {
-            "namespace": "casterlabs_goal",
+            "namespace": "casterlabs_follower_goal",
             "id": "follower_goal"
         },
         {

@@ -39,13 +39,11 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
             MODULES.emitIO(instance, "event", event);
         });
 
-        /*
         koi.addEventListener("donation", (event) => {
             if (instance.settings.show_donations) {
                 MODULES.emitIO(instance, "event", event);
             }
         });
-        */
     }
 
     onSettingsUpdate() {
@@ -56,7 +54,7 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
         font: "font",
         font_size: "number",
         text_color: "color",
-        // show_donations: "checkbox",
+        show_donations: "checkbox",
         chat_direction: "select",
         chat_animation: "select",
         text_align: "select"
