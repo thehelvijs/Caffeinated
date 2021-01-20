@@ -5,6 +5,7 @@ const FONTSELECT = {
 
     preload() {
         return new Promise((resolve, reject) => {
+            /*
             require("font-list").getFonts().then((fonts) => {
                 fonts.forEach((font) => {
                     const name = font.replace(/\"/g, "");
@@ -13,7 +14,7 @@ const FONTSELECT = {
                         this.fonts.push(name);
                     }
                 })
-            });
+            });*/
 
             fetch(this.endPoint).then((response) => response.json())
                 .catch(reject)
