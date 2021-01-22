@@ -2,6 +2,7 @@
 <html>
 
     <head>
+        <title>Caffeinated Chat Popout</title>
         <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" />
         <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
@@ -27,6 +28,10 @@
                 color: white !important;
                 fill: white !important;
                 transition: 0.2s linear;
+            }
+
+            .hide {
+                display: none !important;
             }
 
             html {
@@ -64,6 +69,79 @@
                 border: 1px solid #4a4a4a;
                 cursor: auto;
                 outline: none !important;
+            }
+
+            /* Popout Mode */
+            .isPopout .title-bar {
+                display: block;
+            }
+
+            .isPopout #chatbox {
+                padding-top: 34px;
+            }
+
+            .isPopout #vcpopoutviewers {
+                display: none;
+            }
+
+            .isPopout #vcpopout {
+                display: none;
+            }
+
+            #vcpopout {
+                position: fixed;
+                top: 5px;
+                right: 11px;
+                font-size: 23px;
+            }
+
+            #vcpopoutviewers {
+                position: fixed;
+                top: 30px;
+                right: 15px;
+                font-size: 20px;
+            }
+
+            /* Title Bar */
+
+            .title-bar {
+                display: none;
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                height: 30px;
+                width: 100%;
+                background-color: #272727;
+                padding-top: 5px;
+                user-select: none;
+                font-size: 1em;
+                -webkit-app-region: drag;
+            }
+
+            .title-bar span {
+                color: rgb(133, 133, 133);
+                vertical-align: top;
+                font-family: "Segoe UI", sans-serif;
+                line-height: 20px;
+            }
+
+            .title-icon {
+                margin-left: 5px;
+                margin-right: 1px;
+                height: 20px;
+                width: 20px;
+            }
+
+            #close {
+                cursor: pointer;
+                position: fixed;
+                right: 8px;
+                top: 6px;
+                -webkit-app-region: no-drag !important;
+            }
+
+            #close ion-icon {
+                -webkit-app-region: no-drag !important;
             }
 
             /* Scrollbar */
@@ -115,19 +193,18 @@
                 display: flex;
                 padding-top: 7px;
                 justify-content: center;
+                width: 100vw;
+                padding-left: 2px;
+                padding-right: 2px;
             }
 
             .vcbuttons .item {
                 height: 30px;
                 font-size: 15px;
                 padding-top: 0;
-                padding-bottom: calc(.2em - 1px);
-            }
-
-            .vcbuttons input {
-                width: 300px;
-                margin-bottom: 8px;
-                margin-right: 2px;
+                margin: 1px;
+                margin-bottom: 4px;
+                line-height: 27px;
             }
 
             /* Chat */
@@ -295,13 +372,303 @@
             <button class="button item" id="vcsend">
                 Send
             </button>
-            <button class="button item" id="vcopen">
-                Viewers
-            </button>
         </div>
         <a id="vcjumpdown" title="Jump to bottom" style="opacity: 0;">
             <ion-icon name="arrow-down-circle"></ion-icon>
         </a>
+        <a id="vcpopout" title="Pop Out Chat">
+            <ion-icon name="log-out-outline"></ion-icon>
+        </a>
+        <a id="vcpopoutviewers" title="Pop Out Viewers">
+            <ion-icon name="eye-outline"></ion-icon>
+        </a>
+        <div class="title-bar">
+            <img class="title-icon" src="../../media/app_icon.png" />
+            <span>Chat Popout</span>
+            <a id="close" title="Close">
+                <ion-icon name="close"></ion-icon>
+            </a>
+        </div>
     </body>
+
+    <footer>
+        <script>
+            let currentWindow;
+            let shell;
+
+            if (typeof require !== "undefined") {
+                // We're not in the simulation
+                currentWindow = require("electron").remote.getCurrentWindow();
+
+                document.body.classList.add("isPopout");
+
+                document.querySelector("#close").addEventListener("click", () => {
+                    currentWindow.close();
+                });
+
+                const messageInput = document.querySelector("#vcmessage");
+
+                messageInput.addEventListener("keyup", (e) => {
+                    if (e.key == "Enter") {
+                        currentWindow.emit("send_message", messageInput.value);
+                        messageInput.value = "";
+                    }
+                });
+
+                document.querySelector("#vcsend").addEventListener("click", () => {
+                    currentWindow.emit("send_message", messageInput.value);
+                    messageInput.value = "";
+                });
+            }
+
+            function openLink(link) {
+                if (currentWindow) {
+                    shell.openExternal(link);
+                } else {
+                    document.dispatchEvent(new CustomEvent("open_link", {
+                        detail: {
+                            link: link
+                        }
+                    }));
+                }
+            }
+
+            function upvote(id) {
+                if (currentWindow) {
+                    currentWindow.emit("upvote_request", id);
+                } else {
+                    document.dispatchEvent(new CustomEvent("upvote_request", {
+                        detail: {
+                            id: id
+                        }
+                    }));
+                }
+            }
+
+            function messageUpvote(event) {
+                let element = document.querySelector("[vc_message_id='" + event.id + "']");
+
+                // Sometimes messages don't exist.
+                if (element) {
+                    element.innerText = event.upvotes;
+
+                    if (event.upvotes >= 1000) {
+                        element.classList = "upvote-4";
+                    } else if (event.upvotes >= 100) {
+                        element.classList = "upvote-3";
+                    } else if (event.upvotes >= 10) {
+                        element.classList = "upvote-2";
+                    } else if (event.upvotes >= 1) {
+                        element.classList = "upvote-1";
+                    }
+                }
+            }
+
+            function addMessage(event) {
+                const div = document.createElement("div");
+                const username = document.createElement("span");
+                const pfp = document.createElement("img");
+                const text = document.createElement("span");
+
+                const msg = document.createElement("li");
+                const tooltip = document.createElement("ul");
+                const counter = document.createElement("sup");
+
+                pfp.src = event.sender.image_link;
+                pfp.classList.add("vcprofile");
+                pfp.addEventListener("click", () => {
+                    openLink(event.sender.link);
+                });
+
+                username.classList.add("vcusername");
+                username.style = "color: " + event.sender.color + ";";
+                username.appendChild(pfp);
+                username.appendChild(document.createTextNode(event.sender.username));
+
+                event.sender.badges.forEach((badge) => {
+                    const badgeIcon = document.createElement("img");
+
+                    badgeIcon.src = badge;
+                    badgeIcon.classList = "vcbadge";
+
+                    username.appendChild(badgeIcon);
+                });
+
+                username.appendChild(text);
+
+                text.classList.add("vctext");
+
+                event.message = escapeHtml(event.message);
+
+                for (const [name, link] of Object.entries(event.emotes)) {
+                    event.message = event.message.split(name).join(`<img class="vcimage" title="${name}" src="${link}" />`);
+                }
+
+                text.innerHTML = event.message;
+
+                counter.setAttribute("vc_message_id", event.id);
+
+                div.classList.add("vcchatmessage");
+                div.appendChild(username);
+
+                div.appendChild(counter);
+
+                if (event.donations) {
+                    // Caffeine has cute little prop images, so we display those instead of just the amount
+                    if (event.sender.platform === "CAFFEINE") {
+                        event.donations.forEach((donation) => {
+                            const img = document.createElement("img");
+
+                            img.src = donation.image;
+                            img.classList = "vcimage";
+
+                            username.appendChild(img);
+                        });
+                    } else {
+                        event.donations.forEach((donation) => {
+                            const donationContainer = document.createElement("span");
+
+                            donationContainer.innerHTML = formatCurrency(donation.amount, donation.currency);
+
+                            username.appendChild(donationContainer);
+                        });
+                    }
+                }
+
+                msg.appendChild(div);
+
+                if (event.sender.platform === "CAFFEINE") {
+                    if (event.id) {
+                        const upvotetooltip = document.createElement("li");
+                        const upvotebtn = document.createElement("a");
+
+                        upvotebtn.innerHTML = `<ion-icon name="arrow-up"></ion-icon>`;
+                        upvotebtn.title = "Upvote";
+                        upvotebtn.addEventListener("click", () => {
+                            upvote(event.id);
+                            upvotetooltip.remove();
+                        });
+
+                        upvotetooltip.appendChild(upvotebtn);
+                        upvotetooltip.classList.add("tooltipbtn");
+                        tooltip.appendChild(upvotetooltip);
+                    }
+                }
+
+                tooltip.classList.add("tip");
+                msg.appendChild(tooltip);
+
+                document.querySelector("#chatbox").appendChild(msg);
+
+                tryJump();
+            }
+
+            function addStatus(user, profilePic, color, type) {
+                const div = document.createElement("div");
+                const pfp = document.createElement("img");
+                const username = document.createElement("span");
+                const text = document.createElement("span");
+                const msg = document.createElement("li");
+
+                pfp.src = profilePic;
+                pfp.classList.add("vcprofile");
+
+                username.classList.add("vcusername");
+                username.style = "color: " + color + ";";
+                username.innerText = user;
+
+                switch (type.toLowerCase()) {
+                    case "leave": text.innerText = "left the stream."; break;
+                    case "join": text.innerText = "joined the stream."; break;
+                    case "follow": text.innerText = "started following."; break;
+                }
+
+                div.classList.add("vcchatmessage");
+                div.classList.add("vcstatus");
+                div.appendChild(pfp);
+                div.appendChild(username);
+                div.appendChild(text);
+
+                msg.appendChild(div);
+
+                document.querySelector("#chatbox").appendChild(msg);
+
+                tryJump();
+            }
+
+            function isAtBottom() {
+                const scrollOffset = document.querySelector("#chatbox").scrollHeight - document.querySelector("#chatbox").scrollTop;
+                const height = document.querySelector("#chatbox").offsetHeight;
+
+                return (scrollOffset - height) < 125;
+            }
+
+            function tryJump() {
+                checkJumpButton();
+
+                if (isAtBottom()) {
+                    jumpDown();
+                }
+            }
+
+            function checkJumpButton() {
+                const jump = document.querySelector("#vcjumpdown");
+
+                if (isAtBottom()) {
+                    anime({
+                        targets: jump,
+                        easing: "linear",
+                        opacity: 0,
+                        duration: 100
+                    }).finished.then(() => {
+                        jump.classList.add("hide");
+                    });
+                } else {
+                    jump.classList.remove("hide");
+                    anime({
+                        targets: jump,
+                        easing: "linear",
+                        opacity: 1,
+                        duration: 100
+                    });
+                }
+            }
+
+            function catchUp(events) {
+                events.forEach((event) => {
+                    switch (event.type) {
+                        case "UPVOTE": messageUpvote(event.event, true); break;
+
+                        case "MESSAGE": addMessage(event.event, true); break;
+
+                        case "STATUS": addStatus(event.user, event.profilePic, event.color, event.statusType, true); break;
+
+                    }
+                });
+
+                setTimeout(jumpDown, 100);
+            }
+
+            function jumpDown() {
+                document.querySelector("#chatbox").scrollTo(0, document.querySelector("#chatbox").scrollHeight + 1000);
+            }
+
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+            }
+
+            document.querySelector("#vcjumpdown").addEventListener("click", () => {
+                jumpDown();
+            });
+
+            document.querySelector("#chatbox").addEventListener("scroll", () => {
+                checkJumpButton();
+            });
+
+        </script>
+    </footer>
 
 </html>
