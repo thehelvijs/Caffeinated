@@ -362,7 +362,7 @@ async function createDynamicModuleOption(module, layout, values, formCallback) {
     });
 
     for (const [key, type] of Object.entries(display)) {
-        const data = type;
+        let data = type;
 
         if (typeof data === "string") {
             data = {
