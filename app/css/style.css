@@ -380,7 +380,7 @@ input[type=number] {
     position: fixed;
     left: 0;
     width: var(--menu-width);
-    height: calc(100% - var(--title-bar-height));
+    height: calc((100% - var(--title-bar-height)) - var(--user-bar-height));
     background-color: var(--menu-background-color);
     overflow-y: auto !important;
 }
