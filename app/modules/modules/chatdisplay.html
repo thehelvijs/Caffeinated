@@ -390,6 +390,8 @@
 
     <footer>
         <script>
+            const messageInput = document.querySelector("#vcmessage");
+
             let currentWindow;
             let shell;
 
@@ -402,8 +404,6 @@
                 document.querySelector("#close").addEventListener("click", () => {
                     currentWindow.close();
                 });
-
-                const messageInput = document.querySelector("#vcmessage");
 
                 messageInput.addEventListener("keyup", (e) => {
                     if (e.key == "Enter") {
@@ -528,6 +528,20 @@
                 }
 
                 msg.appendChild(div);
+
+                const replytooltip = document.createElement("li");
+                const replybtn = document.createElement("a");
+
+                replybtn.innerHTML = `<ion-icon name="arrow-redo-outline"></ion-icon>`;
+                replybtn.title = "Reply";
+                replybtn.addEventListener("click", () => {
+                    messageInput.value = `@${event.sender.username} `;
+                    messageInput.focus();
+                });
+
+                replytooltip.appendChild(replybtn);
+                replytooltip.classList.add("tooltipbtn");
+                tooltip.appendChild(replytooltip);
 
                 if (event.sender.platform === "CAFFEINE") {
                     if (event.id) {
