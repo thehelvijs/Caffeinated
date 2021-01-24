@@ -104,9 +104,10 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 y: mainWindowState.y,
                 resizable: true,
                 transparent: false,
+                alwaysOnTop: true,
                 show: false,
                 titleBarStyle: "shown",
-                icon: __dirname + "/media/app_icon.png",
+                icon: "https://assets.casterlabs.co/logo/casterlabs_icon.png",
                 frame: false,
                 webPreferences: {
                     nodeIntegration: true
@@ -149,9 +150,10 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 y: mainWindowState.y,
                 resizable: true,
                 transparent: false,
+                alwaysOnTop: true,
                 show: false,
                 titleBarStyle: "shown",
-                icon: __dirname + "/media/app_icon.png",
+                icon: "https://assets.casterlabs.co/logo/casterlabs_icon.png",
                 frame: false,
                 webPreferences: {
                     nodeIntegration: true
@@ -199,7 +201,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         if (!onlyPopout) {
             this.messageHistory.push({
                 type: "UPVOTE",
-                event: event
+                event: Object.assign({}, event)
             });
 
             this.contentWindow.messageUpvote(event);
@@ -214,7 +216,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         if (!onlyPopout) {
             this.messageHistory.push({
                 type: "MESSAGE",
-                event: event
+                event: Object.assign({}, event)
             });
 
             this.contentWindow.addMessage(event);

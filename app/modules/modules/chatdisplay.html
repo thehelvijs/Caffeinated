@@ -11,14 +11,11 @@
         <style>
             /* Making everything match Caffeinated */
             :root {
-                --casterlabs: #e94b4b;
-                --menu-width: 200px;
-                --user-bar-height: 55px;
+                --theme: #e94b4b;
                 --menu-icon-color: #DCDCDC;
                 --menu-icon-color-hover: #7a7a7a;
                 --menu-background-color: #202020;
                 --menu-border-color: #383838;
-                --title-bar-height: 30px;
                 --background-color: #141414;
             }
 
@@ -42,6 +39,15 @@
             span {
                 color: white;
                 font-family: "Inter", sans-serif;
+            }
+
+            body {
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+
+            a {
+                color: var(--theme) !important;
             }
 
             input[type=search]::-webkit-search-decoration,
@@ -119,7 +125,7 @@
             }
 
             .title-bar span {
-                color: rgb(133, 133, 133);
+                color: rgb(133, 133, 133) !important;
                 vertical-align: top;
                 font-family: "Segoe UI", sans-serif;
                 line-height: 20px;
@@ -185,15 +191,14 @@
 
             .vcbuttons {
                 position: fixed;
-                right: 10px;
+                right: 5px;
                 bottom: 0px;
-                left: 0;
+                left: 5px;
                 z-index: 1000;
                 background-color: var(--background-color);
                 display: flex;
                 padding-top: 7px;
                 justify-content: center;
-                width: 100vw;
                 padding-left: 2px;
                 padding-right: 2px;
             }
@@ -230,7 +235,6 @@
                 display: inline-block;
                 height: 100%;
                 text-decoration: none;
-                color: white !important;
             }
 
             ul li:hover>.vcchatmessage {
@@ -267,16 +271,9 @@
                 margin-right: 10px;
             }
 
-            .vctext::before {
-                content: "\00a0";
-            }
-
             .vctext {
                 border-radius: 1px;
-            }
-
-            .vctext::after {
-                content: "\00a0";
+                color: white;
             }
 
             .vcstatus {
@@ -383,7 +380,7 @@
             <ion-icon name="eye-outline"></ion-icon>
         </a>
         <div class="title-bar">
-            <img class="title-icon" src="../../media/app_icon.png" />
+            <img class="title-icon" src="https://assets.casterlabs.co/logo/casterlabs_icon.png" />
             <span>Chat Popout</span>
             <a id="close" title="Close">
                 <ion-icon name="close"></ion-icon>
@@ -500,11 +497,17 @@
 
                 event.message = escapeHtml(event.message);
 
-                for (const [name, link] of Object.entries(event.emotes)) {
-                    event.message = event.message.split(name).join(`<img class="vcimage" title="${name}" src="${link}" />`);
+                for (const [name, image] of Object.entries(event.emotes)) {
+                    event.message = event.message.split(name).join(`<img class="vcimage" title="${name}" src="${image}" />`);
                 }
 
-                text.innerHTML = event.message;
+                event.links.forEach((pattern) => {
+                    const link = pattern.includes("://") ? pattern : ("https://" + pattern);
+
+                    event.message = event.message.split(pattern).join(`<a onclick="openLink('${link}')">${pattern}</a>`);
+                });
+
+                text.innerHTML = " " + event.message + " ";
 
                 counter.setAttribute("vc_message_id", event.id);
 
@@ -514,25 +517,14 @@
                 div.appendChild(counter);
 
                 if (event.donations) {
-                    // Caffeine has cute little prop images, so we display those instead of just the amount
-                    if (event.sender.platform === "CAFFEINE") {
-                        event.donations.forEach((donation) => {
-                            const img = document.createElement("img");
+                    event.donations.forEach((donation) => {
+                        const img = document.createElement("img");
 
-                            img.src = donation.image;
-                            img.classList = "vcimage";
+                        img.src = donation.image;
+                        img.classList = "vcimage";
 
-                            username.appendChild(img);
-                        });
-                    } else {
-                        event.donations.forEach((donation) => {
-                            const donationContainer = document.createElement("span");
-
-                            donationContainer.innerHTML = formatCurrency(donation.amount, donation.currency);
-
-                            username.appendChild(donationContainer);
-                        });
-                    }
+                        username.appendChild(img);
+                    });
                 }
 
                 msg.appendChild(div);
