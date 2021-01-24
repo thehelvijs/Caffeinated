@@ -4,8 +4,13 @@
     <head>
         <title>Caffeinated Viewers Popout</title>
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
-        <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
         <style>
+            :root {
+                --title-color: rgb(133, 133, 133);
+            }
+
             html {
                 color: whitesmoke;
                 background-color: #141414;
@@ -26,6 +31,7 @@
 
             ion-icon {
                 pointer-events: none !important;
+                transition: 0.2s linear;
             }
 
             .title-bar {
@@ -36,7 +42,9 @@
                 width: 100%;
                 background-color: #272727;
                 padding-top: 5px;
-                color: rgb(133, 133, 133);
+                color: var(--title-color);
+                stroke: var(--title-color) !important;
+                fill: var(--title-color) !important;
                 user-select: none;
                 font-size: 1em;
             }
@@ -69,7 +77,7 @@
                 cursor: pointer;
                 position: fixed;
                 right: 8px;
-                top: 6px;
+                top: 7px;
                 -webkit-app-region: no-drag !important;
             }
 
@@ -81,7 +89,7 @@
                 cursor: pointer;
                 position: fixed;
                 right: 28px;
-                top: 6px;
+                top: 7px;
                 -webkit-app-region: no-drag !important;
             }
 
