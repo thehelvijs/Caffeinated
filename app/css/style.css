@@ -369,8 +369,10 @@ input[type=number] {
 
 .minmax {
     position: absolute;
-    right: 40px;
+    right: 34px;
     -webkit-app-region: no-drag;
+    font-size: .9em;
+    transform: translateY(.75px);
 }
 
 .minmax:hover ion-icon {
@@ -379,7 +381,7 @@ input[type=number] {
 
 .minimize {
     position: absolute;
-    right: 70px;
+    right: 58px;
     -webkit-app-region: no-drag;
 }
 
