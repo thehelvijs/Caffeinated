@@ -3,6 +3,7 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_follower";
+        this.displayname = "caffeinated.follower_alert.title";
         this.type = "overlay settings";
         this.id = id;
     }
@@ -66,14 +67,46 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
     }
 
     settingsDisplay = {
-        font: "font",
-        font_size: "number",
-        text_color: "color",
-        volume: "range",
-        enable_audio: "checkbox",
-        use_custom_image: "checkbox",
-        audio_file: "file",
-        image_file: "file"
+        font: {
+            display: "caffeinated.follower_alert.font",
+            type: "font",
+            isLang: true
+        },
+        font_size: {
+            display: "caffeinated.follower_alert.font_size",
+            type: "number",
+            isLang: true
+        },
+        text_color: {
+            display: "caffeinated.follower_alert.text_color",
+            type: "color",
+            isLang: true
+        },
+        volume: {
+            display: "caffeinated.follower_alert.volume",
+            type: "range",
+            isLang: true
+        },
+        enable_audio: {
+            display: "caffeinated.follower_alert.enable_audio",
+            type: "checkbox",
+            isLang: true
+        },
+        use_custom_image: {
+            display: "caffeinated.follower_alert.use_custom_image",
+            type: "checkbox",
+            isLang: true
+        },
+        audio_file: {
+            display: "caffeinated.follower_alert.audio_file",
+            type: "file",
+            isLang: true
+        },
+        image_file: {
+            display: "caffeinated.follower_alert.image_file",
+            type: "file",
+            isLang: true
+        }
     };
 
     defaultSettings = {

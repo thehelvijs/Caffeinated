@@ -3,6 +3,7 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_donation_ticker";
+        this.displayname = "caffeinated.donation_ticker.title";
         this.type = "overlay settings";
         this.id = id;
 
@@ -75,10 +76,26 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
     }
 
     settingsDisplay = {
-        font: "font",
-        currency: "currency",
-        font_size: "number",
-        text_color: "color"
+        font: {
+            display: "caffeinated.donation_ticker.font",
+            type: "font",
+            isLang: true
+        },
+        font_size: {
+            display: "caffeinated.donation_ticker.font_size",
+            type: "number",
+            isLang: true
+        },
+        currency: {
+            display: "caffeinated.donation_ticker.currency",
+            type: "currency",
+            isLang: true
+        },
+        text_color: {
+            display: "caffeinated.donation_ticker.text_color",
+            type: "color",
+            isLang: true
+        }
     };
 
     defaultSettings = {

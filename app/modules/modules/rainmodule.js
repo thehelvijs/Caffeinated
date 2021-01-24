@@ -1,4 +1,5 @@
 
+// TODO lang
 MODULES.moduleClasses["casterlabs_rain"] = class {
 
     constructor(id) {

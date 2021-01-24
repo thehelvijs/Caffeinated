@@ -3,6 +3,7 @@ MODULES.moduleClasses["casterlabs_follower_goal"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_follower_goal";
+        this.displayname = "caffeinated.follower_goal.title";
         this.type = "overlay settings";
         this.id = id;
     }
@@ -65,10 +66,26 @@ MODULES.moduleClasses["casterlabs_follower_goal"] = class {
     }
 
     settingsDisplay = {
-        title: "input",
-        goal_amount: "number",
-        text_color: "color",
-        bar_color: "color"
+        title: {
+            display: "caffeinated.follower_goal.name",
+            type: "input",
+            isLang: true
+        },
+        goal_amount: {
+            display: "caffeinated.follower_goal.goal_amount",
+            type: "number",
+            isLang: true
+        },
+        text_color: {
+            display: "caffeinated.follower_goal.text_color",
+            type: "color",
+            isLang: true
+        },
+        bar_color: {
+            display: "caffeinated.follower_goal.bar_color",
+            type: "color",
+            isLang: true
+        }
     };
 
     defaultSettings = {

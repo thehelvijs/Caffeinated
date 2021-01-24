@@ -211,13 +211,15 @@ class Modules {
         a.innerText = name;
         a.addEventListener("click", () => navigate(selector));
 
+        title.classList.add("dropdown-title");
+        title.appendChild(a);
+
         if (module.displayname) {
             a.classList = "translatable";
             a.setAttribute("lang", name);
-        }
 
-        title.classList.add("dropdown-title");
-        title.appendChild(a);
+            translate(title);
+        }
 
         icons.classList.add("dropdown-icon");
 
@@ -374,6 +376,8 @@ async function createDynamicModuleOption(module, layout, values, formCallback) {
 
         div.appendChild(await createModuleInput(module, key, data, values, formCallback, defaults[key]));
     }
+
+    translate(div);
 
     return div;
 }

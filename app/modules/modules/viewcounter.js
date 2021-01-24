@@ -3,6 +3,7 @@ MODULES.moduleClasses["casterlabs_view_counter"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_view_counter";
+        this.displayname = "caffeinated.view_counter.title";
         this.type = "overlay settings";
         this.id = id;
 
@@ -50,9 +51,21 @@ MODULES.moduleClasses["casterlabs_view_counter"] = class {
     }
 
     settingsDisplay = {
-        font: "font",
-        font_size: "number",
-        text_color: "color"
+        font: {
+            display: "caffeinated.view_counter.font",
+            type: "font",
+            isLang: true
+        },
+        font_size: {
+            display: "caffeinated.view_counter.font_size",
+            type: "number",
+            isLang: true
+        },
+        text_color: {
+            display: "caffeinated.view_counter.text_color",
+            type: "color",
+            isLang: true
+        }
     };
 
     defaultSettings = {

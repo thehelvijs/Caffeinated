@@ -3,6 +3,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_bot";
+        this.displayname = "caffeinated.chatbot.title";
         this.type = "settings";
         this.id = id;
     }
@@ -96,24 +97,24 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
 
     settingsDisplay = {
         enabled: {
-            display: "Enabled",
+            display: "caffeinated.chatbot.enabled",
             type: "checkbox",
-            isLang: false // TODO
+            isLang: true
         },
         commands: {
-            display: "Commands",
+            display: "caffeinated.chatbot.commands",
             type: "dynamic",
-            isLang: false // TODO
+            isLang: true
         },
         follow_callout: {
-            display: "Follow Callout (Leave blank to disable)",
+            display: "caffeinated.chatbot.follow_callout",
             type: "input",
-            isLang: false // TODO
+            isLang: true
         },
         donation_callout: {
-            display: "Donation Callout (Leave blank to disable)",
+            display: "caffeinated.chatbot.donation_callout",
             type: "input",
-            isLang: false // TODO
+            isLang: true
         }
     };
 
@@ -122,30 +123,30 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         commands: {
             display: {
                 type: {
-                    display: "Command Type",
+                    display: "caffeinated.chatbot.command_type",
                     type: "select",
-                    isLang: false
+                    isLang: true
                 },
                 trigger: {
-                    display: "Trigger",
+                    display: "caffeinated.chatbot.trigger",
                     type: "input",
-                    isLang: false
+                    isLang: true
                 },
                 reply: {
-                    display: "Reply",
+                    display: "caffeinated.chatbot.reply",
                     type: "textarea",
-                    isLang: false
+                    isLang: true
                 }
             },
             default: {
                 type: ["Command", "Keyword"],
                 trigger: "!casterlabs",
                 mention: true,
-                reply: "Casterlabs is a free stream widget service!"
+                reply: getTranslation("caffeinated.chatbot.default_reply")
             }
         },
-        follow_callout: "Thanks for the follow!",
-        donation_callout: "Thanks for the support!"
+        follow_callout: getTranslation("caffeinated.chatbot.default_follow_callout"),
+        donation_callout: getTranslation("caffeinated.chatbot.default_donation_callout")
     };
 
 };

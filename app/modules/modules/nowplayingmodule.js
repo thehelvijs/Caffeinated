@@ -3,7 +3,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_now_playing";
-        this.displayname = "Spotify"
+        this.displayname = "spotify.integration.title"
         this.type = "overlay settings";
         this.id = id;
     }
@@ -23,14 +23,14 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
         const authResult = await response.json();
 
         if (!authResult.error) {
-            this.statusElement.innerText = "Logging in";
+            this.statusElement.innerText = getTranslation("spotify.integration.logging_in");
 
             this.refreshToken = authResult.refresh_token;
 
             MODULES.saveToStore(this);
         } else {
             this.settings.token = null;
-            this.statusElement.innerText = "Login with Spotify";
+            this.statusElement.innerText = getTranslation("spotify.integration.login");
         }
     }
 
@@ -59,7 +59,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
         element.style = "overflow: hidden; background-color: rgb(30, 215, 96); margin-top: 15px;";
         element.innerHTML = `
             <img src="https://developer.spotify.com/assets/branding-guidelines/icon4@2x.png" style="height: 3.5em; position: absolute; left: -5px;" />
-            <span style="padding-left: 1.75em; z-index: 2;" name="text">Login with Spotify</span>
+            <span style="padding-left: 1.75em; z-index: 2;" name="text">${getTranslation("spotify.integration.login")}</span>
         `;
 
         this.statusElement = element.querySelector("[name=text]");
@@ -77,9 +77,9 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
 
                 if (auth.error) {
                     this.refreshToken = null;
-                    this.statusElement.innerText = "Login with Spotify";
+                    this.statusElement.innerText = getTranslation("spotify.integration.login");
                 } else {
-                    this.statusElement.innerText = "Logging in";
+                    this.statusElement.innerText = getTranslation("spotify.integration.logging_in");
 
                     this.accessToken = auth.access_token;
                     if (auth.refresh_token) {
@@ -93,7 +93,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
                         }
                     })).json();
 
-                    this.statusElement.innerText = "Logged in as " + profile.display_name + " (Click to log out)";
+                    this.statusElement.innerText = getTranslation("spotify.integration.logged_in_as", profile.display_name);
                 }
 
                 MODULES.saveToStore(this);
@@ -154,15 +154,25 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
 
     settingsDisplay = {
         login: {
-            display: "Login with Spotify",
-            type: "button"
+            display: "spotify.integration.login",
+            type: "button",
+            isLang: true
         },
         announce: {
-            display: "Announce song",
-            type: "checkbox"
+            display: "spotify.integration.announce",
+            type: "checkbox",
+            isLang: true
         },
-        background: "select",
-        image_style: "select"
+        background_style: {
+            display: "spotify.integration.background_style",
+            type: "select",
+            isLang: true
+        },
+        image_style: {
+            display: "spotify.integration.image_style",
+            type: "select",
+            isLang: true
+        }
     };
 
     defaultSettings = {
@@ -170,7 +180,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
             if (this.refreshToken) {
                 this.refreshToken = null;
                 this.accessToken = null;
-                this.statusElement.innerText = "Login with Spotify";
+                this.statusElement.innerText = getTranslation("spotify.integration.login");
             } else {
                 const auth = new AuthCallback("caffeinated_spotify");
 
@@ -183,7 +193,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
             }
         },
         announce: false,
-        background: ["Blur", "Clear", "Solid"],
+        background_style: ["Blur", "Clear", "Solid"],
         image_style: ["Left", "Right", "None"]
     };
 

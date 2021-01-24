@@ -3,6 +3,7 @@ MODULES.moduleClasses["casterlabs_recent_donation"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_recent_donation";
+        this.displayname = "caffeinated.recent_donation.title";
         this.type = "overlay settings";
         this.id = id;
 
@@ -82,10 +83,26 @@ MODULES.moduleClasses["casterlabs_recent_donation"] = class {
     }
 
     settingsDisplay = {
-        font: "font",
-        currency: "currency",
-        font_size: "number",
-        text_color: "color"
+        font: {
+            display: "caffeinated.recent_donation.font",
+            type: "font",
+            isLang: true
+        },
+        font_size: {
+            display: "caffeinated.recent_donation.text_align",
+            type: "number",
+            isLang: true
+        },
+        currency: {
+            display: "caffeinated.recent_donation.currency",
+            type: "currency",
+            isLang: true
+        },
+        text_color: {
+            display: "caffeinated.recent_donation.text_color",
+            type: "color",
+            isLang: true
+        }
     };
 
     defaultSettings = {

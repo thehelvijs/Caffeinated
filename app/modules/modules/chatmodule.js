@@ -3,6 +3,7 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_chat";
+        this.displayname = "caffeinated.chat.title";
         this.type = "overlay settings";
         this.id = id;
     }
@@ -51,13 +52,41 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
     }
 
     settingsDisplay = {
-        font: "font",
-        font_size: "number",
-        text_color: "color",
-        show_donations: "checkbox",
-        chat_direction: "select",
-        chat_animation: "select",
-        text_align: "select"
+        font: {
+            display: "caffeinated.chat.font",
+            type: "font",
+            isLang: true
+        },
+        font_size: {
+            display: "caffeinated.chat.font_size",
+            type: "number",
+            isLang: true
+        },
+        text_color: {
+            display: "caffeinated.chat.text_color",
+            type: "color",
+            isLang: true
+        },
+        show_donations: {
+            display: "caffeinated.chat.show_donations",
+            type: "checkbox",
+            isLang: true
+        },
+        chat_direction: {
+            display: "caffeinated.chat.chat_direction",
+            type: "select",
+            isLang: true
+        },
+        chat_animation: {
+            display: "caffeinated.chat.chat_animation",
+            type: "select",
+            isLang: true
+        },
+        text_align: {
+            display: "caffeinated.chat.text_align",
+            type: "select",
+            isLang: true
+        }
     };
 
     defaultSettings = {

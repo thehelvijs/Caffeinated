@@ -4,6 +4,7 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_donation";
+        this.displayname = "caffeinated.donation_alert.title";
         this.type = "overlay settings";
         this.id = id;
     }
@@ -78,15 +79,51 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
     }
 
     settingsDisplay = {
-        font: "font",
-        font_size: "number",
-        text_color: "color",
-        volume: "range",
-        text_to_speech_voice: "select",
-        audio: "select",
-        image: "select",
-        audio_file: "file",
-        image_file: "file"
+        font: {
+            display: "caffeinated.donation_alert.font",
+            type: "font",
+            isLang: true
+        },
+        font_size: {
+            display: "caffeinated.donation_alert.font_size",
+            type: "number",
+            isLang: true
+        },
+        text_color: {
+            display: "caffeinated.donation_alert.text_color",
+            type: "color",
+            isLang: true
+        },
+        volume: {
+            display: "caffeinated.donation_alert.volume",
+            type: "range",
+            isLang: true
+        },
+        text_to_speech_voice: {
+            display: "caffeinated.donation_alert.text_to_speech_voice",
+            type: "select",
+            isLang: true
+        },
+        audio: {
+            display: "caffeinated.donation_alert.audio",
+            type: "select",
+            isLang: true
+        },
+        image: {
+            display: "caffeinated.donation_alert.image",
+            type: "select",
+            isLang: true
+        },
+        audio_file: {
+            display: "caffeinated.donation_alert.audio_file",
+            type: "file",
+            isLang: true
+        },
+        image_file: {
+            display: "caffeinated.donation_alert.image_file",
+            type: "file",
+            isLang: true
+        }
     };
 
     defaultSettings = {

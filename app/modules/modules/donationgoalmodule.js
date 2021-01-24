@@ -3,6 +3,7 @@ MODULES.moduleClasses["casterlabs_donation_goal"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_donation_goal";
+        this.displayname = "caffeinated.donation_goal.title";
         this.type = "overlay settings";
         this.id = id;
     }
@@ -59,13 +60,17 @@ MODULES.moduleClasses["casterlabs_donation_goal"] = class {
     async onSettingsUpdate() {
         const current = parseFloat(this.page.querySelector("[name=current_amount]").value);
 
-        this.amount = (await convertCurrency(current, this.settings.currency, "USD"));
+        if (this.oldAmount != this.amount) {
+            this.amount = (await convertCurrency(current, this.settings.currency, "USD"));
+        }
 
         this.sendUpdates();
     }
 
     async sendUpdates(socket) {
         MODULES.emitIO(this, "config", this.settings, socket);
+
+        this.oldAmount = this.amount;
 
         const convertedAmount = (await convertCurrency(this.amount, "USD", this.settings.currency));
 
@@ -77,12 +82,36 @@ MODULES.moduleClasses["casterlabs_donation_goal"] = class {
     }
 
     settingsDisplay = {
-        title: "input",
-        currency: "currency",
-        current_amount: "number",
-        goal_amount: "number",
-        text_color: "color",
-        bar_color: "color"
+        title: {
+            display: "caffeinated.donation_goal.name",
+            type: "input",
+            isLang: true
+        },
+        currency: {
+            display: "caffeinated.donation_goal.currency",
+            type: "currency",
+            isLang: true
+        },
+        current_amount: {
+            display: "caffeinated.donation_goal.current_amount",
+            type: "number",
+            isLang: true
+        },
+        goal_amount: {
+            display: "caffeinated.donation_goal.goal_amount",
+            type: "number",
+            isLang: true
+        },
+        text_color: {
+            display: "caffeinated.donation_goal.text_color",
+            type: "color",
+            isLang: true
+        },
+        bar_color: {
+            display: "caffeinated.donation_goal.bar_color",
+            type: "color",
+            isLang: true
+        }
     };
 
     defaultSettings = {
