@@ -511,6 +511,7 @@ input[type=number] {
 
 .settings-page {
     padding-right: 15px;
+    padding-left: 15px;
 }
 
 .settings-page .box {
@@ -526,7 +527,7 @@ input[type=number] {
 /* Pages */
 
 .pages {
-    padding-left: calc(var(--menu-width) + 10px);
+    padding-left: var(--menu-width);
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
