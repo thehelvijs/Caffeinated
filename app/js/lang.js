@@ -1,7 +1,7 @@
 let LANGUAGES = {
     "en-*": {
         "caffeinated.internal.widgets": "Widgets",
-        "caffeinated.internal.followers_count_text": "followers",
+        "caffeinated.internal.followers_count_text": (count) => `${count} followers`,
 
         "caffeinated.credits.title": "Credits",
 
@@ -75,25 +75,42 @@ function getSupportedLanguage(langs = navigator.languages) {
     }
 }
 
-function translate(parent = document) {
+function translate(parent = document, ...args) {
     const lang = LANGUAGES[getSupportedLanguage()];
 
     Array.from(parent.querySelectorAll(".translatable")).forEach((element) => {
         const key = element.getAttribute("lang");
-        const translated = lang[key];
+        let translated = lang[key];
+        let result;
 
-        const result = (translated !== undefined) ? translated : key;
+        if (translated === "undefined") {
+            result = key;
+        } else {
+            if (typeof translated === "function") {
+                result = translated(...args);
+            } else {
+                result = translated;
+            }
+        }
 
         element.innerText = result;
         element.setAttribute("title", result);
     });
 }
 
-function getTranslation(key) {
+function getTranslation(key, ...args) {
     const lang = LANGUAGES[getSupportedLanguage()];
 
-    const translated = lang[key];
-    const result = (translated !== undefined) ? translated : key;
+    let translated = lang[key];
 
-    return result;
+    if (translated === "undefined") {
+        return key;
+    } else {
+
+        if (typeof translated === "function") {
+            translated = translated(...args);
+        }
+
+        return translated;
+    }
 }

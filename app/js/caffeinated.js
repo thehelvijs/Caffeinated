@@ -7,13 +7,13 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 28;
-const VERSION = "1.0-stable5";
+const PROTOCOLVERSION = 29;
+const VERSION = "1.0-stable6";
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
 let CONNECTED = false;
-let PLATFORMS = {};
+let PLATFORMS_DATA = {};
 
 console.log("%c                                                 ", `
     line-height:      100px;
@@ -135,10 +135,10 @@ class Caffeinated {
 
         setInterval(() => this.checkForUpdates(), (10 * 60) * 1000); // 10 Minutes
 
-        PLATFORMS = await (await fetch("https://api.casterlabs.co/v1/koi/platforms")).json();
+        PLATFORMS_DATA = await (await fetch("https://api.casterlabs.co/v2/koi/platforms")).json();
         let platformsList = [];
 
-        Object.values(PLATFORMS).forEach((platform) => {
+        Object.values(PLATFORMS_DATA).forEach((platform) => {
             platformsList.push(platform.name);
         });
 
@@ -357,7 +357,7 @@ const UI = {
 
     setUserPlatform(platform, link) {
         if (platform) {
-            document.querySelector(".user-platform").src = PLATFORMS[platform].logo;
+            document.querySelector(".user-platform").src = PLATFORMS_DATA[platform].logo;
             document.querySelector(".user-platform").setAttribute("title", link);
         } else {
             document.querySelector(".user-platform").src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
@@ -405,9 +405,8 @@ const UI = {
     setFollowerCount(count) {
         if (count && (count >= 0)) {
             const formatted = kFormatter(count, 1);
-            const followers_count_text = getTranslation("caffeinated.internal.followers_count_text");
 
-            document.querySelector("#followers").innerText = `${formatted} ${followers_count_text}`;
+            document.querySelector("#followers").innerText = getTranslation("caffeinated.internal.followers_count_text", formatted);
 
             anime({
                 targets: "#followers",

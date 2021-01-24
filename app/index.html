@@ -100,24 +100,25 @@
         <div id="content">
             <div id="banners">
             </div>
-            <div class="menu">
-                <nav>
-                    <ul class="menu-list" id="page-menu">
-                        <!-- <li id="menu-overlays">
+            <div class="main-content">
+                <div class="menu">
+                    <nav>
+                        <ul class="menu-list" id="page-menu">
+                            <!-- <li id="menu-overlays">
                             <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays"> -->
-                        <!-- <ion-icon name="copy"></ion-icon> -->
-                        <!-- <div class="menu-button-title">Overlays</div>
+                            <!-- <ion-icon name="copy"></ion-icon> -->
+                            <!-- <div class="menu-button-title">Overlays</div>
                             </a>
                         </li> -->
-                        <li id="menu-overlays">
-                            <a class="menu-button">
-                                <div class="menu-button-title">
-                                    <span class="translatable" lang="caffeinated.internal.widgets">Widgets</span>
-                                    <ion-icon name="chevron-down-outline" class="sub-menu-arrow"></ion-icon>
-                                </div>
-                            </a>
-                            <div class="dropdown-container" id="widgets">
-                                <!-- <div class="dropdown-item">
+                            <li id="menu-overlays">
+                                <a class="menu-button">
+                                    <div class="menu-button-title">
+                                        <span class="translatable" lang="caffeinated.internal.widgets">Widgets</span>
+                                        <ion-icon name="chevron-down-outline" class="sub-menu-arrow"></ion-icon>
+                                    </div>
+                                </a>
+                                <div class="dropdown-container" id="widgets">
+                                    <!-- <div class="dropdown-item">
                                     <div class="dropdown-title">
                                         <a>Donation</a>
                                     </div>
@@ -128,34 +129,35 @@
                                     </div>
                                 </div> -->
 
-                                <!-- For when widgets are dynamically added -->
-                                <!-- <div class="dropdown-item add-widget">
+                                    <!-- For when widgets are dynamically added -->
+                                    <!-- <div class="dropdown-item add-widget">
                                     <a href="#"><ion-icon name="add-circle-outline"></ion-icon> <span style="position: absolute; top: 9px; left: 40px;">Add widget</span></a>
                                 </div> -->
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div id="user-bar">
+                        <a onclick="navigate('settings');">
+                            <img class="user-icon" src="media/icon.png" />
+                            <div class="user-username">
+                                <ion-icon name="settings-outline"></ion-icon>
                             </div>
-                        </li>
-                    </ul>
-                </nav>
-                <div id="user-bar">
-                    <a onclick="navigate('settings');">
-                        <img class="user-icon" src="media/icon.png" />
-                        <div class="user-username">
-                            <ion-icon name="settings-outline"></ion-icon>
-                        </div>
-                    </a>
-                    <a onclick="openLink(CAFFEINATED.userdata.streamer.link)">
-                        <img class="user-platform" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
-                    </a>
-                    <p class="user-followers">
-                        <span id="followers"></span>
-                    </p>
-                    <!-- <a class="user-settings" title="Settings" onclick="navigate('settings');">
+                        </a>
+                        <a onclick="openLink(CAFFEINATED.userdata.streamer.link)">
+                            <img class="user-platform" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
+                        </a>
+                        <p class="user-followers">
+                            <span id="followers"></span>
+                        </p>
+                        <!-- <a class="user-settings" title="Settings" onclick="navigate('settings');">
                         <ion-icon name="settings-outline"></ion-icon>
                     </a> -->
+                    </div>
                 </div>
-            </div>
-            <div class="pages">
-                <div class="content page widget-settings-page hide" page="settings" id="settings"></div>
+                <div class="pages">
+                    <div class="content page widget-settings-page hide" page="settings" id="settings"></div>
+                </div>
             </div>
             <div id="login" class="center-text hide">
                 <br />
