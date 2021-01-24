@@ -77,6 +77,18 @@
                 -webkit-app-region: no-drag !important;
             }
 
+            #minimize {
+                cursor: pointer;
+                position: fixed;
+                right: 28px;
+                top: 6px;
+                -webkit-app-region: no-drag !important;
+            }
+
+            #minimize ion-icon {
+                -webkit-app-region: no-drag !important;
+            }
+
             .count {
                 position: fixed;
                 right: 15px;
@@ -161,6 +173,9 @@
             <a id="close" title="Close">
                 <ion-icon name="close"></ion-icon>
             </a>
+            <a id="minimize" title="Minimize">
+                <ion-icon name="remove" style="--ionicon-stroke-width: 48px !important;"></ion-icon>
+            </a>
         </div>
         <div class="count">
             <ion-icon class="eyeicon" name="eye"></ion-icon>
@@ -177,6 +192,10 @@
 
             document.querySelector("#close").addEventListener("click", () => {
                 remote.getCurrentWindow().close();
+            });
+
+            document.querySelector("#minimize").addEventListener("click", () => {
+                remote.getCurrentWindow().minimize();
             });
 
             function setViewers(viewers) {
