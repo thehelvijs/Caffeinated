@@ -107,7 +107,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 alwaysOnTop: true,
                 show: false,
                 titleBarStyle: "shown",
-                icon: "https://assets.casterlabs.co/logo/casterlabs_icon.png",
+                icon: __dirname + "/media/app_icon.png",
                 frame: false,
                 webPreferences: {
                     nodeIntegration: true
@@ -153,7 +153,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 alwaysOnTop: true,
                 show: false,
                 titleBarStyle: "shown",
-                icon: "https://assets.casterlabs.co/logo/casterlabs_icon.png",
+                icon: __dirname + "/media/app_icon.png",
                 frame: false,
                 webPreferences: {
                     nodeIntegration: true

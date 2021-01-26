@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 30;
-const VERSION = "1.0-stable7";
+const PROTOCOLVERSION = 31;
+const VERSION = "1.0-stable8";
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
@@ -727,7 +727,7 @@ Array.from(document.querySelectorAll(".menu-button")).forEach((dropdown) => {
 });
 
 document.querySelector(".close").addEventListener("click", () => {
-    electron.getCurrentWindow().close();
+    app.exit();
 });
 
 document.querySelector(".minimize").addEventListener("click", () => {
