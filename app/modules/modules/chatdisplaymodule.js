@@ -110,7 +110,8 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 icon: __dirname + "/media/app_icon.png",
                 frame: false,
                 webPreferences: {
-                    nodeIntegration: true
+                    nodeIntegration: true,
+                    enableRemoteModule: true
                 }
             });
 
@@ -156,7 +157,8 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 icon: __dirname + "/media/app_icon.png",
                 frame: false,
                 webPreferences: {
-                    nodeIntegration: true
+                    nodeIntegration: true,
+                    enableRemoteModule: true
                 }
             });
 
