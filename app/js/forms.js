@@ -8,7 +8,7 @@ const FORMSJS = {
     PARSE_NUMBERS: false,
     ALLOW_FALSE: true,
 
-    readForm(selector, query = document, parent = query.querySelector(selector)) {
+    readForm(selector, parent = query.querySelector(selector)) {
         let values = {};
 
         Array.from(parent.querySelectorAll("." + this.CLASS_SELECTOR)).forEach((element) => {
