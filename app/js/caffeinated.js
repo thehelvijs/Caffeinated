@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 31;
-const VERSION = "1.0-stable8";
+const PROTOCOLVERSION = 32;
+const VERSION = "1.0-stable9";
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
@@ -35,13 +35,14 @@ class Caffeinated {
     constructor() {
         FONTSELECT.endPoint = "https://www.googleapis.com/webfonts/v1/webfonts?sort=popularity&key=AIzaSyBuFeOYplWvsOlgbPeW8OfPUejzzzTCITM"; // TODO cache/proxy from Casterlabs' server
 
+        this.uniqueStateId = btoa(generateUUID() + generateUnsafePassword());
         this.store = new Store();
 
         if (!this.store.get("initalized")) {
             this.store.set({
                 initalized: true,
                 port: 8091,
-                user: null,
+                token: null,
                 modules: {},
                 repos: [],
                 cleared: []
@@ -50,6 +51,10 @@ class Caffeinated {
 
         if (!this.store.has("cleared_events")) {
             this.store.set("cleared_events", []);
+        }
+
+        if (!this.store.has("resource_tokens")) {
+            this.store.set("resource_tokens", {});
         }
 
         this.isDevEnviroment = !location.href.includes(".asar") || this.store.get("force_dev");
@@ -112,6 +117,53 @@ class Caffeinated {
 
     getRepos() {
         return this.store.get("repos");
+    }
+
+    getResourceToken(resourceId) {
+        return this.store.get("resource_tokens")[resourceId];
+    }
+
+    addResourceToken(token) {
+        try {
+            let payload = JSON.parse(atob(token.split(".")[1]));
+            let tokens = this.store.get("resource_tokens");
+
+            payload.token = token;
+
+            fetch(`https://${payload.server_location}/data?token=${token}`).then((response) => {
+                if (response.status == 200) {
+                    tokens[payload.resource_id] = payload;
+
+                    this.store.set("resource_tokens", tokens);
+
+                    response.json().then(async (result) => {
+                        try {
+                            await this.repomanager.addRepo(result.data.module_url);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+
+                    alert("Code redeemed successfully.");
+                } else {
+                    alert("Code invalid.");
+                }
+            }).catch(() => {
+                alert("Code invalid.");
+            });
+        } catch (e) {
+            alert("Code invalid.");
+        }
+    }
+
+    removeResourceToken(resourceId) {
+        let tokens = this.store.get("resource_tokens");
+
+        delete tokens[resourceId];
+
+        this.store.set("resource_tokens", tokens);
+
+        location.reload();
     }
 
     removeRepo(repo) {
@@ -188,6 +240,43 @@ class Caffeinated {
                 } catch (e) { } // Ignore, module not loaded because it's not present
             }
         }
+
+        Object.values(this.store.get("resource_tokens")).forEach((payload) => {
+            fetch(`https://${payload.server_location}/data?token=${payload.token}`).then((response) => {
+                if (response.status == 200) {
+                    response.json().then(async (result) => {
+                        try {
+                            await this.repomanager.addRepo(result.data.module_url);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+                } else {
+                    this.removeResourceToken(payload.token);
+                }
+            });
+        })
+
+        MODULES.initalizeModule({
+            namespace: "casterlabs_caffeinated",
+            type: "settings",
+            persist: true,
+            id: "Resource Redeem",
+
+            onSettingsUpdate() {
+                this.page.querySelector('[name="code_to_redeem"]').value = "";
+
+                CAFFEINATED.addResourceToken(this.settings.code_to_redeem);
+            },
+
+            settingsDisplay: {
+                code_to_redeem: "input"
+            },
+
+            defaultSettings: {
+                code_to_redeem: ""
+            }
+        });
 
         MODULES.initalizeModule({
             displayname: "caffeinated.credits.title",
