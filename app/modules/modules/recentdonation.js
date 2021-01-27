@@ -89,7 +89,7 @@ MODULES.moduleClasses["casterlabs_recent_donation"] = class {
             isLang: true
         },
         font_size: {
-            display: "caffeinated.recent_donation.text_align",
+            display: "caffeinated.recent_donation.font_size",
             type: "number",
             isLang: true
         },

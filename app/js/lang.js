@@ -40,6 +40,7 @@ let LANGUAGES = {
         "caffeinated.follower_goal.title": "Follower Goal",
         "caffeinated.follower_goal.name": "Title",
         "caffeinated.follower_goal.currency": "Currency",
+        "caffeinated.follower_goal.goal_amount": "Target Amount",
         "caffeinated.follower_goal.text_color": "Title Color",
         "caffeinated.follower_goal.bar_color": "Progress Bar Color",
 
