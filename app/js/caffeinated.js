@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 32;
-const VERSION = "1.0-stable9";
+const PROTOCOLVERSION = 33;
+const VERSION = "1.0-stable10";
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
@@ -241,21 +241,20 @@ class Caffeinated {
             }
         }
 
-        Object.values(this.store.get("resource_tokens")).forEach((payload) => {
-            fetch(`https://${payload.server_location}/data?token=${payload.token}`).then((response) => {
-                if (response.status == 200) {
-                    response.json().then(async (result) => {
-                        try {
-                            await this.repomanager.addRepo(result.data.module_url);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-                } else {
-                    this.removeResourceToken(payload.token);
+        for (const payload of Object.values(this.store.get("resource_tokens"))) {
+            const response = await fetch(`https://${payload.server_location}/data?token=${payload.token}`)
+
+            if (response.status == 200) {
+                const result = await response.json();
+                try {
+                    await this.repomanager.addRepo(result.data.module_url);
+                } catch (e) {
+                    console.error(e);
                 }
-            });
-        })
+            } else {
+                this.removeResourceToken(payload.token);
+            }
+        }
 
         MODULES.initalizeModule({
             namespace: "casterlabs_caffeinated",
