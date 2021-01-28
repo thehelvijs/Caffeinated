@@ -275,7 +275,7 @@ class Modules {
         module.page = container;
 
         const formCallback = async () => {
-            const result = FORMSJS.readForm(null, container);
+            const result = FORMSJS.readForm("#" + settingsSelector);
 
             module.settings = result;
 
