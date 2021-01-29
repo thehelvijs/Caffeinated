@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 34;
-const VERSION = "1.0-stable11";
+const PROTOCOLVERSION = 35;
+const VERSION = "1.0-stable12";
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
@@ -691,7 +691,7 @@ const UI = {
                 password.value = "";
                 mfa.value = "";
 
-                fetch("https://api.casterlabs.co/v2/platforms/caffeine/authorize?refresh_token=" + refreshToken).then((nResult) => nResult.json()).then((nResponse) => {
+                fetch("https://api.casterlabs.co/v2/natsukashii/create?platform=CAFFEINE&token=" + refreshToken).then((nResult) => nResult.json()).then((nResponse) => {
                     if (nResponse.data) {
                         CAFFEINATED.setToken(nResponse.data.token);
                     } else {
