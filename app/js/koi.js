@@ -130,34 +130,38 @@ class Koi {
     }
 
     upvote(messageId) {
-        this.ws.send(JSON.stringify({
-            type: "UPVOTE",
-            message_id: messageId
-        }));
+        if (this.isAlive()) {
+            this.ws.send(JSON.stringify({
+                type: "UPVOTE",
+                message_id: messageId
+            }));
+        }
     }
 
     sendMessage(message) {
-        if (isPlatform("TWITCH")) {
-            message = message.replace(/\n/gm, " ");
-        }
+        if (this.isAlive()) {
+            if (isPlatform("TWITCH")) {
+                message = message.replace(/\n/gm, " ");
+            }
 
-        this.ws.send(JSON.stringify({
-            type: "CHAT",
-            message: message
-        }));
+            this.ws.send(JSON.stringify({
+                type: "CHAT",
+                message: message
+            }));
+        }
     }
 
     isAlive() {
-        return this.ws.readyState == this.ws.OPEN;
+        return this.ws && (this.ws.readyState == WebSocket.OPEN);
     }
 
     test(event) {
-        if (this.ws.readyState != WebSocket.OPEN) return;
-
-        this.ws.send(JSON.stringify({
-            type: "TEST",
-            eventType: event.toUpperCase()
-        }));
+        if (this.isAlive()) {
+            this.ws.send(JSON.stringify({
+                type: "TEST",
+                eventType: event.toUpperCase()
+            }));
+        }
     }
 
     close() {
