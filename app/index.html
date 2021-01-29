@@ -77,6 +77,7 @@
     </head>
 
     <body>
+        <canvas id="doot-rain" style="opacity: 0;"></canvas>
         <div id="splash" style="opacity: 1;">
             <img src="media/app_icon.png" class="app-icon" />
             <img src="media/caffeinated.png" class="caffeinated-logo" />
@@ -84,7 +85,7 @@
         </div>
         <div class="title-bar">
             <div class="title-bar-title">
-                <img class="version-hover" src="media/app_icon.png" />Caffeinated
+                <img class="version-hover" src="media/app_icon.png" onclick="UI.doot();" />Caffeinated
             </div>
             <!-- <span class="currentpage" style="opacity: 0;"></span> -->
             <a class="close" title="Close">
@@ -171,15 +172,8 @@
                     <!-- <sub><i>ITALICS</i> <b>BOLD <i>VARIETY</i></b></sub> New merch? -->
                     <br />
                     <br />
-                    <a class="button" onclick="UI.loginScreen('TWITCH');" style="overflow: hidden; background-color: #7d2bf9;">
-                        <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 12.5px; top: 7.5px;" />
-                        <span style="padding-left: 1.75em; z-index: 2;">Login with Twitch</span>
-                    </a>
-                    <br />
-                    <a class="button" onclick="UI.loginScreen('CAFFEINE');" style="overflow: hidden; background-color: #0000FF;">
-                        <img src="https://assets.casterlabs.co/caffeine/logo.png" style="height: 2.5em; position: absolute; left: 5px;" />
-                        <span style="padding-left: 1.75em; z-index: 2;">Login with Caffeine</span>
-                    </a>
+                    <div class="button-container">
+                    </div>
                     <div class="service-disclaimer">
                         <span>
                             By logging in, you agree to our <a onclick="openLink('https:\/\/casterlabs.co/terms-of-service');">Terms of Service</a> and acknowledge that our <a onclick="openLink('https:\/\/casterlabs.co/privacy-policy')">Privacy Policy</a> applies to you.

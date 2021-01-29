@@ -34,6 +34,16 @@ a {
     color: var(--theme);
 }
 
+#doot-rain {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100000;
+    pointer-events: none;
+}
+
 ion-icon {
     pointer-events: none !important;
     stroke: var(--menu-icon-color) !important;
@@ -89,6 +99,7 @@ ion-icon {
 
 #login-buttons .button {
     width: 200px;
+    margin-top: 1px;
 }
 
 .service-disclaimer {
