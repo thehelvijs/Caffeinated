@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 33;
-const VERSION = "1.0-stable10";
+const PROTOCOLVERSION = 34;
+const VERSION = "1.0-stable11";
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
@@ -44,7 +44,6 @@ class Caffeinated {
                 port: 8091,
                 token: null,
                 modules: {},
-                repos: [],
                 cleared: []
             });
         }
@@ -80,15 +79,15 @@ class Caffeinated {
     }
 
     async addRepo(repo) {
-        repo = repo.replace("\\", "/");
-
         if (repo.endsWith("/")) {
             repo = repo.substring(repo, repo.length - 1);
         }
 
         await this.repomanager.addRepo(repo);
 
-        this.store.set("repos", this.store.get("repos").concat(repo));
+        this.store.set("repos", [repo]);
+
+        location.reload();
     }
 
     triggerBanner(name, callback, color = "rebeccapurple") {
@@ -113,10 +112,6 @@ class Caffeinated {
 
             callback(content);
         }
-    }
-
-    getRepos() {
-        return this.store.get("repos");
     }
 
     getResourceToken(resourceId) {
@@ -166,17 +161,6 @@ class Caffeinated {
         location.reload();
     }
 
-    removeRepo(repo) {
-        repo = repo.replace("\\", "/");
-
-        if (repo.endsWith("/")) {
-            repo = repo.substring(repo, repo.length - 1);
-        }
-
-        this.store.set("repos", removeFromArray(this.store.get("repos"), repo));
-        location.reload();
-    }
-
     reset() {
         this.store.clear();
         location.reload();
@@ -194,9 +178,11 @@ class Caffeinated {
             platformsList.push(platform.name);
         });
 
+        const instance = this;
+
         MODULES.initalizeModule({
             displayname: "caffeinated.settings.title",
-            namespace: "casterlabs_caffeinated",
+            namespace: "casterlabs_caffeinated_settings",
             type: "settings",
             persist: true,
             id: "settings",
@@ -216,18 +202,64 @@ class Caffeinated {
             }
         });
 
-        this.store.set("repos", removeFromArray(this.store.get("repos"), "https://beta.casterlabs.co/caffeinated"));
-        this.store.set("repos", removeFromArray(this.store.get("repos"), "https://caffeinated.casterlabs.co"));
+        await this.repomanager.addRepo(__dirname + "/modules");
 
-        await this.repomanager.addRepo(__dirname + "/modules", false);
+        MODULES.initalizeModule({
+            namespace: "casterlabs_caffeinated_modules",
+            type: "settings",
+            persist: true,
+            id: "third_party_modules",
 
-        for (let repo of this.store.get("repos")) {
-            try {
-                await this.repomanager.addRepo(repo);
-            } catch (e) {
-                console.error(e);
+            getDataToStore() {
+                return this.settings;
+            },
+
+            async init() {
+                if (instance.store.has("repos")) {
+                    instance.store.get("repos").forEach((url) => {
+                        this.settings.third_party_repos.push({ repo_url: url });
+                    });
+                    MODULES.saveToStore(this);
+                    instance.store.delete("repos");
+                    location.reload();
+                }
+
+                for (const repo of this.settings.third_party_repos) {
+                    try {
+                        await instance.repomanager.addRepo(repo.repo_url);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            },
+
+            settingsDisplay: {
+                third_party_repos: "dynamic",
+                apply: {
+                    display: "Apply (Requires Reload)",
+                    type: "button",
+                    isLang: false
+                }
+            },
+
+            defaultSettings: {
+                third_party_repos: {
+                    display: {
+                        repo_url: {
+                            display: "Repo URL",
+                            type: "input",
+                            isLang: false
+                        }
+                    },
+                    default: {
+                        repo_url: ""
+                    }
+                },
+                apply: () => {
+                    location.reload();
+                }
             }
-        }
+        });
 
         for (const [namespace, modules] of Object.entries(this.store.get("modules"))) {
             for (const [id, module] of Object.entries(modules)) {
@@ -257,10 +289,10 @@ class Caffeinated {
         }
 
         MODULES.initalizeModule({
-            namespace: "casterlabs_caffeinated",
+            namespace: "casterlabs_caffeinated_redeem",
             type: "settings",
             persist: true,
-            id: "Resource Redeem",
+            id: "resource_redeem",
 
             onSettingsUpdate() {
                 this.page.querySelector('[name="code_to_redeem"]').value = "";
@@ -291,7 +323,7 @@ class Caffeinated {
             settingsDisplay: {
                 content: {
                     type: "iframe-src",
-                    height: "400px",
+                    height: "475px",
                     isLang: false
                 }
             },

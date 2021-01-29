@@ -327,6 +327,7 @@ class Modules {
 
     getStoredValues(module) {
         const stored = CAFFEINATED.store.get("modules." + module.namespace + "." + module.id);
+        let data;
 
         if (stored) {
             for (const [key, value] of Object.entries(module.defaultSettings)) {
@@ -335,11 +336,26 @@ class Modules {
                 }
             }
 
-            return stored;
+            data = stored;
         } else {
-            return Object.assign({}, module.defaultSettings);
+            data = Object.assign({}, module.defaultSettings);
         }
+
+
+        for (const [key, value] of Object.entries(module.defaultSettings)) {
+            const type = module.settingsDisplay[key];
+
+            if ((type === "dynamic") || ((typeof type === "object") && !Array.isArray(type) && (type.type === "dynamic)"))) {
+                if (!Array.isArray(data[key])) {
+                    data[key] = value.default;
+                }
+            }
+
+        }
+
+        return data;
     }
+
 }
 
 async function createDynamicModuleOption(module, layout, values, formCallback) {
@@ -471,7 +487,6 @@ async function createModuleInput(module, key, data, stored, formCallback, defaul
 
         input.classList = "dynamic-setting data";
         input.id = uuid;
-        input.appendChild(add);
         input.setAttribute("type", type);
         input.setAttribute("name", key);
         input.setAttribute("owner", module.id);
@@ -484,6 +499,7 @@ async function createModuleInput(module, key, data, stored, formCallback, defaul
         }
 
         container.appendChild(name);
+        container.appendChild(add);
         container.appendChild(input);
         container.appendChild(document.createElement("br"));
 
@@ -491,6 +507,8 @@ async function createModuleInput(module, key, data, stored, formCallback, defaul
             stored[key].forEach(async (dynamic) => {
                 input.appendChild(await createDynamicModuleOption(module, defaultValue, dynamic, formCallback));
             });
+        } else {
+            stored[key] = [];
         }
 
         return container;
