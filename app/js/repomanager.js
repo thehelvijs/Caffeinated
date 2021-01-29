@@ -4,12 +4,8 @@ class RepoManager {
         this.elements = [];
     }
 
-    async addRepo(repo, useVersionedRepo = true) {
+    async addRepo(repo) {
         try {
-            if (useVersionedRepo) {
-                repo = await RepoUtil.getRepoUrl(repo);
-            }
-
             let modules = await (await fetch(repo + "/modules.json")).json();
 
             if (RepoUtil.isSupported(modules.supported, modules.unsupported)) {
@@ -88,24 +84,6 @@ class RepoManager {
 const RepoUtil = {
     matchToRegex(str) {
         return new RegExp("(" + str.replace(/[\.]/g, "\\.").replace(/[\*]/g, ".*") + ")", "g");
-    },
-
-    getRepoUrl(base) {
-        return new Promise((resolve) => {
-            let versioned = base + "/" + VERSION.split("-")[0];
-
-            fetch(versioned + "/modules.json").then((response) => {
-                if (response.ok) {
-                    resolve(versioned);
-                } else {
-                    console.warn("Repo: " + base + " does not support versioned urls, using root.");
-                    resolve(base);
-                }
-            }).catch(() => {
-                console.warn("Repo: " + base + " does not support versioned urls, using root.");
-                resolve(base);
-            });;
-        });
     },
 
     waitForScriptToLoad(script) {
