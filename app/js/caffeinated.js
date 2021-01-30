@@ -7,19 +7,19 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 36;
-const VERSION = "1.0-stable13";
+const PROTOCOLVERSION = 37;
+const VERSION = "1.0-stable14";
 
 const LOGIN_BUTTONS = {
     BETA: `
-        <a class="button" onclick="UI.login('caffeinated_twitch', 'https:\/\/id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit&state=');" style="overflow: hidden; background-color: #7d2bf9;">
+        <a class="button" onclick="UI.login('caffeinated_twitch', 'https:\/\/id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions&state=');" style="overflow: hidden; background-color: #7d2bf9;">
             <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 14px; top: 7.5px;" />
             <span style="padding-left: 1.75em; z-index: 2;">
                 Login with Twitch
             </span>
         </a>
         <br />
-        <a class="button" onclick="UI.login('caffeinated_trovo', 'https:\/\/open.trovo.live/page/login.html?client_id=BGUnwUJUSJS2wf5xJpa2QrJRU4ZVcMgS&response_type=token&scope=channel_details_self+chat_send_self+user_details_self+chat_connect&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth/trovo&state=');" style="overflow: hidden; background-color: #088942;">
+        <a class="button" onclick="UI.login('caffeinated_trovo', 'https:\/\/open.trovo.live/page/login.html?client_id=BGUnwUJUSJS2wf5xJpa2QrJRU4ZVcMgS&response_type=token&scope=channel_details_self+send_chat_self+user_details_self+chat_connect&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth/trovo&state=');" style="overflow: hidden; background-color: #088942;">
             <img src="https://assets.casterlabs.co/trovo/logo.png" style="height: 2em; position: absolute; left: 8px; top: 4px;" />
             <span style="padding-left: 1.75em; z-index: 2;">
                 Login with Trovo
@@ -34,7 +34,7 @@ const LOGIN_BUTTONS = {
         </a>
     `,
     STABLE: `
-        <a class="button" onclick="UI.login('caffeinated_twitch', 'https:\/\/id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit&state=');" style="overflow: hidden; background-color: #7d2bf9;">
+        <a class="button" onclick="UI.login('caffeinated_twitch', 'https:\/\/id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions&state=');" style="overflow: hidden; background-color: #7d2bf9;">
             <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 14px; top: 7.5px;" />
             <span style="padding-left: 1.75em; z-index: 2;">
                 Login with Twitch

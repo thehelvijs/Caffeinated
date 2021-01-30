@@ -537,7 +537,8 @@
 
                 div.appendChild(counter);
 
-                if (event.donations) {
+                // Twitch Cheers are parsed as emojis.
+                if (event.donations && (event.sender.platform != "TWITCH")) {
                     event.donations.forEach((donation) => {
                         const img = document.createElement("img");
 
