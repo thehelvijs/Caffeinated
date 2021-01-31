@@ -58,7 +58,7 @@ MODULES.moduleClasses["casterlabs_top_donation"] = class {
                 }
 
                 if (amount >= this.amount) {
-                    this.username = event.sender.username;
+                    this.username = event.sender.displayname;
                     this.amount = amount;
 
                     MODULES.saveToStore(this);

@@ -978,8 +978,8 @@ koi.addEventListener("chat", (event) => {
 koi.addEventListener("user_update", (event) => {
     UI.splashScreen(false);
     UI.loginScreen("HIDE");
-    UI.setUserImage(event.streamer.image_link, event.streamer.username);
-    UI.setUserName(event.streamer.username, event.streamer.badges);
+    UI.setUserImage(event.streamer.image_link, event.streamer.displayname);
+    UI.setUserName(event.streamer.displayname, event.streamer.badges);
     UI.setFollowerCount(event.streamer.followers_count);
     UI.setUserPlatform(event.streamer.platform, event.streamer.link);
 

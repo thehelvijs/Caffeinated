@@ -53,7 +53,7 @@ MODULES.moduleClasses["casterlabs_recent_donation"] = class {
                     amount += (await convertCurrency(donation.amount, donation.currency, "USD"));
                 }
 
-                this.username = event.sender.username;
+                this.username = event.sender.displayname;
                 this.amount = amount;
 
                 MODULES.saveToStore(this);
