@@ -67,22 +67,22 @@ MODULES.moduleClasses["casterlabs_follower_goal"] = class {
 
     settingsDisplay = {
         title: {
-            display: "caffeinated.follower_goal.name",
+            display: "caffeinated.generic_goal.name",
             type: "input",
             isLang: true
         },
         goal_amount: {
-            display: "caffeinated.follower_goal.goal_amount",
+            display: "caffeinated.generic_goal.goal_amount",
             type: "number",
             isLang: true
         },
         text_color: {
-            display: "caffeinated.follower_goal.text_color",
+            display: "caffeinated.generic_goal.text_color",
             type: "color",
             isLang: true
         },
         bar_color: {
-            display: "caffeinated.follower_goal.bar_color",
+            display: "caffeinated.generic_goal.bar_color",
             type: "color",
             isLang: true
         }

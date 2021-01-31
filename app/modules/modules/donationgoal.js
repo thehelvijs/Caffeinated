@@ -83,7 +83,7 @@ MODULES.moduleClasses["casterlabs_donation_goal"] = class {
 
     settingsDisplay = {
         title: {
-            display: "caffeinated.donation_goal.name",
+            display: "caffeinated.generic_goal.name",
             type: "input",
             isLang: true
         },
@@ -98,17 +98,17 @@ MODULES.moduleClasses["casterlabs_donation_goal"] = class {
             isLang: true
         },
         goal_amount: {
-            display: "caffeinated.donation_goal.goal_amount",
+            display: "caffeinated.generic_goal.goal_amount",
             type: "number",
             isLang: true
         },
         text_color: {
-            display: "caffeinated.donation_goal.text_color",
+            display: "caffeinated.generic_goal.text_color",
             type: "color",
             isLang: true
         },
         bar_color: {
-            display: "caffeinated.donation_goal.bar_color",
+            display: "caffeinated.generic_goal.bar_color",
             type: "color",
             isLang: true
         }
