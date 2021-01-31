@@ -81,17 +81,18 @@ class Koi {
                         const type = event["event_type"];
 
                         if ((type === "DONATION") && (event.sender.platform === "CASTERLABS_SYSTEM")) {
+                            const streamerPlatform = CAFFEINATED.userdata.streamer.platform; // TODO MOVE AWAY FROM THIS
                             event.isTest = true;
 
                             event.donations.forEach((donation) => {
                                 // TODO keep this up-to-date with new platforms.
-                                if (event.streamer.platform === "CAFFEINE") {
+                                if (streamerPlatform === "CAFFEINE") {
                                     donation.amount = 9;
                                     donation.currency = "CAFFEINE_CREDITS";
                                     donation.image = "https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png";
                                     donation.animated_image = "https://assets.caffeine.tv/digital-items/praise_preview.062e1659faa201a6c9fb0f4599bfa8ef.png";
                                     donation.type = "CAFFEINE_PROP";
-                                } else if (event.streamer.platform === "TWITCH") {
+                                } else if (streamerPlatform === "TWITCH") {
                                     donation.amount = 100;
                                     donation.currency = "TWITCH_BITS";
                                     donation.image = "https://d3aqoihi2n8ty8.cloudfront.net/actions/party/light/static/100/4.gif";
@@ -101,7 +102,7 @@ class Koi {
                             });
 
                             // Add an emote to the message since that's how they work on Twitch
-                            if (event.streamer.platform === "TWITCH") {
+                            if (streamerPlatform === "TWITCH") {
                                 event.message = event.message + " Party100";
 
                                 event.emotes["Party100"] = "https://d3aqoihi2n8ty8.cloudfront.net/actions/party/light/animated/100/4.gif";
