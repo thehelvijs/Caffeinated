@@ -1,228 +1,440 @@
 let LANGUAGES = {
-    "en-*": {
-        // UI
-        "caffeinated.internal.widgets": "Widgets",
-        "caffeinated.internal.followers_count_text": (count) => `${count} followers`,
+    // UI
+    "caffeinated.internal.widgets": {
+        "en-*": "Widgets",
+        "fr-*": "Outils"
+    },
+    "caffeinated.internal.followers_count_text": {
+        "en-*": (count) => `${count} followers`,
+        "fr-*": (count) => `${count} suiveures`
+    },
 
-        // Credits
-        "caffeinated.credits.title": "Credits",
+    // Generic
+    "generic.font": {
+        "en-*": "Font",
+        "fr-*": "Police de caractère"
+    },
+    "generic.font.size": {
+        "en-*": "Font Size (px)",
+        "fr-*": "Grandeur de Police de caractère (px)"
+    },
+    "generic.text.color": {
+        "en-*": "Text Color",
+        "fr-*": "Couleur de Texte"
+    },
+    "generic.volume": {
+        "en-*": "Volume",
+        "fr-*": "Volume"
+    },
+    "generic.alert.audio": {
+        "en-*": "Alert Audio",
+        "fr-*": "Audio d'Alerte"
+    },
+    "generic.alert.image": {
+        "en-*": "Alert Image",
+        "fr-*": "Image d'Alerte"
+    },
+    "generic.audio.file": {
+        "en-*": "Audio File",
+        "fr-*": "Fichier Audio"
+    },
+    "generic.image.file": {
+        "en-*": "Image File",
+        "fr-*": "Fichier Image"
+    },
+    "generic.currency": {
+        "en-*": "Currency",
+        "fr-*": "Devise"
+    },
 
-        // Settings
-        "caffeinated.settings.title": "Settings",
-        "caffeinated.settings.signout": "Sign out",
+    // Credits
+    "caffeinated.credits.title": {
+        "en-*": "Credits",
+        "fr-*": "Crédit"
+    },
 
-        // Support Us
-        "caffeinated.supporters.title": "Support Us",
+    // Settings
+    "caffeinated.settings.title": {
+        "en-*": "Settings",
+        "fr-*": "Réglages"
+    },
+    "caffeinated.settings.signout": {
+        "en-*": "Sign out",
+        "fr-*": "Déconnexion"
+    },
+    "caffeinated.settings.language": {
+        "en-*": "Language",
+        "fr-*": "Langue"
+    },
 
-        // Chat Display
-        "caffeinated.chatdisplay.title": "Chat",
+    // Support Us
+    "caffeinated.supporters.title": {
+        "en-*": "Support Us",
+        "fr-*": "Nous Soutenir"
+    },
 
-        // Chat
-        "caffeinated.chat.title": "Chat",
-        "caffeinated.chat.font": "Font",
-        "caffeinated.chat.font_size": "Font Size (px)",
-        "caffeinated.chat.text_color": "Text Color",
-        "caffeinated.chat.show_donations": "Show Donations",
-        "caffeinated.chat.chat_direction": "Direction",
-        "caffeinated.chat.chat_animation": "Animation",
-        "caffeinated.chat.text_align": "Text Align",
+    // Chat Display
+    "caffeinated.chatdisplay.title": {
+        "en-*": "Chat",
+        "fr-*": "Chat"
+    },
+    "caffeinated.chatdisplay.follow_text": {
+        "en-*": (username) => `${username} started following.`,
+        "fr-*": (username) => `${username} a commencé à suivre.`
+    },
+    "caffeinated.chatdisplay.join_text": {
+        "en-*": (username) => `${username} joined the stream.`,
+        "fr-*": (username) => `${username} a rejoint le flux vidéo.`
+    },
+    "caffeinated.chatdisplay.leave_text": {
+        "en-*": (username) => `${username} left the stream.`,
+        "fr-*": (username) => `${username} quitter le flux vidéo.`
+    },
 
-        // Donation Goal
-        "caffeinated.donation_goal.title": "Donation Goal",
-        "caffeinated.donation_goal.name": "Title",
-        "caffeinated.donation_goal.currency": "Currency",
-        "caffeinated.donation_goal.current_amount": "Current Amount",
-        "caffeinated.donation_goal.goal_amount": "Target Amount",
-        "caffeinated.donation_goal.text_color": "Title Color",
-        "caffeinated.donation_goal.bar_color": "Progress Bar Color",
+    // Chat
+    "caffeinated.chat.title": {
+        "en-*": "Chat",
+        "fr-*": "Chat"
+    },
+    "caffeinated.chat.show_donations": {
+        "en-*": "Show Donations",
+        "fr-*": "Montre Donations"
+    },
+    "caffeinated.chat.chat_direction": {
+        "en-*": "Direction",
+        "fr-*": "Direction"
+    },
+    "caffeinated.chat.chat_animation": {
+        "en-*": "Animation",
+        "fr-*": "Animation"
+    },
+    "caffeinated.chat.text_align": {
+        "en-*": "Text Align",
+        "fr-*": "Alignment de Texte"
+    },
 
-        // Follower Goal
-        "caffeinated.follower_goal.title": "Follower Goal",
-        "caffeinated.follower_goal.name": "Title",
-        "caffeinated.follower_goal.currency": "Currency",
-        "caffeinated.follower_goal.goal_amount": "Target Amount",
-        "caffeinated.follower_goal.text_color": "Title Color",
-        "caffeinated.follower_goal.bar_color": "Progress Bar Color",
+    // Donation Goal
+    "caffeinated.donation_goal.title": {
+        "en-*": "Donation Goal",
+        "fr-*": "Objectif de don"
+    },
+    "caffeinated.donation_goal.name": {
+        "en-*": "Title",
+        "fr-*": "Titre"
+    },
+    "caffeinated.donation_goal.current_amount": {
+        "en-*": "Current Amount",
+        "fr-*": "Montant actuel"
+    },
+    "caffeinated.donation_goal.goal_amount": {
+        "en-*": "Target Amount",
+        "fr-*": "Montant cible"
+    },
+    "caffeinated.donation_goal.text_color": {
+        "en-*": "Title Color",
+        "fr-*": "Couleur de Titre"
+    },
+    "caffeinated.donation_goal.bar_color": {
+        "en-*": "Progress Bar Color",
+        "fr-*": "Couleur de la barre"
+    },
 
-        // Donation Alert
-        "caffeinated.donation_alert.title": "Donation Alert",
-        "caffeinated.donation_alert.font": "Font",
-        "caffeinated.donation_alert.font_size": "Font Size (px)",
-        "caffeinated.donation_alert.text_color": "Text Color",
-        "caffeinated.donation_alert.volume": "Volume",
-        "caffeinated.donation_alert.text_to_speech_voice": "TTS Voice",
-        "caffeinated.donation_alert.audio": "Alert Audio",
-        "caffeinated.donation_alert.image": "Alert Image",
-        "caffeinated.donation_alert.audio_file": "Audio File",
-        "caffeinated.donation_alert.image_file": "Image File",
+    // Follower Goal
+    "caffeinated.follower_goal.title": {
+        "en-*": "Follower Goal",
+        "fr-*": "Objectif suiveur"
+    },
+    "caffeinated.follower_goal.name": {
+        "en-*": "Title",
+        "fr-*": "Titre"
+    },
+    "caffeinated.follower_goal.goal_amount": {
+        "en-*": "Target Amount",
+        "fr-*": "Montant cible"
+    },
+    "caffeinated.follower_goal.text_color": {
+        "en-*": "Title Color",
+        "fr-*": "Couleur de Titre"
+    },
+    "caffeinated.follower_goal.bar_color": {
+        "en-*": "Progress Bar Color",
+        "fr-*": "Couleur de la barre"
+    },
 
-        // Follower Alert
-        "caffeinated.follower_alert.title": "Follower Alert",
-        "caffeinated.follower_alert.font": "Font",
-        "caffeinated.follower_alert.font_size": "Font Size (px)",
-        "caffeinated.follower_alert.text_color": "Text Color",
-        "caffeinated.follower_alert.volume": "Volume",
-        "caffeinated.follower_alert.enable_audio": "Enable Custom Audio",
-        "caffeinated.follower_alert.use_custom_image": "Use Custom Audio",
-        "caffeinated.follower_alert.audio_file": "Audio File",
-        "caffeinated.follower_alert.image_file": "Image File",
+    // Donation Alert
+    "caffeinated.donation_alert.title": {
+        "en-*": "Donation Alert",
+        "fr-*": "Alerte de don"
+    },
+    "caffeinated.donation_alert.text_to_speech_voice": {
+        "en-*": "TTS Voice",
+        "fr-*": "Voix de synthèse vocale"
+    },
 
-        // Spotify
-        "spotify.integration.title": "Spotify",
-        "spotify.integration.login": "Login with Spotify",
-        "spotify.integration.logging_in": "Logging in",
-        "spotify.integration.logged_in_as": (name) => `Logged in as ${name} (Click to log out)`,
-        "spotify.integration.announce": "Announce Song",
-        "spotify.integration.background_style": "Background Style",
-        "spotify.integration.image_style": "Image Style",
-        "spotify.integration.now_playing_announcment": (title, artist) => `Now playing: ${title} - ${artist}`,
+    // Follower Alert
+    "caffeinated.follower_alert.title": {
+        "en-*": "Follower Alert",
+        "fr-*": "Alerte Suiveur"
+    },
+    "caffeinated.follower_alert.enable_audio": {
+        "en-*": "Enable Custom Audio",
+        "fr-*": "Activer l'audio personnalisé"
+    },
+    "caffeinated.follower_alert.use_custom_image": {
+        "en-*": "Use Custom Image",
+        "fr-*": "Utuliser l'image personnalisé"
+    },
 
-        // View Counter
-        "caffeinated.view_counter.title": "View Counter",
-        "caffeinated.view_counter.font": "Font",
-        "caffeinated.view_counter.font_size": "Font Size (px)",
-        "caffeinated.view_counter.text_color": "Text Color",
+    // Spotify
+    "spotify.integration.title": {
+        "en-*": "Spotify",
+        "fr-*": "Spotify"
+    },
+    "spotify.integration.login": {
+        "en-*": "Login with Spotify",
+        "fr-*": "Connectez-vous avec Spotify"
+    },
+    "spotify.integration.logging_in": {
+        "en-*": "Logging in",
+        "fr-*": "Se connecter"
+    },
+    "spotify.integration.logged_in_as": {
+        "en-*": (name) => `Logged in as ${name} (Click to log out)`,
+        "fr-*": (name) => `Connecté en tant que ${name}, (Cliquez pour vous déconnecter)`
+    },
+    "spotify.integration.announce": {
+        "en-*": "Announce Song",
+        "fr-*": "Annoncer la chanson"
+    },
+    "spotify.integration.background_style": {
+        "en-*": "Background Style",
+        "fr-*": "Style de fond"
+    },
+    "spotify.integration.image_style": {
+        "en-*": "Image Style",
+        "fr-*": "Style d'Image"
+    },
+    "spotify.integration.now_playing_announcment": {
+        "en-*": (title, artist) => `Now playing: ${title} - ${artist}`,
+        "fr-*": (title, artist) => `Lecture en cours: ${title} - ${artist}`
+    },
 
-        // Recent Follow
-        "caffeinated.recent_follow.title": "Recent Follow",
-        "caffeinated.recent_follow.font": "Font",
-        "caffeinated.recent_follow.font_size": "Font Size (px)",
-        "caffeinated.recent_follow.text_color": "Text Color",
+    // View Counter
+    "caffeinated.view_counter.title": {
+        "en-*": "View Counter",
+        "fr-*": "Compteur de Vue"
+    },
 
-        // Donation Ticker
-        "caffeinated.donation_ticker.title": "Donation Ticker",
-        "caffeinated.donation_ticker.font": "Font",
-        "caffeinated.donation_ticker.font_size": "Font Size (px)",
-        "caffeinated.donation_ticker.currency": "Currency",
-        "caffeinated.donation_ticker.text_color": "Text Color",
+    // Recent Follow
+    "caffeinated.recent_follow.title": {
+        "en-*": "Recent Follow",
+        "fr-*": "Suivi récent"
+    },
 
-        // Top Donation
-        "caffeinated.top_donation.title": "Top Donation",
-        "caffeinated.top_donation.font": "Font",
-        "caffeinated.top_donation.font_size": "Font Size (px)",
-        "caffeinated.top_donation.currency": "Currency",
-        "caffeinated.top_donation.text_color": "Text Color",
+    // Donation Ticker
+    "caffeinated.donation_ticker.title": {
+        "en-*": "Donation Ticker",
+        "fr-*": "Compteur de dons"
+    },
 
-        // Recent Donation
-        "caffeinated.recent_donation.title": "Recent Donation",
-        "caffeinated.recent_donation.font": "Font",
-        "caffeinated.recent_donation.font_size": "Font Size (px)",
-        "caffeinated.recent_donation.currency": "Currency",
-        "caffeinated.recent_donation.text_color": "Text Color",
+    // Top Donation
+    "caffeinated.top_donation.title": {
+        "en-*": "Top Donation",
+        "fr-*": "Don le Plus Grand"
+    },
 
-        // Chat Bot
-        "caffeinated.chatbot.title": "Chat Bot",
-        "caffeinated.chatbot.enabled": "Enabled",
-        "caffeinated.chatbot.commands": "Commands",
-        "caffeinated.chatbot.follow_callout": "Follow Callout (Leave blank to disable)",
-        "caffeinated.chatbot.donation_callout": "Donation Callout (Leave blank to disable)",
-        "caffeinated.chatbot.default_follow_callout": "Thanks for the follow!",
-        "caffeinated.chatbot.default_donation_callout": "Thanks for the support!",
-        "caffeinated.chatbot.default_reply": "Casterlabs is a free stream widget service!",
-        "caffeinated.chatbot.command_type": "Command Type",
-        "caffeinated.chatbot.trigger": "Trigger",
-        "caffeinated.chatbot.reply": "Reply",
+    // Recent Donation
+    "caffeinated.recent_donation.title": {
+        "en-*": "Recent Donation",
+        "fr-*": "Don Recent"
+    },
 
-        // Caffeine Inregration
-        "caffeine.integration.title": "Caffeine",
-        "caffeine.integration.new_thumbnail": "New thumbnail",
-        "caffeine.integration.rating_selector": "Content Rating",
-        "caffeine.integration.title_selector": "Title",
-        "caffeine.integration.game_selector": "Selected Game",
-        "caffeine.integration.update": "Update",
+    // Chat Bot
+    "caffeinated.chatbot.title": {
+        "en-*": "Chat Bot",
+        "fr-*": "Robot de Chat"
+    },
+    "caffeinated.chatbot.enabled": {
+        "en-*": "Enabled",
+        "fr-*": "Activé"
+    },
+    "caffeinated.chatbot.commands": {
+        "en-*": "Commands",
+        "fr-*": "Commandes"
+    },
+    "caffeinated.chatbot.follow_callout": {
+        "en-*": "Follow Callout (Leave blank to disable)",
+        "fr-*": "Notification Suiveur (Laisser vide pour désactiver)"
+    },
+    "caffeinated.chatbot.donation_callout": {
+        "en-*": "Donation Callout (Leave blank to disable)",
+        "fr-*": "Notification de Don (Laisser vide pour désactiver)"
+    },
+    "caffeinated.chatbot.default_follow_callout": {
+        "en-*": "Thanks for the follow!",
+        "fr-*": "Merci pour me suivre!"
+    },
+    "caffeinated.chatbot.default_donation_callout": {
+        "en-*": "Thanks for the support!",
+        "fr-*": "Merci pour le support!"
+    },
+    "caffeinated.chatbot.default_reply": {
+        "en-*": "Casterlabs is a free stream widget service!",
+        "fr-*": "Casterlabs est un service gratuit pour des modules de vidéo en streaming!"
+    },
+    "caffeinated.chatbot.command_type": {
+        "en-*": "Command Type",
+        "fr-*": "Type de Commande"
+    },
+    "caffeinated.chatbot.trigger": {
+        "en-*": "Trigger",
+        "fr-*": "Déclencheur"
+    },
+    "caffeinated.chatbot.reply": {
+        "en-*": "Reply",
+        "fr-*": "Repond"
+    },
 
-        // Casterlabs Companion
-        "caffeinated.companion.title": "Casterlabs Companion",
-        "caffeinated.companion.enabled": "Enabled",
-        "caffeinated.companion.open": "Open this link on your device",
-        "caffeinated.companion.reset": "Reset Link",
+    // Caffeine Inregration
+    "caffeine.integration.title": {
+        "en-*": "Caffeine",
+        "fr-*": "Caffeine"
+    },
+    "caffeine.integration.new_thumbnail": {
+        "en-*": "New thumbnail",
+        "fr-*": "Nouvelle miniature"
+    },
+    "caffeine.integration.rating_selector": {
+        "en-*": "Content Rating",
+        "fr-*": "Évaluation du contenu"
+    },
+    "caffeine.integration.title_selector": {
+        "en-*": "Title",
+        "fr-*": "Titre"
+    },
+    "caffeine.integration.game_selector": {
+        "en-*": "Selected Game",
+        "fr-*": "Jeux selectionner"
+    },
+    "caffeine.integration.update": {
+        "en-*": "Update",
+        "fr-*": "Mettre à jour"
+    },
 
-    }
+    // Casterlabs Companion
+    "caffeinated.companion.title": {
+        "en-*": "Casterlabs Companion",
+        "fr-*": "Companion Casterlabs"
+    },
+    "caffeinated.companion.enabled": {
+        "en-*": "Enabled",
+        "fr-*": "Activé"
+    },
+    "caffeinated.companion.open": {
+        "en-*": "Open this link on your device",
+        "fr-*": "Ouvrez ce lien sur votre appareil"
+    },
+    "caffeinated.companion.reset": {
+        "en-*": "Reset Link",
+        "fr-*": "Réinitialiser le lien"
+    },
+
 };
 
-function absorbLang(newLang) {
-    for (const [key, value] of Object.entries(newLang)) {
-        if (LANGUAGES[key]) {
-            LANGUAGES[key] = Object.assign(LANGUAGES[key], value);
-        } else {
-            LANGUAGES[key] = value;
-        }
-    }
-}
+const LANG = {
 
-function getLangKey(lang = navigator.language) {
-    for (const code of Object.keys(LANGUAGES)) {
-        const regex = RepoUtil.matchToRegex(code);
-
-        if (lang.match(regex)) {
-            return code;
-        }
-    }
-
-    return null;
-}
-
-function getSupportedLanguage(langs = navigator.languages) {
-    const stored = CAFFEINATED.store.get("language");
-
-    if (stored) {
-        const code = getLangKey(stored);
-
-        if (code) {
-            return code;
-        } // Otherwise, figure it out based on what the OS gives us.
-    }
-
-    for (const lang of langs) {
-        const code = getLangKey(lang);
-
-        if (code) {
-            return code;
-        }
-    }
-
-    if (CAFFEINATED.store.get("experimental_no_translation_default")) {
-        return "";
-    } else {
-        return "en-*";
-    }
-}
-
-function translate(parent = document, ...args) {
-    const lang = LANGUAGES[getSupportedLanguage()];
-
-    Array.from(parent.querySelectorAll(".translatable")).forEach((element) => {
-        const key = element.getAttribute("lang");
-        let translated = lang[key];
-        let result;
-
-        if (translated === undefined) {
-            result = key;
-        } else {
-            if (typeof translated === "function") {
-                result = translated(...args);
+    absorbLang(newLang) {
+        for (const [key, value] of Object.entries(newLang)) {
+            if (LANGUAGES[key]) {
+                LANGUAGES[key] = Object.assign(LANGUAGES[key], value);
             } else {
-                result = translated;
+                LANGUAGES[key] = value;
+            }
+        }
+    },
+
+    getLangKey(key, language = navigator.language) {
+        const lang = LANGUAGES[key];
+
+        if (lang) {
+            for (const code of Object.keys(lang)) {
+                const regex = RepoUtil.matchToRegex(code);
+
+                if (language.match(regex)) {
+                    return code;
+                }
             }
         }
 
-        element.innerText = result;
-        element.setAttribute("title", result);
-    });
-}
+        return null;
+    },
 
-function getTranslation(key, ...args) {
-    const lang = LANGUAGES[getSupportedLanguage()];
+    getSupportedLanguage(key, languages = navigator.languages) {
+        const stored = CAFFEINATED.store.get("language");
 
-    let translated = lang[key];
+        if (stored) {
+            const code = this.getLangKey(key, stored);
 
-    if (translated === undefined) {
-        return key;
-    } else {
-        if (typeof translated === "function") {
-            translated = translated(...args);
+            if (code) {
+                return code;
+            } // Otherwise, figure it out based on what the OS gives us.
         }
 
-        return translated;
+        for (const lang of languages) {
+            const code = this.getLangKey(key, lang);
+
+            if (code) {
+                return code;
+            }
+        }
+
+        if (CAFFEINATED.store.get("experimental_no_translation_default")) {
+            return "";
+        } else {
+            return "en-*";
+        }
+    },
+
+    translate(parent = document, ...args) {
+        Array.from(parent.querySelectorAll(".translatable")).forEach((element) => {
+            const key = element.getAttribute("lang");
+            const lang = LANGUAGES[key];
+
+            const supported = this.getSupportedLanguage(key);
+            let translated = supported ? lang[supported] : key;
+
+            let result;
+
+            if (translated === undefined) {
+                result = key;
+            } else {
+                if (typeof translated === "function") {
+                    result = translated(...args);
+                } else {
+                    result = translated;
+                }
+            }
+
+            element.innerText = result;
+            element.setAttribute("title", result);
+        });
+    },
+
+    getTranslation(key, ...args) {
+        const lang = LANGUAGES[key];
+
+        const supported = this.getSupportedLanguage(key);
+        let translated = supported ? lang[supported] : key;
+
+        if (translated === undefined) {
+            return key;
+        } else {
+            if (typeof translated === "function") {
+                translated = translated(...args);
+            }
+
+            return translated;
+        }
     }
-}
+
+};

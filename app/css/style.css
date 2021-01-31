@@ -685,5 +685,5 @@ nav ul li .dropdown-icon a:hover ion-icon {
 .sub-menu-arrow {
     position: absolute;
     left: calc(var(--menu-width) - 45px);
-    top: 5px;
+    transform: translateY(3px);
 }

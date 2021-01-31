@@ -53,17 +53,17 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
 
     settingsDisplay = {
         font: {
-            display: "caffeinated.chat.font",
+            display: "generic.font",
             type: "font",
             isLang: true
         },
         font_size: {
-            display: "caffeinated.chat.font_size",
+            display: "generic.font.size",
             type: "number",
             isLang: true
         },
         text_color: {
-            display: "caffeinated.chat.text_color",
+            display: "generic.text.color",
             type: "color",
             isLang: true
         },

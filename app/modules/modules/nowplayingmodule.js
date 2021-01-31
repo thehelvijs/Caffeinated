@@ -23,14 +23,14 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
         const authResult = await response.json();
 
         if (!authResult.error) {
-            this.statusElement.innerText = getTranslation("spotify.integration.logging_in");
+            this.statusElement.innerText = LANG.getTranslation("spotify.integration.logging_in");
 
             this.refreshToken = authResult.refresh_token;
 
             MODULES.saveToStore(this);
         } else {
             this.settings.token = null;
-            this.statusElement.innerText = getTranslation("spotify.integration.login");
+            this.statusElement.innerText = LANG.getTranslation("spotify.integration.login");
         }
     }
 
@@ -59,7 +59,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
         element.style = "overflow: hidden; background-color: rgb(30, 215, 96); margin-top: 15px;";
         element.innerHTML = `
             <img src="https://developer.spotify.com/assets/branding-guidelines/icon4@2x.png" style="height: 3.5em; position: absolute; left: -5px;" />
-            <span style="padding-left: 1.75em; z-index: 2;" name="text">${getTranslation("spotify.integration.login")}</span>
+            <span style="padding-left: 1.75em; z-index: 2;" name="text">${LANG.getTranslation("spotify.integration.login")}</span>
         `;
 
         this.statusElement = element.querySelector("[name=text]");
@@ -77,9 +77,9 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
 
                 if (auth.error) {
                     this.refreshToken = null;
-                    this.statusElement.innerText = getTranslation("spotify.integration.login");
+                    this.statusElement.innerText = LANG.getTranslation("spotify.integration.login");
                 } else {
-                    this.statusElement.innerText = getTranslation("spotify.integration.logging_in");
+                    this.statusElement.innerText = LANG.getTranslation("spotify.integration.logging_in");
 
                     this.accessToken = auth.access_token;
                     if (auth.refresh_token) {
@@ -93,7 +93,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
                         }
                     })).json();
 
-                    this.statusElement.innerText = getTranslation("spotify.integration.logged_in_as", profile.display_name);
+                    this.statusElement.innerText = LANG.getTranslation("spotify.integration.logged_in_as", profile.display_name);
                 }
 
                 MODULES.saveToStore(this);
@@ -180,7 +180,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
             if (this.refreshToken) {
                 this.refreshToken = null;
                 this.accessToken = null;
-                this.statusElement.innerText = getTranslation("spotify.integration.login");
+                this.statusElement.innerText = LANG.getTranslation("spotify.integration.login");
             } else {
                 const auth = new AuthCallback("caffeinated_spotify");
 

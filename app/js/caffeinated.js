@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 37;
-const VERSION = "1.0-stable14";
+const PROTOCOLVERSION = 38;
+const VERSION = "1.0-stable15";
 
 const LOGIN_BUTTONS = {
     BETA: `
@@ -226,6 +226,11 @@ class Caffeinated {
 
         const instance = this;
 
+        const LANGUAGE_MAP = {
+            "English": "en-*",
+            "Français": "fr-*"
+        };
+
         MODULES.initalizeModule({
             displayname: "caffeinated.settings.title",
             namespace: "casterlabs_caffeinated_settings",
@@ -233,18 +238,32 @@ class Caffeinated {
             persist: true,
             id: "settings",
 
+            getDataToStore() {
+                return this.settings;
+            },
+
             settingsDisplay: {
                 signout: {
                     display: "caffeinated.settings.signout",
                     type: "button",
                     isLang: true
+                },
+                language: {
+                    display: "caffeinated.settings.language",
+                    type: "select",
+                    isLang: true
                 }
+            },
+
+            onSettingsUpdate() {
+                CAFFEINATED.setLanguage(LANGUAGE_MAP[this.settings.language]);
             },
 
             defaultSettings: {
                 signout: () => {
                     CAFFEINATED.signOut();
-                }
+                },
+                language: Object.keys(LANGUAGE_MAP)
             }
         });
 
@@ -436,6 +455,13 @@ class Caffeinated {
         this.checkForUpdates();
     }
 
+    setLanguage(language) {
+        this.store.set("language", language);
+
+        LANG.translate(document);
+        UI.setFollowerCount(this.userdata.followers_count);
+    }
+
     getChannel() {
         return this.store.get("channel");
     }
@@ -508,7 +534,7 @@ const MODULES = new Modules();
 const UI = {
     dootCounter: 0,
     doots: [],
-    dootSize: 25,
+    dootSize: 35,
     dootCanvas: document.querySelector("#doot-rain"),
     dootImg: new Image(),
 
@@ -520,8 +546,8 @@ const UI = {
             const scale = (Math.random() * (1 - 0.8)) + 0.8;
 
             this.doots.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
+                x: Math.random(),
+                y: Math.random(),
                 ys: Math.random() + 1,
                 scale: scale
             });
@@ -593,7 +619,7 @@ const UI = {
         if (count && (count >= 0)) {
             const formatted = kFormatter(count, 1);
 
-            document.querySelector("#followers").innerText = getTranslation("caffeinated.internal.followers_count_text", formatted);
+            document.querySelector("#followers").innerText = LANG.getTranslation("caffeinated.internal.followers_count_text", formatted);
 
             anime({
                 targets: "#followers",
@@ -710,14 +736,14 @@ const UI = {
                 this.dootCtx.clearRect(0, 0, width, height);
 
                 this.doots.forEach((dootItem) => {
-                    dootItem.y += dootItem.ys;
+                    dootItem.y += dootItem.ys / height;
 
-                    if (dootItem.y > height) {
-                        dootItem.x = Math.random() * width;
-                        dootItem.y = -this.dootSize;
+                    if (dootItem.y > ((this.dootSize / height) + 1)) {
+                        dootItem.x = Math.random();
+                        dootItem.y = 0;
                     }
 
-                    this.dootCtx.drawImage(this.dootImg, dootItem.x, dootItem.y, this.dootSize, this.dootSize);
+                    this.dootCtx.drawImage(this.dootImg, dootItem.x * width, (dootItem.y * height) - this.dootSize, this.dootSize, this.dootSize);
                 });
             }
 
@@ -754,6 +780,8 @@ const UI = {
 
                 audio.addEventListener("play", () => {
                     setTimeout(() => {
+                        this.dootCanvas.style.opacity = 0.001;
+
                         anime({
                             targets: this.dootCanvas,
                             easing: "linear",
@@ -901,6 +929,8 @@ const UI = {
 UI.init();
 UI.reset();
 
+LANG.translate(document.querySelector(".menu-button-title"));
+
 function isPlatform(expected) {
     if (CAFFEINATED.userdata) {
         return CAFFEINATED.userdata.streamer.platform == expected;
@@ -948,8 +978,8 @@ koi.addEventListener("chat", (event) => {
 koi.addEventListener("user_update", (event) => {
     UI.splashScreen(false);
     UI.loginScreen("HIDE");
-    UI.setUserImage(event.streamer.image_link, event.streamer.username);
-    UI.setUserName(event.streamer.username, event.streamer.badges);
+    UI.setUserImage(event.streamer.image_link, event.streamer.displayname);
+    UI.setUserName(event.streamer.displayname, event.streamer.badges);
     UI.setFollowerCount(event.streamer.followers_count);
     UI.setUserPlatform(event.streamer.platform, event.streamer.link);
 

@@ -80,22 +80,22 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
 
     settingsDisplay = {
         font: {
-            display: "caffeinated.donation_alert.font",
+            display: "generic.font",
             type: "font",
             isLang: true
         },
         font_size: {
-            display: "caffeinated.donation_alert.font_size",
+            display: "generic.font.size",
             type: "number",
             isLang: true
         },
         text_color: {
-            display: "caffeinated.donation_alert.text_color",
+            display: "generic.text.color",
             type: "color",
             isLang: true
         },
         volume: {
-            display: "caffeinated.donation_alert.volume",
+            display: "generic.volume",
             type: "range",
             isLang: true
         },
@@ -105,22 +105,22 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
             isLang: true
         },
         audio: {
-            display: "caffeinated.donation_alert.audio",
+            display: "generic.alert.audio",
             type: "select",
             isLang: true
         },
         image: {
-            display: "caffeinated.donation_alert.image",
+            display: "generic.alert.image",
             type: "select",
             isLang: true
         },
         audio_file: {
-            display: "caffeinated.donation_alert.audio_file",
+            display: "generic.audio.file",
             type: "file",
             isLang: true
         },
         image_file: {
-            display: "caffeinated.donation_alert.image_file",
+            display: "generic.image.file",
             type: "file",
             isLang: true
         }

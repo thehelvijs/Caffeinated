@@ -25,10 +25,6 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         });
 
         koi.addEventListener("donation", (event) => {
-            event.donations.forEach((donation) => {
-                donation.display = formatCurrency(donation.amount, donation.currency);
-            });
-
             this.addMessage(event);
         });
 
@@ -37,15 +33,15 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         });
 
         koi.addEventListener("follow", (event) => {
-            this.addStatus(event.follower.username, event.follower.image_link, event.follower.color, "follow");
+            this.addStatus(event.follower, "caffeinated.chatdisplay.follow_text");
         });
 
         koi.addEventListener("viewer_join", (event) => {
-            this.addStatus(event.viewer.username, event.viewer.image_link, event.color, "join");
+            this.addStatus(event.viewer, "caffeinated.chatdisplay.join_text");
         });
 
         koi.addEventListener("viewer_leave", (event) => {
-            this.addStatus(event.viewer.username, event.viewer.image_link, event.color, "leave");
+            this.addStatus(event.viewer, "caffeinated.chatdisplay.leave_text");
         });
 
         koi.addEventListener("viewer_list", (event) => {
@@ -195,52 +191,47 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         }
     }
 
-    messageUpvote(event, onlyPopout) {
+    messageUpvote(event) {
         if (this.popoutWindow) {
             this.popoutWindow.webContents.executeJavaScript(`messageUpvote(${JSON.stringify(event)})`);
         }
 
-        if (!onlyPopout) {
-            this.messageHistory.push({
-                type: "UPVOTE",
-                event: Object.assign({}, event)
-            });
+        this.messageHistory.push({
+            type: "UPVOTE",
+            event: Object.assign({}, event)
+        });
 
-            this.contentWindow.messageUpvote(event);
-        }
+        this.contentWindow.messageUpvote(event);
     }
 
-    addMessage(event, onlyPopout) {
+    addMessage(event) {
         if (this.popoutWindow) {
             this.popoutWindow.webContents.executeJavaScript(`addMessage(${JSON.stringify(event)})`);
         }
 
-        if (!onlyPopout) {
-            this.messageHistory.push({
-                type: "MESSAGE",
-                event: Object.assign({}, event)
-            });
+        this.messageHistory.push({
+            type: "MESSAGE",
+            event: Object.assign({}, event)
+        });
 
-            this.contentWindow.addMessage(event);
-        }
+        this.contentWindow.addMessage(event);
     }
 
-    addStatus(user, profilePic, color, type, onlyPopout) {
+    addStatus(profile, langKey) {
+        const usernameHtml = `<span style="color: ${profile.color};">${escapeHtml(profile.displayname)}</span>`;
+        const lang = LANG.getTranslation(langKey, usernameHtml);
+
         if (this.popoutWindow) {
-            this.popoutWindow.webContents.executeJavaScript(`addStatus(${JSON.stringify(user)}, ${JSON.stringify(profilePic)}, ${JSON.stringify(color)}, ${JSON.stringify(type)})`);
+            this.popoutWindow.webContents.executeJavaScript(`addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)})`);
         }
 
-        if (!onlyPopout) {
-            this.messageHistory.push({
-                type: "STATUS",
-                user: user,
-                profilePic: profilePic,
-                color: color,
-                statusType: type
-            });
+        this.messageHistory.push({
+            type: "STATUS",
+            profile: profile,
+            lang: lang
+        });
 
-            this.contentWindow.addStatus(user, profilePic, color, type);
-        }
+        this.contentWindow.addStatus(profile, lang);
     }
 
 };

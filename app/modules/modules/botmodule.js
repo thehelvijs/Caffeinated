@@ -28,7 +28,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         koi.addEventListener("donation", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.donation_callout) {
-                    this.sendMessage(`@${event.sender.username} ${this.settings.donation_callout}`);
+                    this.sendMessage(`@${event.sender.displayname} ${this.settings.donation_callout}`);
                 }
 
                 this.processCommand(event);
@@ -38,7 +38,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         koi.addEventListener("follow", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.follow_callout) {
-                    this.sendMessage(`@${event.follower.username} ${this.settings.follow_callout}`);
+                    this.sendMessage(`@${event.follower.displayname} ${this.settings.follow_callout}`);
                 }
             }
         });
@@ -61,7 +61,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                     )
                 )
             ) {
-                this.sendMessage(`@${event.sender.username} ${command.reply}`);
+                this.sendMessage(`@${event.sender.displayname} ${command.reply}`);
                 return;
             }
         }
@@ -142,11 +142,11 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 type: ["Command", "Keyword"],
                 trigger: "!casterlabs",
                 mention: true,
-                reply: getTranslation("caffeinated.chatbot.default_reply")
+                reply: LANG.getTranslation("caffeinated.chatbot.default_reply")
             }
         },
-        follow_callout: getTranslation("caffeinated.chatbot.default_follow_callout"),
-        donation_callout: getTranslation("caffeinated.chatbot.default_donation_callout")
+        follow_callout: LANG.getTranslation("caffeinated.chatbot.default_follow_callout"),
+        donation_callout: LANG.getTranslation("caffeinated.chatbot.default_donation_callout")
     };
 
 };

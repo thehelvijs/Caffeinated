@@ -58,11 +58,11 @@ MODULES.moduleClasses["casterlabs_top_donation"] = class {
                 }
 
                 if (amount >= this.amount) {
-                    this.username = event.sender.username;
+                    this.username = event.sender.displayname;
                     this.amount = amount;
 
-                    this.update();
                     MODULES.saveToStore(this);
+                    this.update();
                 }
             }
         });
@@ -90,22 +90,22 @@ MODULES.moduleClasses["casterlabs_top_donation"] = class {
 
     settingsDisplay = {
         font: {
-            display: "caffeinated.top_donation.font",
+            display: "generic.font",
             type: "font",
             isLang: true
         },
         font_size: {
-            display: "caffeinated.top_donation.font_size",
+            display: "generic.font.size",
             type: "number",
             isLang: true
         },
         currency: {
-            display: "caffeinated.top_donation.currency",
+            display: "generic.currency",
             type: "currency",
             isLang: true
         },
         text_color: {
-            display: "caffeinated.top_donation.text_color",
+            display: "generic.text.color",
             type: "color",
             isLang: true
         }

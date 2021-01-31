@@ -11,16 +11,6 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     widgetDisplay = [
         {
-            name: "Reset",
-            icon: "trash",
-            async onclick(instance) {
-                instance.amount = 0;
-
-                instance.update();
-                MODULES.saveToStore(instance);
-            }
-        },
-        {
             name: "Copy",
             icon: "copy",
             onclick(instance) {
@@ -31,7 +21,6 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     getDataToStore() {
         return Object.assign({
-            username: this.username,
             amount: this.amount
         }, this.settings);
     }
@@ -53,8 +42,8 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
                     this.amount += (await convertCurrency(donation.amount, donation.currency, "USD"));
                 }
 
-                this.update();
                 MODULES.saveToStore(this);
+                this.update();
             }
         });
     }
@@ -77,22 +66,22 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     settingsDisplay = {
         font: {
-            display: "caffeinated.donation_ticker.font",
+            display: "generic.font",
             type: "font",
             isLang: true
         },
         font_size: {
-            display: "caffeinated.donation_ticker.font_size",
+            display: "generic.font.size",
             type: "number",
             isLang: true
         },
         currency: {
-            display: "caffeinated.donation_ticker.currency",
+            display: "generic.currency",
             type: "currency",
             isLang: true
         },
         text_color: {
-            display: "caffeinated.donation_ticker.text_color",
+            display: "generic.text.color",
             type: "color",
             isLang: true
         }

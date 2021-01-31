@@ -42,16 +42,16 @@ MODULES.moduleClasses["casterlabs_recent_follow"] = class {
     init() {
         this.username = this.settings.username;
 
-        if (!this.username) {
+        if (this.username === undefined) {
             this.username = "";
         }
 
         koi.addEventListener("follow", (event) => {
             if (!event.isTest) {
-                this.username = event.follower.username;
+                this.username = event.follower.displayname;
 
-                this.update();
                 MODULES.saveToStore(this);
+                this.update();
             }
         });
     }
@@ -76,17 +76,17 @@ MODULES.moduleClasses["casterlabs_recent_follow"] = class {
 
     settingsDisplay = {
         font: {
-            display: "caffeinated.recent_follow.font",
+            display: "generic.font",
             type: "font",
             isLang: true
         },
         font_size: {
-            display: "caffeinated.recent_follow.font_size",
+            display: "generic.font.size",
             type: "number",
             isLang: true
         },
         text_color: {
-            display: "caffeinated.recent_follow.text_color",
+            display: "generic.text.color",
             type: "color",
             isLang: true
         }

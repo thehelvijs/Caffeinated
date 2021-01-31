@@ -68,22 +68,22 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
 
     settingsDisplay = {
         font: {
-            display: "caffeinated.follower_alert.font",
+            display: "generic.font",
             type: "font",
             isLang: true
         },
         font_size: {
-            display: "caffeinated.follower_alert.font_size",
+            display: "generic.font.size",
             type: "number",
             isLang: true
         },
         text_color: {
-            display: "caffeinated.follower_alert.text_color",
+            display: "generic.text.color",
             type: "color",
             isLang: true
         },
         volume: {
-            display: "caffeinated.follower_alert.volume",
+            display: "generic.volume",
             type: "range",
             isLang: true
         },
@@ -98,12 +98,12 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
             isLang: true
         },
         audio_file: {
-            display: "caffeinated.follower_alert.audio_file",
+            display: "generic.audio.file",
             type: "file",
             isLang: true
         },
         image_file: {
-            display: "caffeinated.follower_alert.image_file",
+            display: "generic.image.file",
             type: "file",
             isLang: true
         }
