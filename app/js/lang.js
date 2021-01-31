@@ -16,6 +16,9 @@ let LANGUAGES = {
 
         // Chat Display
         "caffeinated.chatdisplay.title": "Chat",
+        "caffeinated.chatdisplay.follow_text": (username) => `${username} started following.`,
+        "caffeinated.chatdisplay.join_text": (username) => `${username} joined the stream.`,
+        "caffeinated.chatdisplay.leave_text": (username) => `${username} left the stream.`,
 
         // Chat
         "caffeinated.chat.title": "Chat",

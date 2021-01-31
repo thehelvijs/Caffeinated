@@ -85,20 +85,27 @@ class Koi {
 
                             event.donations.forEach((donation) => {
                                 // TODO keep this up-to-date with new platforms.
-                                if (isPlatform("CAFFEINE")) {
-                                    event.sender.platform = "CAFFEINE"; // Internally we detect Caffeine props and display the image via the platform
-
+                                if (event.streamer.platform === "CAFFEINE") {
                                     donation.amount = 9;
                                     donation.currency = "CAFFEINE_CREDITS";
                                     donation.image = "https://assets.caffeine.tv/digital-items/praise.36c2c696ce186e3d57dc4ca69482f315.png";
                                     donation.animated_image = "https://assets.caffeine.tv/digital-items/praise_preview.062e1659faa201a6c9fb0f4599bfa8ef.png";
-                                } else if (isPlatform("TWITCH")) {
+                                    donation.type = "CAFFEINE_PROP";
+                                } else if (event.streamer.platform === "TWITCH") {
                                     donation.amount = 100;
                                     donation.currency = "TWITCH_BITS";
-                                    donation.image = "https://static-cdn.jtvnw.net/bits/dark/static/purple/4";
-                                    donation.animated_image = "https://static-cdn.jtvnw.net/bits/dark/animated/purple/4";
+                                    donation.image = "https://d3aqoihi2n8ty8.cloudfront.net/actions/party/light/static/100/4.gif";
+                                    donation.animated_image = "https://d3aqoihi2n8ty8.cloudfront.net/actions/party/light/animated/100/4.gif";
+                                    donation.type = "TWITCH_BITS";
                                 }
                             });
+
+                            // Add an emote to the message since that's how they work on Twitch
+                            if (event.streamer.platform === "TWITCH") {
+                                event.message = event.message + " Party100";
+
+                                event.emotes["Party100"] = "https://d3aqoihi2n8ty8.cloudfront.net/actions/party/light/animated/100/4.gif";
+                            }
                         } else if ((type === "FOLLOW") && (event.follower.platform === "CASTERLABS_SYSTEM")) {
                             event.isTest = true;
                         } else if ((type === "CHAT") && (event.sender.platform === "CASTERLABS_SYSTEM")) {

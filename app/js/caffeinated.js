@@ -508,7 +508,7 @@ const MODULES = new Modules();
 const UI = {
     dootCounter: 0,
     doots: [],
-    dootSize: 25,
+    dootSize: 35,
     dootCanvas: document.querySelector("#doot-rain"),
     dootImg: new Image(),
 
@@ -520,8 +520,8 @@ const UI = {
             const scale = (Math.random() * (1 - 0.8)) + 0.8;
 
             this.doots.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
+                x: Math.random(),
+                y: Math.random(),
                 ys: Math.random() + 1,
                 scale: scale
             });
@@ -710,14 +710,14 @@ const UI = {
                 this.dootCtx.clearRect(0, 0, width, height);
 
                 this.doots.forEach((dootItem) => {
-                    dootItem.y += dootItem.ys;
+                    dootItem.y += dootItem.ys / height;
 
-                    if (dootItem.y > height) {
-                        dootItem.x = Math.random() * width;
-                        dootItem.y = -this.dootSize;
+                    if (dootItem.y > ((this.dootSize / height) + 1)) {
+                        dootItem.x = Math.random();
+                        dootItem.y = 0;
                     }
 
-                    this.dootCtx.drawImage(this.dootImg, dootItem.x, dootItem.y, this.dootSize, this.dootSize);
+                    this.dootCtx.drawImage(this.dootImg, dootItem.x * width, (dootItem.y * height) - this.dootSize, this.dootSize, this.dootSize);
                 });
             }
 
@@ -754,6 +754,8 @@ const UI = {
 
                 audio.addEventListener("play", () => {
                     setTimeout(() => {
+                        this.dootCanvas.style.opacity = 0.001;
+
                         anime({
                             targets: this.dootCanvas,
                             easing: "linear",

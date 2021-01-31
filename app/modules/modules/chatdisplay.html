@@ -334,7 +334,7 @@
 
             .vcbadge {
                 padding-left: 5px;
-                transform: translateY(5px);
+                transform: translateY(3px);
                 height: 20px;
                 width: auto;
             }
@@ -494,6 +494,7 @@
 
                 pfp.src = event.sender.image_link;
                 pfp.classList.add("vcprofile");
+                pfp.setAttribute("title", "Click to open channel in your web browser");
                 pfp.addEventListener("click", () => {
                     openLink(event.sender.link);
                 });
@@ -501,7 +502,7 @@
                 username.classList.add("vcusername");
                 username.style = "color: " + event.sender.color + ";";
                 username.appendChild(pfp);
-                username.appendChild(document.createTextNode(event.sender.username));
+                username.appendChild(document.createTextNode(event.sender.displayname));
 
                 event.sender.badges.forEach((badge) => {
                     const badgeIcon = document.createElement("img");
@@ -537,8 +538,13 @@
 
                 div.appendChild(counter);
 
-                // Twitch Cheers are parsed as emojis.
-                if (event.donations && (event.sender.platform != "TWITCH")) {
+                // Twitch Cheers are parsed as emotes.
+                if (
+                    event.donations &&
+                    (event.sender.platform !== "TWITCH") &&
+                    // Ensure test messages on Twitch don't show the icons.
+                    ((event.streamer.platform !== "TWITCH") && (event.sender.platform !== "CASTERLABS_SYSTEM"))
+                ) {
                     event.donations.forEach((donation) => {
                         const img = document.createElement("img");
 
@@ -557,7 +563,7 @@
                 replybtn.innerHTML = `<ion-icon name="arrow-redo-outline"></ion-icon>`;
                 replybtn.title = "Reply";
                 replybtn.addEventListener("click", () => {
-                    messageInput.value = `@${event.sender.username} `;
+                    messageInput.value = `@${event.sender.displayname} `;
                     messageInput.focus();
                 });
 
@@ -577,6 +583,11 @@
                             upvotetooltip.remove();
                         });
 
+                        // Caffeine won't let you upvote a message past 15 minutes
+                        setTimeout(() => {
+                            upvotetooltip.remove();
+                        }, 15000);
+
                         upvotetooltip.appendChild(upvotebtn);
                         upvotetooltip.classList.add("tooltipbtn");
                         tooltip.appendChild(upvotetooltip);
@@ -591,30 +602,23 @@
                 tryJump();
             }
 
-            function addStatus(user, profilePic, color, type) {
+            function addStatus(profile, lang) {
                 const div = document.createElement("div");
                 const pfp = document.createElement("img");
-                const username = document.createElement("span");
                 const text = document.createElement("span");
                 const msg = document.createElement("li");
 
-                pfp.src = profilePic;
+                pfp.src = profile.image_link;
                 pfp.classList.add("vcprofile");
+                pfp.addEventListener("click", () => {
+                    openLink(profile.link);
+                });
 
-                username.classList.add("vcusername");
-                username.style = "color: " + color + ";";
-                username.innerText = user;
-
-                switch (type.toLowerCase()) {
-                    case "leave": text.innerText = "left the stream."; break;
-                    case "join": text.innerText = "joined the stream."; break;
-                    case "follow": text.innerText = "started following."; break;
-                }
+                text.innerHTML = lang;
 
                 div.classList.add("vcchatmessage");
                 div.classList.add("vcstatus");
                 div.appendChild(pfp);
-                div.appendChild(username);
                 div.appendChild(text);
 
                 msg.appendChild(div);
@@ -665,11 +669,11 @@
             function catchUp(events) {
                 events.forEach((event) => {
                     switch (event.type) {
-                        case "UPVOTE": messageUpvote(event.event, true); break;
+                        case "UPVOTE": messageUpvote(event.event); break;
 
-                        case "MESSAGE": addMessage(event.event, true); break;
+                        case "MESSAGE": addMessage(event.event); break;
 
-                        case "STATUS": addStatus(event.user, event.profilePic, event.color, event.statusType, true); break;
+                        case "STATUS": addStatus(event.profile, event.lang); break;
 
                     }
                 });
