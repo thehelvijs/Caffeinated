@@ -56,8 +56,8 @@ MODULES.moduleClasses["casterlabs_recent_donation"] = class {
                 this.username = event.sender.username;
                 this.amount = amount;
 
-                this.update();
                 MODULES.saveToStore(this);
+                this.update();
             }
         });
     }

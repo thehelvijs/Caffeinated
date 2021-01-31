@@ -42,7 +42,7 @@ MODULES.moduleClasses["casterlabs_recent_follow"] = class {
     init() {
         this.username = this.settings.username;
 
-        if (!this.username) {
+        if (this.username === undefined) {
             this.username = "";
         }
 
@@ -50,8 +50,8 @@ MODULES.moduleClasses["casterlabs_recent_follow"] = class {
             if (!event.isTest) {
                 this.username = event.follower.username;
 
-                this.update();
                 MODULES.saveToStore(this);
+                this.update();
             }
         });
     }

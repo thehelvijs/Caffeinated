@@ -31,7 +31,6 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     getDataToStore() {
         return Object.assign({
-            username: this.username,
             amount: this.amount
         }, this.settings);
     }
@@ -53,8 +52,8 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
                     this.amount += (await convertCurrency(donation.amount, donation.currency, "USD"));
                 }
 
-                this.update();
                 MODULES.saveToStore(this);
+                this.update();
             }
         });
     }
