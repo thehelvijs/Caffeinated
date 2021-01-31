@@ -20,7 +20,7 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
             name: "Copy",
             icon: "copy",
             onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/follower.html?id=" + instance.id);
+                putInClipboard("https://caffeinated.casterlabs.co/alert.html?namespace=" + instance.namespace + "&id=" + instance.id);
             }
         }
     ]
@@ -43,7 +43,9 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
 
     init() {
         koi.addEventListener("follow", (event) => {
-            MODULES.emitIO(this, "event", event);
+            const follower = `<span style="color: ${event.follower.color};">${event.follower.displayname}</span>`;
+
+            MODULES.emitIO(this, "event", LANG.getTranslation("caffeinated.raid_alert.format.followed", follower));
         });
 
         this.audio_file = this.settings.audio_file;
@@ -88,12 +90,12 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
             isLang: true
         },
         enable_audio: {
-            display: "caffeinated.follower_alert.enable_audio",
+            display: "generic.enable_audio",
             type: "checkbox",
             isLang: true
         },
         use_custom_image: {
-            display: "caffeinated.follower_alert.use_custom_image",
+            display: "generic.use_custom_image",
             type: "checkbox",
             isLang: true
         },

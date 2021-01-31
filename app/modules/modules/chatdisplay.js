@@ -32,8 +32,18 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
             this.messageUpvote(event);
         });
 
+        koi.addEventListener("channel_points", (event) => {
+            this.addPointStatus(event.sender, event.reward, "caffeinated.chatdisplay.reward_text");
+        });
+
         koi.addEventListener("follow", (event) => {
             this.addStatus(event.follower, "caffeinated.chatdisplay.follow_text");
+        });
+
+        koi.addEventListener("subscription", (event) => {
+            const profile = event.gift_recipient ?? event.subscriber;
+
+            this.addManualStatus(profile, LANG.formatSubscription(event));
         });
 
         koi.addEventListener("viewer_join", (event) => {
@@ -232,6 +242,39 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         });
 
         this.contentWindow.addStatus(profile, lang);
+    }
+
+    addPointStatus(profile, reward, langKey) {
+        const usernameHtml = `<span style="color: ${profile.color};">${escapeHtml(profile.displayname)}</span>`;
+        const imageHtml = `<img class="vcimage" src="${reward.reward_image ?? reward.default_reward_image}" />`;
+
+        const lang = LANG.getTranslation(langKey, usernameHtml, reward.title, imageHtml);
+
+        if (this.popoutWindow) {
+            this.popoutWindow.webContents.executeJavaScript(`addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)})`);
+        }
+
+        this.messageHistory.push({
+            type: "STATUS",
+            profile: profile,
+            lang: lang
+        });
+
+        this.contentWindow.addStatus(profile, lang);
+    }
+
+    addManualStatus(profile, status) {
+        if (this.popoutWindow) {
+            this.popoutWindow.webContents.executeJavaScript(`addStatus(${JSON.stringify(profile)}, ${JSON.stringify(status)})`);
+        }
+
+        this.messageHistory.push({
+            type: "STATUS",
+            profile: profile,
+            lang: status
+        });
+
+        this.contentWindow.addStatus(profile, status);
     }
 
 };

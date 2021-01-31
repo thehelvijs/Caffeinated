@@ -111,6 +111,8 @@ class Koi {
                             event.isTest = true;
                         } else if ((type === "CHAT") && (event.sender.platform === "CASTERLABS_SYSTEM")) {
                             event.isTest = true;
+                        } else if ((type === "SUBSCRIPTION") && event.subscriber && (event.subscriber.platform === "CASTERLABS_SYSTEM")) {
+                            event.isTest = true;
                         }
 
                         this.broadcast(type.toLowerCase(), event);

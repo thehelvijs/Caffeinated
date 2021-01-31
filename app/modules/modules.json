@@ -9,23 +9,27 @@
     "version": "1.0.0",
     "name": "Caffeinated Default Widgets Repo",
     "scripts": [
-        "modules/donationmodule.js",
-        "modules/followermodule.js",
-        "modules/chatmodule.js",
-        "modules/followergoalmodule.js",
-        "modules/donationgoalmodule.js",
-        "modules/supportersmodule.js",
-        "modules/chatdisplaymodule.js",
-        "modules/companionmodule.js",
-        "modules/rainmodule.js",
-        "modules/nowplayingmodule.js",
+        "modules/donation.js",
+        "modules/follower.js",
+        "modules/chat.js",
+        "modules/followergoal.js",
+        "modules/donationgoal.js",
+        "modules/supporters.js",
+        "modules/chatdisplay.js",
+        "modules/companion.js",
+        "modules/rain.js",
+        "modules/nowplaying.js",
         "modules/viewcounter.js",
         "modules/recentfollow.js",
         "modules/recentdonation.js",
         "modules/topdonation.js",
         "modules/donationticker.js",
-        "caffeine/caffeinemodule.js",
-        "modules/botmodule.js",
+        "modules/bot.js",
+        "modules/raidalert.js",
+        "modules/subscriptionalert.js",
+        "modules/subscriptiongoal.js",
+        "modules/recentsubscription.js",
+        "caffeine/caffeine.js",
         "ko-fi/kofimodule.js"
     ],
     "simple": [
@@ -68,6 +72,22 @@
         {
             "namespace": "casterlabs_recent_follow",
             "id": "recent_follow"
+        },
+        {
+            "namespace": "casterlabs_raid",
+            "id": "raid"
+        },
+        {
+            "namespace": "casterlabs_subscription",
+            "id": "subscription"
+        },
+        {
+            "namespace": "casterlabs_subscription_goal",
+            "id": "subscription_goal"
+        },
+        {
+            "namespace": "casterlabs_recent_subscription",
+            "id": "recent_subscription"
         },
         {
             "namespace": "casterlabs_now_playing",

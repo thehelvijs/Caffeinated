@@ -6,7 +6,11 @@ let LANGUAGES = {
     },
     "caffeinated.internal.followers_count_text": {
         "en-*": (count) => `${count} followers`,
-        "fr-*": (count) => `${count} suiveures`
+        "fr-*": (count) => `${count} followers`
+    },
+    "caffeinated.internal.subscribers_count_text": {
+        "en-*": (count) => `${count} subscribers`,
+        "fr-*": (count) => `${count} subscribers`
     },
 
     // Generic
@@ -46,6 +50,53 @@ let LANGUAGES = {
         "en-*": "Currency",
         "fr-*": "Devise"
     },
+    "generic.enable_audio": {
+        "en-*": "Enable Custom Audio",
+        "fr-*": "Activer l'audio personnalisé"
+    },
+    "generic.use_custom_image": {
+        "en-*": "Use Custom Image",
+        "fr-*": "Utuliser l'image personnalisé"
+    },
+
+    // TODO french
+    // Raid
+    "caffeinated.raid_alert.title": {
+        "en-*": "Raid Alert"
+    },
+    "caffeinated.raid_alert.format.now_raiding": {
+        "en-*": (raider, viewers) => `${raider} just raided with ${viewers} viewers`
+    },
+
+    // TODO french
+    // Subscription Goal
+    "caffeinated.subscription_goal.title": {
+        "en-*": "Subscription Goal"
+    },
+
+    // TODO french
+    // Subscription
+    "caffeinated.subscription_alert.title": {
+        "en-*": "Subscription Alert"
+    },
+    "caffeinated.subscription_alert.format.sub": {
+        "en-*": (name, months, isPlural) => `${name} just subscribed for ${months} month${isPlural ? "s" : ""}`
+    },
+    "caffeinated.subscription_alert.format.resub": {
+        "en-*": (name, months, isPlural) => `${name} just resubscribed for ${months} month${isPlural ? "s" : ""}`
+    },
+    "caffeinated.subscription_alert.format.subgift": {
+        "en-*": (name, giftee, months, isPlural) => `${name} just gifted ${giftee} a ${months} month${isPlural ? "s" : ""} subscription`
+    },
+    "caffeinated.subscription_alert.format.resubgift": {
+        "en-*": (name, giftee, months, isPlural) => `${name} just gifted ${giftee} a ${months} month${isPlural ? "s" : ""} resubscription`
+    },
+    "caffeinated.subscription_alert.format.anonsubgift": {
+        "en-*": (giftee, months, isPlural) => `Anonymous just gifted ${giftee} a ${months} month${isPlural ? "s" : ""} subscription`
+    },
+    "caffeinated.subscription_alert.format.anonresubgift": {
+        "en-*": (giftee, months, isPlural) => `Anonymous just gifted ${giftee} a ${months} month${isPlural ? "s" : ""} resubscription`
+    },
 
     // Credits
     "caffeinated.credits.title": {
@@ -78,17 +129,21 @@ let LANGUAGES = {
         "en-*": "Chat",
         "fr-*": "Chat"
     },
-    "caffeinated.chatdisplay.follow_text": {
-        "en-*": (username) => `${username} started following.`,
-        "fr-*": (username) => `${username} a commencé à suivre.`
-    },
     "caffeinated.chatdisplay.join_text": {
-        "en-*": (username) => `${username} joined the stream.`,
-        "fr-*": (username) => `${username} a rejoint le flux vidéo.`
+        "en-*": (name) => `${name} joined the stream`,
+        "fr-*": (name) => `${name} a rejoint le flux vidéo`
     },
     "caffeinated.chatdisplay.leave_text": {
-        "en-*": (username) => `${username} left the stream.`,
-        "fr-*": (username) => `${username} quitter le flux vidéo.`
+        "en-*": (name) => `${name} left the stream`,
+        "fr-*": (name) => `${name} quitter le flux vidéo`
+    },
+    "caffeinated.chatdisplay.follow_text": {
+        "en-*": (name) => `${name} started following`,
+        "fr-*": (name) => `${name} a commencé à suivre`
+    },
+    "caffeinated.chatdisplay.reward_text": {
+        "en-*": (name, title, image) => `${name} just redeemed ${image}${title}`
+        // TODO french
     },
 
     // Chat
@@ -118,25 +173,9 @@ let LANGUAGES = {
         "en-*": "Donation Goal",
         "fr-*": "Objectif de don"
     },
-    "caffeinated.donation_goal.name": {
-        "en-*": "Title",
-        "fr-*": "Titre"
-    },
     "caffeinated.donation_goal.current_amount": {
         "en-*": "Current Amount",
         "fr-*": "Montant actuel"
-    },
-    "caffeinated.donation_goal.goal_amount": {
-        "en-*": "Target Amount",
-        "fr-*": "Montant cible"
-    },
-    "caffeinated.donation_goal.text_color": {
-        "en-*": "Title Color",
-        "fr-*": "Couleur de Titre"
-    },
-    "caffeinated.donation_goal.bar_color": {
-        "en-*": "Progress Bar Color",
-        "fr-*": "Couleur de la barre"
     },
 
     // Follower Goal
@@ -144,19 +183,21 @@ let LANGUAGES = {
         "en-*": "Follower Goal",
         "fr-*": "Objectif suiveur"
     },
-    "caffeinated.follower_goal.name": {
+
+    // Generic Goal
+    "caffeinated.generic_goal.name": {
         "en-*": "Title",
         "fr-*": "Titre"
     },
-    "caffeinated.follower_goal.goal_amount": {
+    "caffeinated.generic_goal.goal_amount": {
         "en-*": "Target Amount",
         "fr-*": "Montant cible"
     },
-    "caffeinated.follower_goal.text_color": {
+    "caffeinated.generic_goal.text_color": {
         "en-*": "Title Color",
         "fr-*": "Couleur de Titre"
     },
-    "caffeinated.follower_goal.bar_color": {
+    "caffeinated.generic_goal.bar_color": {
         "en-*": "Progress Bar Color",
         "fr-*": "Couleur de la barre"
     },
@@ -176,13 +217,9 @@ let LANGUAGES = {
         "en-*": "Follower Alert",
         "fr-*": "Alerte Suiveur"
     },
-    "caffeinated.follower_alert.enable_audio": {
-        "en-*": "Enable Custom Audio",
-        "fr-*": "Activer l'audio personnalisé"
-    },
-    "caffeinated.follower_alert.use_custom_image": {
-        "en-*": "Use Custom Image",
-        "fr-*": "Utuliser l'image personnalisé"
+    "caffeinated.raid_alert.format.followed": {
+        "en-*": (user) => `${user} just followed`
+        // TODO french
     },
 
     // Spotify
@@ -249,6 +286,12 @@ let LANGUAGES = {
         "fr-*": "Don Recent"
     },
 
+    // Recent Donation
+    "caffeinated.recent_subscription.title": {
+        "en-*": "Recent Subscription"
+        // TODO french
+    },
+
     // Chat Bot
     "caffeinated.chatbot.title": {
         "en-*": "Chat Bot",
@@ -295,7 +338,7 @@ let LANGUAGES = {
         "fr-*": "Repond"
     },
 
-    // Caffeine Inregration
+    // Caffeine Integration
     "caffeine.integration.title": {
         "en-*": "Caffeine",
         "fr-*": "Caffeine"
@@ -337,7 +380,7 @@ let LANGUAGES = {
     "caffeinated.companion.reset": {
         "en-*": "Reset Link",
         "fr-*": "Réinitialiser le lien"
-    },
+    }
 
 };
 
@@ -377,7 +420,10 @@ const LANG = {
 
             if (code) {
                 return code;
-            } // Otherwise, figure it out based on what the OS gives us.
+            } else if (CAFFEINATED.store.get("experimental_no_translation_default")) {
+                return "";
+            }
+            // Otherwise, figure it out based on what the OS gives us.
         }
 
         for (const lang of languages) {
@@ -434,6 +480,33 @@ const LANG = {
             }
 
             return translated;
+        }
+    },
+
+    formatSubscription(event) {
+        const subscriberName = `<span class="meta-subscriber" style="color: ${event.subscriber.color};">${event.subscriber.displayname}</span>`;
+        const months = `<span class="meta-months">${event.months}</span>`;
+        const isPlural = months != 1;
+
+        switch (event.sub_type) {
+            case "SUB":
+                return this.getTranslation("caffeinated.subscription_alert.format.sub", subscriberName, months, isPlural);
+
+            case "RESUB":
+                return this.getTranslation("caffeinated.subscription_alert.format.resub", subscriberName, months, isPlural);
+
+            case "SUBGIFT":
+                return this.getTranslation("caffeinated.subscription_alert.format.subgift", subscriberName, `<span class="meta-subscriber" style="color: ${event.gift_recipient.color};">${event.gift_recipient.displayname}</span>`, months, isPlural);
+
+            case "RESUBGIFT":
+                return this.getTranslation("caffeinated.subscription_alert.format.resubgift", subscriberName, `<span class="meta-subscriber" style="color: ${event.gift_recipient.color};">${event.gift_recipient.displayname}</span>`, months, isPlural);
+
+            case "ANONSUBGIFT":
+                return this.getTranslation("caffeinated.subscription_alert.format.anonsubgift", `<span class="meta-subscriber" style="color: ${event.gift_recipient.color};">${event.gift_recipient.displayname}</span>`, months, isPlural);
+
+            case "ANONRESUBGIFT":
+                return this.getTranslation("caffeinated.subscription_alert.format.anonresubgift", `<span class="meta-subscriber" style="color: ${event.gift_recipient.color};">${event.gift_recipient.displayname}</span>`, months, isPlural);
+
         }
     }
 
