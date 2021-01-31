@@ -26,7 +26,8 @@
         "modules/donationticker.js",
         "caffeine/caffeinemodule.js",
         "modules/botmodule.js",
-        "ko-fi/kofimodule.js"
+        "ko-fi/kofimodule.js",
+        "modules/analytics.js"
     ],
     "simple": [
         {
@@ -94,6 +95,10 @@
         {
             "namespace": "casterlabs_companion",
             "id": "casterlabs_companion"
+        },
+        {
+            "namespace": "casterlabs_analytics",
+            "id": "analytics"
         },
         {
             "namespace": "casterlabs_supporters",

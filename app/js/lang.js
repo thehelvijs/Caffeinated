@@ -67,6 +67,13 @@ let LANGUAGES = {
         "fr-*": "Langue"
     },
 
+    // Analytics
+    "caffeinated.analytics.title": {
+        "en-*": "Analytics",
+        "fr-*": "Analytics"
+    },
+
+
     // Support Us
     "caffeinated.supporters.title": {
         "en-*": "Support Us",
