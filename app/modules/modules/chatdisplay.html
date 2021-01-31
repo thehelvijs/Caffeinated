@@ -538,20 +538,17 @@
 
                 div.appendChild(counter);
 
-                // Twitch Cheers are parsed as emotes.
-                if (
-                    event.donations &&
-                    (event.sender.platform !== "TWITCH") &&
-                    // Ensure test messages on Twitch don't show the icons.
-                    ((event.streamer.platform !== "TWITCH") && (event.sender.platform !== "CASTERLABS_SYSTEM"))
-                ) {
+                if (event.donations) {
                     event.donations.forEach((donation) => {
-                        const img = document.createElement("img");
+                        // Caffeine Props don't appear in chat like Twitch Cheers do.
+                        if (donation.type === "CAFFEINE_PROP") {
+                            const img = document.createElement("img");
 
-                        img.src = donation.image;
-                        img.classList = "vcimage";
+                            img.src = donation.image;
+                            img.classList = "vcimage";
 
-                        username.appendChild(img);
+                            username.appendChild(img);
+                        }
                     });
                 }
 
