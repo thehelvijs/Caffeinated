@@ -88,7 +88,7 @@ MODULES.moduleClasses["casterlabs_donation_goal"] = class {
             isLang: true
         },
         currency: {
-            display: "caffeinated.donation_goal.currency",
+            display: "generic.currency",
             type: "currency",
             isLang: true
         },

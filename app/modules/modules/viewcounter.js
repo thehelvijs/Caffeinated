@@ -52,17 +52,17 @@ MODULES.moduleClasses["casterlabs_view_counter"] = class {
 
     settingsDisplay = {
         font: {
-            display: "caffeinated.view_counter.font",
+            display: "generic.font",
             type: "font",
             isLang: true
         },
         font_size: {
-            display: "caffeinated.view_counter.font_size",
+            display: "generic.font.size",
             type: "number",
             isLang: true
         },
         text_color: {
-            display: "caffeinated.view_counter.text_color",
+            display: "generic.text.color",
             type: "color",
             isLang: true
         }

@@ -72,6 +72,18 @@
                 padding-left: 35px;
             }
 
+            /* Translators */
+
+            .translator {
+                padding-left: 15px;
+                padding-right: 15px;
+                padding-bottom: 10px;
+            }
+
+            .translator-language {
+                padding-left: 35px;
+            }
+
             /* Scrollbar */
 
             ::-webkit-scrollbar {
@@ -142,6 +154,23 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
                 <div class="dropdown-content" id="developers">
+                    <!-- Dynamic -->
+                </div>
+            </div>
+        </div>
+        <div class="dropdown is-hoverable">
+            <div class="dropdown-trigger">
+                <button class="button has-text-centered" aria-haspopup="true" aria-controls="dropdown-menu">
+                    <span>
+                        Translators
+                    </span>
+                    <span class="icon is-small">
+                        <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                    </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content" id="translators">
                     <!-- Dynamic -->
                 </div>
             </div>
@@ -276,6 +305,14 @@
                 }
             ];
 
+            const TRANSLATORS = [
+                {
+                    name: "Oasis",
+                    language: "Français",
+                    link: "https://www.youtube.com/channel/UCL85-pp5V0UC_WjjLKb39pQ",
+                }
+            ];
+
             // Let's-a-go!
 
             LIBRARIES.forEach((library) => {
@@ -318,6 +355,27 @@
                 div.classList = "developer";
 
                 document.querySelector("#developers").appendChild(div);
+            });
+
+            TRANSLATORS.forEach((translator) => {
+                const div = document.createElement("div");
+
+                const name = document.createElement("a");
+
+                name.innerText = translator.name;
+                name.addEventListener("click", () => openLink(translator.link));
+
+                const language = document.createElement("span");
+
+                language.innerText = translator.language;
+                language.classList = "translator-language";
+
+                div.appendChild(name);
+                div.appendChild(document.createElement("br"));
+                div.appendChild(language);
+                div.classList = "translator";
+
+                document.querySelector("#translators").appendChild(div);
             });
 
         </script>

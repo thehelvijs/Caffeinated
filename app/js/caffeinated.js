@@ -226,6 +226,11 @@ class Caffeinated {
 
         const instance = this;
 
+        const LANGUAGE_MAP = {
+            "English": "en-*",
+            "Français": "fr-*"
+        };
+
         MODULES.initalizeModule({
             displayname: "caffeinated.settings.title",
             namespace: "casterlabs_caffeinated_settings",
@@ -233,18 +238,32 @@ class Caffeinated {
             persist: true,
             id: "settings",
 
+            getDataToStore() {
+                return this.settings;
+            },
+
             settingsDisplay: {
                 signout: {
                     display: "caffeinated.settings.signout",
                     type: "button",
                     isLang: true
+                },
+                language: {
+                    display: "caffeinated.settings.language",
+                    type: "select",
+                    isLang: true
                 }
+            },
+
+            onSettingsUpdate() {
+                CAFFEINATED.setLanguage(LANGUAGE_MAP[this.settings.language]);
             },
 
             defaultSettings: {
                 signout: () => {
                     CAFFEINATED.signOut();
-                }
+                },
+                language: Object.keys(LANGUAGE_MAP)
             }
         });
 
@@ -434,6 +453,13 @@ class Caffeinated {
         this.store.set("channel", value);
 
         this.checkForUpdates();
+    }
+
+    setLanguage(language) {
+        this.store.set("language", language);
+
+        LANG.translate(document);
+        UI.setFollowerCount(this.userdata.followers_count);
     }
 
     getChannel() {
@@ -902,6 +928,8 @@ const UI = {
 
 UI.init();
 UI.reset();
+
+LANG.translate(document.querySelector(".menu-button-title"));
 
 function isPlatform(expected) {
     if (CAFFEINATED.userdata) {
