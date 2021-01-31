@@ -142,11 +142,11 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 type: ["Command", "Keyword"],
                 trigger: "!casterlabs",
                 mention: true,
-                reply: getTranslation("caffeinated.chatbot.default_reply")
+                reply: LANG.getTranslation("caffeinated.chatbot.default_reply")
             }
         },
-        follow_callout: getTranslation("caffeinated.chatbot.default_follow_callout"),
-        donation_callout: getTranslation("caffeinated.chatbot.default_donation_callout")
+        follow_callout: LANG.getTranslation("caffeinated.chatbot.default_follow_callout"),
+        donation_callout: LANG.getTranslation("caffeinated.chatbot.default_donation_callout")
     };
 
 };

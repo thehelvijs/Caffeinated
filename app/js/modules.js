@@ -120,7 +120,7 @@ class Modules {
                 }
             }
 
-            translate(module.page);
+            LANG.translate(module.page);
 
             if (module.init) module.init();
 
@@ -194,7 +194,7 @@ class Modules {
 
         document.querySelector("#page-menu").insertBefore(li, document.querySelector("#page-menu").lastChild);
 
-        translate(li);
+        LANG.translate(li);
     }
 
     initalizeModuleWidgetPage(module) {
@@ -218,7 +218,7 @@ class Modules {
             a.classList = "translatable";
             a.setAttribute("lang", name);
 
-            translate(title);
+            LANG.translate(title);
         }
 
         icons.classList.add("dropdown-icon");
@@ -322,7 +322,7 @@ class Modules {
 
         module.settings = stored;
 
-        translate(parent);
+        LANG.translate(parent);
     }
 
     getStoredValues(module) {
@@ -393,7 +393,7 @@ async function createDynamicModuleOption(module, layout, values, formCallback) {
         div.appendChild(await createModuleInput(module, key, data, values, formCallback, defaults[key]));
     }
 
-    translate(div);
+    LANG.translate(div);
 
     return div;
 }

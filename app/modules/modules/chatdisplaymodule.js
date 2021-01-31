@@ -219,7 +219,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
 
     addStatus(profile, langKey) {
         const usernameHtml = `<span style="color: ${profile.color};">${escapeHtml(profile.displayname)}</span>`;
-        const lang = getTranslation(langKey, usernameHtml);
+        const lang = LANG.getTranslation(langKey, usernameHtml);
 
         if (this.popoutWindow) {
             this.popoutWindow.webContents.executeJavaScript(`addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)})`);

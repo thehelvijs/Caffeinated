@@ -593,7 +593,7 @@ const UI = {
         if (count && (count >= 0)) {
             const formatted = kFormatter(count, 1);
 
-            document.querySelector("#followers").innerText = getTranslation("caffeinated.internal.followers_count_text", formatted);
+            document.querySelector("#followers").innerText = LANG.getTranslation("caffeinated.internal.followers_count_text", formatted);
 
             anime({
                 targets: "#followers",
