@@ -11,16 +11,6 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
 
     widgetDisplay = [
         {
-            name: "Reset",
-            icon: "trash",
-            async onclick(instance) {
-                instance.amount = 0;
-
-                instance.update();
-                MODULES.saveToStore(instance);
-            }
-        },
-        {
             name: "Copy",
             icon: "copy",
             onclick(instance) {
