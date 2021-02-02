@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 39;
-const VERSION = "1.0-stable16";
+const PROTOCOLVERSION = 40;
+const VERSION = "1.0-stable17";
 
 const LOGIN_BUTTONS = {
     BETA: `
@@ -19,7 +19,7 @@ const LOGIN_BUTTONS = {
             </span>
         </a>
         <br />
-        <a class="button" onclick="UI.login('caffeinated_trovo', 'https:\/\/open.trovo.live/page/login.html?client_id=BGUnwUJUSJS2wf5xJpa2QrJRU4ZVcMgS&response_type=token&scope=channel_details_self+send_chat_self+user_details_self+chat_connect&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth/trovo&state=');" style="overflow: hidden; background-color: #088942;">
+        <a class="button" onclick="UI.login('caffeinated_trovo', 'https:\/\/open.trovo.live/page/login.html?client_id=BGUnwUJUSJS2wf5xJpa2QrJRU4ZVcMgS&response_type=token&scope=channel_details_self+chat_send_self+send_to_my_channel+user_details_self+chat_connect&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth/trovo&state=');" style="overflow: hidden; background-color: #088942;">
             <img src="https://assets.casterlabs.co/trovo/logo.png" style="height: 2em; position: absolute; left: 8px; top: 4px;" />
             <span style="padding-left: 1.75em; z-index: 2;">
                 Login with Trovo
@@ -532,6 +532,7 @@ class Caffeinated {
 const CAFFEINATED = new Caffeinated();
 const MODULES = new Modules();
 const UI = {
+    slapCounter: 0,
     dootCounter: 0,
     doots: [],
     dootSize: 35,
@@ -575,6 +576,46 @@ const UI = {
         } else {
             document.querySelector(".user-platform").src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
             document.querySelector(".user-platform").setAttribute("title", "");
+        }
+    },
+
+    slap() {
+        if (this.slapCounter >= 0) {
+            this.slapCounter++;
+
+            if (this.slapCounter == 5) {
+                this.slapCounter = -1;
+                const audio = new Audio("https://assets.casterlabs.co/doot/cut.mp3");
+
+                audio.addEventListener("play", () => {
+                    setTimeout(() => {
+                        const html = document.body.parentElement;
+
+                        html.style.filter = "invert(1)";
+
+                        setTimeout(() => {
+                            anime({
+                                easing: "linear",
+                                duration: 1000,
+                                direction: "reverse",
+                                update: (anim) => {
+                                    html.style.filter = `invert(${anim.progress / 100})`;
+                                }
+                            }).finished.then(() => {
+                                html.style.filter = "";
+                                this.slapCounter = 0;
+                            });
+                        }, 7500);
+                    }, 1575);
+                });
+
+                audio.volume = 0.25;
+                audio.play();
+            } else {
+                setTimeout(() => {
+                    this.slapCounter--;
+                }, 10000);
+            }
         }
     },
 
@@ -798,7 +839,7 @@ const UI = {
                 }, 10000);
             }
 
-            audio.volume = 0.25;
+            audio.volume = 0.1;
             audio.play();
         }
     },
