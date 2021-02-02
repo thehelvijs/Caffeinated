@@ -598,30 +598,35 @@
                 tryJump();
             }
 
-            function addStatus(profile, lang) {
-                const div = document.createElement("div");
-                const pfp = document.createElement("img");
-                const text = document.createElement("span");
-                const msg = document.createElement("li");
+            function addStatus(profile, lang, id) {
+                // Prevent duplicates
+                if (!id || !document.querySelector("[vc_message_id='" + event.id + "']")) {
+                    const div = document.createElement("div");
+                    const pfp = document.createElement("img");
+                    const text = document.createElement("span");
+                    const msg = document.createElement("li");
 
-                pfp.src = profile.image_link;
-                pfp.classList.add("vcprofile");
-                pfp.addEventListener("click", () => {
-                    openLink(profile.link);
-                });
+                    pfp.src = profile.image_link;
+                    pfp.classList.add("vcprofile");
+                    pfp.addEventListener("click", () => {
+                        openLink(profile.link);
+                    });
 
-                text.innerHTML = lang;
+                    text.innerHTML = lang;
 
-                div.classList.add("vcchatmessage");
-                div.classList.add("vcstatus");
-                div.appendChild(pfp);
-                div.appendChild(text);
+                    div.classList.add("vcchatmessage");
+                    div.classList.add("vcstatus");
+                    div.appendChild(pfp);
+                    div.appendChild(text);
 
-                msg.appendChild(div);
+                    msg.appendChild(div);
 
-                document.querySelector("#chatbox").appendChild(msg);
+                    msg.setAttribute("vc_message_id", id);
 
-                tryJump();
+                    document.querySelector("#chatbox").appendChild(msg);
+
+                    tryJump();
+                }
             }
 
             function isAtBottom() {
@@ -671,7 +676,7 @@
 
                         case "MESSAGE": addMessage(event.event); break;
 
-                        case "STATUS": addStatus(event.profile, event.lang); break;
+                        case "STATUS": addStatus(event.profile, event.lang, event.id); break;
 
                     }
                 });
