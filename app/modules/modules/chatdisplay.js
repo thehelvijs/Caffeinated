@@ -33,7 +33,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         });
 
         koi.addEventListener("channel_points", (event) => {
-            this.addPointStatus(event.sender, event.reward, "caffeinated.chatdisplay.reward_text");
+            this.addPointStatus(event.sender, event.reward, "caffeinated.chatdisplay.reward_text", event.id);
         });
 
         koi.addEventListener("follow", (event) => {
@@ -237,26 +237,27 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         this.contentWindow.addMessage(event);
     }
 
-    addStatus(profile, langKey) {
+    addStatus(profile, langKey, id) {
         const usernameHtml = `<span style="color: ${profile.color};">${escapeHtml(profile.displayname)}</span>`;
         const lang = LANG.getTranslation(langKey, usernameHtml);
 
         if (this.popoutWindow) {
-            this.popoutWindow.webContents.executeJavaScript(`addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)})`);
+            this.popoutWindow.webContents.executeJavaScript(`addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)}, ${JSON.stringify(id)})`);
         }
 
         this.messageHistory.push({
             type: "STATUS",
             profile: profile,
-            lang: lang
+            lang: lang,
+            id: id
         });
 
         this.contentWindow.addStatus(profile, lang);
     }
 
     addPointStatus(profile, reward, langKey) {
-        const usernameHtml = `<span style="color: ${profile.color};">${escapeHtml(profile.displayname)}</span>`;
-        const imageHtml = `<img class="vcimage" src="${reward.reward_image ?? reward.default_reward_image}" />`;
+        const usernameHtml = `< span style = "color: ${profile.color};" > ${escapeHtml(profile.displayname)}</span > `;
+        const imageHtml = `< img class="vcimage" src = "${reward.reward_image ?? reward.default_reward_image}" /> `;
 
         const lang = LANG.getTranslation(langKey, usernameHtml, reward.title, imageHtml);
 
