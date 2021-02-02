@@ -43,7 +43,6 @@
 
             body {
                 padding-left: 5px;
-                padding-right: 5px;
             }
 
             a {
@@ -659,6 +658,8 @@
                         easing: "linear",
                         opacity: 1,
                         duration: 100
+                    }).finished.then(() => {
+                        jump.classList.remove("hide");
                     });
                 }
             }
