@@ -11,7 +11,7 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
         this.viewersList = [];
 
         this.defaultSettings.reset_link = () => {
-            this.uuid = generateUnsafePassword(64);
+            this.uuid = generateUUID() + generateUnsafePassword(64);
             this.setLinkText();
             this.connect();
             MODULES.saveToStore(this);
@@ -144,7 +144,7 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
         this.uuid = this.settings.uuid;
 
         if (!this.uuid || (this.uuid.length < 64)) {
-            this.uuid = generateUnsafePassword(64);
+            this.uuid = generateUUID() + generateUnsafePassword(64);
 
             MODULES.saveToStore(this);
         }
