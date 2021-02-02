@@ -6,7 +6,7 @@ MODULES.moduleClasses["casterlabs_view_counter"] = class {
         this.displayname = "caffeinated.view_counter.title";
         this.type = "overlay settings";
         this.id = id;
-
+        this.supportedPlatforms = ["TWITCH", "CAFFEINE"];
     }
 
     widgetDisplay = [
