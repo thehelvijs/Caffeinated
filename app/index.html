@@ -78,11 +78,6 @@
 
     <body>
         <canvas id="doot-rain" style="opacity: 0;"></canvas>
-        <div id="splash" style="opacity: 1;">
-            <img src="media/app_icon.png" class="app-icon" />
-            <img src="media/caffeinated.png" class="caffeinated-logo" />
-            <span class="splash-message" style="opacity: 0;"></span>
-        </div>
         <div class="title-bar">
             <div class="title-bar-title">
                 <img class="version-hover" src="media/app_icon.png" onclick="UI.doot();" />Caffeinated
@@ -98,7 +93,7 @@
                 <ion-icon name="remove" style="--ionicon-stroke-width: 48px !important;"></ion-icon>
             </a>
         </div>
-        <div id="content">
+        <div id="content" class="hide" style="opacity: 0;">
             <div id="banners">
             </div>
             <div class="main-content">
@@ -246,6 +241,13 @@
                         </span>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div id="splash" style="opacity: 1;">
+            <div class="inner-splash">
+                <img src="media/app_icon.png" class="app-icon" />
+                <img src="media/caffeinated.png" class="caffeinated-logo" />
+                <span class="splash-message" style="opacity: 0;"></span>
             </div>
         </div>
     </body>

@@ -271,6 +271,12 @@ input[type=number] {
 /* Splash page */
 
 #splash {
+    height: 100vh;
+    width: 100vw;
+    z-index: 95;
+}
+
+.inner-splash {
     position: relative;
     width: 216px;
     height: 40px;
@@ -289,7 +295,7 @@ input[type=number] {
     color: rgb(160, 160, 160);
 }
 
-.app-icon {
+#splash .app-icon {
     position: absolute;
     width: 40px;
     height: 40px;
@@ -297,7 +303,7 @@ input[type=number] {
     left: 0px;
 }
 
-.caffeinated-logo {
+#splash .caffeinated-logo {
     position: absolute;
     width: auto;
     height: 40px;
@@ -305,13 +311,14 @@ input[type=number] {
     right: 0px;
 }
 
+/* Content */
+
 #content {
     position: absolute;
     width: 100%;
     bottom: 0;
     overflow-y: hidden;
     overflow-x: hidden;
-    opacity: 0;
     top: var(--title-bar-height);
     left: 0;
     display: flex;

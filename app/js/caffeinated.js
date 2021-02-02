@@ -8,10 +8,10 @@ const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remo
 const windowStateKeeper = require("electron-window-state");
 
 const PROTOCOLVERSION = 40;
-const VERSION = "1.0-stable17";
+const VERSION = "1.1-stable1";
 
 const LOGIN_BUTTONS = {
-    BETA: `
+    STABLE: `
         <a class="button" onclick="UI.login('caffeinated_twitch', 'https:\/\/id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions&state=');" style="overflow: hidden; background-color: #7d2bf9;">
             <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 14px; top: 7.5px;" />
             <span style="padding-left: 1.75em; z-index: 2;">
@@ -32,28 +32,13 @@ const LOGIN_BUTTONS = {
                 Login with Caffeine
             </span>
         </a>
-    `,
-    STABLE: `
-        <a class="button" onclick="UI.login('caffeinated_twitch', 'https:\/\/id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions&state=');" style="overflow: hidden; background-color: #7d2bf9;">
-            <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 14px; top: 7.5px;" />
-            <span style="padding-left: 1.75em; z-index: 2;">
-                Login with Twitch
-            </span>
-        </a>
-        <br />
-        <a class="button" onclick="UI.loginScreen('CAFFEINE');" style="overflow: hidden; background-color: #0000FF;">
-            <img src="https://assets.casterlabs.co/caffeine/logo.png" style="height: 2.5em; position: absolute; left: 5px;" />
-            <span style="padding-left: 1.75em; z-index: 2;">
-                Login with Caffeine
-            </span>
-        </a>
     `
 };
 
 const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
 let CONNECTED = false;
-let PLATFORMS_DATA = {};
+let PLATFORM_DATA = {};
 
 console.log("%c                                                                                                                                                                                                                                                                                                                                                                                                        ", `
     line-height:         100px;
@@ -119,7 +104,9 @@ class Caffeinated {
         this.notifiedUpdate = false;
 
         document.querySelector("#login-buttons .button-container").innerHTML =
-            ((this.store.get("channel") == "STABLE") && !this.isDevEnviroment) ?
+            (
+                ((this.store.get("channel") == "STABLE") && !this.isDevEnviroment) || !LOGIN_BUTTONS.BETA
+            ) ?
                 LOGIN_BUTTONS.STABLE :
                 LOGIN_BUTTONS.BETA;
     }
@@ -217,14 +204,7 @@ class Caffeinated {
 
         setInterval(() => this.checkForUpdates(), (5 * 60) * 1000); // 5 Minutes
 
-        PLATFORMS_DATA = await (await fetch("https://api.casterlabs.co/v2/koi/platforms")).json();
-        let platformsList = [];
-
-        Object.values(PLATFORMS_DATA).forEach((platform) => {
-            platformsList.push(platform.name);
-        });
-
-        const instance = this;
+        PLATFORM_DATA = await (await fetch("https://api.casterlabs.co/v2/koi/platforms")).json();
 
         const LANGUAGE_MAP = {
             "English": "en-*",
@@ -280,18 +260,18 @@ class Caffeinated {
             },
 
             async init() {
-                if (instance.store.has("repos")) {
-                    instance.store.get("repos").forEach((url) => {
+                if (CAFFEINATED.store.has("repos")) {
+                    CAFFEINATED.store.get("repos").forEach((url) => {
                         this.settings.third_party_repos.push({ repo_url: url });
                     });
                     MODULES.saveToStore(this);
-                    instance.store.delete("repos");
+                    CAFFEINATED.store.delete("repos");
                     location.reload();
                 }
 
                 for (const repo of this.settings.third_party_repos) {
                     try {
-                        await instance.repomanager.addRepo(repo.repo_url);
+                        await CAFFEINATED.repomanager.addRepo(repo.repo_url);
                     } catch (e) {
                         console.error(e);
                     }
@@ -326,18 +306,6 @@ class Caffeinated {
             }
         });
 
-        for (const [namespace, modules] of Object.entries(this.store.get("modules"))) {
-            for (const [id, module] of Object.entries(modules)) {
-                try {
-                    let loaded = MODULES.getFromUUID(namespace + ":" + id);
-
-                    if (!loaded) {
-                        MODULES.initalizeModule(new MODULES.moduleClasses[namespace](id));
-                    }
-                } catch (e) { } // Ignore, module not loaded because it's not present
-            }
-        }
-
         for (const payload of Object.values(this.store.get("resource_tokens"))) {
             const response = await fetch(`https://${payload.server_location}/data?token=${payload.token}`)
 
@@ -350,6 +318,21 @@ class Caffeinated {
                 }
             } else {
                 this.removeResourceToken(payload.token);
+            }
+        }
+
+        for (const [namespace, modules] of Object.entries(this.store.get("modules"))) {
+            for (const id of Object.keys(modules)) {
+                try {
+                    const loaded = MODULES.getFromUUID(namespace + ":" + id);
+
+                    if (!loaded) {
+                        MODULES.initalizeModule(new MODULES.moduleClasses[namespace](id));
+                    }
+                } catch (e) {
+                    console.info(`Removed unloaded module "${namespace}:${id}" from config.`)
+                    this.store.delete(`modules.${namespace}.${id}`);
+                } // Delete values, module is not present.
             }
         }
 
@@ -571,7 +554,7 @@ const UI = {
 
     setUserPlatform(platform, link) {
         if (platform) {
-            document.querySelector(".user-platform").src = PLATFORMS_DATA[platform].logo;
+            document.querySelector(".user-platform").src = PLATFORM_DATA[platform].logo;
             document.querySelector(".user-platform").setAttribute("title", link);
         } else {
             document.querySelector(".user-platform").src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
@@ -942,7 +925,9 @@ const UI = {
     },
 
     splashScreen(show) {
-        if (!show) {
+        if (show) {
+            document.querySelector("#splash").classList.remove("hide");
+        } else {
             document.querySelector("#content").classList.remove("hide");
         }
 
@@ -962,6 +947,10 @@ const UI = {
             easing: "linear",
             opacity: show ? 1 : 0,
             duration: 500
+        }).finished.then(() => {
+            if (!show) {
+                document.querySelector("#splash").classList.add("hide");
+            }
         });
     }
 
@@ -1093,3 +1082,13 @@ document.querySelector("#login-caffeine-mfa").addEventListener("keyup", (e) => {
         UI.loginCaffeine();
     }
 });
+
+setTimeout(() => {
+    CAFFEINATED.triggerBanner("discord-banner", (element) => {
+        element.innerHTML = `
+            <a style="margin-left: 5px; color: white; text-decoration: underline;" onclick="openLink('https:\/\/casterlabs.co/discord');">
+                We have a Discord server!
+            </a>
+        `;
+    }, "#7289da");
+}, (5 * 60) * 1000);
