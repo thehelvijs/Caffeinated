@@ -6,6 +6,7 @@ MODULES.moduleClasses["caffeine_integration"] = class {
         this.displayname = "caffeine.integration.title";
         this.type = "settings";
         this.id = id;
+        this.supportedPlatforms = ["CAFFEINE"];
 
         this.schedule = -1;
 
@@ -91,24 +92,6 @@ MODULES.moduleClasses["caffeine_integration"] = class {
 
     onSettingsUpdate() {
         this.updated = true;
-    }
-
-    init() {
-        const div = document.getElementById(this.namespace + "_" + this.id).parentElement;
-
-        koi.addEventListener("user_update", (event) => {
-            // Hide the Caffeine settings box if not on Caffeine
-            if (event.streamer.platform == "CAFFEINE") {
-                div.classList.remove("hide");
-            } else {
-                div.classList.add("hide");
-            }
-        });
-
-        if (CAFFEINATED.userdata && (CAFFEINATED.userdata.platform != "CAFFEINE")) {
-            div.classList.add("hide");
-        }
-
     }
 
     settingsDisplay = {

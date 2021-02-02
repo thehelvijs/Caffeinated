@@ -40,12 +40,18 @@ const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 let CONNECTED = false;
 let PLATFORM_DATA = {};
 
-console.log("%c                                                                                                                                                                                                                                                                                                                                                                                                        ", `
-    line-height:         100px;
-    background-image:    url("https://assets.casterlabs.co/logo/casterlabs_full_white.png");
-    background-size:     contain;
-    background-repeat:   no-repeat;
+console.log("%c0", `
+    line-height: 105px;
+    background-image: url("https://assets.casterlabs.co/logo/casterlabs_full_white.png");
+    background-size: contain;
+    background-repeat: no-repeat;
     background-position: center;
+    background-color: #141414;
+    border-radius: 15px;
+    margin-left: calc((50% - 150px) - 1ch);
+    padding-left: 150px;
+    color: transparent;
+    padding-right: 150px;
 `);
 
 console.log(`%c
@@ -442,7 +448,7 @@ class Caffeinated {
         this.store.set("language", language);
 
         LANG.translate(document);
-        UI.setFollowerCount(this.userdata.followers_count);
+        // UI.setFollowerCount(this.userdata.streamer.followers_count);
     }
 
     getChannel() {
@@ -639,7 +645,7 @@ const UI = {
         }
     },
 
-    setFollowerCount(count) {
+    /*setFollowerCount(count) {
         if (count && (count >= 0)) {
             const formatted = kFormatter(count, 1);
 
@@ -659,10 +665,10 @@ const UI = {
                 duration: 250,
             });
         }
-    },
+    },*/
 
     reset() {
-        this.setFollowerCount(null);
+        // this.setFollowerCount(null);
         this.setUserImage(null, "");
         this.setUserName("");
         this.setUserPlatform(null, "");
@@ -1010,7 +1016,7 @@ koi.addEventListener("user_update", (event) => {
     UI.loginScreen("HIDE");
     UI.setUserImage(event.streamer.image_link, event.streamer.displayname);
     UI.setUserName(event.streamer.displayname, event.streamer.badges);
-    UI.setFollowerCount(event.streamer.followers_count);
+    // UI.setFollowerCount(event.streamer.followers_count);
     UI.setUserPlatform(event.streamer.platform, event.streamer.link);
 
     CAFFEINATED.userdata = event;

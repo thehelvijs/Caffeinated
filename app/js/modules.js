@@ -335,9 +335,9 @@ class Modules {
                 module.isEnabled = module.supportedPlatforms.includes(event.streamer.platform);
 
                 if (module.isEnabled) {
-                    div.classList.remove("hide");
+                    container.classList.remove("hide");
                 } else {
-                    div.classList.add("hide");
+                    container.classList.add("hide");
                 }
             });
         }
