@@ -106,7 +106,7 @@ class Modules {
                 if (types.includes("SETTINGS")) {
                     module.page.classList.add("widget-settings-page");
 
-                    await this.initalizeModuleSettingsPage(module, module.page);
+                    await this.initalizeModuleSettingsPage(module, module.page, true);
                 }
             } else {
                 if (types.includes("SETTINGS")) {
@@ -240,6 +240,18 @@ class Modules {
             }
         }
 
+        if (module.supportedPlatforms) {
+            koi.addEventListener("user_update", (event) => {
+                module.isEnabled = module.supportedPlatforms.includes(event.streamer.platform);
+
+                if (module.isEnabled) {
+                    div.classList.remove("hide");
+                } else {
+                    div.classList.add("hide");
+                }
+            });
+        }
+
         div.classList.add("dropdown-item");
         div.appendChild(title);
         div.appendChild(icons);
@@ -263,7 +275,7 @@ class Modules {
         document.querySelector(".pages").appendChild(page);
     }
 
-    async initalizeModuleSettingsPage(module, parent = document.getElementById("settings")) {
+    async initalizeModuleSettingsPage(module, parent = document.getElementById("settings"), isWidget) {
         const settingsSelector = module.namespace + "_" + module.id;
 
         const name = module.displayname ? module.displayname : prettifyString(module.id);
@@ -316,6 +328,18 @@ class Modules {
             }
 
             div.appendChild(await createModuleInput(module, key, data, stored, formCallback));
+        }
+
+        if (!isWidget && module.supportedPlatforms) {
+            koi.addEventListener("user_update", (event) => {
+                module.isEnabled = module.supportedPlatforms.includes(event.streamer.platform);
+
+                if (module.isEnabled) {
+                    container.classList.remove("hide");
+                } else {
+                    container.classList.add("hide");
+                }
+            });
         }
 
         parent.appendChild(container);

@@ -5,15 +5,19 @@ const FONTSELECT = {
 
     preload() {
         return new Promise((resolve, reject) => {
-            require("font-list").getFonts().then((fonts) => {
-                fonts.forEach((font) => {
-                    const name = font.replace(/\"/g, "");
+            try {
+                require("font-list").getFonts().then((fonts) => {
+                    fonts.forEach((font) => {
+                        const name = font.replace(/\"/g, "");
 
-                    if (!this.fonts.includes(name)) {
-                        this.fonts.push(name);
-                    }
-                })
-            });
+                        if (!this.fonts.includes(name)) {
+                            this.fonts.push(name);
+                        }
+                    })
+                });
+            } catch (e) {
+                console.log(e);
+            }
 
             fetch(this.endPoint).then((response) => response.json())
                 .catch(reject)

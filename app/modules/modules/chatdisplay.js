@@ -61,6 +61,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         });
 
         /* Listeners */
+        const viewersPopout = this.contentDocument.querySelector("#vcpopoutviewers");
 
         this.contentDocument.addEventListener("upvote_request", (e) => {
             koi.upvote(e.detail.id);
@@ -70,12 +71,21 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
             openLink(e.detail.link);
         });
 
-        this.contentDocument.querySelector("#vcpopoutviewers").addEventListener("click", () => {
+        viewersPopout.addEventListener("click", () => {
             this.createViewersWindow();
         });
 
         this.contentDocument.querySelector("#vcpopout").addEventListener("click", () => {
             this.createPopoutWindow();
+        });
+
+        koi.addEventListener("user_update", (event) => {
+            // They don't have that sort of viewer data available.
+            if (event.streamer.platform === "TROVO") {
+                viewersPopout.classList.add("hide");
+            } else {
+                viewersPopout.classList.remove("hide");
+            }
         });
 
         const messageInput = this.contentDocument.querySelector("#vcmessage");
