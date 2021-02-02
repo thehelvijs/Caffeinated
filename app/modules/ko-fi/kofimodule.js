@@ -65,9 +65,9 @@ MODULES.moduleClasses["kofi_integration"] = class {
     }
 
     init() {
-        if (this.settings.uuid) {
-            this.uuid = this.settings.uuid;
-        } else {
+        this.uuid = this.settings.uuid;
+
+        if (!this.uuid) {
             this.uuid = `kofi_signaling:${generateUUID()}:${generateUnsafePassword()}`;
             MODULES.saveToStore(this);
         }
