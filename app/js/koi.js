@@ -156,9 +156,31 @@ class Koi {
 
             this.ws.send(JSON.stringify({
                 type: "CHAT",
-                message: message
+                message: message.substring(0, this.getMaxLength(event))
             }));
         }
+    }
+
+    getMaxLength(event = CAFFEINATED.userdata) {
+        if (event) {
+            const platform = event.streamer.platform;
+
+            switch (platform) {
+                case "CAFFEINE":
+                    return 80;
+
+                case "TWITCH":
+                    return 500;
+
+                case "TROVO":
+                    return 300;
+
+                default:
+                    console.debug(platform);
+            }
+        }
+
+        return 100; // ?
     }
 
     isAlive() {

@@ -43,10 +43,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
     }
 
     onConnection(socket) {
-        MODULES.emitIO(this, "config", {
-            background: this.settings.background,
-            image_style: this.settings.image_style
-        }, socket);
+        MODULES.emitIO(this, "config", this.settings, socket);
 
         if (this.event) {
             MODULES.emitIO(this, "event", this.event, socket);
@@ -54,6 +51,20 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
     }
 
     init() {
+        if (this.settings.token) {
+            this.refreshToken = this.settings.token;
+            this.settings.token = null;
+            this.check();
+        }
+
+        koi.addEventListener("chat", (event) => {
+            this.processCommand(event);
+        });
+
+        koi.addEventListener("donation", (event) => {
+            this.processCommand(event);
+        });
+
         setInterval(() => this.check(), 1000);
 
         const element = document.querySelector("#casterlabs_now_playing_" + this.id).querySelector("[name=login]");
@@ -65,10 +76,15 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
         `;
 
         this.statusElement = element.querySelector("[name=text]");
+    }
 
-        if (this.settings.token) {
-            this.refreshToken = this.settings.token;
-            this.check();
+    processCommand(event) {
+        const message = event.message.toLowerCase();
+
+        if (message.startsWith("!song")) {
+            if (this.settings.enable_song_command) {
+                koi.sendMessage(`@${event.sender.displayname} ${this.event.title} - ${this.event.artist}`, event);
+            }
         }
     }
 
@@ -165,6 +181,11 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
             type: "checkbox",
             isLang: true
         },
+        enable_song_command: {
+            display: "spotify.integration.enable_song_command",
+            type: "checkbox",
+            isLang: true
+        },
         background_style: {
             display: "spotify.integration.background_style",
             type: "select",
@@ -195,7 +216,8 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
             }
         },
         announce: false,
-        background_style: ["Blur", "Clear", "Solid"],
+        enable_song_command: false,
+        background_style: ["Blur", "Clear"/*, "Solid"*/],
         image_style: ["Left", "Right", "None"]
     };
 

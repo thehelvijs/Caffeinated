@@ -85,6 +85,7 @@ LANG.absorbLang({
     "spotify.integration.logging_in": "Logging in",
     "spotify.integration.logged_in_as": (name) => `Logged in as ${name} (Click to log out)`,
     "spotify.integration.announce": "Announce Song",
+    "spotify.integration.enable_song_command": "Enable Song Command",
     "spotify.integration.background_style": "Background Style",
     "spotify.integration.image_style": "Image Style",
     "spotify.integration.now_playing_announcment": (title, artist) => `Now playing: ${title} - ${artist}`,

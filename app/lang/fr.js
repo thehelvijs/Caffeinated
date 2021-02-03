@@ -87,6 +87,7 @@ LANG.absorbLang({
     "spotify.integration.logging_in": "Se connecter",
     "spotify.integration.logged_in_as": (name) => `Connecté en tant que ${name}, (Cliquez pour vous déconnecter)`,
     "spotify.integration.announce": "Annoncer la chanson",
+    // TODO "spotify.integration.enable_song_command": "Enable Song Command",
     "spotify.integration.background_style": "Style de fond",
     "spotify.integration.image_style": "Style d'Image",
     "spotify.integration.now_playing_announcment": (title, artist) => `Lecture en cours: ${title} - ${artist}`,

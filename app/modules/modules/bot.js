@@ -28,7 +28,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         koi.addEventListener("donation", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.donation_callout) {
-                    this.sendMessage(`@${event.sender.displayname} ${this.settings.donation_callout}`, event);
+                    koi.sendMessage(`@${event.sender.displayname} ${this.settings.donation_callout}`, event);
                 }
 
                 this.processCommand(event);
@@ -38,7 +38,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         koi.addEventListener("donation", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.welcome_callout) {
-                    this.sendMessage(`@${event.sender.displayname} ${this.settings.welcome_callout}`, event);
+                    koi.sendMessage(`@${event.sender.displayname} ${this.settings.welcome_callout}`, event);
                 }
 
                 this.processCommand(event);
@@ -48,7 +48,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         koi.addEventListener("follow", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.follow_callout) {
-                    this.sendMessage(`@${event.follower.displayname} ${this.settings.follow_callout}`, event);
+                    koi.sendMessage(`@${event.follower.displayname} ${this.settings.follow_callout}`, event);
                 }
             }
         });
@@ -71,19 +71,15 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 ((command.type == "Command") && message.startsWith(trigger)) ||
                 ((command.type == "Keyword") && message.includes(trigger))
             ) {
-                this.sendMessage(`@${event.sender.displayname} ${command.reply}`, event);
+                koi.sendMessage(`@${event.sender.displayname} ${command.reply}`, event);
                 return;
             }
         }
     }
 
-    sendMessage(message, event) {
-        koi.sendMessage(message.substring(0, this.getMaxLength(event)), event);
-    }
-
     limitFields() {
         // It's 10 less to help fit in the mention
-        const max = this.getMaxLength() - 10;
+        const max = koi.getMaxLength() - 10;
 
         Array.from(this.page.querySelectorAll("[name=reply][owner=chat_bot]")).forEach((element) => {
             element.setAttribute("maxlength", max);
@@ -91,28 +87,6 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
 
         this.page.querySelector("[name=follow_callout][owner=chat_bot]").setAttribute("maxlength", max);
         this.page.querySelector("[name=donation_callout][owner=chat_bot]").setAttribute("maxlength", max);
-    }
-
-    getMaxLength(event = CAFFEINATED.userdata) {
-        if (event) {
-            const platform = event.streamer.platform;
-
-            switch (platform) {
-                case "CAFFEINE":
-                    return 80;
-
-                case "TWITCH":
-                    return 500;
-
-                case "TROVO":
-                    return 300;
-
-                default:
-                    console.debug(platform);
-            }
-        }
-
-        return 100; // ?
     }
 
     onSettingsUpdate() {
