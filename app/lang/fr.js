@@ -115,8 +115,6 @@ LANG.absorbLang({
     "caffeinated.chatbot.commands": "Commandes",
     "caffeinated.chatbot.follow_callout": "Notification Suiveur (Laisser vide pour désactiver)",
     "caffeinated.chatbot.donation_callout": "Notification de Don (Laisser vide pour désactiver)",
-    "caffeinated.chatbot.default_follow_callout": "Merci pour me suivre!",
-    "caffeinated.chatbot.default_donation_callout": "Merci pour le support!",
     "caffeinated.chatbot.default_reply": "Casterlabs est un service gratuit pour des modules de vidéo en streaming!",
     "caffeinated.chatbot.command_type": "Type de Commande",
     "caffeinated.chatbot.trigger": "Déclencheur",

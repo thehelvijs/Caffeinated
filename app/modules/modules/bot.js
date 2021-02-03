@@ -35,6 +35,16 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
             }
         });
 
+        koi.addEventListener("donation", (event) => {
+            if (this.settings.enabled) {
+                if (this.settings.welcome_callout) {
+                    this.sendMessage(`@${event.sender.displayname} ${this.settings.welcome_callout}`);
+                }
+
+                this.processCommand(event);
+            }
+        });
+
         koi.addEventListener("follow", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.follow_callout) {
@@ -48,18 +58,18 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         const message = event.message.toLowerCase();
 
         for (const command of this.settings.commands) {
+            if (message.endsWith(command.reply.toLowerCase())) {
+                return; // Loop detected.
+            }
+        }
+
+        // Second pass.
+        for (const command of this.settings.commands) {
             const trigger = command.trigger.toLowerCase();
 
             if (
                 ((command.type == "Command") && message.startsWith(trigger)) ||
-                // So we do normal detection, then check to see if the sender is the streamer.
-                ((command.type == "Keyword") && message.includes(trigger) &&
-                    (
-                        // Then, we check the contents of the message against it to ensure we're not 
-                        // spamming the streamer's own account with replys
-                        (event.sender.UUID != event.streamer.UUID) || !message.endsWith(command.reply.toLowerCase())
-                    )
-                )
+                ((command.type == "Keyword") && message.includes(trigger))
             ) {
                 this.sendMessage(`@${event.sender.displayname} ${command.reply}`);
                 return;
@@ -88,6 +98,8 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
             return 80;
         } else if (isPlatform("TWITCH")) {
             return 500;
+        } else if (isPlatform("TROVO")) {
+            return 300;
         }
     }
 
@@ -113,6 +125,11 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         },
         donation_callout: {
             display: "caffeinated.chatbot.donation_callout",
+            type: "input",
+            isLang: true
+        },
+        welcome_callout: {
+            display: "caffeinated.chatbot.welcome_callout",
             type: "input",
             isLang: true
         }
@@ -145,8 +162,9 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 reply: LANG.getTranslation("caffeinated.chatbot.default_reply")
             }
         },
-        follow_callout: LANG.getTranslation("caffeinated.chatbot.default_follow_callout"),
-        donation_callout: LANG.getTranslation("caffeinated.chatbot.default_donation_callout")
+        follow_callout: "",
+        donation_callout: "",
+        welcome_callout: ""
     };
 
 };
