@@ -463,7 +463,7 @@ input[type=number] {
     overflow: hidden !important;
     text-overflow: ellipsis;
     left: 55px;
-    top: 50%;
+    top: 22px;
     transform: translateY(-50%);
     box-sizing: border-box;
     display: inline-block;
@@ -476,12 +476,7 @@ input[type=number] {
     padding-right: 0.45rem;
     padding-bottom: 0.2rem;
     padding-left: 0.45rem;
-    margin-top: 1px;
     line-height: inherit;
-}
-
-.user-username-text {
-    padding-left: 1px;
 }
 
 .user-username ion-icon {
@@ -490,12 +485,12 @@ input[type=number] {
     transform: translateY(4px);
 }
 
-.user-followers {
+.user-meta {
     font-size: 11px;
     color: white;
     position: absolute;
-    left: 56px;
-    top: 33px;
+    left: 65px;
+    top: 35px;
 }
 
 .user-settings {

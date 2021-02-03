@@ -1,8 +1,8 @@
 LANG.absorbLang({
     // UI
     "caffeinated.internal.widgets": "Widgets",
-    "caffeinated.internal.followers_count_text": (count) => `${count} followers`,
-    "caffeinated.internal.subscribers_count_text": (count) => `${count} subscribers`,
+    "caffeinated.internal.followers_count_text": (count) => `${count} ${(count == 1 ? "follower" : "followers")}`,
+    "caffeinated.internal.subscribers_count_text": (count) => `${count} ${(count == 1 ? "subscriber" : "subscribers")}`,
 
     // Generic
     "generic.font": "Font",

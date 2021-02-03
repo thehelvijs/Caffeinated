@@ -448,7 +448,6 @@ class Caffeinated {
         this.store.set("language", language);
 
         LANG.translate(document);
-        // UI.setFollowerCount(this.userdata.streamer.followers_count);
     }
 
     getChannel() {
@@ -527,6 +526,8 @@ const UI = {
     dootSize: 35,
     dootCanvas: document.querySelector("#doot-rain"),
     dootImg: new Image(),
+    metaTaskDisplay: 0,
+    animatingMeta: false,
 
     init() {
         this.dootCtx = this.dootCanvas.getContext("2d");
@@ -646,30 +647,7 @@ const UI = {
         }
     },
 
-    /*setFollowerCount(count) {
-        if (count && (count >= 0)) {
-            const formatted = kFormatter(count, 1);
-
-            document.querySelector("#followers").innerText = LANG.getTranslation("caffeinated.internal.followers_count_text", formatted);
-
-            anime({
-                targets: "#followers",
-                easing: "linear",
-                opacity: 1,
-                duration: 250,
-            });
-        } else {
-            anime({
-                targets: "#followers",
-                easing: "linear",
-                opacity: 0,
-                duration: 250,
-            });
-        }
-    },*/
-
     reset() {
-        // this.setFollowerCount(null);
         this.setUserImage(null, "");
         this.setUserName("");
         this.setUserPlatform(null, "");
@@ -959,12 +937,72 @@ const UI = {
                 document.querySelector("#splash").classList.add("hide");
             }
         });
+    },
+
+    toggleMetaDisplay() {
+        if (!this.animatingMeta) {
+            const element = document.querySelector("#user-meta-text");
+            this.animatingMeta = true;
+
+            if (CAFFEINATED.userdata.streamer.subscriber_count > -1) {
+                anime({
+                    targets: element,
+                    easing: "linear",
+                    opacity: 0,
+                    duration: 100,
+                }).finished.then(() => {
+                    if (CAFFEINATED.userdata) {
+                        let text;
+
+                        if (UI.metaTaskDisplay == 1) {
+                            UI.metaTaskDisplay = 0;
+                            text = LANG.getTranslation("caffeinated.internal.subscribers_count_text", kFormatter(CAFFEINATED.userdata.streamer.subscriber_count, 2));
+                        } else {
+                            UI.metaTaskDisplay = 1;
+                            text = LANG.getTranslation("caffeinated.internal.followers_count_text", kFormatter(CAFFEINATED.userdata.streamer.followers_count, 2));
+                        }
+
+                        element.innerText = text;
+
+                        anime({
+                            targets: element,
+                            easing: "linear",
+                            opacity: 1,
+                            duration: 100,
+                        }).finished.then(() => {
+                            this.animatingMeta = false;
+                        });
+                    } else {
+                        this.animatingMeta = false;
+                    }
+                });
+            } else {
+                element.innerText = LANG.getTranslation("caffeinated.internal.followers_count_text", kFormatter(CAFFEINATED.userdata.streamer.followers_count, 2));
+
+                if (element.style.opacity == 0) {
+                    anime({
+                        targets: element,
+                        easing: "linear",
+                        opacity: 1,
+                        duration: 100,
+                    }).finished.then(() => {
+                        this.animatingMeta = false;
+                    });
+                } else {
+                    this.animatingMeta = false;
+                }
+            }
+        }
     }
 
 };
 
 UI.init();
 UI.reset();
+
+setInterval(() => {
+    UI.toggleMetaDisplay();
+}, 20 * 1000); // 20s
 
 LANG.translate(document.querySelector(".menu-button-title"));
 
@@ -1009,10 +1047,10 @@ koi.addEventListener("user_update", (event) => {
     UI.loginScreen("HIDE");
     UI.setUserImage(event.streamer.image_link, event.streamer.displayname);
     UI.setUserName(event.streamer.displayname, event.streamer.badges);
-    // UI.setFollowerCount(event.streamer.followers_count);
     UI.setUserPlatform(event.streamer.platform, event.streamer.link);
 
     CAFFEINATED.userdata = event;
+    UI.toggleMetaDisplay();
 });
 
 koi.addEventListener("error", (event) => {
@@ -1020,6 +1058,9 @@ koi.addEventListener("error", (event) => {
 
     switch (error) {
         case "AUTH_INVALID": {
+            CAFFEINATED.userdata = null;
+            UI.toggleMetaDisplay();
+
             UI.splashScreen(false);
             UI.triggerLogin();
 
