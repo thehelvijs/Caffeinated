@@ -145,7 +145,7 @@ function generateUnsafePassword(len = 32) {
 class AuthCallback {
 
     constructor(type = "unknown") {
-        this.id = `auth_redirect:${generateUUID()}:${type}`;
+        this.id = `auth_redirect:${generateUnsafePassword(128)}:${type}`;
     }
 
     disconnect() {

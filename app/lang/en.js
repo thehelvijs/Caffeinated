@@ -1,8 +1,8 @@
 LANG.absorbLang({
     // UI
     "caffeinated.internal.widgets": "Widgets",
-    "caffeinated.internal.followers_count_text": (count) => `${count} followers`,
-    "caffeinated.internal.subscribers_count_text": (count) => `${count} subscribers`,
+    "caffeinated.internal.followers_count_text": (count) => `${count} ${(count == 1 ? "follower" : "followers")}`,
+    "caffeinated.internal.subscribers_count_text": (count) => `${count} ${(count == 1 ? "subscriber" : "subscribers")}`,
 
     // Generic
     "generic.font": "Font",
@@ -85,6 +85,7 @@ LANG.absorbLang({
     "spotify.integration.logging_in": "Logging in",
     "spotify.integration.logged_in_as": (name) => `Logged in as ${name} (Click to log out)`,
     "spotify.integration.announce": "Announce Song",
+    "spotify.integration.enable_song_command": "Enable Song Command",
     "spotify.integration.background_style": "Background Style",
     "spotify.integration.image_style": "Image Style",
     "spotify.integration.now_playing_announcment": (title, artist) => `Now playing: ${title} - ${artist}`,
@@ -113,8 +114,7 @@ LANG.absorbLang({
     "caffeinated.chatbot.commands": "Commands",
     "caffeinated.chatbot.follow_callout": "Follow Callout (Leave blank to disable)",
     "caffeinated.chatbot.donation_callout": "Donation Callout (Leave blank to disable)",
-    "caffeinated.chatbot.default_follow_callout": "Thanks for the follow!",
-    "caffeinated.chatbot.default_donation_callout": "Thanks for the support!",
+    "caffeinated.chatbot.welcome_callout": "Welcome Callout (Leave blank to disable)",
     "caffeinated.chatbot.default_reply": "Casterlabs is a free stream widget service!",
     "caffeinated.chatbot.command_type": "Command Type",
     "caffeinated.chatbot.trigger": "Trigger",

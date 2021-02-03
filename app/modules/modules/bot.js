@@ -28,17 +28,25 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         koi.addEventListener("donation", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.donation_callout) {
-                    this.sendMessage(`@${event.sender.displayname} ${this.settings.donation_callout}`);
+                    koi.sendMessage(`@${event.sender.displayname} ${this.settings.donation_callout}`, event);
                 }
 
                 this.processCommand(event);
             }
         });
 
+        koi.addEventListener("viewer_join", (event) => {
+            if (this.settings.enabled) {
+                if (this.settings.welcome_callout && (event.streamer.platform === "TROVO")) {
+                    koi.sendMessage(`@${event.sender.displayname} ${this.settings.welcome_callout}`, event);
+                }
+            }
+        });
+
         koi.addEventListener("follow", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.follow_callout) {
-                    this.sendMessage(`@${event.follower.displayname} ${this.settings.follow_callout}`);
+                    koi.sendMessage(`@${event.follower.displayname} ${this.settings.follow_callout}`, event);
                 }
             }
         });
@@ -48,32 +56,28 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         const message = event.message.toLowerCase();
 
         for (const command of this.settings.commands) {
+            if (message.endsWith(command.reply.toLowerCase())) {
+                return; // Loop detected.
+            }
+        }
+
+        // Second pass.
+        for (const command of this.settings.commands) {
             const trigger = command.trigger.toLowerCase();
 
             if (
                 ((command.type == "Command") && message.startsWith(trigger)) ||
-                // So we do normal detection, then check to see if the sender is the streamer.
-                ((command.type == "Keyword") && message.includes(trigger) &&
-                    (
-                        // Then, we check the contents of the message against it to ensure we're not 
-                        // spamming the streamer's own account with replys
-                        (event.sender.UUID != event.streamer.UUID) || !message.endsWith(command.reply.toLowerCase())
-                    )
-                )
+                ((command.type == "Keyword") && message.includes(trigger))
             ) {
-                this.sendMessage(`@${event.sender.displayname} ${command.reply}`);
+                koi.sendMessage(`@${event.sender.displayname} ${command.reply}`, event);
                 return;
             }
         }
     }
 
-    sendMessage(message) {
-        koi.sendMessage(message.substring(0, this.getMaxLength()));
-    }
-
     limitFields() {
         // It's 10 less to help fit in the mention
-        const max = this.getMaxLength() - 10;
+        const max = koi.getMaxLength() - 10;
 
         Array.from(this.page.querySelectorAll("[name=reply][owner=chat_bot]")).forEach((element) => {
             element.setAttribute("maxlength", max);
@@ -81,13 +85,12 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
 
         this.page.querySelector("[name=follow_callout][owner=chat_bot]").setAttribute("maxlength", max);
         this.page.querySelector("[name=donation_callout][owner=chat_bot]").setAttribute("maxlength", max);
-    }
+        this.page.querySelector("[name=welcome_callout][owner=chat_bot]").setAttribute("maxlength", max);
 
-    getMaxLength() {
-        if (isPlatform("CAFFEINE")) {
-            return 80;
-        } else if (isPlatform("TWITCH")) {
-            return 500;
+        if (CAFFEINATED.userdata && (CAFFEINATED.userdata.streamer.platform === "TROVO")) {
+            this.page.querySelector("[name=welcome_callout][owner=chat_bot]").parentElement.classList.remove("hide");
+        } else {
+            this.page.querySelector("[name=welcome_callout][owner=chat_bot]").parentElement.classList.add("hide");
         }
     }
 
@@ -113,6 +116,11 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         },
         donation_callout: {
             display: "caffeinated.chatbot.donation_callout",
+            type: "input",
+            isLang: true
+        },
+        welcome_callout: {
+            display: "caffeinated.chatbot.welcome_callout",
             type: "input",
             isLang: true
         }
@@ -145,8 +153,9 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 reply: LANG.getTranslation("caffeinated.chatbot.default_reply")
             }
         },
-        follow_callout: LANG.getTranslation("caffeinated.chatbot.default_follow_callout"),
-        donation_callout: LANG.getTranslation("caffeinated.chatbot.default_donation_callout")
+        follow_callout: "",
+        donation_callout: "",
+        welcome_callout: ""
     };
 
 };
