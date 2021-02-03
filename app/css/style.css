@@ -480,11 +480,14 @@ input[type=number] {
     line-height: inherit;
 }
 
+.user-username-text {
+    padding-left: 1px;
+}
+
 .user-username ion-icon {
-    position: absolute;
     color: var(--background-color) !important;
     font-size: 18px !important;
-    top: 1px;
+    transform: translateY(4px);
 }
 
 .user-followers {

@@ -545,17 +545,18 @@ const UI = {
     },
 
     setUserName(username, badges) {
-        const element = document.querySelector(".user-username");
-
-        element.innerHTML = '<ion-icon name="settings-outline"></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;';
+        const element = document.querySelector(".user-username-text");
+        let newHtml = "";
 
         if (username) {
-            element.innerHTML += "&nbsp;&nbsp;" + escapeHtml(username);
+            newHtml += escapeHtml(username);
 
             badges.forEach((badge) => {
-                element.innerHTML += `<img style="height: 1.1em; transform: translateY(.2em); padding-left: 3px;" src=${badge} />`;
+                newHtml += `<img style="height: 1.1em; transform: translateY(.2em); padding-left: 3px;" src=${badge} />`;
             })
         }
+
+        element.innerHTML = newHtml;
     },
 
     setUserPlatform(platform, link) {
