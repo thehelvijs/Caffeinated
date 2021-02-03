@@ -22,7 +22,7 @@ MODULES.moduleClasses["caffeine_integration"] = class {
 
         this.defaultSettings.game.push("Entertainment");
 
-        (() => {
+        {
             const xhr = new XMLHttpRequest();
 
             xhr.open("GET", "https://api.caffeine.tv/v1/games", false);
@@ -32,7 +32,7 @@ MODULES.moduleClasses["caffeine_integration"] = class {
                 GAMES[game.name] = game.id;
                 this.defaultSettings.game.push(game.name);
             });
-        })();
+        }
 
         this.defaultSettings.update = () => {
             const form = new FormData();
@@ -60,7 +60,8 @@ MODULES.moduleClasses["caffeine_integration"] = class {
                         fetch("https://api.caffeine.tv/v1/broadcasts/" + broadcastId, {
                             method: "PATCH",
                             headers: {
-                                "Authorization": credentials.authorization
+                                "Authorization": credentials.authorization,
+                                "x-client-type": "web" // I see.
                             },
                             body: form
                         });
