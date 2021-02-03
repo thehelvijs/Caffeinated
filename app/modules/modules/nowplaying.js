@@ -35,9 +35,11 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
     }
 
     getDataToStore() {
-        return Object.assign({
-            token: this.refreshToken
-        }, this.settings);
+        const data = Object.assign({}, this.settings);
+
+        data.token = this.refreshToken;
+
+        return data;
     }
 
     onConnection(socket) {

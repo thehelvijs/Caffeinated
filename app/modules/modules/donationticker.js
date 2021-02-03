@@ -20,9 +20,11 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
     ]
 
     getDataToStore() {
-        return Object.assign({
-            amount: this.amount
-        }, this.settings);
+        const data = Object.assign({}, this.settings);
+
+        data.amount = this.amount;
+
+        return data;
     }
 
     onConnection(socket) {

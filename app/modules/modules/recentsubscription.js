@@ -31,9 +31,11 @@ MODULES.moduleClasses["casterlabs_recent_subscription"] = class {
     ]
 
     getDataToStore() {
-        return Object.assign({
-            username: this.username
-        }, this.settings);
+        const data = Object.assign({}, this.settings);
+
+        data.username = this.username;
+
+        return data;
     }
 
     onConnection(socket) {

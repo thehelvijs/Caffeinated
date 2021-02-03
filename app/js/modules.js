@@ -80,8 +80,8 @@ class Modules {
 
     saveToStore(module) {
         try {
-            let path = "modules." + module.namespace + "." + module.id;
-            let data = module.getDataToStore();
+            const path = `modules.${module.namespace}.${module.id}`;
+            const data = module.getDataToStore();
 
             CAFFEINATED.store.set(path, data);
         } catch (e) {

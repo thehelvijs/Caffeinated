@@ -27,7 +27,7 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
     ]
 
     getDataToStore() {
-        let data = Object.assign({}, this.settings);
+        const data = Object.assign({}, this.settings);
 
         data.audio_file = this.audio_file;
         data.image_file = this.image_file;
