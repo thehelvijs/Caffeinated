@@ -967,14 +967,6 @@ UI.reset();
 
 LANG.translate(document.querySelector(".menu-button-title"));
 
-function isPlatform(expected) {
-    if (CAFFEINATED.userdata) {
-        return CAFFEINATED.userdata.streamer.platform == expected;
-    } else {
-        return false;
-    }
-}
-
 /* Koi */
 koi.addEventListener("close", () => {
     CONNECTED = false;

@@ -148,9 +148,9 @@ class Koi {
         }
     }
 
-    sendMessage(message) {
-        if (this.isAlive()) {
-            if (isPlatform("TWITCH")) {
+    sendMessage(message, event = CAFFEINATED.userdata) {
+        if (this.isAlive() && event) {
+            if (event.streamer.platform === "TWITCH") {
                 message = message.replace(/\n/gm, " ");
             }
 
