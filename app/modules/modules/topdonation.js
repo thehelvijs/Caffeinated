@@ -31,10 +31,12 @@ MODULES.moduleClasses["casterlabs_top_donation"] = class {
     ]
 
     getDataToStore() {
-        return Object.assign({
-            username: this.username,
-            amount: this.amount
-        }, this.settings);
+        const data = Object.assign({}, this.settings);
+
+        data.amount = this.amount;
+        data.username = this.username;
+
+        return data;
     }
 
     onConnection(socket) {

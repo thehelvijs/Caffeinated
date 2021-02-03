@@ -29,7 +29,7 @@ MODULES.moduleClasses["casterlabs_follower_goal"] = class {
     ]
 
     getDataToStore() {
-        let data = Object.assign({}, this.settings);
+        const data = Object.assign({}, this.settings);
 
         data.amount = this.amount;
 

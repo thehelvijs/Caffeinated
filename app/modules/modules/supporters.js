@@ -26,7 +26,7 @@ MODULES.moduleClasses["casterlabs_supporters"] = class {
             <br />
         `;
 
-        setInterval(this.update, 15000); // Every 15s
+        setInterval(this.update, 60000); // Every 60s
 
         this.update();
     }
