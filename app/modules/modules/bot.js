@@ -35,13 +35,11 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
             }
         });
 
-        koi.addEventListener("donation", (event) => {
+        koi.addEventListener("viewer_join", (event) => {
             if (this.settings.enabled) {
-                if (this.settings.welcome_callout) {
+                if (this.settings.welcome_callout && (event.streamer.platform === "TROVO")) {
                     koi.sendMessage(`@${event.sender.displayname} ${this.settings.welcome_callout}`, event);
                 }
-
-                this.processCommand(event);
             }
         });
 
@@ -87,6 +85,13 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
 
         this.page.querySelector("[name=follow_callout][owner=chat_bot]").setAttribute("maxlength", max);
         this.page.querySelector("[name=donation_callout][owner=chat_bot]").setAttribute("maxlength", max);
+        this.page.querySelector("[name=welcome_callout][owner=chat_bot]").setAttribute("maxlength", max);
+
+        if (CAFFEINATED.userdata && (CAFFEINATED.userdata.streamer.platform === "TROVO")) {
+            this.page.querySelector("[name=welcome_callout][owner=chat_bot]").parentElement.classList.remove("hide");
+        } else {
+            this.page.querySelector("[name=welcome_callout][owner=chat_bot]").parentElement.classList.add("hide");
+        }
     }
 
     onSettingsUpdate() {
