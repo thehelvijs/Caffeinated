@@ -5,6 +5,7 @@ const CURRENCY_TABLE = {
     "Caffeine Credits": "CAFFEINE_CREDITS",
     "Caffeine Gold": "CAFFEINE_GOLD",
     "Twitch Bits": "TWITCH_BITS",
+    "Trovo Elixir": "TROVO_ELIXIR",
 
     // Popular (?)
     "US Dollar (USD)": "USD",
@@ -188,7 +189,21 @@ function formatCurrency(amount, currency) {
         currency = "USD";
     }
 
-    if (currency === "CAFFEINE_CREDITS") {
+    if (currency === "TROVO_ELIXIR") {
+        return `
+            <span>
+                <img src="https://static.trovo.live/imgupload/shop/20200422_h5b26j9k0pj.png" />
+                ${amount.toFixed(0)}
+            </span>
+        `;
+    } else if (currency === "TROVO_MANA") {
+        return `
+            <span>
+                <img src="https://static.trovo.live/cat/img/e2374dd.png" />
+                ${amount.toFixed(0)}
+            </span>
+        `;
+    } else if (currency === "CAFFEINE_CREDITS") {
         return `
             <span>
                 <svg viewBox="0 0 16 16" fill="#C6F" style="height: .85em; width: auto; transform: translateY(.15em);">
@@ -284,7 +299,11 @@ async function convertCurrency(amount, from, to) {
         let result;
         let usd;
 
-        if (from === "CAFFEINE_CREDITS") {
+        if (from === "TROVO_MANA") {
+            return 0;
+        } else if (from === "TROVO_ELIXIR") {
+            usd = (amount / 1000) * 5; // https://trovo.live/support?topicid=C02F691C6E4A05DD%2F8F61C86D1EA7869B
+        } else if (from === "CAFFEINE_CREDITS") {
             usd = amount / 91; // Something we figured out, no official source for this though.
         } else if (from === "CAFFEINE_GOLD") {
             usd = (amount * 3) / 91;
@@ -294,7 +313,11 @@ async function convertCurrency(amount, from, to) {
             usd = await CurrencyConverter(amount, from, "USD");
         }
 
-        if (to === "CAFFEINE_CREDITS") {
+        if (to === "TROVO_MANA") {
+            return 0;
+        } else if (to === "TROVO_ELIXIR") {
+            result = (usd / 5) * 1000; // https://trovo.live/support?topicid=C02F691C6E4A05DD%2F8F61C86D1EA7869B
+        } else if (to === "CAFFEINE_CREDITS") {
             result = usd * 91; // Something we figured out, no official source for this though.
         } else if (to === "CAFFEINE_GOLD") {
             result = (usd * 91) / 3;
