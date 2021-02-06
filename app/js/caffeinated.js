@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 45;
-const VERSION = "1.1-stable5";
+const PROTOCOLVERSION = 46;
+const VERSION = "1.1-stable6";
 
 const LOGIN_BUTTONS = {
     STABLE: `
@@ -1127,8 +1127,18 @@ setTimeout(() => {
     CAFFEINATED.triggerBanner("discord-banner", (element) => {
         element.innerHTML = `
             <a style="margin-left: 5px; color: white; text-decoration: underline;" onclick="openLink('https:\/\/casterlabs.co/discord');">
-                We have a Discord server!
+                We have a Discord!
             </a>
         `;
     }, "#7289da");
 }, (5 * 60) * 1000);
+
+setTimeout(() => {
+    CAFFEINATED.triggerBanner("twitter-banner", (element) => {
+        element.innerHTML = `
+            <a style="margin-left: 5px; color: white; text-decoration: underline;" onclick="openLink('https:\/\/casterlabs.co/twitter');">
+                We have a Twitter!
+            </a>
+        `;
+    }, "#00acee");
+}, (25 * 60) * 1000);
