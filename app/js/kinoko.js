@@ -142,6 +142,10 @@ function generateUnsafePassword(len = 32) {
         }).join("");
 }
 
+function generateUnsafeUniquePassword(len = 32) {
+    return generateUUID().replace(/-/g, "") + generateUnsafePassword(len);
+}
+
 class AuthCallback {
 
     constructor(type = "unknown") {

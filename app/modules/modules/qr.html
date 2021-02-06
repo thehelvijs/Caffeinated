@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Caffeinated QR Code</title>
+        <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet" />
+        <style>
+            body {
+                margin: 0;
+                color: black;
+            }
+
+            #click {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100vmin;
+                height: 100vmin;
+            }
+
+            #click span {
+                top: 50vmin;
+                left: 50vmin;
+                position: fixed;
+                transform: translate(-50%, -50%);
+                font-family: "Poppins", sans-serif;
+                pointer-events: none;
+                text-align: center;
+            }
+
+            .hidden img {
+                filter: blur(5px);
+                width: calc(100vmin - 20px);
+                height: calc(100vmin - 20px);
+                margin: 10px;
+            }
+
+            #qrcode {
+                width: 100vmin;
+            }
+
+            img {
+                width: 100vmin;
+                height: 100vmin;
+                image-rendering: pixelated;
+            }
+
+            canvas {
+                opacity: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="qrcode" class="hidden"></div>
+        <div id="click">
+            <span>
+                Click to unhide
+                <br />
+                QR code
+            </span>
+        </div>
+    </body>
+
+    <footer>
+        <script>
+            const qrElement = document.querySelector("#qrcode");
+            const clickElement = document.querySelector("#click");
+
+            const qrcode = new QRCode("qrcode", {
+                text: "reallylonglinkokthisissoooooooooooooooooolonglikezoowheemamaitslong.",
+                width: 175,
+                height: 175,
+                colorDark: "#DCDCDC",
+                colorLight: "transparent"
+            });
+
+            let hidden = true;
+
+            clickElement.addEventListener("click", () => {
+                hidden = !hidden;
+
+                if (hidden) {
+                    qrElement.classList.add("hidden");
+                    clickElement.style.opacity = 1;
+                } else {
+                    qrElement.classList.remove("hidden");
+                    clickElement.style.opacity = 0;
+                }
+            })
+
+            function setCode(text) {
+                qrcode.makeCode(text);
+            }
+
+        </script>
+    </footer>
+
+</html>
