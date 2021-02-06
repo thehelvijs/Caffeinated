@@ -11,10 +11,14 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
         this.viewersList = [];
 
         this.defaultSettings.reset_link = () => {
-            this.uuid = generateUUID() + generateUnsafePassword(64);
+            this.uuid = generateUnsafeUniquePassword(16);
             this.setLinkText();
             this.connect();
             MODULES.saveToStore(this);
+        };
+
+        this.defaultSettings.copy_link = () => {
+            putInClipboard(`https://casterlabs.co/companion?key=${this.uuid}`);
         };
 
         this.kinoko.on("message", (data) => {
@@ -137,22 +141,26 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
     }
 
     setLinkText() {
-        document.querySelector("#casterlabs_companion_casterlabs_companion").querySelector("[name='open']").value = "casterlabs.co/companion?key=" + this.uuid;
+        this.qrWindow.setCode(`https://casterlabs.co/companion?key=${this.uuid}`);
     }
 
     init() {
+        this.qrWindow = this.page.querySelector("iframe").contentWindow;
         this.uuid = this.settings.uuid;
 
-        if (!this.uuid || (this.uuid.length < 64)) {
-            this.uuid = generateUUID() + generateUnsafePassword(64);
+        if (!this.uuid || this.uuid.includes("-")) {
+            this.uuid = generateUnsafeUniquePassword(16);
 
             MODULES.saveToStore(this);
         }
 
-        document.querySelector("#casterlabs_companion_" + this.id).querySelector("[name='open']").setAttribute("readonly", "");
+        this.page.querySelector("iframe").style.marginBottom = "35px";
 
-        this.setLinkText();
-        this.connect();
+        // Give the frame time to render.
+        setTimeout(() => {
+            this.setLinkText();
+            this.connect();
+        }, 100);
     }
 
 
@@ -167,9 +175,14 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
             type: "checkbox",
             isLang: true
         },
-        open: {
-            display: "caffeinated.companion.open",
-            type: "input",
+        qr_frame: {
+            type: "iframe-src",
+            height: "175px",
+            width: "175px"
+        },
+        copy_link: {
+            display: "caffeinated.companion.copy",
+            type: "button",
             isLang: true
         },
         reset_link: {
@@ -181,7 +194,8 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
 
     defaultSettings = {
         enabled: false,
-        open: "",
+        qr_frame: __dirname + "/modules/modules/qr.html",
+        // copy_link: () => {},
         // reset_link: () => {}
     };
 

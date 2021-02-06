@@ -3,10 +3,15 @@ MODULES.moduleClasses["kofi_integration"] = class {
 
     constructor(id) {
         this.namespace = "kofi_integration";
+        this.displayname = "Ko-fi Integration";
         this.type = "settings";
         this.id = id;
 
         this.kinoko = new Kinoko();
+
+        this.defaultSettings.url = () => {
+            putInClipboard(`https://api.casterlabs.co/v1/kinoko?channel=${encodeURIComponent(this.uuid)}`);
+        }
 
         this.kinoko.on("close", () => this.kinoko.connect(this.uuid, "parent"));
 
@@ -16,45 +21,73 @@ MODULES.moduleClasses["kofi_integration"] = class {
             console.debug(data);
 
             if (data.is_public && (data.type === "Donation")) {
-                const isTest = data.currency; // Is null on tests
+                const isTest = data.kofi_transaction_id === "1234-1234-1234-1234";
 
                 const id = isTest ? data.kofi_transaction_id : "";
-                const currency = isTest ? data.currency : "USD";
-                const message = isTest ? data.message : "Test from Ko-fi";
-                const amount = isTest ? 0 : parseFloat(data.amount);
 
-                // TODO subs
+                if (data.is_subscription_payment) {
+                    koi.broadcast("subscription", {
+                        emotes: {},
+                        mensions: [],
+                        links: [],
+                        streamer: CAFFEINATED.userdata.streamer,
+                        subscriber: {
+                            platform: "KOFI",
+                            image_link: "https://ko-fi.com/favicon.png",
+                            followers_count: -1,
+                            badges: [],
+                            color: "#00B9FE",
+                            username: data.from_name.toLowerCase(),
+                            displayname: data.from_name,
+                            UUID: data.from_name,
+                            UPID: `${data.from_name};KOFI`,
+                            link: data.url
+                        },
+                        months: 1,
+                        sub_type: data.is_first_subscription_payment ? "SUB" : "RESUB",
+                        sub_level: "TIER_1",
+                        // message: message,
+                        id: id,
+                        upvotable: false,
+                        event_type: "SUBSCRIPTION"
+                    });
+                } else {
+                    const currency = isTest ? data.currency : "USD";
+                    const message = isTest ? data.message : "Test from Ko-fi";
+                    const amount = isTest ? 0 : parseFloat(data.amount);
 
-                const event = {
-                    donations: [
-                        {
-                            "animated_image": "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
-                            "currency": currency,
-                            "amount": amount,
-                            "image": "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
-                        }
-                    ],
-                    emotes: {},
-                    mensions: [],
-                    links: [],
-                    streamer: CAFFEINATED.userdata,
-                    sender: {
-                        platform: "KO-FI",
-                        image_link: "https://ko-fi.com/favicon.png",
-                        followers_count: -1,
-                        badges: [],
-                        color: "#00B9FE",
-                        username: data.from_name,
-                        UUID: data.from_name,
-                        link: data.url
-                    },
-                    message: message,
-                    id: id,
-                    upvotable: false,
-                    event_type: "DONATION"
-                };
-
-                koi.broadcast("donation", event);
+                    koi.broadcast("donation", {
+                        donations: [
+                            {
+                                "animated_image": "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
+                                "currency": currency,
+                                "amount": amount,
+                                "image": "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
+                                "type": "KOFI_DIRECT"
+                            }
+                        ],
+                        emotes: {},
+                        mensions: [],
+                        links: [],
+                        streamer: CAFFEINATED.userdata.streamer,
+                        sender: {
+                            platform: "KOFI",
+                            image_link: "https://ko-fi.com/favicon.png",
+                            followers_count: -1,
+                            badges: [],
+                            color: "#00B9FE",
+                            username: data.from_name.toLowerCase(),
+                            displayname: data.from_name,
+                            UUID: data.from_name,
+                            UPID: `${data.from_name};KOFI`,
+                            link: data.url
+                        },
+                        message: message,
+                        id: id,
+                        upvotable: false,
+                        event_type: "DONATION"
+                    });
+                }
             }
         });
 
@@ -67,15 +100,12 @@ MODULES.moduleClasses["kofi_integration"] = class {
     init() {
         this.uuid = this.settings.uuid;
 
-        if (!this.uuid) {
-            this.uuid = `kofi_signaling:${generateUUID()}:${generateUnsafePassword()}`;
+        if (!this.uuid || this.uuid.includes("-")) {
+            this.uuid = `kofi_signaling:${generateUnsafeUniquePassword(64)}`;
             MODULES.saveToStore(this);
         }
 
         this.kinoko.connect(this.uuid, "parent");
-
-        this.page.querySelector("[name=url").setAttribute("readonly", "");
-        this.page.querySelector("[name=url").value = "https://api.casterlabs.co/v1/kinoko?channel=" + encodeURIComponent(this.uuid);
 
         const instructions = document.createElement("div");
 
@@ -91,13 +121,13 @@ MODULES.moduleClasses["kofi_integration"] = class {
 
     settingsDisplay = {
         url: {
-            display: "Webhook URL",
-            type: "input"
+            display: "Copy Webhook URL",
+            type: "button"
         }
     };
 
     defaultSettings = {
-        url: ""
+        // url: () => {}
     };
 
 };

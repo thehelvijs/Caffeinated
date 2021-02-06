@@ -132,7 +132,7 @@ LANG.absorbLang({
     // Casterlabs Companion
     "caffeinated.companion.title": "Companion Casterlabs",
     "caffeinated.companion.enabled": "Activé",
-    "caffeinated.companion.open": "Ouvrez ce lien sur votre appareil",
+    "caffeinated.companion.copy": "Copier le lien",
     "caffeinated.companion.reset": "Réinitialiser le lien"
 
 }, "fr-*");
