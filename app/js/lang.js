@@ -62,19 +62,23 @@ const LANG = {
             const key = element.getAttribute("lang");
             const lang = LANGUAGES[key];
 
-            const supported = this.getSupportedLanguage(key);
-            let translated = supported ? lang[supported] : key;
-
             let result;
 
-            if (translated === undefined) {
-                result = key;
-            } else {
-                if (typeof translated === "function") {
-                    result = translated(...args);
+            if (lang) {
+                const supported = this.getSupportedLanguage(key);
+                let translated = supported ? lang[supported] : key;
+
+                if (translated === undefined) {
+                    result = key;
                 } else {
-                    result = translated;
+                    if (typeof translated === "function") {
+                        result = translated(...args);
+                    } else {
+                        result = translated;
+                    }
                 }
+            } else {
+                result = key;
             }
 
             element.innerText = result;
@@ -85,17 +89,21 @@ const LANG = {
     getTranslation(key, ...args) {
         const lang = LANGUAGES[key];
 
-        const supported = this.getSupportedLanguage(key);
-        let translated = supported ? lang[supported] : key;
+        if (lang) {
+            const supported = this.getSupportedLanguage(key);
+            let translated = supported ? lang[supported] : key;
 
-        if (translated === undefined) {
-            return key;
-        } else {
-            if (typeof translated === "function") {
-                translated = translated(...args);
+            if (translated === undefined) {
+                return key;
+            } else {
+                if (typeof translated === "function") {
+                    translated = translated(...args);
+                }
+
+                return translated;
             }
-
-            return translated;
+        } else {
+            return key;
         }
     },
 
