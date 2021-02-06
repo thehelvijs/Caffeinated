@@ -336,8 +336,8 @@ class Caffeinated {
                         MODULES.initalizeModule(new MODULES.moduleClasses[namespace](id));
                     }
                 } catch (e) {
-                    console.info(`Removed unloaded module "${namespace}:${id}" from config.`)
-                    this.store.delete(`modules.${namespace}.${id}`);
+                    console.info(`Removed unloaded module namespace "${namespace}" from config.`)
+                    this.store.delete(`modules.${namespace}`);
                 } // Delete values, module is not present.
             }
         }
