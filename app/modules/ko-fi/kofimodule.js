@@ -9,6 +9,10 @@ MODULES.moduleClasses["kofi_integration"] = class {
 
         this.kinoko = new Kinoko();
 
+        this.defaultSettings.url = () => {
+            putInClipboard(`https://api.casterlabs.co/v1/kinoko?channel=${encodeURIComponent(this.uuid)}`);
+        }
+
         this.kinoko.on("close", () => this.kinoko.connect(this.uuid, "parent"));
 
         this.kinoko.on("message", (form) => {
@@ -96,15 +100,12 @@ MODULES.moduleClasses["kofi_integration"] = class {
     init() {
         this.uuid = this.settings.uuid;
 
-        if (!this.uuid) {
-            this.uuid = `kofi_signaling:${generateUUID()}:${generateUnsafePassword()}`;
+        if (!this.uuid || this.uuid.includes("-")) {
+            this.uuid = `kofi_signaling:${generateUnsafeUniquePassword(64)}`;
             MODULES.saveToStore(this);
         }
 
         this.kinoko.connect(this.uuid, "parent");
-
-        this.page.querySelector("[name=url").setAttribute("readonly", "");
-        this.page.querySelector("[name=url").value = "https://api.casterlabs.co/v1/kinoko?channel=" + encodeURIComponent(this.uuid);
 
         const instructions = document.createElement("div");
 
@@ -120,13 +121,13 @@ MODULES.moduleClasses["kofi_integration"] = class {
 
     settingsDisplay = {
         url: {
-            display: "Webhook URL",
-            type: "input"
+            display: "Copy Webhook URL",
+            type: "button"
         }
     };
 
     defaultSettings = {
-        url: ""
+        // url: () => {}
     };
 
 };
