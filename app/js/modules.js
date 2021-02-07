@@ -291,12 +291,12 @@ class Modules {
 
             module.settings = result;
 
-            if (module.onSettingsUpdate) {
-                await module.onSettingsUpdate();
-            }
-
             if (module.getDataToStore) {
                 MODULES.saveToStore(module);
+            }
+
+            if (module.onSettingsUpdate) {
+                await module.onSettingsUpdate();
             }
         };
 

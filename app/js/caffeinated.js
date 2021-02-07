@@ -269,9 +269,8 @@ class Caffeinated {
                     CAFFEINATED.store.get("repos").forEach((url) => {
                         this.settings.third_party_repos.push({ repo_url: url });
                     });
-                    MODULES.saveToStore(this);
+
                     CAFFEINATED.store.delete("repos");
-                    location.reload();
                 }
 
                 for (const repo of this.settings.third_party_repos) {
@@ -281,6 +280,8 @@ class Caffeinated {
                         console.error(e);
                     }
                 }
+
+                MODULES.saveToStore(this);
             },
 
             settingsDisplay: {
@@ -306,6 +307,7 @@ class Caffeinated {
                     }
                 },
                 apply: () => {
+                    MODULES.saveToStore(this);
                     location.reload();
                 }
             }
