@@ -58,27 +58,27 @@ class Koi {
                     this.broadcast("close");
                 };
 
-                this.ws.onmessage = (payload) => {
+                this.ws.onmessage = async (payload) => {
                     const raw = payload.data;
                     const json = JSON.parse(raw);
 
-                    if (json["type"] == "KEEP_ALIVE") {
+                    if (json.type == "KEEP_ALIVE") {
                         this.ws.send(JSON.stringify({
                             type: "KEEP_ALIVE"
                         }));
-                    } else if (json["type"] == "CREDENTIALS") {
+                    } else if (json.type == "CREDENTIALS") {
                         this.credentialCallbacks.forEach((callback) => callback.resolve(json));
                         this.credentialCallbacks = [];
-                    } else if (json["type"] == "ERROR") {
+                    } else if (json.type == "ERROR") {
                         if (json.error === "AUTH_INVALID") {
                             this.credentialCallbacks.forEach((callback) => callback.reject());
                             this.credentialCallbacks = [];
                         }
 
                         this.broadcast("error", json);
-                    } else if (json["type"] == "EVENT") {
-                        const event = json["event"];
-                        const type = event["event_type"];
+                    } else if (json.type == "EVENT") {
+                        const event = json.event;
+                        const type = event.event_type;
 
                         if ((type === "DONATION") && (event.sender.platform === "CASTERLABS_SYSTEM")) {
                             const streamerPlatform = CAFFEINATED.userdata.streamer.platform; // TODO MOVE AWAY FROM THIS
