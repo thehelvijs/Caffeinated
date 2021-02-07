@@ -65,9 +65,8 @@ If someone tells you to paste code here, they might be trying to steal important
 console.log("\n\n");
 
 class Caffeinated {
-    constructor() {
-        FONTSELECT.endPoint = "https://www.googleapis.com/webfonts/v1/webfonts?sort=popularity&key=AIzaSyBuFeOYplWvsOlgbPeW8OfPUejzzzTCITM"; // TODO cache/proxy from Casterlabs' server
 
+    constructor() {
         this.uniqueStateId = generateUnsafeUniquePassword(64);
         this.store = new Store();
 
