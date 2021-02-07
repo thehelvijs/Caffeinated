@@ -19,8 +19,12 @@ const SELECTNSEARCH = {
             contentDiv.style.display = "block";
         });
         document.addEventListener("click", () => {
-            if ((getSelection().focusNode.classList == undefined) || !getSelection().focusNode.classList.contains("sns-container")) {
-                contentDiv.style.display = "none";
+            const selection = getSelection();
+
+            if (selection && selection.focusNode) {
+                if ((selection.focusNode.classList == undefined) || !selection.focusNode.classList.contains("sns-container")) {
+                    contentDiv.style.display = "none";
+                }
             }
         });
         input.addEventListener("close", () => {
