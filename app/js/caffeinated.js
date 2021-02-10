@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 47;
-const VERSION = "1.1-stable7";
+const PROTOCOLVERSION = 48;
+const VERSION = "1.1-stable8";
 
 const LOGIN_BUTTONS = {
     STABLE: `
@@ -65,9 +65,8 @@ If someone tells you to paste code here, they might be trying to steal important
 console.log("\n\n");
 
 class Caffeinated {
-    constructor() {
-        FONTSELECT.endPoint = "https://www.googleapis.com/webfonts/v1/webfonts?sort=popularity&key=AIzaSyBuFeOYplWvsOlgbPeW8OfPUejzzzTCITM"; // TODO cache/proxy from Casterlabs' server
 
+    constructor() {
         this.uniqueStateId = generateUnsafeUniquePassword(64);
         this.store = new Store();
 
@@ -270,9 +269,8 @@ class Caffeinated {
                     CAFFEINATED.store.get("repos").forEach((url) => {
                         this.settings.third_party_repos.push({ repo_url: url });
                     });
-                    MODULES.saveToStore(this);
+
                     CAFFEINATED.store.delete("repos");
-                    location.reload();
                 }
 
                 for (const repo of this.settings.third_party_repos) {
@@ -282,6 +280,8 @@ class Caffeinated {
                         console.error(e);
                     }
                 }
+
+                MODULES.saveToStore(this);
             },
 
             settingsDisplay: {
@@ -307,6 +307,7 @@ class Caffeinated {
                     }
                 },
                 apply: () => {
+                    MODULES.saveToStore(this);
                     location.reload();
                 }
             }

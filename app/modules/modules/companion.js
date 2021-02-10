@@ -160,7 +160,7 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
         setTimeout(() => {
             this.setLinkText();
             this.connect();
-        }, 100);
+        }, 1000);
     }
 
 
