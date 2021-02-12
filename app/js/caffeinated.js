@@ -76,7 +76,7 @@ class Caffeinated {
                 port: 8091,
                 token: null,
                 modules: {},
-                cleared: []
+                cleared_events: []
             });
         }
 
@@ -106,6 +106,7 @@ class Caffeinated {
 
         this.token = this.store.get("token");
         this.userdata = null;
+        this.streamdata = null;
         this.notifiedUpdate = false;
 
         document.querySelector("#login-buttons .button-container").innerHTML =
@@ -1052,6 +1053,10 @@ koi.addEventListener("user_update", (event) => {
 
     CAFFEINATED.userdata = event;
     UI.toggleMetaDisplay();
+});
+
+koi.addEventListener("stream_status", (event) => {
+    CAFFEINATED.streamdata = event;
 });
 
 koi.addEventListener("error", (event) => {
