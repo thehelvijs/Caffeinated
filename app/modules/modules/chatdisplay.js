@@ -256,8 +256,8 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
     }
 
     addPointStatus(profile, reward, langKey) {
-        const usernameHtml = `< span style = "color: ${profile.color};" > ${escapeHtml(profile.displayname)}</span > `;
-        const imageHtml = `< img class="vcimage" src = "${reward.reward_image ?? reward.default_reward_image}" /> `;
+        const usernameHtml = `<span style = "color: ${profile.color};" > ${escapeHtml(profile.displayname)}</span> `;
+        const imageHtml = `<img class="vcimage" src = "${reward.reward_image ?? reward.default_reward_image}" /> `;
 
         const lang = LANG.getTranslation(langKey, usernameHtml, reward.title, imageHtml);
 
