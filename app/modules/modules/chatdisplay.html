@@ -462,21 +462,24 @@
                 }
             }
 
-            function messageUpvote(event) {
-                let element = document.querySelector("[vc_message_id='" + event.id + "']");
+            function messageMeta(event) {
+                const element = document.querySelector("[vc_message_id='" + event.id + "']");
 
-                // Sometimes messages don't exist.
                 if (element) {
-                    element.innerText = event.upvotes;
+                    if (event.is_visible) {
+                        element.innerText = event.upvotes;
 
-                    if (event.upvotes >= 1000) {
-                        element.classList = "upvote-4";
-                    } else if (event.upvotes >= 100) {
-                        element.classList = "upvote-3";
-                    } else if (event.upvotes >= 10) {
-                        element.classList = "upvote-2";
-                    } else if (event.upvotes >= 1) {
-                        element.classList = "upvote-1";
+                        if (event.upvotes >= 1000) {
+                            element.classList = "upvote-4";
+                        } else if (event.upvotes >= 100) {
+                            element.classList = "upvote-3";
+                        } else if (event.upvotes >= 10) {
+                            element.classList = "upvote-2";
+                        } else if (event.upvotes >= 1) {
+                            element.classList = "upvote-1";
+                        }
+                    } else {
+                        element.remove();
                     }
                 }
             }
@@ -539,8 +542,8 @@
 
                 if (event.donations) {
                     event.donations.forEach((donation) => {
-                        // Caffeine Props don't appear in chat like Twitch Cheers do.
-                        if (donation.type === "CAFFEINE_PROP") {
+                        // Caffeine Props & Trovo Spells don't appear in chat like Twitch Cheers do.
+                        if (donation.type !== "TWITCH_CHEER") {
                             const img = document.createElement("img");
 
                             img.src = donation.image;
@@ -672,7 +675,7 @@
             function catchUp(events) {
                 events.forEach((event) => {
                     switch (event.type) {
-                        case "UPVOTE": messageUpvote(event.event); break;
+                        case "META": messageMeta(event.event); break;
 
                         case "MESSAGE": addMessage(event.event); break;
 

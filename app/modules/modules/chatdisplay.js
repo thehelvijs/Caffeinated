@@ -28,8 +28,8 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
             this.addMessage(event);
         });
 
-        koi.addEventListener("upvote", (event) => {
-            this.messageUpvote(event);
+        koi.addEventListener("meta", (event) => {
+            this.messageMeta(event);
         });
 
         koi.addEventListener("channel_points", (event) => {
@@ -211,17 +211,17 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         }
     }
 
-    messageUpvote(event) {
+    messageMeta(event) {
         if (this.popoutWindow) {
-            this.popoutWindow.webContents.executeJavaScript(`messageUpvote(${JSON.stringify(event)})`);
+            this.popoutWindow.webContents.executeJavaScript(`messageMeta(${JSON.stringify(event)})`);
         }
 
         this.messageHistory.push({
-            type: "UPVOTE",
+            type: "META",
             event: Object.assign({}, event)
         });
 
-        this.contentWindow.messageUpvote(event);
+        this.contentWindow.messageMeta(event);
     }
 
     addMessage(event) {
