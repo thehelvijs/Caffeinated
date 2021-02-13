@@ -89,7 +89,24 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         for (const command of this.settings.commands) {
             const trigger = command.trigger.toLowerCase();
 
-            if (
+            if ((command.type == "Script") && message.startsWith(trigger)) {
+                const eventVar = "const event = arguments[0];\n";
+                const result = looseInterpret(eventVar + command.reply, event);
+
+                if (result) {
+                    if (result instanceof Promise) {
+                        result.then((message) => {
+                            if (message) {
+                                koi.sendMessage(message.toString(), event);
+                            }
+                        })
+                    } else {
+                        koi.sendMessage(result.toString(), event);
+                    }
+                }
+
+                return;
+            } else if (
                 ((command.type == "Command") && message.startsWith(trigger)) ||
                 ((command.type == "Keyword") && message.includes(trigger))
             ) {
@@ -103,9 +120,11 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         // It's 10 less to help fit in the mention
         const max = koi.getMaxLength() - 10;
 
+        /*
         Array.from(this.page.querySelectorAll("[name=reply][owner=chat_bot]")).forEach((element) => {
             element.setAttribute("maxlength", max);
         });
+        */
 
         this.page.querySelector("[name=follow_callout][owner=chat_bot]").setAttribute("maxlength", max);
         this.page.querySelector("[name=donation_callout][owner=chat_bot]").setAttribute("maxlength", max);
@@ -176,7 +195,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 }
             },
             default: {
-                type: ["Command", "Keyword"],
+                type: ["Command", "Keyword", "Script"],
                 trigger: "!casterlabs",
                 mention: true,
                 reply: LANG.getTranslation("caffeinated.chatbot.default_reply")
