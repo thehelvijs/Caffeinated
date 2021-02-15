@@ -119,6 +119,9 @@ LANG.absorbLang({
     "caffeinated.chatbot.command_type": "Command Type",
     "caffeinated.chatbot.trigger": "Trigger",
     "caffeinated.chatbot.reply": "Reply",
+    "caffeinated.chatbot.uptime_command.enable": "Enable Uptime Command",
+    "caffeinated.chatbot.uptime_command.format": (time) => `The stream has been up for ${time}`,
+    "caffeinated.chatbot.uptime_command.not_live": "We're off the air",
 
     // Caffeine Integration
     "caffeine.integration.title": "Caffeine",

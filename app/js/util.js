@@ -1,4 +1,16 @@
 
+function looseInterpret(code, ...args) {
+    try {
+        return Function(code)(...args);
+    } catch (e) {
+        if (typeof test === "string") {
+            alert(`Uncaught Exception: ${e}`);
+        } else {
+            alert(`Uncaught ${e.name}: ${e.message}`);
+        }
+    }
+}
+
 function openLink(link) {
     shell.openExternal(link);
 }
