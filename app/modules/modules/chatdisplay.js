@@ -9,11 +9,10 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         this.icon = "chatbox";
 
         this.messageHistory = [];
+        this.viewersList = [];
 
         // Where the magic happens
         this.pageSrc = __dirname + "/modules/modules/chatdisplay.html";
-
-        this.viewersList = [];
     }
 
     init() {

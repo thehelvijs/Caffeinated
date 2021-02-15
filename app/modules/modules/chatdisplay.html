@@ -323,11 +323,9 @@
             }
 
             .vcimage {
-                border-radius: 50%;
                 object-fit: cover;
                 height: 22px;
                 width: auto;
-                margin: 1px;
                 vertical-align: bottom;
             }
 
@@ -543,7 +541,7 @@
                 if (event.donations) {
                     event.donations.forEach((donation) => {
                         // Caffeine Props & Trovo Spells don't appear in chat like Twitch Cheers do.
-                        if (donation.type !== "TWITCH_CHEER") {
+                        if (donation.type !== "TWITCH_BITS") {
                             const img = document.createElement("img");
 
                             img.src = donation.image;

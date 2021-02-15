@@ -6,9 +6,11 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
         this.displayname = "caffeinated.companion.title";
         this.type = "settings";
         this.id = id;
-        this.kinoko = new Kinoko();
-        this.messageHistory = {};
+
+        this.messageHistory = [];
         this.viewersList = [];
+
+        this.kinoko = new Kinoko();
 
         this.defaultSettings.reset_link = () => {
             this.uuid = generateUnsafeUniquePassword(16);
@@ -31,82 +33,12 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
             }
         });
 
-        koi.addEventListener("chat", (event) => {
-            if (event.id === "") {
-                event.id = generateUUID();
-            }
-
-            event.upvotes = 0;
-            event.timestamp = performance.now();
-
-            this.messageHistory[event.id] = event;
-            this.sendEvent("chat", event);
-        });
-
-        koi.addEventListener("donation", (event) => {
-            if (event.id === "") {
-                event.id = generateUUID();
-            }
-
-            event.upvotes = 0;
-            event.timestamp = performance.now();
-
-            this.messageHistory[event.id] = event;
-            this.sendEvent("donation", event);
-        });
-
-        koi.addEventListener("upvote", (event) => {
-            if (!this.messageHistory[event.id]) {
-                this.messageHistory[event.id] = event.event;
-            }
-
-            this.messageHistory[event.id].upvotes = event.upvotes;
-            this.sendEvent("upvote", event);
-        });
-
-        koi.addEventListener("follow", (event) => {
-            this.sendEvent("follow", event);
-        });
-
-        koi.addEventListener("stream_status", (event) => {
-            this.sendEvent("stream_status", event);
-            this.streamStatus = event;
-        });
-
-        koi.addEventListener("user_update", (event) => {
-            this.sendEvent("user_update", event);
-        });
-
-        koi.addEventListener("viewer_join", (event) => {
-            this.sendEvent("join", event.viewer);
-        });
-
-        koi.addEventListener("viewer_leave", (event) => {
-            this.sendEvent("leave", event.viewer);
-        });
-
-        koi.addEventListener("viewer_list", (event) => {
-            this.viewersList = event.viewers;
-
-            this.sendEvent("viewers", event.viewers);
-            this.sendEvent("viewcount", event.viewers.length);
-        });
     }
 
     sendAll() {
         if (CAFFEINATED.userdata) {
-            this.sendEvent("user_update", CAFFEINATED.userdata, true);
-
-            this.sendEvent("stream_status", this.streamStatus, true);
-
-            this.sendEvent("viewcount", this.viewersList.length, true);
-            this.sendEvent("viewers", this.viewersList, true);
-            // Send join messages
-            this.viewersList.forEach((viewer) => {
-                this.sendEvent("join", viewer, true);
-            });
-
-            this.sendEvent("message_history", Object.values(this.messageHistory), true);
+            this.sendEvent("message_history", this.messageHistory, true);
+            this.sendEvent("viewers_list", this.viewersList, true);
         }
     }
 
@@ -160,9 +92,119 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
         setTimeout(() => {
             this.setLinkText();
             this.connect();
-        }, 1000);
+        }, 5000);
+
+        koi.addEventListener("chat", (event) => {
+            this.addMessage(event);
+        });
+
+        koi.addEventListener("donation", (event) => {
+            this.addMessage(event);
+        });
+
+        koi.addEventListener("meta", (event) => {
+            this.messageMeta(event);
+        });
+
+        koi.addEventListener("channel_points", (event) => {
+            this.addPointStatus(event.sender, event.reward, "caffeinated.chatdisplay.reward_text", event.id);
+        });
+
+        koi.addEventListener("follow", (event) => {
+            this.addStatus(event.follower, "caffeinated.chatdisplay.follow_text");
+        });
+
+        koi.addEventListener("subscription", (event) => {
+            const profile = event.gift_recipient ?? event.subscriber;
+
+            this.addManualStatus(profile, LANG.formatSubscription(event));
+        });
+
+        koi.addEventListener("viewer_join", (event) => {
+            this.addStatus(event.viewer, "caffeinated.chatdisplay.join_text");
+        });
+
+        koi.addEventListener("viewer_leave", (event) => {
+            this.addStatus(event.viewer, "caffeinated.chatdisplay.leave_text");
+        });
+
+        koi.addEventListener("viewer_list", (event) => {
+            this.viewersList = event.viewers;
+
+            this.sendEvent("viewers_list", this.viewersList);
+        });
+
     }
 
+    /* Handler Code */
+    messageMeta(event) {
+        this.messageHistory.push({
+            type: "META",
+            event: Object.assign({}, event)
+        });
+
+        this.sendEvent("meta", event);
+    }
+
+    addMessage(event) {
+        this.messageHistory.push({
+            type: "MESSAGE",
+            event: Object.assign({}, event)
+        });
+
+        this.sendEvent("message", event);
+    }
+
+    addStatus(profile, langKey, id) {
+        const usernameHtml = `<span style="color: ${profile.color};">${escapeHtml(profile.displayname)}</span>`;
+        const lang = LANG.getTranslation(langKey, usernameHtml);
+
+        const event = {
+            profile: profile,
+            lang: lang,
+            id: id
+        };
+
+        this.messageHistory.push({
+            type: "STATUS",
+            event: event
+        });
+
+        this.sendEvent("status", event);
+    }
+
+    addPointStatus(profile, reward, langKey) {
+        const usernameHtml = `<span style = "color: ${profile.color};" > ${escapeHtml(profile.displayname)}</span> `;
+        const imageHtml = `<img class="vcimage" src = "${reward.reward_image ?? reward.default_reward_image}" /> `;
+
+        const lang = LANG.getTranslation(langKey, usernameHtml, reward.title, imageHtml);
+
+        const event = {
+            profile: profile,
+            lang: lang, id: id
+        };
+
+        this.messageHistory.push({
+            type: "STATUS",
+            event: event
+        });
+
+        this.sendEvent("status", event);
+    }
+
+    addManualStatus(profile, status) {
+        const event = {
+            profile: profile,
+            lang: status
+        };
+
+        this.messageHistory.push({
+            type: "STATUS",
+            event: event
+        });
+
+        this.sendEvent("status", event);
+    }
 
     onSettingsUpdate() {
         this.setLinkText();
