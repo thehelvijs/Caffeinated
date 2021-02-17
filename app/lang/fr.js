@@ -111,7 +111,7 @@ LANG.absorbLang({
     // Recent Donation
     "caffeinated.recent_donation.title": "Don Recent",
 
-    // Recent Donation
+    // Recent Subscription
     "caffeinated.recent_subscription.title": "Subscription Recent",
 
     // Chat Bot
