@@ -77,7 +77,7 @@ LANG.absorbLang({
 
     // Follower Alert
     "caffeinated.follower_alert.title": "Follower Alert",
-    "caffeinated.raid_alert.format.followed": (user) => `${user} just followed`,
+    "caffeinated.follower_alert.format.followed": (user) => `${user} just followed`,
 
     // Spotify
     "spotify.integration.title": "Spotify",
