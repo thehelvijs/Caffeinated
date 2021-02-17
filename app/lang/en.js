@@ -1,6 +1,7 @@
 LANG.absorbLang({
     "meta.language.name": "English",
-    "meta.language.native": "English",
+    "meta.language.name.native": "English",
+    "meta.language.code": "en-*",
 
     // UI
     "caffeinated.internal.widgets": "Widgets",

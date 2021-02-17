@@ -1,6 +1,7 @@
 LANG.absorbLang({
     "meta.language.name": "French",
-    "meta.language.native": "Français",
+    "meta.language.name.native": "Français",
+    "meta.language.code": "fr-*",
 
     // UI
     "caffeinated.internal.widgets": "Outils",
