@@ -1,4 +1,7 @@
 LANG.absorbLang({
+    "meta.language.name": "Dutch",
+    "meta.language.native": "Nederlandse",
+
     // UI
     "caffeinated.internal.widgets": "Widgets",
     "caffeinated.internal.followers_count_text": (count) => `${count} ${(count == 1 ? "volgeling" : "volgers")}`,
@@ -44,7 +47,7 @@ LANG.absorbLang({
     "caffeinated.settings.language": "Taal",
 
     // Support Us
-    "caffeinated.supporters.title": "Steun ons",
+    "caffeinated.supporters.title": "Steun Ons",
 
     // Chat Display
     "caffeinated.chatdisplay.title": "Chat",

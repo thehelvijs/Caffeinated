@@ -1,4 +1,7 @@
 LANG.absorbLang({
+    "meta.language.name": "English",
+    "meta.language.native": "English",
+
     // UI
     "caffeinated.internal.widgets": "Widgets",
     "caffeinated.internal.followers_count_text": (count) => `${count} ${(count == 1 ? "follower" : "followers")}`,
