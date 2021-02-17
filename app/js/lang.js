@@ -1,8 +1,13 @@
 let LANGUAGES = {};
 
 const LANG = {
+    supportedLanguages: {},
 
     absorbLang(newLang, code) {
+        const languageName = newLang["meta.language.name.native"];
+
+        this.supportedLanguages[languageName] = code;
+
         for (const [key, value] of Object.entries(newLang)) {
             if (!LANGUAGES[key]) {
                 LANGUAGES[key] = {};

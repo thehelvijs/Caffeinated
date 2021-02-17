@@ -45,7 +45,7 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
         koi.addEventListener("follow", (event) => {
             const follower = `<span style="color: ${event.follower.color};">${event.follower.displayname}</span>`;
 
-            MODULES.emitIO(this, "event", LANG.getTranslation("caffeinated.raid_alert.format.followed", follower));
+            MODULES.emitIO(this, "event", LANG.getTranslation("caffeinated.follower_alert.format.followed", follower));
         });
 
         this.audio_file = this.settings.audio_file;

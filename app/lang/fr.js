@@ -1,8 +1,12 @@
 LANG.absorbLang({
+    "meta.language.name": "French",
+    "meta.language.name.native": "Français",
+    "meta.language.code": "fr-*",
+
     // UI
     "caffeinated.internal.widgets": "Outils",
     "caffeinated.internal.followers_count_text": (count) => `${count} ${(count == 1 ? "follower" : "followers")}`,
-    "caffeinated.internal.subscribers_count_text": (count) => `${count} ${(count == 1 ? "subscriber" : "subscribers")}`,
+    "caffeinated.internal.subscribers_count_text": (count) => `${count} ${(count == 1 ? "abonné(e)" : "abonnés")}`,
 
     // Generic
     "generic.font": "Police de caractère",
@@ -79,7 +83,7 @@ LANG.absorbLang({
 
     // Follower Alert
     "caffeinated.follower_alert.title": "Alerte Suiveur",
-    // TODO "caffeinated.raid_alert.format.followed": (user) => `${user} just followed`,
+    // TODO "caffeinated.follower_alert.format.followed": (user) => `${user} just followed`,
 
     // Spotify
     "spotify.integration.title": "Spotify",
@@ -87,7 +91,7 @@ LANG.absorbLang({
     "spotify.integration.logging_in": "Se connecter",
     "spotify.integration.logged_in_as": (name) => `Connecté en tant que ${name}, (Cliquez pour vous déconnecter)`,
     "spotify.integration.announce": "Annoncer la chanson",
-    // TODO "spotify.integration.enable_song_command": "Enable Song Command",
+    "spotify.integration.enable_song_command": "Activer la commande de chanson",
     "spotify.integration.background_style": "Style de fond",
     "spotify.integration.image_style": "Style d'Image",
     "spotify.integration.now_playing_announcment": (title, artist) => `Lecture en cours: ${title} - ${artist}`,
@@ -107,8 +111,8 @@ LANG.absorbLang({
     // Recent Donation
     "caffeinated.recent_donation.title": "Don Recent",
 
-    // Recent Donation
-    // TODO "caffeinated.recent_subscription.title": "Recent Subscription",
+    // Recent Subscription
+    "caffeinated.recent_subscription.title": "Subscription Recent",
 
     // Chat Bot
     "caffeinated.chatbot.title": "Robot de Chat",
@@ -120,6 +124,9 @@ LANG.absorbLang({
     "caffeinated.chatbot.command_type": "Type de Commande",
     "caffeinated.chatbot.trigger": "Déclencheur",
     "caffeinated.chatbot.reply": "Repond",
+    // TODO "caffeinated.chatbot.uptime_command.enable": "Enable Uptime Command",
+    // TODO "caffeinated.chatbot.uptime_command.format": (time) => `The stream has been up for ${time}`,
+    // TODO "caffeinated.chatbot.uptime_command.not_live": "We're off the air",
 
     // Caffeine Integration
     "caffeine.integration.title": "Caffeine",

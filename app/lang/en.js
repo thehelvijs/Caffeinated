@@ -1,4 +1,8 @@
 LANG.absorbLang({
+    "meta.language.name": "English",
+    "meta.language.name.native": "English",
+    "meta.language.code": "en-*",
+
     // UI
     "caffeinated.internal.widgets": "Widgets",
     "caffeinated.internal.followers_count_text": (count) => `${count} ${(count == 1 ? "follower" : "followers")}`,
@@ -77,7 +81,7 @@ LANG.absorbLang({
 
     // Follower Alert
     "caffeinated.follower_alert.title": "Follower Alert",
-    "caffeinated.raid_alert.format.followed": (user) => `${user} just followed`,
+    "caffeinated.follower_alert.format.followed": (user) => `${user} just followed`,
 
     // Spotify
     "spotify.integration.title": "Spotify",
@@ -105,7 +109,7 @@ LANG.absorbLang({
     // Recent Donation
     "caffeinated.recent_donation.title": "Recent Donation",
 
-    // Recent Donation
+    // Recent Subscription
     "caffeinated.recent_subscription.title": "Recent Subscription",
 
     // Chat Bot

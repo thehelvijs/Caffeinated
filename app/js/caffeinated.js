@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 50;
-const VERSION = "1.1-stable10";
+const PROTOCOLVERSION = 51;
+const VERSION = "1.1-stable11";
 
 const LOGIN_BUTTONS = {
     STABLE: `
@@ -212,11 +212,6 @@ class Caffeinated {
 
         PLATFORM_DATA = await (await fetch("https://api.casterlabs.co/v2/koi/platforms")).json();
 
-        const LANGUAGE_MAP = {
-            "English": "en-*",
-            "Français": "fr-*"
-        };
-
         MODULES.initalizeModule({
             displayname: "caffeinated.settings.title",
             namespace: "casterlabs_caffeinated_settings",
@@ -242,14 +237,14 @@ class Caffeinated {
             },
 
             onSettingsUpdate() {
-                CAFFEINATED.setLanguage(LANGUAGE_MAP[this.settings.language]);
+                CAFFEINATED.setLanguage(LANG.supportedLanguages[this.settings.language]);
             },
 
             defaultSettings: {
                 signout: () => {
                     CAFFEINATED.signOut();
                 },
-                language: Object.keys(LANGUAGE_MAP)
+                language: Object.keys(LANG.supportedLanguages)
             }
         });
 
@@ -338,8 +333,8 @@ class Caffeinated {
                         MODULES.initalizeModule(new MODULES.moduleClasses[namespace](id));
                     }
                 } catch (e) {
-                    console.info(`Removed unloaded module namespace "${namespace}" from config.`)
-                    this.store.delete(`modules.${namespace}`);
+                    // console.info(`Removed unloaded module namespace "${namespace}" from config.`)
+                    // this.store.delete(`modules.${namespace}`);
                 } // Delete values, module is not present.
             }
         }

@@ -75,13 +75,13 @@
             /* Translators */
 
             .translator {
+                padding-left: 35px;
+            }
+
+            .language {
                 padding-left: 15px;
                 padding-right: 15px;
                 padding-bottom: 10px;
-            }
-
-            .translator-language {
-                padding-left: 35px;
             }
 
             /* Scrollbar */
@@ -305,13 +305,30 @@
                 }
             ];
 
-            const TRANSLATORS = [
-                {
-                    name: "Oasis",
-                    language: "Français",
-                    link: "https://www.youtube.com/channel/UCL85-pp5V0UC_WjjLKb39pQ",
-                }
-            ];
+            const TRANSLATORS = {
+                "Français": [
+                    {
+                        name: "Oasis",
+                        link: "https://youtube.com/channel/UCL85-pp5V0UC_WjjLKb39pQ",
+                    }
+                ],
+                "Nederlandse": [
+                    {
+                        name: "Zubbzirro",
+                        link: "https://twitch.tv/zubbzirro",
+                    },
+                    {
+                        name: "Nemhenil",
+                        link: "https://caffeine.tv/Nemhenil",
+                    }
+                ],
+                "Español": [
+                    {
+                        name: "Eslerand",
+                        link: "https://twitch.tv/Eslerand",
+                    }
+                ]
+            };
 
             // Let's-a-go!
 
@@ -357,23 +374,29 @@
                 document.querySelector("#developers").appendChild(div);
             });
 
-            TRANSLATORS.forEach((translator) => {
+            Object.entries(TRANSLATORS).forEach(([languageName, translators]) => {
                 const div = document.createElement("div");
-
-                const name = document.createElement("a");
-
-                name.innerText = translator.name;
-                name.addEventListener("click", () => openLink(translator.link));
 
                 const language = document.createElement("span");
 
-                language.innerText = translator.language;
-                language.classList = "translator-language";
+                language.innerText = languageName;
 
-                div.appendChild(name);
-                div.appendChild(document.createElement("br"));
+                div.classList = "language";
                 div.appendChild(language);
-                div.classList = "translator";
+                div.appendChild(document.createElement("br"));
+
+                translators.forEach((translator) => {
+                    const name = document.createElement("a");
+
+                    name.innerText = translator.name;
+                    name.addEventListener("click", () => openLink(translator.link));
+                    name.classList = "translator";
+
+                    div.appendChild(name);
+                    div.appendChild(document.createElement("br"));
+                });
+
+                div.appendChild(document.createElement("br"));
 
                 document.querySelector("#translators").appendChild(div);
             });
