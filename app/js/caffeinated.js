@@ -215,7 +215,8 @@ class Caffeinated {
         const LANGUAGE_MAP = {
             "English": "en-*",
             "Français": "fr-*",
-            "Nederlandse": "nl-*"
+            "Nederlandse": "nl-*",
+            "Español": "es-*"
         };
 
         MODULES.initalizeModule({
