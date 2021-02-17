@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 50;
-const VERSION = "1.1-stable10";
+const PROTOCOLVERSION = 51;
+const VERSION = "1.1-stable11";
 
 const LOGIN_BUTTONS = {
     STABLE: `
