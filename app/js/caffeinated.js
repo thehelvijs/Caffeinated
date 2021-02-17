@@ -212,13 +212,6 @@ class Caffeinated {
 
         PLATFORM_DATA = await (await fetch("https://api.casterlabs.co/v2/koi/platforms")).json();
 
-        const LANGUAGE_MAP = {
-            "English": "en-*",
-            "Français": "fr-*",
-            "Nederlandse": "nl-*",
-            "Español": "es-*"
-        };
-
         MODULES.initalizeModule({
             displayname: "caffeinated.settings.title",
             namespace: "casterlabs_caffeinated_settings",
@@ -244,14 +237,14 @@ class Caffeinated {
             },
 
             onSettingsUpdate() {
-                CAFFEINATED.setLanguage(LANGUAGE_MAP[this.settings.language]);
+                CAFFEINATED.setLanguage(LANG.supportedLanguages[this.settings.language]);
             },
 
             defaultSettings: {
                 signout: () => {
                     CAFFEINATED.signOut();
                 },
-                language: Object.keys(LANGUAGE_MAP)
+                language: Object.keys(LANG.supportedLanguages)
             }
         });
 
