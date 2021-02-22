@@ -84,6 +84,8 @@ class Modules {
             const data = module.getDataToStore();
 
             CAFFEINATED.store.set(path, data);
+
+            console.debug(`Save succeeded. (${module.namespace}:${module.id})`);
         } catch (e) {
             console.error("Unable to save module");
             console.error(e);
@@ -291,13 +293,11 @@ class Modules {
 
             module.settings = result;
 
-            if (module.getDataToStore) {
-                MODULES.saveToStore(module);
-            }
-
             if (module.onSettingsUpdate) {
                 await module.onSettingsUpdate();
             }
+
+            MODULES.saveToStore(module);
         };
 
         label.classList.add("settings-label");
