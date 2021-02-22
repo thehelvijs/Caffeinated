@@ -66,6 +66,15 @@ class Koi {
                         this.ws.send(JSON.stringify({
                             type: "KEEP_ALIVE"
                         }));
+                    } else if (json.type == "NOTICE") {
+                        const notice = json.notice;
+
+                        console.debug("New notice:");
+                        console.debug(notice);
+
+                        CAFFEINATED.triggerBanner(notice.id, (element) => {
+                            element.innerHTML = notice.message;
+                        }, notice.color);
                     } else if (json.type == "CREDENTIALS") {
                         this.credentialCallbacks.forEach((callback) => callback.resolve(json));
                         this.credentialCallbacks = [];
