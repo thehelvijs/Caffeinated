@@ -46,7 +46,7 @@ MODULES.moduleClasses["kofi_integration"] = class {
                         months: 1,
                         sub_type: data.is_first_subscription_payment ? "SUB" : "RESUB",
                         sub_level: "TIER_1",
-                        // message: message,
+                        message: "",
                         id: id,
                         upvotable: false,
                         event_type: "SUBSCRIPTION"
@@ -63,7 +63,8 @@ MODULES.moduleClasses["kofi_integration"] = class {
                                 "currency": currency,
                                 "amount": amount,
                                 "image": "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
-                                "type": "KOFI_DIRECT"
+                                "type": "KOFI_DIRECT",
+                                "name": "Ko-fi Donation"
                             }
                         ],
                         emotes: {},
