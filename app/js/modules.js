@@ -125,7 +125,7 @@ class Modules {
 
             LANG.translate(module.page);
 
-            if (module.init) module.init();
+            if (module.init) await module.init();
 
             this.#modules.set(holder.getUUID(), holder);
         } catch (e) {
