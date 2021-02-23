@@ -217,7 +217,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
         },
         announce: false,
         enable_song_command: false,
-        background_style: ["Blur", "Clear"/*, "Solid"*/],
+        background_style: ["Blur", "Clear", "Solid"],
         image_style: ["Left", "Right", "None"]
     };
 
