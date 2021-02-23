@@ -41,6 +41,10 @@ class Modules {
     moduleClasses = {};
     #modules = new Map();
 
+    getAllModuleNamespaces() {
+        return Object.keys(this.moduleClasses);
+    }
+
     addIOHandler(module, channel, callback, socket) {
         let uuid = module.namespace + ":" + module.id;
 

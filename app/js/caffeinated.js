@@ -314,6 +314,7 @@ class Caffeinated {
 
             if (response.status == 200) {
                 const result = await response.json();
+
                 try {
                     await this.repomanager.addRepo(result.data.module_url);
                 } catch (e) {
@@ -339,7 +340,7 @@ class Caffeinated {
             }
         }
 
-        MODULES.initalizeModule({
+        await MODULES.initalizeModule({
             namespace: "casterlabs_caffeinated_redeem",
             type: "settings",
             persist: true,
