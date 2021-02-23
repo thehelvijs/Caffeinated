@@ -514,6 +514,26 @@ class Caffeinated {
 
 }
 
+const FileStore = {
+    store: new Store({
+        name: "files"
+    }),
+
+    getFile(module, name, defaultValue) {
+        const path = `modules.${module.namespace}.${module.id}.${name}`;
+
+        return this.store.get(name) ?? defaultValue;
+    },
+
+    async setFile(module, name, data = null) {
+        const path = `modules.${module.namespace}.${module.id}.${name}`;
+
+        this.store.set(path, data);
+
+        console.debug(`Saved file ${path}`);
+    }
+};
+
 const CAFFEINATED = new Caffeinated();
 const MODULES = new Modules();
 const UI = {

@@ -1,12 +1,4 @@
-const FILE_SIZE_THRESHOLD = 1048576 * 5; // 5mb
-
-/*
-const FileStore = {
-    store: new Store({
-        name: "files"
-    })
-}
-*/
+const FILE_SIZE_THRESHOLD = 1048576 * 10; // 10mb
 
 function looseInterpret(code, ...args) {
     try {
@@ -111,7 +103,7 @@ function fileToBase64(fileElement, type) {
         const size = file.size;
 
         if (size > FILE_SIZE_THRESHOLD) {
-            if (confirm(`The current selected file is greater than 5mb (Actual Size: ${fileSizeFormatter(size, 1)}) which is known to cause issues with Caffeinated.\n\nEither click OK to proceed or click cancel to select a smaller file.`)) {
+            if (confirm(`The current selected file is greater than 10mb (Actual Size: ${fileSizeFormatter(size, 1)}) which is known to cause issues with Caffeinated.\n\nEither click OK to proceed or click cancel to select a smaller file.`)) {
                 console.debug("User OK'd a large file read.");
             } else {
                 resolve("");
