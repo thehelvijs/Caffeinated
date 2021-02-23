@@ -20,9 +20,8 @@ MODULES.moduleClasses["kofi_integration"] = class {
 
             console.debug(data);
 
-            if (data.is_public && (data.type === "Donation")) {
+            if (data.is_public) {
                 const isTest = data.kofi_transaction_id === "1234-1234-1234-1234";
-
                 const id = isTest ? data.kofi_transaction_id : "";
 
                 if (data.is_subscription_payment) {
