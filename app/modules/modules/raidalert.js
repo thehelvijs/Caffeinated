@@ -27,16 +27,14 @@ MODULES.moduleClasses["casterlabs_raid"] = class {
     ]
 
     getDataToStore() {
-        const data = Object.assign({}, this.settings);
+        FileStore.setFile(this, "audio_file", this.audio_file);
+        FileStore.setFile(this, "image_file", this.image_file);
 
-        data.audio_file = this.audio_file;
-        data.image_file = this.image_file;
-
-        return data;
+        return this.settings;
     }
 
     onConnection(socket) {
-        MODULES.emitIO(this, "config", nullFields(this.settings, ["audio_file", "image_file"]), socket);
+        MODULES.emitIO(this, "config", this.settings, socket);
         MODULES.emitIO(this, "audio_file", this.audio_file, socket);
         MODULES.emitIO(this, "image_file", this.image_file, socket);
 
@@ -47,8 +45,23 @@ MODULES.moduleClasses["casterlabs_raid"] = class {
             MODULES.emitIO(this, "event", `<span style="color: ${event.host.color};">${event.host.displayname}</span> started following`);
         });
 
-        this.audio_file = this.settings.audio_file;
-        this.image_file = this.settings.image_file;
+        if (this.settings.audio_file) {
+            this.audio_file = this.settings.audio_file;
+            delete this.settings.audio_file;
+
+            MODULES.saveToStore(this);
+        } else {
+            this.audio_file = FileStore.getFile(this, "audio_file", this.audio_file);
+        }
+
+        if (this.settings.image_file) {
+            this.image_file = this.settings.image_file;
+            delete this.settings.image_file;
+
+            MODULES.saveToStore(this);
+        } else {
+            this.image_file = FileStore.getFile(this, "image_file", this.image_file);
+        }
     }
 
     async onSettingsUpdate() {

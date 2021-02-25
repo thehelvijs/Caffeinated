@@ -20,9 +20,8 @@ MODULES.moduleClasses["kofi_integration"] = class {
 
             console.debug(data);
 
-            if (data.is_public && (data.type === "Donation")) {
+            if (data.is_public) {
                 const isTest = data.kofi_transaction_id === "1234-1234-1234-1234";
-
                 const id = isTest ? data.kofi_transaction_id : "";
 
                 if (data.is_subscription_payment) {
@@ -46,7 +45,7 @@ MODULES.moduleClasses["kofi_integration"] = class {
                         months: 1,
                         sub_type: data.is_first_subscription_payment ? "SUB" : "RESUB",
                         sub_level: "TIER_1",
-                        // message: message,
+                        message: "",
                         id: id,
                         upvotable: false,
                         event_type: "SUBSCRIPTION"
@@ -63,7 +62,8 @@ MODULES.moduleClasses["kofi_integration"] = class {
                                 "currency": currency,
                                 "amount": amount,
                                 "image": "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
-                                "type": "KOFI_DIRECT"
+                                "type": "KOFI_DIRECT",
+                                "name": "Ko-fi Donation"
                             }
                         ],
                         emotes: {},

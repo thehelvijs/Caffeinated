@@ -1,3 +1,4 @@
+
 class ModuleHolder {
     #module;
     sockets = [];
@@ -39,6 +40,10 @@ class ModuleHolder {
 class Modules {
     moduleClasses = {};
     #modules = new Map();
+
+    getAllModuleNamespaces() {
+        return Object.keys(this.moduleClasses);
+    }
 
     addIOHandler(module, channel, callback, socket) {
         let uuid = module.namespace + ":" + module.id;
@@ -84,6 +89,8 @@ class Modules {
             const data = module.getDataToStore();
 
             CAFFEINATED.store.set(path, data);
+
+            console.debug(`Save succeeded. (${module.namespace}:${module.id})`);
         } catch (e) {
             console.error("Unable to save module");
             console.error(e);
@@ -122,7 +129,7 @@ class Modules {
 
             LANG.translate(module.page);
 
-            if (module.init) module.init();
+            if (module.init) await module.init();
 
             this.#modules.set(holder.getUUID(), holder);
         } catch (e) {
@@ -291,13 +298,11 @@ class Modules {
 
             module.settings = result;
 
-            if (module.getDataToStore) {
-                MODULES.saveToStore(module);
-            }
-
             if (module.onSettingsUpdate) {
                 await module.onSettingsUpdate();
             }
+
+            MODULES.saveToStore(module);
         };
 
         label.classList.add("settings-label");

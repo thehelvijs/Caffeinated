@@ -65,6 +65,7 @@ MODULES.moduleClasses["casterlabs_rain"] = class {
         "life_time (Seconds)": "number",
         max_emojis: "number",
         size: "number",
+        speed: "range",
         custom_emotes: "dynamic"
     };
 
@@ -72,14 +73,15 @@ MODULES.moduleClasses["casterlabs_rain"] = class {
         "life_time (Seconds)": 10,
         max_emojis: 1000,
         size: 20,
+        speed: .5,
         custom_emotes: {
             display: {
                 name: "input",
                 link: "input"
             },
             default: {
-                name: "Pog",
-                link: "https://cdn.frankerfacez.com/emoticon/210748/1"
+                name: "Casterlabs",
+                link: "https://assets.casterlabs.co/logo/casterlabs_icon.png"
             }
         }
     };

@@ -1,3 +1,4 @@
+const FILE_SIZE_THRESHOLD = 1048576 * 10; // 10mb
 
 function looseInterpret(code, ...args) {
     try {
@@ -48,6 +49,36 @@ function kFormatter(num, decimalPlaces = 1, threshold = 1000) {
     return (negative ? "-" : "") + shortened + mult;
 }
 
+function fileSizeFormatter(num, decimalPlaces = 1, threshold = 1000) {
+    let shortened;
+    let mult;
+
+    if ((num >= threshold) && (num >= 1000)) {
+        if (num >= 1099511627776) {
+            shortened = "Over 1";
+            mult = "tb";
+        } else if (num >= 1073741824) {
+            shortened = (num / 1000000000).toFixed(decimalPlaces);
+            mult = "gb";
+        } else if (num >= 1048576) {
+            shortened = (num / 1000000).toFixed(decimalPlaces);
+            mult = "mb";
+        } else if (num >= 1024) {
+            shortened = (num / 1000).toFixed(decimalPlaces);
+            mult = "kb";
+        }
+    } else {
+        shortened = num.toFixed(decimalPlaces);
+        mult = "b";
+    }
+
+    if (shortened.includes(".")) {
+        shortened = shortened.replace(/\.?0+$/, '');
+    }
+
+    return shortened + mult;
+}
+
 function sleep(millis) {
     return new Promise((resolve) => setTimeout(resolve, millis));
 }
@@ -66,16 +97,32 @@ function putInClipboard(copy) {
     navigator.clipboard.writeText(copy);
 }
 
-function fileToBase64(file, type) {
+function fileToBase64(fileElement, type) {
     return new Promise((resolve) => {
+        const file = fileElement.files[0];
+        const size = file.size;
+
+        if (size > FILE_SIZE_THRESHOLD) {
+            if (confirm(`The current selected file is greater than 10mb (Actual Size: ${fileSizeFormatter(size, 1)}) which is known to cause issues with Caffeinated.\n\nEither click OK to proceed or click cancel to select a smaller file.`)) {
+                console.debug("User OK'd a large file read.");
+            } else {
+                resolve("");
+                fileElement.value = "";
+                console.debug("User aborted a large file read.");
+                return;
+            }
+        }
+
+        console.debug(`Reading a ${fileSizeFormatter(size, 1)} file.`)
+
         try {
             const reader = new FileReader();
 
-            reader.readAsDataURL(file.files[0]);
+            reader.readAsDataURL(file);
             reader.onload = () => {
-                let result = reader.result;
+                const result = reader.result;
 
-                file.value = "";
+                fileElement.value = "";
 
                 if (!type || result.startsWith("data:" + type)) {
                     resolve(result);
@@ -86,7 +133,7 @@ function fileToBase64(file, type) {
         } catch (e) {
             console.warn(e);
             resolve("");
-            file.value = "";
+            fileElement.value = "";
         }
     });
 }

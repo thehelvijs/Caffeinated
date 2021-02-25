@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 52;
-const VERSION = "1.1-stable12";
+const PROTOCOLVERSION = 53;
+const VERSION = "1.1-stable13";
 
 const LOGIN_BUTTONS = {
     STABLE: `
@@ -250,7 +250,7 @@ class Caffeinated {
 
         await this.repomanager.addRepo(__dirname + "/modules");
 
-        MODULES.initalizeModule({
+        await MODULES.initalizeModule({
             namespace: "casterlabs_caffeinated_modules",
             type: "settings",
             persist: true,
@@ -314,6 +314,7 @@ class Caffeinated {
 
             if (response.status == 200) {
                 const result = await response.json();
+
                 try {
                     await this.repomanager.addRepo(result.data.module_url);
                 } catch (e) {
@@ -333,13 +334,13 @@ class Caffeinated {
                         MODULES.initalizeModule(new MODULES.moduleClasses[namespace](id));
                     }
                 } catch (e) {
-                    // console.info(`Removed unloaded module namespace "${namespace}" from config.`)
-                    // this.store.delete(`modules.${namespace}`);
+                    console.info(`Removed unloaded module namespace "${namespace}" from config.`)
+                    this.store.delete(`modules.${namespace}`);
                 } // Delete values, module is not present.
             }
         }
 
-        MODULES.initalizeModule({
+        await MODULES.initalizeModule({
             namespace: "casterlabs_caffeinated_redeem",
             type: "settings",
             persist: true,
@@ -513,6 +514,26 @@ class Caffeinated {
     }
 
 }
+
+const FileStore = {
+    store: new Store({
+        name: "files"
+    }),
+
+    getFile(module, name, defaultValue) {
+        const path = `modules.${module.namespace}.${module.id}.${name}`;
+
+        return this.store.get(name) ?? defaultValue;
+    },
+
+    async setFile(module, name, data = null) {
+        const path = `modules.${module.namespace}.${module.id}.${name}`;
+
+        this.store.set(path, data);
+
+        console.debug(`Saved file ${path}`);
+    }
+};
 
 const CAFFEINATED = new Caffeinated();
 const MODULES = new Modules();
