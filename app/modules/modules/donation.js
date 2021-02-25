@@ -30,7 +30,7 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
         FileStore.setFile(this, "audio_file", this.audio_file);
         FileStore.setFile(this, "image_file", this.image_file);
 
-        return this.settings;
+        return nullFields(this.settings, ["audio_file", "image_file"]);
     }
 
     onConnection(socket) {
