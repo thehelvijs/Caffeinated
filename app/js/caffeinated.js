@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 53;
-const VERSION = "1.1-stable13";
+const PROTOCOLVERSION = 54;
+const VERSION = "1.1-stable14";
 
 const LOGIN_BUTTONS = {
     STABLE: `
@@ -523,10 +523,10 @@ const FileStore = {
     getFile(module, name, defaultValue) {
         const path = `modules.${module.namespace}.${module.id}.${name}`;
 
-        return this.store.get(name) ?? defaultValue;
+        return this.store.get(path) ?? defaultValue;
     },
 
-    async setFile(module, name, data = null) {
+    setFile(module, name, data = null) {
         const path = `modules.${module.namespace}.${module.id}.${name}`;
 
         this.store.set(path, data);
