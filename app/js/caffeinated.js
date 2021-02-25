@@ -523,10 +523,10 @@ const FileStore = {
     getFile(module, name, defaultValue) {
         const path = `modules.${module.namespace}.${module.id}.${name}`;
 
-        return this.store.get(name) ?? defaultValue;
+        return this.store.get(path) ?? defaultValue;
     },
 
-    async setFile(module, name, data = null) {
+    setFile(module, name, data = null) {
         const path = `modules.${module.namespace}.${module.id}.${name}`;
 
         this.store.set(path, data);
