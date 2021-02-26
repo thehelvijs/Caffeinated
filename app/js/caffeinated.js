@@ -310,18 +310,22 @@ class Caffeinated {
         });
 
         for (const payload of Object.values(this.store.get("resource_tokens"))) {
-            const response = await fetch(`https://${payload.server_location}/data?token=${payload.token}`)
+            try {
+                const response = await fetch(`https://${payload.server_location}/data?token=${payload.token}`)
 
-            if (response.status == 200) {
-                const result = await response.json();
+                if (response.status == 200) {
+                    const result = await response.json();
 
-                try {
-                    await this.repomanager.addRepo(result.data.module_url);
-                } catch (e) {
-                    console.error(e);
+                    try {
+                        await this.repomanager.addRepo(result.data.module_url);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                } else {
+                    this.removeResourceToken(payload.token);
                 }
-            } else {
-                this.removeResourceToken(payload.token);
+            } catch (e) {
+                alert("Unable to connect to resource server, some resources will not be available.");
             }
         }
 
@@ -958,7 +962,15 @@ const UI = {
     },
 
     toggleMetaDisplay() {
-        if (!this.animatingMeta) {
+        if (!CAFFEINATED.userdata) {
+            anime({
+                targets: "#user-meta-text",
+                easing: "linear",
+                opacity: 0,
+                duration: 100,
+            });
+            this.animatingMeta = false;
+        } else if (!this.animatingMeta) {
             const element = document.querySelector("#user-meta-text");
             this.animatingMeta = true;
 
@@ -969,30 +981,26 @@ const UI = {
                     opacity: 0,
                     duration: 100,
                 }).finished.then(() => {
-                    if (CAFFEINATED.userdata) {
-                        let text;
+                    let text;
 
-                        if (UI.metaTaskDisplay == 1) {
-                            UI.metaTaskDisplay = 0;
-                            text = LANG.getTranslation("caffeinated.internal.subscribers_count_text", kFormatter(CAFFEINATED.userdata.streamer.subscriber_count, 2));
-                        } else {
-                            UI.metaTaskDisplay = 1;
-                            text = LANG.getTranslation("caffeinated.internal.followers_count_text", kFormatter(CAFFEINATED.userdata.streamer.followers_count, 2));
-                        }
-
-                        element.innerText = text;
-
-                        anime({
-                            targets: element,
-                            easing: "linear",
-                            opacity: 1,
-                            duration: 100,
-                        }).finished.then(() => {
-                            this.animatingMeta = false;
-                        });
+                    if (UI.metaTaskDisplay == 1) {
+                        UI.metaTaskDisplay = 0;
+                        text = LANG.getTranslation("caffeinated.internal.subscribers_count_text", kFormatter(CAFFEINATED.userdata.streamer.subscriber_count, 2));
                     } else {
-                        this.animatingMeta = false;
+                        UI.metaTaskDisplay = 1;
+                        text = LANG.getTranslation("caffeinated.internal.followers_count_text", kFormatter(CAFFEINATED.userdata.streamer.followers_count, 2));
                     }
+
+                    element.innerText = text;
+
+                    anime({
+                        targets: element,
+                        easing: "linear",
+                        opacity: 1,
+                        duration: 100,
+                    }).finished.then(() => {
+                        this.animatingMeta = false;
+                    });
                 });
             } else {
                 element.innerText = LANG.getTranslation("caffeinated.internal.followers_count_text", kFormatter(CAFFEINATED.userdata.streamer.followers_count, 2));
@@ -1081,8 +1089,8 @@ koi.addEventListener("error", (event) => {
     switch (error) {
         case "AUTH_INVALID": {
             CAFFEINATED.userdata = null;
-            UI.toggleMetaDisplay();
 
+            UI.toggleMetaDisplay();
             UI.splashScreen(false);
             UI.triggerLogin();
 
