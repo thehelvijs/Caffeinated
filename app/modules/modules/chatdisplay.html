@@ -580,10 +580,10 @@
                             upvotetooltip.remove();
                         });
 
-                        // Caffeine won't let you upvote a message past 15 minutes
+                        // Caffeine won't let you upvote a message past 10 minutes
                         setTimeout(() => {
                             upvotetooltip.remove();
-                        }, 15000);
+                        }, (10 * 60) * 1000);
 
                         upvotetooltip.appendChild(upvotebtn);
                         upvotetooltip.classList.add("tooltipbtn");
