@@ -22,20 +22,20 @@ LANG.absorbLang({
     "generic.use_custom_image": "Utilizar imagen personalizada",
 
     // Raid
-    "caffeinated.raid_alert.title": "Raid Alert",
-    "caffeinated.raid_alert.format.now_raiding": (raider, viewers) => `${raider} just raided with ${viewers} ${(viewers == 1) ? "espectador(a)" : "espectadores"}`,
+    "caffeinated.raid_alert.title": "Alerta de Incursión",
+    "caffeinated.raid_alert.format.now_raiding": (raider, viewers) => `${raider} acaba de llegar con ${viewers} espectadores`,
 
     // Subscription Goal
-    // TODO "caffeinated.subscription_goal.title": "Subscription Goal",
+    "caffeinated.subscription_goal.title": "Meta de Suscripciónes",
 
     // Subscription
-    // TODO "caffeinated.subscription_alert.title": "Subscription Alert",
-    // TODO "caffeinated.subscription_alert.format.sub": (name, months) => `${name} just subscribed for ${months} ${(months == 1) ? "month" : "months"}`,
-    // TODO "caffeinated.subscription_alert.format.resub": (name, months) => `${name} just resubscribed for ${months} ${(months == 1) ? "month" : "months"}`,
-    // TODO "caffeinated.subscription_alert.format.subgift": (name, giftee, months) => `${name} just gifted ${giftee} a ${months} month subscription`,
-    // TODO "caffeinated.subscription_alert.format.resubgift": (name, giftee, months) => `${name} just gifted ${giftee} a ${months} month resubscription`,
-    // TODO "caffeinated.subscription_alert.format.anonsubgift": (giftee, months) => `Anonymous just gifted ${giftee} a ${months} month subscription`,
-    // TODO "caffeinated.subscription_alert.format.anonresubgift": (giftee, months) => `Anonymous just gifted ${giftee} a ${months} month resubscription`,
+    "caffeinated.subscription_alert.title": "Alerta de Suscripción",
+    "caffeinated.subscription_alert.format.sub": (name, months) => `${name} acaba de suscribir por ${months} meses`,
+    "caffeinated.subscription_alert.format.resub": (name, months) => `${name} acab de resubscribir por ${months} meses`,
+    "caffeinated.subscription_alert.format.subgift": (name, giftee, months) => `${name} le acaba de regalar a ${giftee} una suscripción de ${months} meses`,
+    "caffeinated.subscription_alert.format.resubgift": (name, giftee, months) => `${name} le acaba de regalar a ${giftee} una sreuscripción de ${months} meses`,
+    "caffeinated.subscription_alert.format.anonsubgift": (giftee, months) => `Anónimo le acaba de regalar a ${giftee} una suscripción de ${months} meses`,
+    "caffeinated.subscription_alert.format.anonresubgift": (giftee, months) => `Anónimo le acaba de regalar a ${giftee} una resuscripción de ${months} meses`,
 
     // Credits
     "caffeinated.credits.title": "Créditos",
@@ -53,7 +53,7 @@ LANG.absorbLang({
     "caffeinated.chatdisplay.join_text": (name) => `${name} se unió a la corriente`,
     "caffeinated.chatdisplay.leave_text": (name) => `${name} dejó la corriente`,
     "caffeinated.chatdisplay.follow_text": (name) => `${name} te comenzó a seguir`,
-    "caffeinated.chatdisplay.reward_text": (name, title, image) => `${name} acaba de redimirse ${image}${title}`,
+    "caffeinated.chatdisplay.reward_text": (name, title, image) => `${name} a canjeado ${image}${title}`,
 
     // Chat
     "caffeinated.chat.title": "Chat",
@@ -81,7 +81,7 @@ LANG.absorbLang({
 
     // Follower Alert
     "caffeinated.follower_alert.title": "Alerta de Seguidor",
-    "caffeinated.follower_alert.format.followed": (user) => `${user} te comenzó a seguir`,
+    "caffeinated.follower_alert.format.followed": (user) => `${user} te ha seguido`,
 
     // Spotify
     "spotify.integration.title": "Spotify",
@@ -110,7 +110,7 @@ LANG.absorbLang({
     "caffeinated.recent_donation.title": "Donación Reciente",
 
     // Recent Subscription
-    // TODO "caffeinated.recent_subscription.title": "Recent Subscription",
+    "caffeinated.recent_subscription.title": "Suscripción Reciente",
 
     // Chat Bot
     "caffeinated.chatbot.title": "Chat Bot",
