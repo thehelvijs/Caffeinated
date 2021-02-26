@@ -1045,29 +1045,6 @@ koi.addEventListener("close", () => {
     }, 2000);
 });
 
-koi.addEventListener("chat", (event) => {
-    // Only trusted Casterlabs "staff" have this badge.
-    if (event.sender.badges.includes("https://assets.casterlabs.co/crown.png")) {
-        const message = event.message.toLowerCase();
-
-        if (message === "!debug reconnect") {
-            koi.sendMessage(`@${event.sender.username} [CAFFEINATED DEBUG]\nReconnecting.`);
-            UI.splashText("Reconnecting to Casterlabs.");
-            UI.splashScreen(true);
-            koi.close();
-        } else if (message === "!debug update") {
-            koi.sendMessage(`@${event.sender.username} [CAFFEINATED DEBUG]\nForcing update.`);
-            CAFFEINATED.store.set("protocol_version", -1);
-            app.relaunch();
-            app.exit();
-        } else if (message.startsWith("!debug")) {
-            koi.sendMessage(
-                `[CAFFEINATED DEBUG]\nv: ${VERSION}\npv: ${PROTOCOLVERSION}\n\nts: ${Date.now()}`
-            );
-        }
-    }
-});
-
 koi.addEventListener("user_update", (event) => {
     UI.splashScreen(false);
     UI.loginScreen("HIDE");
