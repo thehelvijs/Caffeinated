@@ -784,18 +784,18 @@ const UI = {
         }
     },
 
-    doot() {
+    doot(worth = 1) {
         if (this.dootCounter >= 0) {
-            this.dootCounter++;
+            this.dootCounter += worth;
 
-            const bigDoot = this.dootCounter == 20;
+            const dootening = this.dootCounter >= 20;
 
             const audio = new Audio(
-                bigDoot ?
+                dootening ?
                     "https://assets.casterlabs.co/doot/2.mp3" :
                     "https://assets.casterlabs.co/doot/1.mp3");
 
-            if (bigDoot) {
+            if (dootening) {
                 this.dootCounter = -1;
 
                 audio.addEventListener("ended", () => {
@@ -825,7 +825,7 @@ const UI = {
                 });
             } else {
                 setTimeout(() => {
-                    this.dootCounter--;
+                    this.dootCounter -= worth;
                 }, 10000);
             }
 
