@@ -649,21 +649,14 @@ nav ul li .dropdown-title a:hover {
     color: var(--menu-icon-color) !important;
 }
 
-/* nav ul li .dropdown-container .add-widget a {
-    padding-top: 10px;
-	background: #e94b4b !important;
-	color: #dddddd !important;
-}
-
-nav ul li .dropdown-container .add-widget a:hover {
-	background: #4b4b4b !important;
-	color: #dddddd !important;
-} */
-
 nav ul li .dropdown-item {
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+#manage-widgets-button {
+    text-align: center;
 }
 
 nav ul li .dropdown-icon {

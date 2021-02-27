@@ -100,12 +100,6 @@
                 <div class="menu">
                     <nav>
                         <ul class="menu-list" id="page-menu">
-                            <!-- <li id="menu-overlays">
-                            <a class="menu-button" onclick="navigate('overlays');" title="Caffeinated Overlays"> -->
-                            <!-- <ion-icon name="copy"></ion-icon> -->
-                            <!-- <div class="menu-button-title">Overlays</div>
-                            </a>
-                        </li> -->
                             <li id="menu-overlays">
                                 <a class="menu-button">
                                     <div class="menu-button-title">
@@ -114,21 +108,12 @@
                                     </div>
                                 </a>
                                 <div class="dropdown-container" id="widgets">
-                                    <!-- <div class="dropdown-item">
-                                    <div class="dropdown-title">
-                                        <a>Donation</a>
+                                    <!-- For when dynamic widgets are a thing -->
+                                    <div class="manage-widgets-container dropdown-item hide">
+                                        <div class="dropdown-title">
+                                            <a id="manage-widgets-button" onclick="navigate('manage-widgets');" class="translatable" lang="caffeinated.internal.managewidgets" title="Manage Widgets">Manage Widgets</a>
+                                        </div>
                                     </div>
-                                   
-                                    <div class="dropdown-icon">
-                                        <a><ion-icon name="eye-outline" role="img" class="md hydrated" aria-label="eye outline"></ion-icon></a>
-                                        <a><ion-icon name="volume-high-outline" role="img" class="md hydrated" aria-label="volume high outline"></ion-icon></a>
-                                    </div>
-                                </div> -->
-
-                                    <!-- For when widgets are dynamically added -->
-                                    <!-- <div class="dropdown-item add-widget">
-                                    <a href="#"><ion-icon name="add-circle-outline"></ion-icon> <span style="position: absolute; top: 9px; left: 40px;">Add widget</span></a>
-                                </div> -->
                                 </div>
                             </li>
                         </ul>
@@ -147,14 +132,11 @@
                         <p class="user-meta">
                             <span id="user-meta-text"></span>
                         </p>
-                        <!-- 
-                        <a class="user-settings" title="Settings" onclick="navigate('settings');">
-                        <ion-icon name="settings-outline"></ion-icon>
-                    </a> -->
                     </div>
                 </div>
                 <div class="pages">
                     <div class="content page widget-settings-page hide" page="settings" id="settings"></div>
+                    <div class="content page hide" page="manage-widgets" id="manage-widgets"></div>
                 </div>
             </div>
             <div id="login" class="center-text hide">

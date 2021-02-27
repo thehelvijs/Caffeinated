@@ -158,15 +158,19 @@ class Koi {
     }
 
     sendMessage(message, event = CAFFEINATED.userdata) {
-        if (this.isAlive() && event) {
-            if (event.streamer.platform === "TWITCH") {
-                message = message.replace(/\n/gm, " ");
-            }
+        if (message.startsWith("/caffeinated")) {
+            this.broadcast("x_caffeinated_command", { text: message });
+        } else {
+            if (this.isAlive() && event) {
+                if (event.streamer.platform === "TWITCH") {
+                    message = message.replace(/\n/gm, " ");
+                }
 
-            this.ws.send(JSON.stringify({
-                type: "CHAT",
-                message: message.substring(0, this.getMaxLength(event))
-            }));
+                this.ws.send(JSON.stringify({
+                    type: "CHAT",
+                    message: message.substring(0, this.getMaxLength(event))
+                }));
+            }
         }
     }
 

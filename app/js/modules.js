@@ -2,9 +2,10 @@
 class ModuleHolder {
     #module;
     sockets = [];
-    #elements = [];
+    #elements;
 
-    constructor(module, elements) {
+    // TODO implement holders properly.
+    constructor(module, elements = []) {
         this.#module = module;
         this.#elements = elements;
     }
@@ -14,13 +15,13 @@ class ModuleHolder {
     }
 
     unload() {
-        MODULES.saveToStore(this.#module);
-
         if (this.#module.onUnload) {
             this.#module.onUnload();
         }
 
         this.#elements.forEach((element) => element.remove());
+
+        delete MODULES.moduleClasses[this.#module.namespace];
     }
 
     getElements() {

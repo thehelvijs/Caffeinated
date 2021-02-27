@@ -10,6 +10,16 @@ const windowStateKeeper = require("electron-window-state");
 const PROTOCOLVERSION = 54;
 const VERSION = "1.1-stable14";
 
+const BROWSERWINDOW = electron.getCurrentWindow();
+
+/*
+    All experimental flags:
+
+     - experimental.no_translation_default
+     - experimental.manage_widgets
+
+*/
+
 const LOGIN_BUTTONS = {
     STABLE: `
         <a class="button" onclick="UI.login('caffeinated_twitch', 'https:\/\/id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions&state=');" style="overflow: hidden; background-color: #7d2bf9;">
@@ -1032,6 +1042,12 @@ setInterval(() => {
 
 LANG.translate(document.querySelector(".menu-button-title"));
 
+if (CAFFEINATED.store.get("experimental.manage_widgets")) {
+    document.querySelector(".manage-widgets-container").classList.remove("hide");
+} else {
+    document.querySelector(".manage-widgets-container").classList.add("hide");
+}
+
 /* Koi */
 koi.addEventListener("close", () => {
     CONNECTED = false;
@@ -1058,6 +1074,46 @@ koi.addEventListener("user_update", (event) => {
 
 koi.addEventListener("stream_status", (event) => {
     CAFFEINATED.streamdata = event;
+});
+
+koi.addEventListener("x_caffeinated_command", async (command) => {
+    const text = command.text;
+    const lowercase = text.toLowerCase();
+
+    console.debug("Caffeinated Command: " + text);
+
+    if (lowercase.startsWith("/caffeinated experimental ")) {
+        const flag = "experimental." + lowercase.substring("/caffeinated experimental ".length);
+        const newValue = !CAFFEINATED.store.get(flag);
+
+        CAFFEINATED.store.set(flag, newValue);
+
+        if (flag == "experimental.manage_widgets") {
+            if (newValue) {
+                document.querySelector(".manage-widgets-container").classList.remove("hide");
+            } else {
+                document.querySelector(".manage-widgets-container").classList.add("hide");
+            }
+        }
+
+        alert(`Set ${flag} to ${newValue}`);
+    } else {
+        switch (lowercase) {
+            case "/caffeinated devtools": {
+                if (BROWSERWINDOW.isDevToolsOpened()) {
+                    BROWSERWINDOW.closeDevTools();
+                } else {
+                    BROWSERWINDOW.openDevTools();
+                }
+                return;
+            }
+
+            default: {
+                alert(`Unrecognized command: "${text}"`);
+                return;
+            }
+        }
+    }
 });
 
 koi.addEventListener("error", (event) => {
