@@ -45,8 +45,6 @@ const LOGIN_BUTTONS = {
     `
 };
 
-const koi = new Koi("wss://api.casterlabs.co/v2/koi");
-
 let CONNECTED = false;
 let PLATFORM_DATA = {};
 
@@ -88,6 +86,10 @@ class Caffeinated {
                 modules: {},
                 cleared_events: []
             });
+        }
+
+        if (!this.store.has("server_domain")) {
+            this.store.set("server_domain", "api.casterlabs.co");
         }
 
         if (!this.store.has("cleared_events")) {
@@ -220,7 +222,7 @@ class Caffeinated {
 
         setInterval(() => this.checkForUpdates(), (5 * 60) * 1000); // 5 Minutes
 
-        PLATFORM_DATA = await (await fetch("https://api.casterlabs.co/v2/koi/platforms")).json();
+        PLATFORM_DATA = await (await fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/koi/platforms`)).json();
 
         MODULES.initalizeModule({
             displayname: "caffeinated.settings.title",
@@ -470,7 +472,7 @@ class Caffeinated {
         const LAUNCHER_VERSION = this.store.get("launcher_version");
         const CHANNEL = this.store.get("channel");
 
-        const updates = await (await fetch("https://api.casterlabs.co/v1/caffeinated/updates")).json();
+        const updates = await (await fetch(`https://${CAFFEINATED.store.get("server_domain")}/v1/caffeinated/updates`)).json();
         const launcher = updates["launcher-" + LAUNCHER_VERSION];
         const channel = launcher[CHANNEL];
 
@@ -520,7 +522,7 @@ class Caffeinated {
         koi.reconnect();
         CAFFEINATED.store.delete("token");
 
-        fetch("https://api.casterlabs.co/v2/natsukashii/revoke", {
+        fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/revoke`, {
             headers: new Headers({
                 authorization: "Bearer " + token
             })
@@ -551,6 +553,9 @@ const FileStore = {
 
 const CAFFEINATED = new Caffeinated();
 const MODULES = new Modules();
+
+const koi = new Koi(`wss://${CAFFEINATED.store.get("server_domain")}/v2/koi`);
+
 const UI = {
     slapCounter: 0,
     dootCounter: 0,
@@ -908,7 +913,7 @@ const UI = {
                 password.value = "";
                 mfa.value = "";
 
-                fetch("https://api.casterlabs.co/v2/natsukashii/create?platform=CAFFEINE&token=" + refreshToken).then((nResult) => nResult.json()).then((nResponse) => {
+                fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=CAFFEINE&token=${refreshToken}`).then((nResult) => nResult.json()).then((nResponse) => {
                     if (nResponse.data) {
                         CAFFEINATED.setToken(nResponse.data.token);
                     } else {
@@ -1082,7 +1087,12 @@ koi.addEventListener("x_caffeinated_command", async (command) => {
 
     console.debug("Caffeinated Command: " + text);
 
-    if (lowercase.startsWith("/caffeinated experimental ")) {
+    if (lowercase.startsWith("/caffeinated serverdomain ")) {
+        const newDomain = lowercase.substring("/caffeinated serverdomain ".length);
+
+        CAFFEINATED.store.set("server_domain", newDomain);
+        location.reload();
+    } else if (lowercase.startsWith("/caffeinated experimental ")) {
         const flag = "experimental." + lowercase.substring("/caffeinated experimental ".length);
         const newValue = !CAFFEINATED.store.get(flag);
 
