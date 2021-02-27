@@ -249,8 +249,24 @@ class Modules {
         }
 
         if (module.supportedPlatforms) {
+            koi.addEventListener("kofi_update", (event) => {
+                const platform = CAFFEINATED.userdata && module.supportedPlatforms.includes(CAFFEINATED.userdata.streamer.platform);
+                const kofi = module.supportedPlatforms.includes("KO_FI") && event.enabled;
+
+                module.isEnabled = platform || kofi;
+
+                if (module.isEnabled) {
+                    div.classList.remove("hide");
+                } else {
+                    div.classList.add("hide");
+                }
+            });
+
             koi.addEventListener("user_update", (event) => {
-                module.isEnabled = module.supportedPlatforms.includes(event.streamer.platform);
+                const platform = module.supportedPlatforms.includes(event.streamer.platform);
+                const kofi = module.supportedPlatforms.includes("KO_FI") && KOFI_ENABLED;
+
+                module.isEnabled = platform || kofi;
 
                 if (module.isEnabled) {
                     div.classList.remove("hide");
