@@ -98,7 +98,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 ((command.type == "Command") && message.startsWith(trigger)) ||
                 ((command.type == "Keyword") && message.includes(trigger))
             ) {
-                koi.sendMessage(`@${event.sender.displayname} ${command.reply} `, event);
+                koi.sendMessage(`@${event.sender.displayname} ${command.reply}`, event);
                 return;
             }
         }
