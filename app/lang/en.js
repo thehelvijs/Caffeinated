@@ -12,6 +12,7 @@ LANG.absorbLang({
     "generic.font": "Font",
     "generic.font.size": "Font Size (px)",
     "generic.text.color": "Text Color",
+    "generic.background.color": "Background Color",
     "generic.volume": "Volume",
     "generic.alert.audio": "Alert Audio",
     "generic.alert.image": "Alert Image",
@@ -20,6 +21,11 @@ LANG.absorbLang({
     "generic.currency": "Currency",
     "generic.enable_audio": "Enable Custom Audio",
     "generic.use_custom_image": "Use Custom Image",
+
+    // Video Share
+    "caffeinated.videoshare.title": "Video Share",
+    "caffeinated.videoshare.donations_only": "Donations Only",
+    "caffeinated.videoshare.skip": "Skip",
 
     // Raid
     "caffeinated.raid_alert.title": "Raid Alert",

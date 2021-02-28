@@ -12,6 +12,7 @@ LANG.absorbLang({
     "generic.font": "Lettertype",
     "generic.font.size": "Lettertype groote (px)",
     "generic.text.color": "Tekst kleur",
+    // TODO "generic.background.color": "Background Color",
     "generic.volume": "Volume",
     "generic.alert.audio": "Waarschuwings notificatie",
     "generic.alert.image": "Waarschuwings afbeelding",
@@ -20,6 +21,11 @@ LANG.absorbLang({
     "generic.currency": "Valuta",
     "generic.enable_audio": "Schakel audio op maat in",
     "generic.use_custom_image": "Gebruik een aangepaste afbeelding",
+
+    // Video Share
+    // TODO "caffeinated.videoshare.title": "Video Share",
+    // TODO "caffeinated.videoshare.donations_only": "Donations Only",
+    // TODO "caffeinated.videoshare.skip": "Skip",
 
     /* TODO
     // Raid
