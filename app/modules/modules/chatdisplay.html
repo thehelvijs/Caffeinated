@@ -412,6 +412,7 @@
             if (typeof require !== "undefined") {
                 // We're not in the simulation
                 currentWindow = require("electron").remote.getCurrentWindow();
+                shell = require("electron").shell;
 
                 document.body.classList.add("isPopout");
 
