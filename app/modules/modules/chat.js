@@ -36,6 +36,10 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
     init() {
         const instance = this;
 
+        koi.addEventListener("meta", (event) => {
+            MODULES.emitIO(instance, "event", event);
+        });
+
         koi.addEventListener("chat", (event) => {
             MODULES.emitIO(instance, "event", event);
         });
@@ -45,7 +49,42 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
                 MODULES.emitIO(instance, "event", event);
             }
         });
+
+        koi.addEventListener("channel_points", (event) => {
+            // this.addPointStatus(event.sender, event.reward);
+        });
+
+        koi.addEventListener("follow", (event) => {
+            // this.addStatus(event.follower, "caffeinated.chatdisplay.follow_text");
+        });
+
     }
+
+    // TODO status messages.
+    /*
+        addStatus(profile, langKey) {
+            const usernameHtml = `<span style="color: ${profile.color};">${escapeHtml(profile.displayname)}</span>`;
+            const lang = LANG.getTranslation(langKey, usernameHtml);
+    
+            this.addManualStatus(lang);
+        }
+    
+        addPointStatus(profile, reward) {
+            const usernameHtml = `<span style = "color: ${profile.color};" > ${escapeHtml(profile.displayname)}</span> `;
+            const imageHtml = `<img class="vcimage" src = "${reward.reward_image ?? reward.default_reward_image}" /> `;
+    
+            const lang = LANG.getTranslation("caffeinated.chatdisplay.reward_text", usernameHtml, reward.title, imageHtml);
+    
+            this.addManualStatus(lang);
+        }
+    
+        addManualStatus(lang) {
+            MODULES.emitIO(instance, "event", {
+                type: "STATUS",
+                lang: lang
+            });
+        }
+    */
 
     onSettingsUpdate() {
         MODULES.emitIO(this, "config", this.settings);

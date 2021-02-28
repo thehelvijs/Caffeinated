@@ -1,3 +1,4 @@
+let KOFI_ENABLED = false;
 
 MODULES.moduleClasses["kofi_integration"] = class {
 
@@ -94,7 +95,15 @@ MODULES.moduleClasses["kofi_integration"] = class {
     }
 
     getDataToStore() {
-        return { uuid: this.uuid };
+        return {
+            uuid: this.uuid,
+            enabled: this.settings.enabled
+        };
+    }
+
+    onSettingsUpdate() {
+        KOFI_ENABLED = this.settings.enabled;
+        koi.broadcast("kofi_update", { enabled: this.settings.enabled });
     }
 
     init() {
@@ -104,6 +113,10 @@ MODULES.moduleClasses["kofi_integration"] = class {
             this.uuid = `kofi_signaling:${generateUnsafeUniquePassword(64)}`;
             MODULES.saveToStore(this);
         }
+
+        KOFI_ENABLED = this.settings.enabled;
+
+        koi.broadcast("kofi_update", { enabled: this.settings.enabled });
 
         this.kinoko.connect(this.uuid, "parent");
 
@@ -120,6 +133,7 @@ MODULES.moduleClasses["kofi_integration"] = class {
     }
 
     settingsDisplay = {
+        enabled: "checkbox",
         url: {
             display: "Copy Webhook URL",
             type: "button"
@@ -127,6 +141,7 @@ MODULES.moduleClasses["kofi_integration"] = class {
     };
 
     defaultSettings = {
+        enabled: false
         // url: () => {}
     };
 

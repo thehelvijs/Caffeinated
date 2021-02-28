@@ -45,6 +45,16 @@ class RepoManager {
                     }
                 }
 
+                if (Array.isArray(modules.simple)) {
+                    for (let instance of modules.simple) {
+                        let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
+
+                        if (!loaded) {
+                            await MODULES.initalizeModule(new MODULES.moduleClasses[instance.namespace](instance.id, repo));
+                        }
+                    }
+                }
+
                 if (Array.isArray(modules.required)) {
                     for (let instance of modules.required) {
                         let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
@@ -55,16 +65,6 @@ class RepoManager {
                             await MODULES.initalizeModule(module);
 
                             module.persist = true;
-                        }
-                    }
-                }
-
-                if (Array.isArray(modules.simple)) {
-                    for (let instance of modules.simple) {
-                        let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
-
-                        if (!loaded) {
-                            await MODULES.initalizeModule(new MODULES.moduleClasses[instance.namespace](instance.id, repo));
                         }
                     }
                 }

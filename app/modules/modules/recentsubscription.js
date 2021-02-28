@@ -6,7 +6,7 @@ MODULES.moduleClasses["casterlabs_recent_subscription"] = class {
         this.displayname = "caffeinated.recent_subscription.title";
         this.type = "overlay settings";
         this.id = id;
-        this.supportedPlatforms = ["TWITCH", "TROVO"];
+        this.supportedPlatforms = ["TWITCH", "TROVO", "KO_FI"];
     }
 
     widgetDisplay = [

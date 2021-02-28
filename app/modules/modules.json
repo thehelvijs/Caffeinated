@@ -29,6 +29,7 @@
         "modules/subscriptionalert.js",
         "modules/subscriptiongoal.js",
         "modules/recentsubscription.js",
+        "modules/videoshare.js",
         "caffeine/caffeine.js",
         "ko-fi/kofimodule.js"
     ],
@@ -122,6 +123,10 @@
         {
             "namespace": "casterlabs_chat_display",
             "id": "chat_display"
+        },
+        {
+            "namespace": "casterlabs_video_share",
+            "id": "video_share"
         }
     ]
 }

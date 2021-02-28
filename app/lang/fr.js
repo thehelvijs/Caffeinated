@@ -12,6 +12,7 @@ LANG.absorbLang({
     "generic.font": "Police de caractère",
     "generic.font.size": "Grandeur de Police de caractère (px)",
     "generic.text.color": "Couleur de Texte",
+    // TODO "generic.background.color": "Background Color",
     "generic.volume": "Volume",
     "generic.alert.audio": "Audio d'Alerte",
     "generic.alert.image": "Image d'Alerte",
@@ -20,6 +21,11 @@ LANG.absorbLang({
     "generic.currency": "Devise",
     "generic.enable_audio": "Activer l'audio personnalisé",
     "generic.use_custom_image": "Utuliser l'image personnalisé",
+
+    // Video Share
+    // TODO "caffeinated.videoshare.title": "Video Share",
+    // TODO "caffeinated.videoshare.donations_only": "Donations Only",
+    // TODO "caffeinated.videoshare.skip": "Skip",
 
     /* TODO
     // Raid
@@ -46,6 +52,7 @@ LANG.absorbLang({
     "caffeinated.settings.title": "Réglages",
     "caffeinated.settings.signout": "Déconnexion",
     "caffeinated.settings.language": "Langue",
+    // TODO "caffeinated.settings.view_changelog": "View Changelog",
 
     // Support Us
     "caffeinated.supporters.title": "Nous Soutenir",

@@ -7,35 +7,52 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 54;
-const VERSION = "1.1-stable14";
+const PROTOCOLVERSION = 56;
+const VERSION = "1.1-stable16";
+
+const BROWSERWINDOW = electron.getCurrentWindow();
+
+/*
+    All experimental flags:
+
+     - experimental.no_translation_default
+     - experimental.manage_widgets
+
+*/
 
 const LOGIN_BUTTONS = {
     STABLE: `
         <a class="button" onclick="UI.login('caffeinated_twitch', 'https:\/\/id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions&state=');" style="overflow: hidden; background-color: #7d2bf9;">
             <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 14px; top: 7.5px;" />
-            <span style="padding-left: 1.75em; z-index: 2;">
+            <span style="position: absolute; left: 3em; z-index: 2;">
                 Login with Twitch
             </span>
         </a>
         <br />
         <a class="button" onclick="UI.login('caffeinated_trovo', 'https:\/\/open.trovo.live/page/login.html?client_id=BGUnwUJUSJS2wf5xJpa2QrJRU4ZVcMgS&response_type=token&scope=channel_details_self+chat_send_self+send_to_my_channel+user_details_self+chat_connect&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth/trovo&state=');" style="overflow: hidden; background-color: #088942;">
             <img src="https://assets.casterlabs.co/trovo/logo.png" style="height: 2em; position: absolute; left: 8px; top: 4px;" />
-            <span style="padding-left: 1.75em; z-index: 2;">
+            <span style="position: absolute; left: 3em; z-index: 2;">
                 Login with Trovo
             </span>
         </a>
         <br />
         <a class="button" onclick="UI.loginScreen('CAFFEINE');" style="overflow: hidden; background-color: #0000FF;">
             <img src="https://assets.casterlabs.co/caffeine/logo.png" style="height: 2.5em; position: absolute; left: 5px;" />
-            <span style="padding-left: 1.75em; z-index: 2;">
+            <span style="position: absolute; left: 3em; z-index: 2;">
                 Login with Caffeine
             </span>
         </a>
+        <!--
+        <br />
+        <a class="button" onclick="UI.loginScreen('caffeinated_brime');" style="background: linear-gradient(45deg, #8439af 15%, #fc3537 65%);">
+            <img src="https://assets.casterlabs.co/brime/white.png" style="height: 2.5em; position: absolute; left: 5px;" />
+            <span style="position: absolute; left: 3em; z-index: 2;">
+                Login with Brime
+            </span>
+        </a>
+        -->
     `
 };
-
-const koi = new Koi("wss://api.casterlabs.co/v2/koi");
 
 let CONNECTED = false;
 let PLATFORM_DATA = {};
@@ -78,6 +95,10 @@ class Caffeinated {
                 modules: {},
                 cleared_events: []
             });
+        }
+
+        if (!this.store.has("server_domain")) {
+            this.store.set("server_domain", "api.casterlabs.co");
         }
 
         if (!this.store.has("cleared_events")) {
@@ -210,7 +231,18 @@ class Caffeinated {
 
         setInterval(() => this.checkForUpdates(), (5 * 60) * 1000); // 5 Minutes
 
-        PLATFORM_DATA = await (await fetch("https://api.casterlabs.co/v2/koi/platforms")).json();
+        PLATFORM_DATA = await (await fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/koi/platforms`)).json();
+
+        MODULES.createContentFrame(document.querySelector("#changelog"), "https://api.casterlabs.co/v1/caffeinated/changelog").then((frame) => {
+            // Map the openLink function to ours.
+            frame.contentWindow.openLink = openLink;
+        });
+
+        if (!this.store.get("cleared_events").includes(`${PROTOCOLVERSION}-changelog`)) {
+            this.store.set("cleared_events", this.store.get("cleared_events").concat(`${PROTOCOLVERSION}-changelog`));
+
+            document.querySelector("#changelog").classList = "";
+        }
 
         MODULES.initalizeModule({
             displayname: "caffeinated.settings.title",
@@ -224,14 +256,19 @@ class Caffeinated {
             },
 
             settingsDisplay: {
-                signout: {
-                    display: "caffeinated.settings.signout",
+                view_changelog: {
+                    display: "caffeinated.settings.view_changelog",
                     type: "button",
                     isLang: true
                 },
                 language: {
                     display: "caffeinated.settings.language",
                     type: "select",
+                    isLang: true
+                },
+                signout: {
+                    display: "caffeinated.settings.signout",
+                    type: "button",
                     isLang: true
                 }
             },
@@ -243,6 +280,9 @@ class Caffeinated {
             defaultSettings: {
                 signout: () => {
                     CAFFEINATED.signOut();
+                },
+                view_changelog: () => {
+                    document.querySelector("#changelog").classList = "";
                 },
                 language: Object.keys(LANG.supportedLanguages)
             }
@@ -310,18 +350,22 @@ class Caffeinated {
         });
 
         for (const payload of Object.values(this.store.get("resource_tokens"))) {
-            const response = await fetch(`https://${payload.server_location}/data?token=${payload.token}`)
+            try {
+                const response = await fetch(`https://${payload.server_location}/data?token=${payload.token}`)
 
-            if (response.status == 200) {
-                const result = await response.json();
+                if (response.status == 200) {
+                    const result = await response.json();
 
-                try {
-                    await this.repomanager.addRepo(result.data.module_url);
-                } catch (e) {
-                    console.error(e);
+                    try {
+                        await this.repomanager.addRepo(result.data.module_url);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                } else {
+                    this.removeResourceToken(payload.token);
                 }
-            } else {
-                this.removeResourceToken(payload.token);
+            } catch (e) {
+                alert("Unable to connect to resource server, some resources will not be available.");
             }
         }
 
@@ -452,11 +496,19 @@ class Caffeinated {
         return this.store.get("channel");
     }
 
+    getTimeLiveInMilliseconds() {
+        if (this.streamdata.is_live) {
+            return new Date().getTime() - new Date(this.streamdata.start_time).getTime();
+        } else {
+            return 0;
+        }
+    }
+
     async checkForUpdates(force = false) {
         const LAUNCHER_VERSION = this.store.get("launcher_version");
         const CHANNEL = this.store.get("channel");
 
-        const updates = await (await fetch("https://api.casterlabs.co/v1/caffeinated/updates")).json();
+        const updates = await (await fetch(`https://${CAFFEINATED.store.get("server_domain")}/v1/caffeinated/updates`)).json();
         const launcher = updates["launcher-" + LAUNCHER_VERSION];
         const channel = launcher[CHANNEL];
 
@@ -506,7 +558,7 @@ class Caffeinated {
         koi.reconnect();
         CAFFEINATED.store.delete("token");
 
-        fetch("https://api.casterlabs.co/v2/natsukashii/revoke", {
+        fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/revoke`, {
             headers: new Headers({
                 authorization: "Bearer " + token
             })
@@ -537,6 +589,9 @@ const FileStore = {
 
 const CAFFEINATED = new Caffeinated();
 const MODULES = new Modules();
+
+const koi = new Koi(`wss://${CAFFEINATED.store.get("server_domain")}/v2/koi`);
+
 const UI = {
     slapCounter: 0,
     dootCounter: 0,
@@ -780,18 +835,18 @@ const UI = {
         }
     },
 
-    doot() {
+    doot(worth = 1) {
         if (this.dootCounter >= 0) {
-            this.dootCounter++;
+            this.dootCounter += worth;
 
-            const bigDoot = this.dootCounter == 20;
+            const dootening = this.dootCounter >= 20;
 
             const audio = new Audio(
-                bigDoot ?
+                dootening ?
                     "https://assets.casterlabs.co/doot/2.mp3" :
                     "https://assets.casterlabs.co/doot/1.mp3");
 
-            if (bigDoot) {
+            if (dootening) {
                 this.dootCounter = -1;
 
                 audio.addEventListener("ended", () => {
@@ -821,7 +876,7 @@ const UI = {
                 });
             } else {
                 setTimeout(() => {
-                    this.dootCounter--;
+                    this.dootCounter -= worth;
                 }, 10000);
             }
 
@@ -894,7 +949,7 @@ const UI = {
                 password.value = "";
                 mfa.value = "";
 
-                fetch("https://api.casterlabs.co/v2/natsukashii/create?platform=CAFFEINE&token=" + refreshToken).then((nResult) => nResult.json()).then((nResponse) => {
+                fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=CAFFEINE&token=${refreshToken}`).then((nResult) => nResult.json()).then((nResponse) => {
                     if (nResponse.data) {
                         CAFFEINATED.setToken(nResponse.data.token);
                     } else {
@@ -958,7 +1013,15 @@ const UI = {
     },
 
     toggleMetaDisplay() {
-        if (!this.animatingMeta) {
+        if (!CAFFEINATED.userdata) {
+            anime({
+                targets: "#user-meta-text",
+                easing: "linear",
+                opacity: 0,
+                duration: 100,
+            });
+            this.animatingMeta = false;
+        } else if (!this.animatingMeta) {
             const element = document.querySelector("#user-meta-text");
             this.animatingMeta = true;
 
@@ -969,30 +1032,26 @@ const UI = {
                     opacity: 0,
                     duration: 100,
                 }).finished.then(() => {
-                    if (CAFFEINATED.userdata) {
-                        let text;
+                    let text;
 
-                        if (UI.metaTaskDisplay == 1) {
-                            UI.metaTaskDisplay = 0;
-                            text = LANG.getTranslation("caffeinated.internal.subscribers_count_text", kFormatter(CAFFEINATED.userdata.streamer.subscriber_count, 2));
-                        } else {
-                            UI.metaTaskDisplay = 1;
-                            text = LANG.getTranslation("caffeinated.internal.followers_count_text", kFormatter(CAFFEINATED.userdata.streamer.followers_count, 2));
-                        }
-
-                        element.innerText = text;
-
-                        anime({
-                            targets: element,
-                            easing: "linear",
-                            opacity: 1,
-                            duration: 100,
-                        }).finished.then(() => {
-                            this.animatingMeta = false;
-                        });
+                    if (UI.metaTaskDisplay == 1) {
+                        UI.metaTaskDisplay = 0;
+                        text = LANG.getTranslation("caffeinated.internal.subscribers_count_text", kFormatter(CAFFEINATED.userdata.streamer.subscriber_count, 2));
                     } else {
-                        this.animatingMeta = false;
+                        UI.metaTaskDisplay = 1;
+                        text = LANG.getTranslation("caffeinated.internal.followers_count_text", kFormatter(CAFFEINATED.userdata.streamer.followers_count, 2));
                     }
+
+                    element.innerText = text;
+
+                    anime({
+                        targets: element,
+                        easing: "linear",
+                        opacity: 1,
+                        duration: 100,
+                    }).finished.then(() => {
+                        this.animatingMeta = false;
+                    });
                 });
             } else {
                 element.innerText = LANG.getTranslation("caffeinated.internal.followers_count_text", kFormatter(CAFFEINATED.userdata.streamer.followers_count, 2));
@@ -1024,6 +1083,12 @@ setInterval(() => {
 
 LANG.translate(document.querySelector(".menu-button-title"));
 
+if (CAFFEINATED.store.get("experimental.manage_widgets")) {
+    document.querySelector(".manage-widgets-container").classList.remove("hide");
+} else {
+    document.querySelector(".manage-widgets-container").classList.add("hide");
+}
+
 /* Koi */
 koi.addEventListener("close", () => {
     CONNECTED = false;
@@ -1035,29 +1100,6 @@ koi.addEventListener("close", () => {
             UI.splashScreen(true);
         }
     }, 2000);
-});
-
-koi.addEventListener("chat", (event) => {
-    // Only trusted Casterlabs "staff" have this badge.
-    if (event.sender.badges.includes("https://assets.casterlabs.co/crown.png")) {
-        const message = event.message.toLowerCase();
-
-        if (message === "!debug reconnect") {
-            koi.sendMessage(`@${event.sender.username} [CAFFEINATED DEBUG]\nReconnecting.`);
-            UI.splashText("Reconnecting to Casterlabs.");
-            UI.splashScreen(true);
-            koi.close();
-        } else if (message === "!debug update") {
-            koi.sendMessage(`@${event.sender.username} [CAFFEINATED DEBUG]\nForcing update.`);
-            CAFFEINATED.store.set("protocol_version", -1);
-            app.relaunch();
-            app.exit();
-        } else if (message.startsWith("!debug")) {
-            koi.sendMessage(
-                `[CAFFEINATED DEBUG]\nv: ${VERSION}\npv: ${PROTOCOLVERSION}\n\nts: ${Date.now()}`
-            );
-        }
-    }
 });
 
 koi.addEventListener("user_update", (event) => {
@@ -1075,14 +1117,59 @@ koi.addEventListener("stream_status", (event) => {
     CAFFEINATED.streamdata = event;
 });
 
+koi.addEventListener("x_caffeinated_command", async (command) => {
+    const text = command.text;
+    const lowercase = text.toLowerCase();
+
+    console.debug("Caffeinated Command: " + text);
+
+    if (lowercase.startsWith("/caffeinated serverdomain ")) {
+        const newDomain = lowercase.substring("/caffeinated serverdomain ".length);
+
+        CAFFEINATED.store.set("server_domain", newDomain);
+        location.reload();
+    } else if (lowercase.startsWith("/caffeinated experimental ")) {
+        const flag = "experimental." + lowercase.substring("/caffeinated experimental ".length);
+        const newValue = !CAFFEINATED.store.get(flag);
+
+        CAFFEINATED.store.set(flag, newValue);
+
+        if (flag == "experimental.manage_widgets") {
+            if (newValue) {
+                document.querySelector(".manage-widgets-container").classList.remove("hide");
+            } else {
+                document.querySelector(".manage-widgets-container").classList.add("hide");
+            }
+        }
+
+        alert(`Set ${flag} to ${newValue}`);
+    } else {
+        switch (lowercase) {
+            case "/caffeinated devtools": {
+                if (BROWSERWINDOW.isDevToolsOpened()) {
+                    BROWSERWINDOW.closeDevTools();
+                } else {
+                    BROWSERWINDOW.openDevTools();
+                }
+                return;
+            }
+
+            default: {
+                alert(`Unrecognized command: "${text}"`);
+                return;
+            }
+        }
+    }
+});
+
 koi.addEventListener("error", (event) => {
     let error = event.error;
 
     switch (error) {
         case "AUTH_INVALID": {
             CAFFEINATED.userdata = null;
-            UI.toggleMetaDisplay();
 
+            UI.toggleMetaDisplay();
             UI.splashScreen(false);
             UI.triggerLogin();
 
@@ -1115,6 +1202,10 @@ Array.from(document.querySelectorAll(".menu-button")).forEach((dropdown) => {
             dropdownContent.style.display = "block";
         }
     });
+});
+
+document.querySelector("#changelog-close").addEventListener("click", () => {
+    document.querySelector("#changelog").classList = "hide";
 });
 
 document.querySelector(".close").addEventListener("click", () => {

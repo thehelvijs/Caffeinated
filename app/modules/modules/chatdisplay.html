@@ -412,6 +412,7 @@
             if (typeof require !== "undefined") {
                 // We're not in the simulation
                 currentWindow = require("electron").remote.getCurrentWindow();
+                shell = require("electron").shell;
 
                 document.body.classList.add("isPopout");
 
@@ -580,10 +581,10 @@
                             upvotetooltip.remove();
                         });
 
-                        // Caffeine won't let you upvote a message past 15 minutes
+                        // Caffeine won't let you upvote a message past 10 minutes
                         setTimeout(() => {
                             upvotetooltip.remove();
-                        }, 15000);
+                        }, (10 * 60) * 1000);
 
                         upvotetooltip.appendChild(upvotebtn);
                         upvotetooltip.classList.add("tooltipbtn");

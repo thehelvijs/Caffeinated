@@ -2,9 +2,10 @@
 class ModuleHolder {
     #module;
     sockets = [];
-    #elements = [];
+    #elements;
 
-    constructor(module, elements) {
+    // TODO implement holders properly.
+    constructor(module, elements = []) {
         this.#module = module;
         this.#elements = elements;
     }
@@ -14,13 +15,13 @@ class ModuleHolder {
     }
 
     unload() {
-        MODULES.saveToStore(this.#module);
-
         if (this.#module.onUnload) {
             this.#module.onUnload();
         }
 
         this.#elements.forEach((element) => element.remove());
+
+        delete MODULES.moduleClasses[this.#module.namespace];
     }
 
     getElements() {
@@ -138,7 +139,7 @@ class Modules {
         }
     }
 
-    createContentFrame(page, src, classList) {
+    createContentFrame(page, src, classList = "") {
         return new Promise(async (resolve) => {
             const frame = document.createElement("iframe");
             const contents = await this.loadContents(src);
@@ -248,8 +249,24 @@ class Modules {
         }
 
         if (module.supportedPlatforms) {
+            koi.addEventListener("kofi_update", (event) => {
+                const platform = CAFFEINATED.userdata && module.supportedPlatforms.includes(CAFFEINATED.userdata.streamer.platform);
+                const kofi = module.supportedPlatforms.includes("KO_FI") && event.enabled;
+
+                module.isEnabled = platform || kofi;
+
+                if (module.isEnabled) {
+                    div.classList.remove("hide");
+                } else {
+                    div.classList.add("hide");
+                }
+            });
+
             koi.addEventListener("user_update", (event) => {
-                module.isEnabled = module.supportedPlatforms.includes(event.streamer.platform);
+                const platform = module.supportedPlatforms.includes(event.streamer.platform);
+                const kofi = module.supportedPlatforms.includes("KO_FI") && KOFI_ENABLED;
+
+                module.isEnabled = platform || kofi;
 
                 if (module.isEnabled) {
                     div.classList.remove("hide");

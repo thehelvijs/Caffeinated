@@ -41,7 +41,7 @@ const LANG = {
 
             if (code) {
                 return code;
-            } else if (CAFFEINATED.store.get("experimental_no_translation_default")) {
+            } else if (CAFFEINATED.store.get("experimental.no_translation_default")) {
                 return "";
             }
             // Otherwise, figure it out based on what the OS gives us.
@@ -55,7 +55,7 @@ const LANG = {
             }
         }
 
-        if (CAFFEINATED.store.get("experimental_no_translation_default")) {
+        if (CAFFEINATED.store.get("experimental.no_translation_default")) {
             return "";
         } else {
             return "en-*";
