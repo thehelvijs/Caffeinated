@@ -233,6 +233,17 @@ class Caffeinated {
 
         PLATFORM_DATA = await (await fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/koi/platforms`)).json();
 
+        MODULES.createContentFrame(document.querySelector("#changelog"), "https://api.casterlabs.co/v1/caffeinated/changelog").then((frame) => {
+            // Map the openLink function to ours.
+            frame.contentWindow.openLink = openLink;
+        });
+
+        if (!this.store.get("cleared_events").includes(`${PROTOCOLVERSION}-changelog`)) {
+            this.store.set("cleared_events", this.store.get("cleared_events").concat(`${PROTOCOLVERSION}-changelog`));
+
+            document.querySelector("#changelog").classList = "";
+        }
+
         MODULES.initalizeModule({
             displayname: "caffeinated.settings.title",
             namespace: "casterlabs_caffeinated_settings",
@@ -245,14 +256,19 @@ class Caffeinated {
             },
 
             settingsDisplay: {
-                signout: {
-                    display: "caffeinated.settings.signout",
+                view_changelog: {
+                    display: "caffeinated.settings.view_changelog",
                     type: "button",
                     isLang: true
                 },
                 language: {
                     display: "caffeinated.settings.language",
                     type: "select",
+                    isLang: true
+                },
+                signout: {
+                    display: "caffeinated.settings.signout",
+                    type: "button",
                     isLang: true
                 }
             },
@@ -264,6 +280,9 @@ class Caffeinated {
             defaultSettings: {
                 signout: () => {
                     CAFFEINATED.signOut();
+                },
+                view_changelog: () => {
+                    document.querySelector("#changelog").classList = "";
                 },
                 language: Object.keys(LANG.supportedLanguages)
             }
@@ -1183,6 +1202,10 @@ Array.from(document.querySelectorAll(".menu-button")).forEach((dropdown) => {
             dropdownContent.style.display = "block";
         }
     });
+});
+
+document.querySelector("#changelog-close").addEventListener("click", () => {
+    document.querySelector("#changelog").classList = "hide";
 });
 
 document.querySelector(".close").addEventListener("click", () => {

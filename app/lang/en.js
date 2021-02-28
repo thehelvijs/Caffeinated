@@ -44,6 +44,7 @@ LANG.absorbLang({
     "caffeinated.settings.title": "Settings",
     "caffeinated.settings.signout": "Sign out",
     "caffeinated.settings.language": "Language",
+    "caffeinated.settings.view_changelog": "View Changelog",
 
     // Support Us
     "caffeinated.supporters.title": "Support Us",

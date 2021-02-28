@@ -80,6 +80,41 @@ ion-icon {
     top: 3px;
 }
 
+/* Changelog */
+
+#changelog-close {
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    z-index: 2001;
+}
+
+#changelog-close ion-icon {
+    font-size: 35px;
+}
+
+#changelog-close:hover ion-icon {
+    color: var(--menu-icon-color-hover) !important;
+}
+
+#changelog {
+    user-select: none;
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 2000;
+}
+
+#changelog iframe {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
 /* Logins */
 
 #login {

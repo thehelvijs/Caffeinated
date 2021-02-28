@@ -46,6 +46,7 @@ LANG.absorbLang({
     "caffeinated.settings.title": "Instellingen",
     "caffeinated.settings.signout": "Uitloggen",
     "caffeinated.settings.language": "Taal",
+    // TODO "caffeinated.settings.view_changelog": "View Changelog",
 
     // Support Us
     "caffeinated.supporters.title": "Steun Ons",

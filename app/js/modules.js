@@ -139,7 +139,7 @@ class Modules {
         }
     }
 
-    createContentFrame(page, src, classList) {
+    createContentFrame(page, src, classList = "") {
         return new Promise(async (resolve) => {
             const frame = document.createElement("iframe");
             const contents = await this.loadContents(src);
