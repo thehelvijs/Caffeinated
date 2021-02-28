@@ -177,3 +177,22 @@ function escapeHtml(unsafe) {
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 }
+
+function getFriendlyTime(millis) {
+    if (millis < 1000) {
+        return `${millis.toFixed(0)} milliseconds`;
+    } else if (millis < 60000) {
+        const seconds = (millis / 1000).toFixed(0);
+
+        return `${seconds} ${(seconds == 1) ? "second" : "seconds"}`;
+    } else if (millis < 3600000) {
+        const minutes = (millis / 60000).toFixed(0);
+
+        return `${minutes} ${(minutes == 1) ? "minute" : "minutes"}`;
+    } else {
+        const hours = millis / 3600000;
+        const minutes = ((hours % 1) * 3600000) / 60000;
+
+        return `${hours.toFixed(0)}:${minutes.toFixed(0)}`;
+    }
+}

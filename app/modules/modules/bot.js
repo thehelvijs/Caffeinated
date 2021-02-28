@@ -55,29 +55,17 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
     processCommand(event) {
         const message = event.message.toLowerCase();
 
-        /*
         if (this.settings.enable_uptime_command && message.startsWith("!uptime")) {
             if (CAFFEINATED.streamdata && CAFFEINATED.streamdata.is_live) {
-                const hours = Math.abs(new Date() - new Date(CAFFEINATED.streamdata.timestamp)) / 3600000;
-                let time;
+                const millis = CAFFEINATED.getTimeLiveInMilliseconds();
+                const formatted = getFriendlyTime(millis);
 
-                if (hours > 1) {
-                    if (hours < 2) {
-                        time = `${kFormatter(hours)} hours`;
-                    } else {
-                        time = `${kFormatter(hours)} hour`;
-                    }
-                } else {
-                    time = `${Math.abs(hours / 60)} minutes`;
-                }
-
-                koi.sendMessage(`@${event.sender.displayname} ${LANG.getTranslation("caffeinated.chatbot.uptime_command.format", time)} `, event);
+                koi.sendMessage(`@${event.sender.displayname} ${LANG.getTranslation("caffeinated.chatbot.uptime_command.format", formatted)} `, event);
             } else {
                 koi.sendMessage(`@${event.sender.displayname} ${LANG.getTranslation("caffeinated.chatbot.uptime_command.not_live")} `, event);
             }
             return;
         }
-        */
 
         for (const command of this.settings.commands) {
             if (message.endsWith(command.reply.toLowerCase())) {
@@ -152,11 +140,11 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
             type: "dynamic",
             isLang: true
         },
-        /*enable_uptime_command: {
+        enable_uptime_command: {
             display: "caffeinated.chatbot.uptime_command.enable",
             type: "checkbox",
             isLang: true
-        },*/
+        },
         follow_callout: {
             display: "caffeinated.chatbot.follow_callout",
             type: "input",
@@ -201,7 +189,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 reply: LANG.getTranslation("caffeinated.chatbot.default_reply")
             }
         },
-        // enable_uptime_command: false,
+        enable_uptime_command: true,
         follow_callout: "",
         donation_callout: "",
         welcome_callout: ""

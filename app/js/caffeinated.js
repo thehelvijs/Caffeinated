@@ -477,6 +477,14 @@ class Caffeinated {
         return this.store.get("channel");
     }
 
+    getTimeLiveInMilliseconds() {
+        if (this.streamdata.is_live) {
+            return new Date().getTime() - new Date(this.streamdata.start_time).getTime();
+        } else {
+            return 0;
+        }
+    }
+
     async checkForUpdates(force = false) {
         const LAUNCHER_VERSION = this.store.get("launcher_version");
         const CHANNEL = this.store.get("channel");
