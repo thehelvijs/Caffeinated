@@ -9,6 +9,7 @@ LANG.absorbLang({
     "caffeinated.internal.subscribers_count_text": (count) => `${count} ${(count == 1 ? "abonado" : "suscriptores")}`,
 
     // Generic
+    "generic.enabled": "Activado",
     "generic.font": "Fuente",
     "generic.font.size": "Tamaño de Fuente (px)",
     "generic.text.color": "Color del Texto",
@@ -26,6 +27,8 @@ LANG.absorbLang({
     // TODO "caffeinated.videoshare.title": "Video Share",
     // TODO "caffeinated.videoshare.donations_only": "Donations Only",
     // TODO "caffeinated.videoshare.skip": "Skip",
+    // TODO "caffeinated.videoshare.pause": "Play/Pause",
+    // TODO "caffeinated.videoshare.player_only": "Player Only (No frame)",
 
     // Raid
     "caffeinated.raid_alert.title": "Alerta de Incursión",
@@ -121,7 +124,6 @@ LANG.absorbLang({
 
     // Chat Bot
     "caffeinated.chatbot.title": "Chat Bot",
-    "caffeinated.chatbot.enabled": "Activado",
     "caffeinated.chatbot.commands": "Comandos",
     "caffeinated.chatbot.follow_callout": "Notificación de Seguidor (Dejar en blanco para desactivar)",
     "caffeinated.chatbot.donation_callout": "Notificación de Donación (Dejar en blanco para desactivar)",
@@ -144,7 +146,6 @@ LANG.absorbLang({
 
     // Casterlabs Companion
     "caffeinated.companion.title": "Casterlabs Companion",
-    "caffeinated.companion.enabled": "Activado",
     "caffeinated.companion.copy": "Copiar el link",
     "caffeinated.companion.reset": "Reiniciar el link"
 

@@ -213,7 +213,7 @@ MODULES.moduleClasses["casterlabs_companion"] = class {
 
     settingsDisplay = {
         enabled: {
-            display: "caffeinated.companion.enabled",
+            display: "generic.enabled",
             type: "checkbox",
             isLang: true
         },

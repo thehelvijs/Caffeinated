@@ -30,11 +30,15 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
         const instance = this;
 
         koi.addEventListener("donation", (event) => {
-            MODULES.emitIO(instance, "event", event);
+            if (this.settings.enabled) {
+                MODULES.emitIO(instance, "event", event);
+            }
         });
 
         koi.addEventListener("chat", (event) => {
-            MODULES.emitIO(instance, "event", event);
+            if (this.settings.enabled) {
+                MODULES.emitIO(instance, "event", event);
+            }
         });
 
     }
@@ -44,6 +48,16 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
     }
 
     settingsDisplay = {
+        enabled: {
+            display: "generic.enabled",
+            type: "checkbox",
+            isLang: true
+        },
+        player_only: {
+            display: "caffeinated.videoshare.player_only",
+            type: "checkbox",
+            isLang: true
+        },
         bar_color: {
             display: "caffeinated.generic_goal.bar_color",
             type: "color",
@@ -59,19 +73,35 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
             type: "checkbox",
             isLang: true
         },
+        volume: {
+            display: "generic.volume",
+            type: "range",
+            isLang: true
+        },
         skip: {
             display: "caffeinated.videoshare.skip",
+            type: "button",
+            isLang: true
+        },
+        pause: {
+            display: "caffeinated.videoshare.pause",
             type: "button",
             isLang: true
         }
     };
 
     defaultSettings = {
+        enabled: true,
+        player_only: false,
         bar_color: "#7a7a7a",
         background_color: "#202020",
         donations_only: false,
+        volume: .5,
         skip: () => {
             MODULES.emitIO(this, "skip", null);
+        },
+        pause: () => {
+            MODULES.emitIO(this, "pause", null);
         }
     };
 
