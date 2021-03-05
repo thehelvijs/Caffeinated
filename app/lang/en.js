@@ -26,6 +26,7 @@ LANG.absorbLang({
     "caffeinated.videoshare.title": "Video Share",
     "caffeinated.videoshare.donations_only": "Donations Only",
     "caffeinated.videoshare.skip": "Skip",
+    "caffeinated.videoshare.pause": "Play/Pause",
 
     // Raid
     "caffeinated.raid_alert.title": "Raid Alert",

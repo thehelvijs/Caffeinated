@@ -59,8 +59,18 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
             type: "checkbox",
             isLang: true
         },
+        volume: {
+            display: "generic.volume",
+            type: "range",
+            isLang: true
+        },
         skip: {
             display: "caffeinated.videoshare.skip",
+            type: "button",
+            isLang: true
+        },
+        pause: {
+            display: "caffeinated.videoshare.pause",
             type: "button",
             isLang: true
         }
@@ -70,8 +80,12 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
         bar_color: "#7a7a7a",
         background_color: "#202020",
         donations_only: false,
+        volume: .5,
         skip: () => {
             MODULES.emitIO(this, "skip", null);
+        },
+        pause: () => {
+            MODULES.emitIO(this, "pause", null);
         }
     };
 
