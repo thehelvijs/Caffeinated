@@ -30,11 +30,15 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
         const instance = this;
 
         koi.addEventListener("donation", (event) => {
-            MODULES.emitIO(instance, "event", event);
+            if (this.settings.enabled) {
+                MODULES.emitIO(instance, "event", event);
+            }
         });
 
         koi.addEventListener("chat", (event) => {
-            MODULES.emitIO(instance, "event", event);
+            if (this.settings.enabled) {
+                MODULES.emitIO(instance, "event", event);
+            }
         });
 
     }
@@ -44,6 +48,11 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
     }
 
     settingsDisplay = {
+        enabled: {
+            display: "generic.enabled",
+            type: "checkbox",
+            isLang: true
+        },
         bar_color: {
             display: "caffeinated.generic_goal.bar_color",
             type: "color",
@@ -77,6 +86,7 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
     };
 
     defaultSettings = {
+        enabled: true,
         bar_color: "#7a7a7a",
         background_color: "#202020",
         donations_only: false,
