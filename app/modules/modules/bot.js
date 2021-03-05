@@ -131,7 +131,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
 
     settingsDisplay = {
         enabled: {
-            display: "caffeinated.chatbot.enabled",
+            display: "generic.enabled",
             type: "checkbox",
             isLang: true
         },

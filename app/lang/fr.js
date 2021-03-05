@@ -9,6 +9,7 @@ LANG.absorbLang({
     "caffeinated.internal.subscribers_count_text": (count) => `${count} ${(count == 1 ? "abonné(e)" : "abonnés")}`,
 
     // Generic
+    "generic.enabled": "Activé",
     "generic.font": "Police de caractère",
     "generic.font.size": "Grandeur de Police de caractère (px)",
     "generic.text.color": "Couleur de Texte",
@@ -124,7 +125,6 @@ LANG.absorbLang({
 
     // Chat Bot
     "caffeinated.chatbot.title": "Robot de Chat",
-    "caffeinated.chatbot.enabled": "Activé",
     "caffeinated.chatbot.commands": "Commandes",
     "caffeinated.chatbot.follow_callout": "Notification Suiveur (Laisser vide pour désactiver)",
     "caffeinated.chatbot.donation_callout": "Notification de Don (Laisser vide pour désactiver)",
@@ -146,7 +146,6 @@ LANG.absorbLang({
 
     // Casterlabs Companion
     "caffeinated.companion.title": "Companion Casterlabs",
-    "caffeinated.companion.enabled": "Activé",
     "caffeinated.companion.copy": "Copier le lien",
     "caffeinated.companion.reset": "Réinitialiser le lien"
 

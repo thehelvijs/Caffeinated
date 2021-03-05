@@ -9,6 +9,7 @@ LANG.absorbLang({
     "caffeinated.internal.subscribers_count_text": (count) => `${count} ${(count == 1 ? "abonnee" : "abonnees")}`,
 
     // Generic
+    "generic.enabled": "Geactiveerd",
     "generic.font": "Lettertype",
     "generic.font.size": "Lettertype groote (px)",
     "generic.text.color": "Tekst kleur",
@@ -124,7 +125,6 @@ LANG.absorbLang({
 
     // Chat Bot
     "caffeinated.chatbot.title": "Chat-Bot",
-    "caffeinated.chatbot.enabled": "Geactiveerd",
     "caffeinated.chatbot.commands": "Commandos",
     "caffeinated.chatbot.follow_callout": "Volger nem needs to check (laat dit leeg om hem uit te schakelen)",
     "caffeinated.chatbot.donation_callout": "Donatie nem needs to check (laat dit leeg om hem uit te schakelen)",
@@ -148,7 +148,6 @@ LANG.absorbLang({
 
     // Casterlabs Companion
     "caffeinated.companion.title": "Casterlabs Companion",
-    "caffeinated.companion.enabled": "Geactiveerd",
     "caffeinated.companion.open": "Open deze link met een apparaat",
     "caffeinated.companion.reset": "Link opnieuw instellen"
 
