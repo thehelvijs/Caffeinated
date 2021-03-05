@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 56;
-const VERSION = "1.1-stable16";
+const PROTOCOLVERSION = 57;
+const VERSION = "1.1-stable17";
 
 const BROWSERWINDOW = electron.getCurrentWindow();
 
