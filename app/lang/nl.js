@@ -28,6 +28,7 @@ LANG.absorbLang({
     // TODO "caffeinated.videoshare.donations_only": "Donations Only",
     // TODO "caffeinated.videoshare.skip": "Skip",
     // TODO "caffeinated.videoshare.pause": "Play/Pause",
+    // TODO "caffeinated.videoshare.player_only": "Player Only (No frame)",
 
     /* TODO
     // Raid

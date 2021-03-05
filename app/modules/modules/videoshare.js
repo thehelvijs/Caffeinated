@@ -53,6 +53,11 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
             type: "checkbox",
             isLang: true
         },
+        player_only: {
+            display: "caffeinated.videoshare.player_only",
+            type: "checkbox",
+            isLang: true
+        },
         bar_color: {
             display: "caffeinated.generic_goal.bar_color",
             type: "color",
@@ -87,6 +92,7 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
 
     defaultSettings = {
         enabled: true,
+        player_only: false,
         bar_color: "#7a7a7a",
         background_color: "#202020",
         donations_only: false,
