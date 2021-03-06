@@ -124,6 +124,7 @@ class Koi {
                             event.isTest = true;
                         }
 
+                        this.broadcast("event", event);
                         this.broadcast(type.toLowerCase(), event);
                     } else {
                         this.broadcast("message", json);
