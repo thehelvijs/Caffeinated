@@ -9,7 +9,7 @@ const windowStateKeeper = require("electron-window-state");
 
 const PROTOCOLVERSION = 57;
 const VERSION = "1.1-stable17";
-
+const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
 /*
@@ -590,7 +590,7 @@ const FileStore = {
 const CAFFEINATED = new Caffeinated();
 const MODULES = new Modules();
 
-const koi = new Koi(`wss://${CAFFEINATED.store.get("server_domain")}/v2/koi`);
+const koi = new Koi(`wss://${CAFFEINATED.store.get("server_domain")}/v2/koi?client_id=${CLIENT_ID}`);
 
 const UI = {
     slapCounter: 0,
