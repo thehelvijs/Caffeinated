@@ -1166,7 +1166,7 @@ koi.addEventListener("error", (event) => {
     let error = event.error;
 
     switch (error) {
-        case "AUTH_INVALID": {
+        case "USER_AUTH_INVALID": {
             CAFFEINATED.userdata = null;
 
             UI.toggleMetaDisplay();
