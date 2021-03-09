@@ -39,6 +39,8 @@ class Koi {
             try {
                 this.ws = new WebSocket(this.address);
 
+                let userAuthReached = false;
+
                 this.ws.onerror = () => {
                     setTimeout(() => this.reconnect, 1000);
                 }
@@ -124,6 +126,18 @@ class Koi {
                             event.isTest = true;
                         }
 
+                        if ((type === "USER_UPDATE") && !userAuthReached) {
+                            // Make this only execute once.
+                            userAuthReached = true;
+
+                            if (CAFFEINATED.puppetToken) {
+                                this.ws.send(JSON.stringify({
+                                    type: "PUPPET_LOGIN",
+                                    token: CAFFEINATED.puppetToken
+                                }));
+                            }
+                        }
+
                         this.broadcast("event", event);
                         this.broadcast(type.toLowerCase(), event);
                     } else {
@@ -158,10 +172,14 @@ class Koi {
         }
     }
 
-    sendMessage(message, event = CAFFEINATED.userdata) {
+    sendMessage(message, event = CAFFEINATED.userdata, chatter = "CLIENT") {
         if (message.startsWith("/caffeinated")) {
             this.broadcast("x_caffeinated_command", { text: message });
         } else {
+            if (!CAFFEINATED.puppetToken) {
+                chatter = "CLIENT";
+            }
+
             if (this.isAlive() && event) {
                 if (event.streamer.platform === "TWITCH") {
                     message = message.replace(/\n/gm, " ");
@@ -169,7 +187,8 @@ class Koi {
 
                 this.ws.send(JSON.stringify({
                     type: "CHAT",
-                    message: message.substring(0, this.getMaxLength(event))
+                    message: message.substring(0, this.getMaxLength(event)),
+                    chatter: chatter
                 }));
             }
         }

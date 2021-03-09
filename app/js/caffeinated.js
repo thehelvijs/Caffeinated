@@ -92,6 +92,7 @@ class Caffeinated {
                 initalized: true,
                 port: 8091,
                 token: null,
+                puppet_token: null,
                 modules: {},
                 cleared_events: []
             });
@@ -126,6 +127,7 @@ class Caffeinated {
         this.repomanager = new RepoManager();
 
         this.token = this.store.get("token");
+        this.puppetToken = this.store.get("puppet_token");
         this.userdata = null;
         this.streamdata = null;
         this.notifiedUpdate = false;
@@ -261,6 +263,11 @@ class Caffeinated {
                     type: "button",
                     isLang: true
                 },
+                chatbot_login: {
+                    display: "caffeinated.settings.chatbot_login",
+                    type: "button",
+                    isLang: true
+                },
                 language: {
                     display: "caffeinated.settings.language",
                     type: "select",
@@ -277,7 +284,43 @@ class Caffeinated {
                 CAFFEINATED.setLanguage(LANG.supportedLanguages[this.settings.language]);
             },
 
+            init() {
+                this.puppetLoginElement = document.querySelector("#casterlabs_caffeinated_settings_settings").querySelector("[name=chatbot_login]");
+
+                this.updatePuppetElement();
+
+                koi.addEventListener("error", (event) => {
+                    let error = event.error;
+
+                    switch (error) {
+                        case "PUPPET_AUTH_INVALID": {
+                            instance.updatePuppetElement(false);
+                        }
+                    }
+                });
+
+            },
+
+            updatePuppetElement(valid = CAFFEINATED.puppetToken) {
+                if (CAFFEINATED.puppetToken) {
+                    this.puppetLoginElement.setAttribute("lang", "caffeinated.settings.chatbot_logout");
+                } else {
+                    this.puppetLoginElement.setAttribute("lang", "caffeinated.settings.chatbot_login");
+                }
+
+                LANG.translate(this.puppetLoginElement.parentElement);
+            },
+
             defaultSettings: {
+                chatbot_login: (instance) => {
+                    if (CAFFEINATED.puppetToken) {
+                        CAFFEINATED.setPuppetToken(null);
+                        instance.updatePuppetElement(false);
+                    } else {
+                        UI.loginPuppet();
+                        instance.updatePuppetElement(true);
+                    }
+                },
                 signout: () => {
                     CAFFEINATED.signOut();
                 },
@@ -540,7 +583,7 @@ class Caffeinated {
     setToken(token) {
         if (token) {
             this.token = token;
-            CAFFEINATED.store.set("token", this.token);
+            this.store.set("token", this.token);
 
             UI.reset();
             UI.loginScreen("SUCCESS");
@@ -551,7 +594,21 @@ class Caffeinated {
         }
     }
 
+    setPuppetToken(puppetToken) {
+        this.puppetToken = puppetToken;
+        this.store.set("puppet_token", this.puppetToken);
+
+        koi.ws.send(JSON.stringify({
+            type: "PUPPET_LOGIN",
+            token: this.puppetToken
+        }));
+
+        UI.loginScreen("HIDE");
+    }
+
     signOut() {
+        UI.authCallback = (token) => this.setToken(token);
+
         const token = this.token;
         this.token = null;
 
@@ -601,6 +658,7 @@ const UI = {
     dootImg: new Image(),
     metaTaskDisplay: 0,
     animatingMeta: false,
+    authCallback: (token) => CAFFEINATED.setToken(token),
 
     init() {
         this.dootCtx = this.dootCanvas.getContext("2d");
@@ -724,6 +782,19 @@ const UI = {
         this.setUserImage(null, "");
         this.setUserName("");
         this.setUserPlatform(null, "");
+    },
+
+    loginPuppet() {
+        this.authCallback = (puppetToken) => CAFFEINATED.setPuppetToken(puppetToken);
+
+        document.querySelector("#login").classList.remove("hide");
+        anime({
+            targets: "#login",
+            easing: "linear",
+            opacity: 1,
+            duration: 175
+        });
+        this.loginScreen("NONE");
     },
 
     loginScreen(screen) {
@@ -892,7 +963,7 @@ const UI = {
 
         // 15min timeout
         auth.awaitAuthMessage((15 * 1000) * 60).then((token) => {
-            CAFFEINATED.setToken(token);
+            this.authCallback(token);
         }).catch((reason) => {
             console.error("Could not await for token: " + reason);
             this.loginScreen("NONE");
@@ -951,7 +1022,7 @@ const UI = {
 
                 fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=CAFFEINE&token=${refreshToken}`).then((nResult) => nResult.json()).then((nResponse) => {
                     if (nResponse.data) {
-                        CAFFEINATED.setToken(nResponse.data.token);
+                        this.authCallback(nResponse.data.token);
                     } else {
                         this.loginScreen("CAFFEINE");
                     }
@@ -1166,6 +1237,14 @@ koi.addEventListener("error", (event) => {
     let error = event.error;
 
     switch (error) {
+        case "PUPPET_AUTH_INVALID": {
+            CAFFEINATED.store.delete("puppet_token");
+            CAFFEINATED.puppetToken = null;
+
+            // TODO make this alert better
+            alert("Chat bot user auth invalid, please log back in.");
+        }
+
         case "USER_AUTH_INVALID": {
             CAFFEINATED.userdata = null;
 
