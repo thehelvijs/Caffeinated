@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-    <img width="60%" src="https://i.imgur.com/cWDET5z.png" />
+    <img width="70%" src="https://i.imgur.com/cWDET5z.png" />
 </p>
 
 ## Note: We are constantly developing. If something does not work or you break something, please open an issue on GitHub or drop a message on our [Discord](https://casterlabs.co/discord).
