@@ -54,6 +54,8 @@ LANG.absorbLang({
     "caffeinated.settings.signout": "Sign out",
     "caffeinated.settings.language": "Language",
     "caffeinated.settings.view_changelog": "View Changelog",
+    "caffeinated.settings.chatbot_login": "Link chatbot account",
+    "caffeinated.settings.chatbot_logout": "Unlink chatbot account",
 
     // Support Us
     "caffeinated.supporters.title": "Support Us",

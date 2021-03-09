@@ -561,7 +561,7 @@ async function createModuleInput(module, key, data, stored, formCallback, defaul
     } else if (type === "button") {
         input = document.createElement("button");
 
-        input.addEventListener("click", defaultValue);
+        input.addEventListener("click", () => defaultValue(module));
         input.innerText = displayname;
         input.id = uuid;
         input.classList = type + " data";

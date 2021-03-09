@@ -28,7 +28,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         koi.addEventListener("donation", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.donation_callout) {
-                    koi.sendMessage(`@${event.sender.displayname} ${this.settings.donation_callout}`, event);
+                    koi.sendMessage(`@${event.sender.displayname} ${this.settings.donation_callout}`, event, "PUPPET");
                 }
 
                 this.processCommand(event);
@@ -38,7 +38,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         koi.addEventListener("viewer_join", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.welcome_callout && (event.streamer.platform === "TROVO")) {
-                    koi.sendMessage(`@${event.sender.displayname} ${this.settings.welcome_callout}`, event);
+                    koi.sendMessage(`@${event.sender.displayname} ${this.settings.welcome_callout}`, event, "PUPPET");
                 }
             }
         });
@@ -46,7 +46,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
         koi.addEventListener("follow", (event) => {
             if (this.settings.enabled) {
                 if (this.settings.follow_callout) {
-                    koi.sendMessage(`@${event.follower.displayname} ${this.settings.follow_callout}`, event);
+                    koi.sendMessage(`@${event.follower.displayname} ${this.settings.follow_callout}`, event, "PUPPET");
                 }
             }
         });
@@ -60,9 +60,9 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 const millis = CAFFEINATED.getTimeLiveInMilliseconds();
                 const formatted = getFriendlyTime(millis);
 
-                koi.sendMessage(`@${event.sender.displayname} ${LANG.getTranslation("caffeinated.chatbot.uptime_command.format", formatted)} `, event);
+                koi.sendMessage(`@${event.sender.displayname} ${LANG.getTranslation("caffeinated.chatbot.uptime_command.format", formatted)} `, event, "PUPPET");
             } else {
-                koi.sendMessage(`@${event.sender.displayname} ${LANG.getTranslation("caffeinated.chatbot.uptime_command.not_live")} `, event);
+                koi.sendMessage(`@${event.sender.displayname} ${LANG.getTranslation("caffeinated.chatbot.uptime_command.not_live")} `, event, "PUPPET");
             }
             return;
         }
@@ -85,11 +85,11 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                     if (result instanceof Promise) {
                         result.then((message) => {
                             if (message) {
-                                koi.sendMessage(message.toString(), event);
+                                koi.sendMessage(message.toString(), event, "PUPPET");
                             }
                         })
                     } else {
-                        koi.sendMessage(result.toString(), event);
+                        koi.sendMessage(result.toString(), event, "PUPPET");
                     }
                 }
 
@@ -98,7 +98,7 @@ MODULES.moduleClasses["casterlabs_bot"] = class {
                 ((command.type == "Command") && message.startsWith(trigger)) ||
                 ((command.type == "Keyword") && message.includes(trigger))
             ) {
-                koi.sendMessage(`@${event.sender.displayname} ${command.reply}`, event);
+                koi.sendMessage(`@${event.sender.displayname} ${command.reply}`, event, "PUPPET");
                 return;
             }
         }

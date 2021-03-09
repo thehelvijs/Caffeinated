@@ -56,6 +56,8 @@ LANG.absorbLang({
     "caffeinated.settings.signout": "Déconnexion",
     "caffeinated.settings.language": "Langue",
     // TODO "caffeinated.settings.view_changelog": "View Changelog",
+    // TODO "caffeinated.settings.chatbot_login": "Link chatbot account",
+    // TODO "caffeinated.settings.chatbot_logout": "Unlink chatbot account",
 
     // Support Us
     "caffeinated.supporters.title": "Nous Soutenir",

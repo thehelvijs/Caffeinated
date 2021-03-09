@@ -83,7 +83,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
 
         if (message.startsWith("!song")) {
             if (this.settings.enable_song_command) {
-                koi.sendMessage(`@${event.sender.displayname} ${this.event.title} - ${this.event.artist}`, event);
+                koi.sendMessage(`@${event.sender.displayname} ${this.event.title} - ${this.event.artist}`, event, "PUPPET");
             }
         }
     }
@@ -160,7 +160,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
         this.event = event;
 
         if (this.settings.announce) {
-            koi.sendMessage(`Now playing: ${event.title} - ${event.artist}`);
+            koi.sendMessage(`Now playing: ${event.title} - ${event.artist}`, "PUPPET");
         }
 
         MODULES.emitIO(this, "event", this.event);
