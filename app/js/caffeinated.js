@@ -42,10 +42,39 @@ const LOGIN_BUTTONS = {
                 Login with Caffeine
             </span>
         </a>
+    `,
+    BETA: `
+        <a class="button" onclick="LOGIN_CALLBACKS.twitch();" style="overflow: hidden; background-color: #7d2bf9;">
+            <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 14px; top: 7.5px;" />
+            <span style="position: absolute; left: 3em; z-index: 2;">
+                Login with Twitch
+            </span>
+        </a>
+        <br />
+        <a class="button" onclick="LOGIN_CALLBACKS.trovo();" style="overflow: hidden; background-color: #088942;">
+            <img src="https://assets.casterlabs.co/trovo/logo.png" style="height: 2em; position: absolute; left: 8px; top: 4px;" />
+            <span style="position: absolute; left: 3em; z-index: 2;">
+                Login with Trovo
+            </span>
+        </a>
+        <br />
+        <a class="button" onclick="LOGIN_CALLBACKS.caffeine();" style="overflow: hidden; background-color: #0000FF;">
+            <img src="https://assets.casterlabs.co/caffeine/logo.png" style="height: 2.5em; position: absolute; left: 5px;" />
+            <span style="position: absolute; left: 3em; z-index: 2;">
+                Login with Caffeine
+            </span>
+        </a>
+        <br />
+        <a class="button" onclick="LOGIN_CALLBACKS.glimesh();" style="overflow: hidden; background-color: #0e1726;">
+            <img src="https://assets.casterlabs.co/glimesh/logo.png" style="height: 1.65em; position: absolute; left: 11px;" />
+            <span style="position: absolute; left: 3em; z-index: 2;">
+                Login with Glimesh
+            </span>
+        </a>
         <!--
         <br />
-        <a class="button" onclick="LOGIN_CALLBACKS.brime();" style="background: linear-gradient(45deg, #8439af 15%, #fc3537 65%);">
-            <img src="https://assets.casterlabs.co/brime/white.png" style="height: 2.5em; position: absolute; left: 5px;" />
+        <a class="button" onclick="" style="background: linear-gradient(45deg, #8439af 15%, #fc3537 65%);">
+            <img src="https://assets.casterlabs.co/brime/white.png" style="height: 2.5em; position: absolute; left: 4px;" />
             <span style="position: absolute; left: 3em; z-index: 2;">
                 Login with Brime
             </span>
@@ -56,17 +85,20 @@ const LOGIN_BUTTONS = {
 const LOGIN_CALLBACKS = {
     twitch(backCallback) {
         UI.setBackCallback(backCallback);
-        UI.login("caffeinated_twitch", "https:\/\/id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&force_verify=true&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions&state=");
+        UI.login("caffeinated_twitch", "https://id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&force_verify=true&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions&state=");
     },
     trovo(backCallback) {
         UI.setBackCallback(backCallback);
-        UI.login("caffeinated_trovo", "https:\/\/open.trovo.live/page/login.html?client_id=BGUnwUJUSJS2wf5xJpa2QrJRU4ZVcMgS&response_type=token&scope=channel_details_self+chat_send_self+send_to_my_channel+user_details_self+chat_connect&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth/trovo&state=");
+        UI.login("caffeinated_trovo", "https://open.trovo.live/page/login.html?client_id=BGUnwUJUSJS2wf5xJpa2QrJRU4ZVcMgS&response_type=token&scope=channel_details_self+chat_send_self+send_to_my_channel+user_details_self+chat_connect&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth/trovo&state=");
     },
     caffeine(backCallback) {
         UI.setBackCallback(backCallback);
         UI.loginScreen("CAFFEINE");
     },
-    brime(backCallback) { }
+    glimesh(backCallback) {
+        UI.setBackCallback(backCallback);
+        UI.login("caffeinated_glimesh", "https://glimesh.tv/oauth/authorize?force_verify=true&client_id=3c60c5b45bbae0eadfeeb35d1ee0c77e580b31fd42a5fbc8ae965ca7106c5139&redirect_uri=https%3A%2F%2Fcasterlabs.co%2Fauth%2Fglimesh&response_type=code&scope=public+email+chat&state=");
+    }
 }
 
 let CONNECTED = false;
@@ -573,22 +605,23 @@ class Caffeinated {
     }
 
     async checkForUpdates(force = false) {
-        const LAUNCHER_VERSION = this.store.get("launcher_version");
-        const CHANNEL = this.store.get("channel");
+        if (!this.isDevEnviroment) {
+            const LAUNCHER_VERSION = this.store.get("launcher_version");
+            const CHANNEL = this.store.get("channel");
 
-        const updates = await (await fetch(`https://${CAFFEINATED.store.get("server_domain")}/v1/caffeinated/updates`)).json();
-        const launcher = updates["launcher-" + LAUNCHER_VERSION];
-        const channel = launcher[CHANNEL];
+            const updates = await (await fetch(`https://${CAFFEINATED.store.get("server_domain")}/v1/caffeinated/updates`)).json();
+            const launcher = updates["launcher-" + LAUNCHER_VERSION];
+            const channel = launcher[CHANNEL];
 
-        if (channel) {
-            if (!this.isDevEnviroment && !this.notifiedUpdate) {
-                const latestProtocol = channel.protocol_version
+            if (channel) {
+                if (!this.isDevEnviroment && !this.notifiedUpdate) {
+                    const latestProtocol = channel.protocol_version
 
-                if ((PROTOCOLVERSION < latestProtocol) || force) {
-                    this.notifiedUpdate = true;
-                    // An update is available
-                    this.triggerBanner("protocol-update-" + latestProtocol, (element) => {
-                        element.innerHTML = `
+                    if ((PROTOCOLVERSION < latestProtocol) || force) {
+                        this.notifiedUpdate = true;
+                        // An update is available
+                        this.triggerBanner("protocol-update-" + latestProtocol, (element) => {
+                            element.innerHTML = `
                             <span>
                                 An update is available.
                             </span>
@@ -596,12 +629,14 @@ class Caffeinated {
                                 Restart
                             </a>
                         `;
-                    }, "#06d6a0");
+                        }, "#06d6a0");
+                    }
                 }
+            } else {
+                this.store.set("channel", "STABLE");
+                alert("Changed update channel to STABLE as the previous one was invalid.");
+                console.warn("Changed update channel to STABLE as the previous one was invalid.");
             }
-        } else {
-            this.store.set("channel", "STABLE");
-            console.warn("Changed update channel to STABLE as the previous one was invalid.")
         }
     }
 
@@ -1236,6 +1271,10 @@ koi.addEventListener("x_caffeinated_command", async (command) => {
 
         CAFFEINATED.store.set("server_domain", newDomain);
         location.reload();
+    } else if (lowercase.startsWith("/caffeinated channel ")) {
+        const channel = lowercase.substring("/caffeinated channel ".length);
+
+        CAFFEINATED.setChannel(channel);
     } else if (lowercase.startsWith("/caffeinated experimental ")) {
         const flag = "experimental." + lowercase.substring("/caffeinated experimental ".length);
         const newValue = !CAFFEINATED.store.get(flag);
