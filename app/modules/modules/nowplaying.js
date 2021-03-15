@@ -160,7 +160,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
         this.event = event;
 
         if (this.settings.announce) {
-            koi.sendMessage(`Now playing: ${event.title} - ${event.artist}`, "PUPPET");
+            koi.sendMessage(`Now playing: ${event.title} - ${event.artist}`, CAFFEINATED.userdata, "PUPPET");
         }
 
         MODULES.emitIO(this, "event", this.event);
