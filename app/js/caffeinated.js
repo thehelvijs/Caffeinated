@@ -1272,7 +1272,7 @@ koi.addEventListener("x_caffeinated_command", async (command) => {
         CAFFEINATED.store.set("server_domain", newDomain);
         location.reload();
     } else if (lowercase.startsWith("/caffeinated channel ")) {
-        const channel = lowercase.substring("/caffeinated channel ".length);
+        const channel = lowercase.substring("/caffeinated channel ".length).toUpperCase();
 
         CAFFEINATED.setChannel(channel);
     } else if (lowercase.startsWith("/caffeinated experimental ")) {
@@ -1319,6 +1319,7 @@ koi.addEventListener("error", (event) => {
 
             // TODO make this alert better
             alert("Chat bot user auth invalid, please log back in.");
+            break;
         }
 
         case "USER_AUTH_INVALID": {
@@ -1330,6 +1331,7 @@ koi.addEventListener("error", (event) => {
 
             CAFFEINATED.store.delete("token");
             CAFFEINATED.token = null;
+            break;
         }
     }
 });
