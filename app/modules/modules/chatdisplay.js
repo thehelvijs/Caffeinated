@@ -80,7 +80,10 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
 
         koi.addEventListener("user_update", (event) => {
             // They don't have that sort of viewer data available.
-            if (event.streamer.platform === "TROVO") {
+            if ([
+                "TROVO",
+                "GLIMESH"
+            ].includes(event.streamer.platform)) {
                 viewersPopout.classList.add("hide");
             } else {
                 viewersPopout.classList.remove("hide");

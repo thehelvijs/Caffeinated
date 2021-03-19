@@ -6,7 +6,7 @@ MODULES.moduleClasses["casterlabs_donation_ticker"] = class {
         this.displayname = "caffeinated.donation_ticker.title";
         this.type = "overlay settings";
         this.id = id;
-
+        this.supportedPlatforms = ["TWITCH", "CAFFEINE", "TROVO"];
     }
 
     widgetDisplay = [
