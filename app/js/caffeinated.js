@@ -17,7 +17,7 @@ const BROWSERWINDOW = electron.getCurrentWindow();
 
      - experimental.no_translation_default   (default: false)
      - experimental.manage_widgets           (default: false)
-     - experimental.koi_path                 (default: /v2/koi)
+     - experimental.use_beta_koi_path        (default: false)
 
 */
 
@@ -144,10 +144,6 @@ class Caffeinated {
                 modules: {},
                 cleared_events: []
             });
-        }
-
-        if (!this.store.has("experimental.koi_path")) {
-            this.store.set("experimental.koi_path", "/v2/koi");
         }
 
         if (!this.store.has("server_domain")) {
@@ -712,7 +708,7 @@ const FileStore = {
 const CAFFEINATED = new Caffeinated();
 const MODULES = new Modules();
 
-const koi = new Koi(`wss://${CAFFEINATED.store.get("server_domain")}${CAFFEINATED.store.get("experimental.koi_path")}?client_id=${CLIENT_ID}`);
+const koi = new Koi(`wss://${CAFFEINATED.store.get("server_domain")}${CAFFEINATED.store.get("experimental.use_beta_koi_path") ? "/beta/v2/koi" : "/v2/koi"}?client_id=${CLIENT_ID}`);
 
 const UI = {
     slapCounter: 0,
@@ -1297,7 +1293,7 @@ koi.addEventListener("x_caffeinated_command", async (command) => {
         alert(`Set ${flag} to ${newValue}`);
 
         // Reload after the alert is cleared.
-        if (flag == "experimental.koi_path") {
+        if (flag == "experimental.use_beta_koi_path") {
             location.reload();
         }
     } else {
