@@ -30,6 +30,7 @@
         "modules/subscriptiongoal.js",
         "modules/recentsubscription.js",
         "modules/videoshare.js",
+        "modules/uptime.js",
         "caffeine/caffeine.js",
         "ko-fi/kofimodule.js"
     ],
@@ -97,6 +98,10 @@
         {
             "namespace": "casterlabs_view_counter",
             "id": "viewer_counter"
+        },
+        {
+            "namespace": "casterlabs_uptime",
+            "id": "uptime"
         }
     ],
     "required": [

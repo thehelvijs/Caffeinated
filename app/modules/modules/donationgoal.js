@@ -6,6 +6,7 @@ MODULES.moduleClasses["casterlabs_donation_goal"] = class {
         this.displayname = "caffeinated.donation_goal.title";
         this.type = "overlay settings";
         this.id = id;
+        this.supportedPlatforms = ["TWITCH", "CAFFEINE", "TROVO"];
     }
 
     widgetDisplay = [
@@ -60,7 +61,7 @@ MODULES.moduleClasses["casterlabs_donation_goal"] = class {
     async onSettingsUpdate() {
         const current = parseFloat(this.page.querySelector("[name=current_amount]").value);
 
-        if (this.oldAmount != this.amount) {
+        if (this.oldAmount != current) {
             this.amount = (await convertCurrency(current, this.settings.currency, "USD"));
         }
 

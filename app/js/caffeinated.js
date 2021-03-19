@@ -7,16 +7,17 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 60;
-const VERSION = "1.1-stable20";
+const PROTOCOLVERSION = 61;
+const VERSION = "1.1-stable21";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
 /*
     All experimental flags:
 
-     - experimental.no_translation_default
-     - experimental.manage_widgets
+     - experimental.no_translation_default   (default: false)
+     - experimental.manage_widgets           (default: false)
+     - experimental.use_beta_koi_path        (default: false)
 
 */
 
@@ -707,7 +708,7 @@ const FileStore = {
 const CAFFEINATED = new Caffeinated();
 const MODULES = new Modules();
 
-const koi = new Koi(`wss://${CAFFEINATED.store.get("server_domain")}/v2/koi?client_id=${CLIENT_ID}`);
+const koi = new Koi(`wss://${CAFFEINATED.store.get("server_domain")}${CAFFEINATED.store.get("experimental.use_beta_koi_path") ? "/beta/v2/koi" : "/v2/koi"}?client_id=${CLIENT_ID}`);
 
 const UI = {
     slapCounter: 0,
@@ -1290,6 +1291,11 @@ koi.addEventListener("x_caffeinated_command", async (command) => {
         }
 
         alert(`Set ${flag} to ${newValue}`);
+
+        // Reload after the alert is cleared.
+        if (flag == "experimental.use_beta_koi_path") {
+            location.reload();
+        }
     } else {
         switch (lowercase) {
             case "/caffeinated devtools": {
