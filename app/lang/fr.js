@@ -59,6 +59,9 @@ LANG.absorbLang({
     // TODO "caffeinated.settings.chatbot_login": "Link chatbot account",
     // TODO "caffeinated.settings.chatbot_logout": "Unlink chatbot account",
 
+    // Stream Uptime
+    // TODO "caffeinated.uptime.title": "Stream Uptime",
+
     // Support Us
     "caffeinated.supporters.title": "Nous Soutenir",
 
