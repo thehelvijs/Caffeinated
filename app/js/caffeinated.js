@@ -43,28 +43,6 @@ const LOGIN_BUTTONS = {
                 Login with Caffeine
             </span>
         </a>
-    `,
-    BETA: `
-        <a class="button" onclick="LOGIN_CALLBACKS.twitch();" style="overflow: hidden; background-color: #7d2bf9;">
-            <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 14px; top: 7.5px;" />
-            <span style="position: absolute; left: 3em; z-index: 2;">
-                Login with Twitch
-            </span>
-        </a>
-        <br />
-        <a class="button" onclick="LOGIN_CALLBACKS.trovo();" style="overflow: hidden; background-color: #088942;">
-            <img src="https://assets.casterlabs.co/trovo/logo.png" style="height: 2em; position: absolute; left: 8px; top: 4px;" />
-            <span style="position: absolute; left: 3em; z-index: 2;">
-                Login with Trovo
-            </span>
-        </a>
-        <br />
-        <a class="button" onclick="LOGIN_CALLBACKS.caffeine();" style="overflow: hidden; background-color: #0000FF;">
-            <img src="https://assets.casterlabs.co/caffeine/logo.png" style="height: 2.5em; position: absolute; left: 5px;" />
-            <span style="position: absolute; left: 3em; z-index: 2;">
-                Login with Caffeine
-            </span>
-        </a>
         <br />
         <a class="button" onclick="LOGIN_CALLBACKS.glimesh();" style="overflow: hidden; background-color: #0e1726;">
             <img src="https://assets.casterlabs.co/glimesh/logo.png" style="height: 1.65em; position: absolute; left: 11px;" />
