@@ -277,7 +277,7 @@ class Caffeinated {
     }
 
     async init() {
-        FONTSELECT.preload();
+        await FONTSELECT.preload();
 
         setInterval(() => this.checkForUpdates(), (5 * 60) * 1000); // 5 Minutes
 
