@@ -4,25 +4,13 @@ const FONTSELECT = {
     fonts: [],
 
     preload() {
-        return new Promise((resolve, reject) => {
-            try {
-                require("font-list").getFonts().then((fonts) => {
-                    fonts.forEach((font) => {
-                        const name = font.replace(/\"/g, "");
-
-                        if (!this.fonts.includes(name)) {
-                            this.fonts.push(name);
-                        }
-                    })
-                });
-            } catch (e) {
-                console.log(e);
-            }
+        return new Promise(async (resolve, reject) => {
+            console.debug("Loading fonts.");
 
             fetch(this.endPoint).then((response) => response.json())
                 .catch(reject)
                 .then(async (fonts) => {
-                    let toload = [];
+                    // let toload = [];
 
                     // Quickly get a list of fonts ready for the caller.
                     fonts.items.forEach((font) => {
@@ -30,10 +18,11 @@ const FONTSELECT = {
 
                         if (!this.fonts.includes(name)) {
                             this.fonts.push(name);
-                            toload.push(font);
+                            // toload.push(font);
                         }
                     });
 
+                    /*
                     for (const font of toload) {
                         const name = font.family;
                         let url;
@@ -48,7 +37,27 @@ const FONTSELECT = {
 
                         document.fonts.add(face);
                     }
+                    */
 
+                    try {
+                        const localFonts = await require("font-list").getFonts();
+
+                        localFonts.forEach((font) => {
+                            const name = font.replace(/\"/g, "");
+
+                            if (!this.fonts.includes(name)) {
+                                this.fonts.push(name);
+
+                                // const face = new FontFace(name, font);
+
+                                // document.fonts.add(face);
+                            }
+                        })
+                    } catch (e) {
+                        console.error(e);
+                    }
+
+                    console.debug("Finished loading fonts.");
                     resolve();
                 });
         });
@@ -58,6 +67,7 @@ const FONTSELECT = {
         return new Promise(async (resolve, reject) => {
             // if (element instanceof HTMLSelectElement) {
             if (this.fonts.length == 0) {
+                console.debug("No fonts present, loading them now.");
                 await this.preload();
             }
 

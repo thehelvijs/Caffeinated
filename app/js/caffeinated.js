@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 61;
-const VERSION = "1.1-stable21";
+const PROTOCOLVERSION = 62;
+const VERSION = "1.1-stable22";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
@@ -23,28 +23,6 @@ const BROWSERWINDOW = electron.getCurrentWindow();
 
 const LOGIN_BUTTONS = {
     STABLE: `
-        <a class="button" onclick="LOGIN_CALLBACKS.twitch();" style="overflow: hidden; background-color: #7d2bf9;">
-            <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 14px; top: 7.5px;" />
-            <span style="position: absolute; left: 3em; z-index: 2;">
-                Login with Twitch
-            </span>
-        </a>
-        <br />
-        <a class="button" onclick="LOGIN_CALLBACKS.trovo();" style="overflow: hidden; background-color: #088942;">
-            <img src="https://assets.casterlabs.co/trovo/logo.png" style="height: 2em; position: absolute; left: 8px; top: 4px;" />
-            <span style="position: absolute; left: 3em; z-index: 2;">
-                Login with Trovo
-            </span>
-        </a>
-        <br />
-        <a class="button" onclick="LOGIN_CALLBACKS.caffeine();" style="overflow: hidden; background-color: #0000FF;">
-            <img src="https://assets.casterlabs.co/caffeine/logo.png" style="height: 2.5em; position: absolute; left: 5px;" />
-            <span style="position: absolute; left: 3em; z-index: 2;">
-                Login with Caffeine
-            </span>
-        </a>
-    `,
-    BETA: `
         <a class="button" onclick="LOGIN_CALLBACKS.twitch();" style="overflow: hidden; background-color: #7d2bf9;">
             <img src="https://assets.casterlabs.co/twitch/logo.png" style="height: 1.5em; position: absolute; left: 14px; top: 7.5px;" />
             <span style="position: absolute; left: 3em; z-index: 2;">
@@ -277,7 +255,7 @@ class Caffeinated {
     }
 
     async init() {
-        FONTSELECT.preload();
+        await FONTSELECT.preload();
 
         setInterval(() => this.checkForUpdates(), (5 * 60) * 1000); // 5 Minutes
 
