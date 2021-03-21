@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 62;
-const VERSION = "1.1-stable22";
+const PROTOCOLVERSION = 63;
+const VERSION = "1.1-stable23";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
@@ -18,7 +18,6 @@ const BROWSERWINDOW = electron.getCurrentWindow();
      - experimental.no_translation_default   (default: false)
      - experimental.manage_widgets           (default: false)
      - experimental.use_beta_koi_path        (default: false)
-     - experimental.brime_integration        (default: false)
 
 */
 
