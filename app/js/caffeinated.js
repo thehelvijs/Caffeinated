@@ -52,7 +52,7 @@ const LOGIN_BUTTONS = {
             </span>
         </a>
         <br />
-        <a id="experimental_brime_integration_login" class="button hide" onclick="LOGIN_CALLBACKS.brime();" style="background: linear-gradient(45deg, #8439af 15%, #fc3537 65%);">
+        <a class="button" onclick="LOGIN_CALLBACKS.brime();" style="background: linear-gradient(45deg, #8439af 15%, #fc3537 65%);">
             <img src="https://assets.casterlabs.co/brime/white.png" style="height: 2.5em; position: absolute; left: 4px;" />
             <span style="position: absolute; left: 3em; z-index: 2;">
                 Login with Brime
@@ -258,13 +258,6 @@ class Caffeinated {
     }
 
     async init() {
-        // Setup the experimental flags
-
-        if (this.store.get("experimental.brime_integration")) {
-            document.querySelector("#experimental_brime_integration_login").classList.remove("hide");
-        }
-
-        // Normal load
         await FONTSELECT.preload();
 
         setInterval(() => this.checkForUpdates(), (5 * 60) * 1000); // 5 Minutes
