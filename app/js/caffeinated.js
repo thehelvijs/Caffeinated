@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 62;
-const VERSION = "1.1-stable22";
+const PROTOCOLVERSION = 63;
+const VERSION = "1.1-stable23";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
@@ -50,15 +50,13 @@ const LOGIN_BUTTONS = {
                 Login with Glimesh
             </span>
         </a>
-        <!--
         <br />
-        <a class="button" onclick="" style="background: linear-gradient(45deg, #8439af 15%, #fc3537 65%);">
+        <a class="button" onclick="LOGIN_CALLBACKS.brime();" style="background: linear-gradient(45deg, #8439af 15%, #fc3537 65%);">
             <img src="https://assets.casterlabs.co/brime/white.png" style="height: 2.5em; position: absolute; left: 4px;" />
             <span style="position: absolute; left: 3em; z-index: 2;">
                 Login with Brime
             </span>
         </a>
-        -->
     `
 };
 const LOGIN_CALLBACKS = {
@@ -77,6 +75,10 @@ const LOGIN_CALLBACKS = {
     glimesh(backCallback) {
         UI.setBackCallback(backCallback);
         UI.login("caffeinated_glimesh", "https://glimesh.tv/oauth/authorize?force_verify=true&client_id=3c60c5b45bbae0eadfeeb35d1ee0c77e580b31fd42a5fbc8ae965ca7106c5139&redirect_uri=https%3A%2F%2Fcasterlabs.co%2Fauth%2Fglimesh&response_type=code&scope=public+email+chat&state=");
+    },
+    brime(backCallback) {
+        UI.setBackCallback(backCallback);
+        UI.loginScreen("BRIME");
     }
 }
 
@@ -847,10 +849,11 @@ const UI = {
             const success = document.querySelector("#login-success");
 
             const loginCaffeine = document.querySelector("#login-caffeine");
+            const loginBrime = document.querySelector("#login-brime");
             const mfaCaffeine = document.querySelector("#mfa-caffeine");
 
             anime({
-                targets: [buttons, waiting, success, loginCaffeine, mfaCaffeine],
+                targets: [buttons, waiting, success, loginCaffeine, mfaCaffeine, loginBrime],
                 easing: "linear",
                 opacity: 0,
                 duration: 175
@@ -882,6 +885,19 @@ const UI = {
 
                     anime({
                         targets: buttons,
+                        easing: "linear",
+                        opacity: 1,
+                        duration: 175
+                    });
+                } else if (screen === "BRIME") {
+                    // Why hello mr snoopy :^)
+                    // Don't do what we're doing unless Geeken tells you to.
+                    // You might not like his firey wrath or the swift ban that follows.
+                    // You have been warned.
+                    loginBrime.classList.remove("hide");
+
+                    anime({
+                        targets: loginBrime,
                         easing: "linear",
                         opacity: 1,
                         duration: 175
@@ -1079,6 +1095,42 @@ const UI = {
                     }
                 });
             }
+        }).catch(() => {
+            this.loginScreen("CAFFEINE");
+        });
+    },
+
+    loginBrime() {
+        const email = document.querySelector("#login-brime-email");
+        const password = document.querySelector("#login-brime-password");
+
+        const loginPayload = {
+            email: email.value,
+            password: password.value
+        }
+
+        this.loginScreen("WAITING");
+
+        fetch("https://api.brimelive.com/user/login", {
+            method: "POST",
+            body: JSON.stringify(loginPayload),
+            headers: new Headers({
+                "Content-Type": "application/json"
+            })
+        }).then((result) => result.json()).then((response) => {
+            const token = response.accessToken;
+
+            email.value = "";
+            password.value = "";
+
+            fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=BRIME&token=${token}`).then((nResult) => nResult.json()).then((nResponse) => {
+                if (nResponse.data) {
+                    alert("Token assigned :D");
+                    this.authCallback(nResponse.data.token);
+                } else {
+                    this.loginScreen("BRIME");
+                }
+            });
         }).catch(() => {
             this.loginScreen("CAFFEINE");
         });
