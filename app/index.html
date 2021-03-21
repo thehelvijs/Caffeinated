@@ -206,6 +206,29 @@
                         </span>
                     </div>
                 </div>
+                <div id="login-brime" class="hide">
+                    <span class="subtitle is-3">
+                        Log in with Brime
+                    </span>
+                    <br />
+                    <br />
+                    <input id="login-brime-email" type="input" placeholder="Email" class="input login-element" />
+                    <br />
+                    <input id="login-brime-password" type="password" placeholder="Password" class="input login-element" />
+                    <br />
+                    <input type="submit" value="Signin" class="button login-element" onclick="UI.loginBrime()" />
+                    <br />
+                    <a onclick="UI.backCallback();">
+                        <sup>
+                            Want to go back?
+                        </sup>
+                    </a>
+                    <div class="service-disclaimer">
+                        <span>
+                            By logging in, you agree to our <a onclick="openLink('https:\/\/casterlabs.co/terms-of-service')">Terms of Service</a> and acknowledge that our <a onclick="openLink('https:\/\/casterlabs.co/privacy-policy')">Privacy Policy</a> applies to you.
+                        </span>
+                    </div>
+                </div>
                 <div id="mfa-caffeine" class="hide">
                     <span class="subtitle is-3">
                         Caffeine Two-Factor
