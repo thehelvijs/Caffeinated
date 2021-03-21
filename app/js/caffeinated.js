@@ -1125,7 +1125,6 @@ const UI = {
 
             fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=BRIME&token=${token}`).then((nResult) => nResult.json()).then((nResponse) => {
                 if (nResponse.data) {
-                    alert("Token assigned :D");
                     this.authCallback(nResponse.data.token);
                 } else {
                     this.loginScreen("BRIME");
