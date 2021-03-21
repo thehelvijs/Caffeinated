@@ -1120,16 +1120,20 @@ const UI = {
         }).then((result) => result.json()).then((response) => {
             const token = response.accessToken;
 
-            email.value = "";
-            password.value = "";
+            if (token) {
+                email.value = "";
+                password.value = "";
 
-            fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=BRIME&token=${token}`).then((nResult) => nResult.json()).then((nResponse) => {
-                if (nResponse.data) {
-                    this.authCallback(nResponse.data.token);
-                } else {
-                    this.loginScreen("BRIME");
-                }
-            });
+                fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=BRIME&token=${token}`).then((nResult) => nResult.json()).then((nResponse) => {
+                    if (nResponse.data) {
+                        this.authCallback(nResponse.data.token);
+                    } else {
+                        this.loginScreen("BRIME");
+                    }
+                });
+            } else {
+                this.loginScreen("BRIME");
+            }
         }).catch(() => {
             this.loginScreen("CAFFEINE");
         });
