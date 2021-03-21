@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 63;
-const VERSION = "1.1-stable23";
+const PROTOCOLVERSION = 64;
+const VERSION = "1.1-stable24";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
@@ -1120,17 +1120,20 @@ const UI = {
         }).then((result) => result.json()).then((response) => {
             const token = response.accessToken;
 
-            email.value = "";
-            password.value = "";
+            if (token) {
+                email.value = "";
+                password.value = "";
 
-            fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=BRIME&token=${token}`).then((nResult) => nResult.json()).then((nResponse) => {
-                if (nResponse.data) {
-                    alert("Token assigned :D");
-                    this.authCallback(nResponse.data.token);
-                } else {
-                    this.loginScreen("BRIME");
-                }
-            });
+                fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=BRIME&token=${token}`).then((nResult) => nResult.json()).then((nResponse) => {
+                    if (nResponse.data) {
+                        this.authCallback(nResponse.data.token);
+                    } else {
+                        this.loginScreen("BRIME");
+                    }
+                });
+            } else {
+                this.loginScreen("BRIME");
+            }
         }).catch(() => {
             this.loginScreen("CAFFEINE");
         });

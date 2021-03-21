@@ -129,8 +129,8 @@ MODULES.moduleClasses["casterlabs_follower"] = class {
         font_size: "16",
         text_color: "#FFFFFF",
         volume: 1,
-        enable_audio: true,
-        use_custom_image: true,
+        enable_audio: false,
+        use_custom_image: false,
         audio_file: "",
         image_file: ""
     };
