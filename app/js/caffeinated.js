@@ -201,6 +201,18 @@ class Caffeinated {
             document.querySelector("#banners").appendChild(banner);
 
             callback(content);
+
+            Array.from(content.querySelectorAll("a")).forEach((a) => {
+                if (a.href) {
+                    const link = a.href;
+
+                    a.href = "#";
+
+                    a.onclick = () => {
+                        openLink(link);
+                    }
+                }
+            });
         }
     }
 
