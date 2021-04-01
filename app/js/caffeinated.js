@@ -1123,16 +1123,16 @@ const UI = {
 
         this.loginScreen("WAITING");
 
-        fetch("https://api.brimelive.com/user/login", {
+        fetch("https://api-staging.brimelive.com/internal/auth/login?client_id=605fadfe563212359ce4eb8b", {
             method: "POST",
             body: JSON.stringify(loginPayload),
             headers: new Headers({
                 "Content-Type": "application/json"
             })
         }).then((result) => result.json()).then((response) => {
-            const token = response.accessToken;
+            if (response.data) {
+                const token = response.data.refreshToken;
 
-            if (token) {
                 email.value = "";
                 password.value = "";
 
