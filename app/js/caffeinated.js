@@ -7,8 +7,8 @@ const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
 
-const PROTOCOLVERSION = 64;
-const VERSION = "1.1-stable24";
+const PROTOCOLVERSION = 65;
+const VERSION = "1.1-stable25";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
@@ -201,6 +201,18 @@ class Caffeinated {
             document.querySelector("#banners").appendChild(banner);
 
             callback(content);
+
+            Array.from(content.querySelectorAll("a")).forEach((a) => {
+                if (a.href) {
+                    const link = a.href;
+
+                    a.href = "#";
+
+                    a.onclick = () => {
+                        openLink(link);
+                    }
+                }
+            });
         }
     }
 
@@ -1111,16 +1123,16 @@ const UI = {
 
         this.loginScreen("WAITING");
 
-        fetch("https://api.brimelive.com/user/login", {
+        fetch("https://api-staging.brimelive.com/internal/auth/login?client_id=605fadfe563212359ce4eb8b", {
             method: "POST",
             body: JSON.stringify(loginPayload),
             headers: new Headers({
                 "Content-Type": "application/json"
             })
         }).then((result) => result.json()).then((response) => {
-            const token = response.accessToken;
+            if (response.data) {
+                const token = response.data.refreshToken;
 
-            if (token) {
                 email.value = "";
                 password.value = "";
 
