@@ -86,11 +86,15 @@ function sleep(millis) {
 function prettifyString(str) {
     let splitStr = str.split("_");
 
-    for (let i = 0; i < splitStr.length; i++) {
-        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-    }
+    if (splitStr.length == 0) {
+        return splitStr[0].charAt(0).toUpperCase() + splitStr[0].substring(1);
+    } else {
+        for (let i = 0; i < splitStr.length; i++) {
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
 
-    return splitStr.join(" ");
+        return splitStr.join(" ");
+    }
 }
 
 function putInClipboard(copy) {

@@ -6,11 +6,21 @@ const Store = require("electron-store");
 const { ipcRenderer } = require("electron");
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remote;
 const windowStateKeeper = require("electron-window-state");
+const RPC = require("discord-rpc");
 
-const PROTOCOLVERSION = 65;
-const VERSION = "1.1-stable25";
+const PROTOCOLVERSION = 66;
+const VERSION = "1.1-stable26";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
+
+const discordRPCClient = new RPC.Client({
+    transport: "ipc"
+});
+
+discordRPCClient.login({
+    clientId: "829844402548768768",
+    clientSecret: "3d829b1a030e39dcf354edda0e0777e6a15a0993d0dfb4b2193f6cc2b19481e0"
+});
 
 /*
     All experimental flags:
@@ -108,6 +118,10 @@ If someone tells you to paste code here, they might be trying to steal important
 `, "font - size: 18px;");
 
 console.log("\n\n");
+
+{
+
+}
 
 class Caffeinated {
 
@@ -673,6 +687,44 @@ class Caffeinated {
                 authorization: "Bearer " + token
             })
         });
+    }
+
+}
+
+const DiscordRPC = {
+
+    async set() {
+        const { streamer, start_time, title } = CAFFEINATED.streamdata;
+
+        const image = `${streamer.platform.toLowerCase()}-logo`;
+        const start = new Date(start_time);
+
+        const link = streamer.link;
+
+        const liveMessage = `Live on ${prettifyString(streamer.platform)}`;
+
+        discordRPCClient.request("SET_ACTIVITY", {
+            pid: process.pid,
+            activity: {
+                state: title,
+                timestamps: {
+                    // Funky normalization below...
+                    start: start.getTime() + 2
+                    // Told ya.
+                },
+                assets: {
+                    large_image: image,
+                    large_text: liveMessage
+                },
+                buttons: [
+                    { label: "Watch Now", url: link }
+                ]
+            }
+        });
+    },
+
+    async clear() {
+        discordRPCClient.clearActivity();
     }
 
 }
@@ -1283,6 +1335,8 @@ koi.addEventListener("close", () => {
     CONNECTED = false;
     koi.reconnect();
 
+    DiscordRPC.clear();
+
     setTimeout(() => {
         if (!CONNECTED) {
             UI.splashText("Reconnecting to Casterlabs.");
@@ -1304,6 +1358,8 @@ koi.addEventListener("user_update", (event) => {
 
 koi.addEventListener("stream_status", (event) => {
     CAFFEINATED.streamdata = event;
+
+    DiscordRPC.set();
 });
 
 koi.addEventListener("x_caffeinated_command", async (command) => {
@@ -1375,6 +1431,8 @@ koi.addEventListener("error", (event) => {
 
         case "USER_AUTH_INVALID": {
             CAFFEINATED.userdata = null;
+
+            DiscordRPC.clear();
 
             UI.toggleMetaDisplay();
             UI.splashScreen(false);
