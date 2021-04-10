@@ -28,11 +28,12 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "discord-rpc": "^3.2.0",
     "electron-store": "^6.0.1",
     "electron-window-state": "^5.0.3",
     "express": "^4.17.1",
-    "socket.io": "^2.3.0",
-    "font-list": "^1.2.11"
+    "font-list": "^1.2.11",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
     "electron-builder": "v22.9.1",
