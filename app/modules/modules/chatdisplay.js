@@ -11,11 +11,54 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         this.messageHistory = [];
         this.viewersList = [];
 
+        this.chatSrc = `${__dirname}/modules/modules/chatdisplay.html`;
+        this.viewerSrc = `${__dirname}/modules/modules/chatviewers.html`;
+
         // Where the magic happens
-        this.pageSrc = __dirname + "/modules/modules/chatdisplay.html";
+        this.pageSrc = this.chatSrc;
     }
 
-    init() {
+    onDockConnection(socket, type) {
+        MODULES.addIOHandler(this, "open_link", openLink, socket);
+
+        switch (type) {
+            case "viewer": {
+                MODULES.emitDockIO(this, "html", this.viewerContents, socket);
+
+                MODULES.addIOHandler(this, "ready_init", () => {
+                    MODULES.emitDockIO(this, "viewers", this.viewersList, socket);
+                }, socket);
+                break;
+            }
+
+            case "chat": {
+                MODULES.addIOHandler(this, "upvote", (id) => {
+                    koi.upvote(id);
+                }, socket);
+
+                MODULES.addIOHandler(this, "chat", (message) => {
+                    koi.sendMessage(message);
+                }, socket);
+
+                MODULES.emitDockIO(this, "html", this.chatContents, socket);
+
+                MODULES.addIOHandler(this, "ready_init", () => {
+                    MODULES.emitDockIO(this, "eval", `catchUp(${JSON.stringify(this.messageHistory)})`, socket);
+                }, socket);
+                break;
+            }
+        }
+    }
+
+    async init() {
+        this.chatContents = await (
+            await fetch(this.chatSrc)
+        ).text();
+
+        this.viewerContents = await (
+            await fetch(this.viewerSrc)
+        ).text();
+
         this.contentWindow = this.page.querySelector("iframe").contentWindow;
         this.contentDocument = this.contentWindow.document;
 
@@ -208,14 +251,20 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
     }
 
     updateViewers() {
+        MODULES.emitDockIO(this, "viewers", this.viewersList);
+
         if (this.viewersWindow) {
             this.viewersWindow.webContents.executeJavaScript(`setViewers(${JSON.stringify(this.viewersList)})`);
         }
     }
 
     messageMeta(event) {
+        const script = `messageMeta(${JSON.stringify(event)})`;
+
+        MODULES.emitDockIO(this, "eval", script);
+
         if (this.popoutWindow) {
-            this.popoutWindow.webContents.executeJavaScript(`messageMeta(${JSON.stringify(event)})`);
+            this.popoutWindow.webContents.executeJavaScript(script);
         }
 
         this.messageHistory.push({
@@ -227,8 +276,12 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
     }
 
     addMessage(event) {
+        const script = `addMessage(${JSON.stringify(event)})`;
+
+        MODULES.emitDockIO(this, "eval", script);
+
         if (this.popoutWindow) {
-            this.popoutWindow.webContents.executeJavaScript(`addMessage(${JSON.stringify(event)})`);
+            this.popoutWindow.webContents.executeJavaScript(script);
         }
 
         this.messageHistory.push({
@@ -243,8 +296,12 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         const usernameHtml = `<span style="color: ${profile.color};">${escapeHtml(profile.displayname)}</span>`;
         const lang = LANG.getTranslation(langKey, usernameHtml);
 
+        const script = `addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)}, ${JSON.stringify(id)})`;
+
+        MODULES.emitDockIO(this, "eval", script);
+
         if (this.popoutWindow) {
-            this.popoutWindow.webContents.executeJavaScript(`addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)}, ${JSON.stringify(id)})`);
+            this.popoutWindow.webContents.executeJavaScript(script);
         }
 
         this.messageHistory.push({
@@ -263,8 +320,12 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
 
         const lang = LANG.getTranslation(langKey, usernameHtml, reward.title, imageHtml);
 
+        const script = `addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)})`;
+
+        MODULES.emitDockIO(this, "eval", script);
+
         if (this.popoutWindow) {
-            this.popoutWindow.webContents.executeJavaScript(`addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)})`);
+            this.popoutWindow.webContents.executeJavaScript(script);
         }
 
         this.messageHistory.push({
@@ -277,8 +338,12 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
     }
 
     addManualStatus(profile, status) {
+        const script = `addStatus(${JSON.stringify(profile)}, ${JSON.stringify(status)})`;
+
+        MODULES.emitDockIO(this, "eval", script);
+
         if (this.popoutWindow) {
-            this.popoutWindow.webContents.executeJavaScript(`addStatus(${JSON.stringify(profile)}, ${JSON.stringify(status)})`);
+            this.popoutWindow.webContents.executeJavaScript(script);
         }
 
         this.messageHistory.push({

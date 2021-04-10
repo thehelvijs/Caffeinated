@@ -77,21 +77,34 @@
             }
 
             /* Popout Mode */
-            .isPopout .title-bar {
+
+            .is-popout .title-bar {
                 display: block;
             }
 
-            .isPopout #chatbox {
+            .is-popout #chatbox {
                 padding-top: 34px;
             }
 
-            .isPopout #vcpopoutviewers {
+            .is-popout #vcpopoutviewers {
                 display: none;
             }
 
-            .isPopout #vcpopout {
+            .is-popout #vcpopout {
                 display: none;
             }
+
+            /* Dock Mode */
+
+            .is-dock #vcpopoutviewers {
+                display: none;
+            }
+
+            .is-dock #vcpopout {
+                display: none;
+            }
+
+            /* Popout Buttons */
 
             #vcpopout {
                 position: fixed;
@@ -406,15 +419,27 @@
         <script>
             const messageInput = document.querySelector("#vcmessage");
 
+            const connPresent = typeof conn !== "undefined";
+
             let currentWindow;
             let shell;
+
+            messageInput.addEventListener("keyup", (e) => {
+                if (e.key == "Enter") {
+                    sendChat();
+                }
+            });
+
+            document.querySelector("#vcsend").addEventListener("click", () => {
+                sendChat();
+            });
 
             if (typeof require !== "undefined") {
                 // We're not in the simulation
                 currentWindow = require("electron").remote.getCurrentWindow();
                 shell = require("electron").shell;
 
-                document.body.classList.add("isPopout");
+                document.body.classList.add("is-popout");
 
                 document.querySelector("#close").addEventListener("click", () => {
                     currentWindow.close();
@@ -423,22 +448,27 @@
                 document.querySelector("#minimize").addEventListener("click", () => {
                     currentWindow.minimize();
                 });
+            } else if (connPresent) {
+                document.body.classList.add("is-dock");
 
-                messageInput.addEventListener("keyup", (e) => {
-                    if (e.key == "Enter") {
-                        currentWindow.emit("send_message", messageInput.value);
-                        messageInput.value = "";
-                    }
-                });
+                conn.on("eval", eval);
+                conn.emit("ready_init");
+            }
 
-                document.querySelector("#vcsend").addEventListener("click", () => {
+            function sendChat() {
+                if (connPresent) {
+                    conn.emit("chat", messageInput.value);
+                } else {
                     currentWindow.emit("send_message", messageInput.value);
-                    messageInput.value = "";
-                });
+                }
+
+                messageInput.value = "";
             }
 
             function openLink(link) {
-                if (currentWindow) {
+                if (connPresent) {
+                    conn.emit("open_link", link);
+                } else if (currentWindow) {
                     shell.openExternal(link);
                 } else {
                     document.dispatchEvent(new CustomEvent("open_link", {
@@ -450,7 +480,9 @@
             }
 
             function upvote(id) {
-                if (currentWindow) {
+                if (connPresent) {
+                    conn.emit("upvote", id);
+                } else if (currentWindow) {
                     currentWindow.emit("upvote_request", id);
                 } else {
                     document.dispatchEvent(new CustomEvent("upvote_request", {
