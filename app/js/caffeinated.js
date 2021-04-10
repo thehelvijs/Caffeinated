@@ -556,19 +556,49 @@ class Caffeinated {
         this.io = require("socket.io").listen(server);
 
         this.io.on("connection", (socket) => {
+
             socket.on("uuid", (uuid) => {
-                let holder = MODULES.getHolderFromUUID(uuid);
+                const holder = MODULES.getHolderFromUUID(uuid);
 
                 if (holder) {
-                    let module = holder.getInstance();
+                    const module = holder.getInstance();
 
-                    if (module.onConnection) module.onConnection(socket);
+                    console.debug(`Widget connected: ${uuid}`);
 
                     holder.sockets.push(socket);
 
                     socket.on("disconnect", () => {
+                        console.debug(`Widget disconnected: ${uuid}`);
+
                         removeFromArray(holder.sockets, socket);
                     });
+
+                    if (module.onConnection) {
+                        module.onConnection(socket);
+                    }
+                }
+            });
+
+            socket.on("dock-uuid", (dockInfo) => {
+                const { uuid, type } = dockInfo;
+                const holder = MODULES.getHolderFromUUID(uuid);
+
+                if (holder) {
+                    const module = holder.getInstance();
+
+                    console.debug(`Dock connected: ${uuid} (${type})`);
+
+                    holder.dockSockets.push(socket);
+
+                    socket.on("disconnect", () => {
+                        console.debug(`Dock disconnected: ${uuid} (${type})`);
+
+                        removeFromArray(holder.dockSockets, socket);
+                    });
+
+                    if (module.onDockConnection) {
+                        module.onDockConnection(socket, type);
+                    }
                 }
             });
 

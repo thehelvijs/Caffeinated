@@ -1,0 +1,49 @@
+:root {
+    --casterlabs: #e94b4b;
+    --menu-width: 200px;
+    --user-bar-height: 55px;
+    --title-bar-height: 30px;
+
+    --theme: #e94b4b;
+    --menu-icon-color: #DCDCDC;
+    --menu-icon-color-hover: #7a7a7a;
+    --menu-background-color: #202020;
+    --menu-border-color: #383838;
+    --background-color: #141414;
+    --box-background-color: #181818;
+    --dynamic-option-background-color: #222222;
+}
+
+html {
+    color: whitesmoke;
+    background-color: var(--background-color);
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Helpers */
+
+.center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+/* Connecting */
+
+#connecting {
+    user-select: none;
+    width: 50vw;
+    text-align: center;
+}
+
+iframe {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+}

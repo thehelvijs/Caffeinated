@@ -2,9 +2,9 @@
 class ModuleHolder {
     #module;
     sockets = [];
+    dockSockets = [];
     #elements;
 
-    // TODO implement holders properly.
     constructor(module, elements = []) {
         this.#module = module;
         this.#elements = elements;
@@ -53,6 +53,18 @@ class Modules {
     }
 
     emitIO(module, channel, data, socket = module.holder.sockets) {
+        let uuid = module.namespace + ":" + module.id;
+
+        if (Array.isArray(socket)) {
+            socket.forEach((sock) => {
+                sock.emit(uuid + " " + channel, data);
+            })
+        } else {
+            socket.emit(uuid + " " + channel, data);
+        }
+    }
+
+    emitDockIO(module, channel, data, socket = module.holder.dockSockets) {
         let uuid = module.namespace + ":" + module.id;
 
         if (Array.isArray(socket)) {
