@@ -93,13 +93,15 @@ class ConnectionUtil {
             });
 
             this.socket.on("init", () => {
+                console.debug("Connected, sending init.")
                 this.socket.emit("dock-uuid", {
                     uuid: this.uuid,
                     type: this.type
                 });
             });
 
-            this.socket.on("disconnected", () => {
+            this.socket.on("disconnect", () => {
+                console.debug("Disconnected.")
                 UI.showConnectingScreen();
 
                 for (const listener of this.listeners) {
@@ -111,12 +113,6 @@ class ConnectionUtil {
 
             this.socket.on(`${this.uuid} html`, (html) => {
                 UI.showContentScreen(html);
-            });
-
-            this.socket.on(`${this.uuid} eval`, (script) => {
-                if (frame) {
-                    frame.contentWindow.eval(script);
-                }
             });
         }, 600);
     }
