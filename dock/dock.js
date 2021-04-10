@@ -122,13 +122,15 @@ class ConnectionUtil {
     }
 
     on(channel, callback) {
-        channel = `${this.uuid} ${channel}`
+        channel = `${this.uuid} ${channel}`;
 
         this.listeners.push(channel);
         this.socket.on(channel, callback);
     }
 
     emit(channel, data) {
+        channel = `${this.uuid} ${channel}`;
+
         this.socket.emit(channel, data);
     }
 

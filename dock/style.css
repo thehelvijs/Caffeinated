@@ -24,6 +24,10 @@ html {
 
 /* Helpers */
 
+.hide {
+    display: none;
+}
+
 .center {
     position: absolute;
     left: 50%;
