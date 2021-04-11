@@ -69,6 +69,9 @@ LANG.absorbLang({
     "caffeinated.chatdisplay.leave_text": (name) => `${name} dejó la corriente`,
     "caffeinated.chatdisplay.follow_text": (name) => `${name} te comenzó a seguir`,
     "caffeinated.chatdisplay.reward_text": (name, title, image) => `${name} a canjeado ${image}${title}`,
+    // TODO "caffeinated.chatdisplay.show_viewers": "Show Viewers",
+    // TODO "caffeinated.chatdisplay.copy_chat_dock_link": "Copy Chat OBS Dock Link",
+    // TODO "caffeinated.chatdisplay.copy_viewers_dock_link": "Copy Viewers List OBS Dock Link",
 
     // Chat
     "caffeinated.chat.title": "Chat",
