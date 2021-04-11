@@ -696,9 +696,13 @@ nav ul li .dropdown-item {
     text-align: center;
 }
 
+nav ul li .button-icon {
+    top: 3px !important
+}
+
 nav ul li .dropdown-icon {
     position: absolute !important;
-    top: -2px !important;
+    top: -2px;
     right: 0 !important;
     display: inline-block !important;
     font-size: 18px;
