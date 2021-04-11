@@ -194,10 +194,10 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         font_size: 16,
         show_viewers: true,
         copy_chat_dock_link(instance) {
-            putInClipboard(`https://widgets.casterlabs.co/dock.html?namespace=${instance.namespace}&id=${instance.id}&type=chat`);
+            putInClipboard(`https://widgets.casterlabs.co/dock?namespace=${instance.namespace}&id=${instance.id}&type=chat`);
         },
         copy_viewers_dock_link(instance) {
-            putInClipboard(`https://widgets.casterlabs.co/dock.html?namespace=${instance.namespace}&id=${instance.id}&type=viewer`);
+            putInClipboard(`https://widgets.casterlabs.co/dock?namespace=${instance.namespace}&id=${instance.id}&type=viewer`);
         }
     };
 
