@@ -254,8 +254,8 @@
                 });
             }
 
+            // Dock mode
             if (typeof conn !== "undefined") {
-                // Dock mode
                 conn.on("viewers", setViewers);
 
                 conn.emit("ready_init");
@@ -264,9 +264,9 @@
                     conn.emit("open_link", link);
                 };
             } else {
+                // Electron window
                 document.body.classList.add("in-electron");
 
-                // Electron window
                 const { remote, shell } = require("electron");
 
                 document.querySelector("#close").addEventListener("click", () => {

@@ -4,7 +4,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
     constructor(id) {
         this.namespace = "casterlabs_chat_display";
         this.displayname = "caffeinated.chatdisplay.title";
-        this.type = "application";
+        this.type = "application settings";
         this.id = id;
         this.icon = "chatbox";
 
@@ -26,6 +26,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 MODULES.emitDockIO(this, "html", this.viewerContents, socket);
 
                 MODULES.addIOHandler(this, "ready_init", () => {
+                    MODULES.emitDockIO(this, "config", this.settings, socket);
                     MODULES.emitDockIO(this, "viewers", this.viewersList, socket);
                 }, socket);
                 break;
@@ -43,11 +44,16 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
                 MODULES.emitDockIO(this, "html", this.chatContents, socket);
 
                 MODULES.addIOHandler(this, "ready_init", () => {
+                    MODULES.emitDockIO(this, "config", this.settings, socket);
                     MODULES.emitDockIO(this, "eval", `catchUp(${JSON.stringify(this.messageHistory)})`, socket);
                 }, socket);
                 break;
             }
         }
+    }
+
+    getDataToStore() {
+        return this.settings;
     }
 
     async init() {
@@ -89,11 +95,15 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         });
 
         koi.addEventListener("viewer_join", (event) => {
-            this.addStatus(event.viewer, "caffeinated.chatdisplay.join_text");
+            if (event.viewer.platform !== "BRIME") {
+                this.addStatus(event.viewer, "caffeinated.chatdisplay.join_text", event.id, "viewer");
+            }
         });
 
         koi.addEventListener("viewer_leave", (event) => {
-            this.addStatus(event.viewer, "caffeinated.chatdisplay.leave_text");
+            if (event.viewer.platform !== "BRIME") {
+                this.addStatus(event.viewer, "caffeinated.chatdisplay.leave_text", event.id, "viewer");
+            }
         });
 
         koi.addEventListener("viewer_list", (event) => {
@@ -107,6 +117,10 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
 
         this.contentDocument.addEventListener("upvote_request", (e) => {
             koi.upvote(e.detail.id);
+        });
+
+        this.contentDocument.addEventListener("send_message", (e) => {
+            koi.sendMessage(e.detail.message);
         });
 
         this.contentDocument.addEventListener("open_link", (e) => {
@@ -133,20 +147,59 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
             }
         });
 
-        const messageInput = this.contentDocument.querySelector("#vcmessage");
-
-        messageInput.addEventListener("keyup", (e) => {
-            if (e.key == "Enter") {
-                koi.sendMessage(messageInput.value);
-                messageInput.value = "";
-            }
-        });
-
-        this.contentDocument.querySelector("#vcsend").addEventListener("click", () => {
-            koi.sendMessage(messageInput.value);
-            messageInput.value = "";
-        });
     }
+
+    onSettingsUpdate() {
+        if (this.popoutWindow) {
+            this.popoutWindow.webContents.executeJavaScript(`updateConfig(${JSON.stringify(this.settings)});`);
+        }
+
+        MODULES.emitDockIO(this, "config", this.settings);
+    }
+
+    settingsDisplay = {
+        font_size: {
+            display: "generic.font.size",
+            type: "number",
+            isLang: true
+        },
+        // show_donations: {
+        //     display: "caffeinated.chat.show_donations",
+        //     type: "checkbox",
+        //     isLang: true
+        // },
+        // show_follows: {
+        //     display: "caffeinated.chat.show_follows",
+        //     type: "checkbox",
+        //     isLang: true
+        // },
+        show_viewers: {
+            display: "caffeinated.chatdisplay.show_viewers",
+            type: "checkbox",
+            isLang: true
+        },
+        copy_chat_dock_link: {
+            display: "caffeinated.chatdisplay.copy_chat_dock_link",
+            type: "button",
+            isLang: true
+        },
+        copy_viewers_dock_link: {
+            display: "caffeinated.chatdisplay.copy_viewers_dock_link",
+            type: "button",
+            isLang: true
+        }
+    };
+
+    defaultSettings = {
+        font_size: 16,
+        show_viewers: true,
+        copy_chat_dock_link(instance) {
+            putInClipboard(`https://widgets.casterlabs.co/dock.html?namespace=${instance.namespace}&id=${instance.id}&type=chat`);
+        },
+        copy_viewers_dock_link(instance) {
+            putInClipboard(`https://widgets.casterlabs.co/dock.html?namespace=${instance.namespace}&id=${instance.id}&type=viewer`);
+        }
+    };
 
     createViewersWindow() {
         if (!this.viewersWindow) {
@@ -292,11 +345,11 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         this.contentWindow.addMessage(event);
     }
 
-    addStatus(profile, langKey, id) {
+    addStatus(profile, langKey, id, type) {
         const usernameHtml = `<span style="color: ${profile.color};">${escapeHtml(profile.displayname)}</span>`;
         const lang = LANG.getTranslation(langKey, usernameHtml);
 
-        const script = `addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)}, ${JSON.stringify(id)})`;
+        const script = `addStatus(${JSON.stringify(profile)}, ${JSON.stringify(lang)}, ${JSON.stringify(id)}, ${JSON.stringify(type)})`;
 
         MODULES.emitDockIO(this, "eval", script);
 
