@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
+        <link rel="stylesheet" href="spinkit.css" />
+        <link rel="stylesheet" href="style.css" />
+        <title>Casterlabs Caffeinated Dock</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+    </head>
+
+    <body>
+        <div id="connecting" class="center">
+            Connecting to Caffeinated
+            <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+
+        <div id="content" class="hide" style="opacity: 0;"></div>
+    </body>
+
+    <footer>
+        <script src="dock.js"></script>
+        <script>
+            const conn = new ConnectionUtil();
+
+        </script>
+    </footer>
+
+</html>

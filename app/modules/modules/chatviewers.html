@@ -34,7 +34,23 @@
                 transition: 0.2s linear;
             }
 
+            /* When not in an OBS Dock */
+            .in-electron .title-bar {
+                display: block;
+            }
+
+            .in-electron #viewers {
+                top: 30px;
+            }
+
+            .in-electron .count {
+                top: 37px;
+            }
+
+            /* Title Bar */
+
             .title-bar {
+                display: none;
                 position: fixed;
                 top: 0px;
                 left: 0px;
@@ -54,23 +70,6 @@
                 margin-right: 1px;
                 height: 20px;
                 width: 20px;
-            }
-
-            #viewers {
-                position: absolute;
-                top: 30px;
-                padding-top: 5px;
-                bottom: 0;
-                overflow-y: auto;
-                overflow-x: hidden;
-                left: 5px;
-                right: 0;
-                -webkit-app-region: no-drag !important;
-            }
-
-            .viewer {
-                margin-bottom: 5px;
-                -webkit-app-region: no-drag !important;
             }
 
             #close {
@@ -97,19 +96,23 @@
                 -webkit-app-region: no-drag !important;
             }
 
-            .count {
-                position: fixed;
-                right: 15px;
-                top: 37px;
-                text-align: right;
-            }
+            /* Viewers List */
 
-            #viewerCount {
+            #viewers {
+                position: absolute;
+                padding-top: 5px;
+                top: 0;
+                bottom: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+                left: 5px;
+                right: 0;
                 -webkit-app-region: no-drag !important;
             }
 
-            .eyeicon {
-                transform: translate(1.5px, 2.75px);
+            .viewer {
+                margin-bottom: 5px;
+                -webkit-app-region: no-drag !important;
             }
 
             img {
@@ -132,6 +135,23 @@
 
             .pfp {
                 -webkit-app-region: no-drag !important;
+            }
+
+            /* Viewer Count */
+
+            .count {
+                position: fixed;
+                right: 15px;
+                top: 10px;
+                text-align: right;
+            }
+
+            #viewerCount {
+                -webkit-app-region: no-drag !important;
+            }
+
+            .eyeicon {
+                transform: translate(1.5px, 2.75px);
             }
 
             /* Scrollbar */
@@ -193,18 +213,9 @@
 
     <footer>
         <script>
-            const { remote, shell } = require("electron");
-
             const viewersElement = document.querySelector("#viewers");
             const viewerCountElement = document.querySelector("#viewerCount");
-
-            document.querySelector("#close").addEventListener("click", () => {
-                remote.getCurrentWindow().close();
-            });
-
-            document.querySelector("#minimize").addEventListener("click", () => {
-                remote.getCurrentWindow().minimize();
-            });
+            const titleBar = document.querySelector(".title-bar");
 
             function setViewers(viewers) {
                 viewersElement.innerHTML = "";
@@ -243,9 +254,33 @@
                 });
             }
 
-            function openLink(link) {
-                shell.openExternal(link);
+            // Dock mode
+            if (typeof conn !== "undefined") {
+                conn.on("viewers", setViewers);
+
+                conn.emit("ready_init");
+
+                window.openLink = (link) => {
+                    conn.emit("open_link", link);
+                };
+            } else {
+                // Electron window
+                document.body.classList.add("in-electron");
+
+                const { remote, shell } = require("electron");
+
+                document.querySelector("#close").addEventListener("click", () => {
+                    remote.getCurrentWindow().close();
+                });
+
+                document.querySelector("#minimize").addEventListener("click", () => {
+                    remote.getCurrentWindow().minimize();
+                });
+
+                window.openLink = shell.openExternal;
             }
+
+            function openLink(link) { }
 
         </script>
     </footer>

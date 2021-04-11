@@ -77,21 +77,34 @@
             }
 
             /* Popout Mode */
-            .isPopout .title-bar {
+
+            .is-popout .title-bar {
                 display: block;
             }
 
-            .isPopout #chatbox {
+            .is-popout #chatbox {
                 padding-top: 34px;
             }
 
-            .isPopout #vcpopoutviewers {
+            .is-popout #vcpopoutviewers {
                 display: none;
             }
 
-            .isPopout #vcpopout {
+            .is-popout #vcpopout {
                 display: none;
             }
+
+            /* Dock Mode */
+
+            .is-dock #vcpopoutviewers {
+                display: none;
+            }
+
+            .is-dock #vcpopout {
+                display: none;
+            }
+
+            /* Popout Buttons */
 
             #vcpopout {
                 position: fixed;
@@ -266,15 +279,15 @@
                 position: absolute;
                 padding: 0;
                 height: auto;
-                left: 25px;
+                left: 1.5625em;
                 bottom: 100%;
                 z-index: 1;
                 width: fit-content;
-                height: 30px;
+                height: 1.875em;
             }
 
             .tooltipbtn {
-                font-size: 20px;
+                font-size: 1.375em;
                 margin-left: 10px;
                 margin-top: 3px;
                 display: inline-block;
@@ -300,6 +313,10 @@
                 color: #D0D0D0;
             }
 
+            .hideviewers .vcviewerstatus {
+                display: none;
+            }
+
             .vcchatmessage {
                 position: relative;
                 display: flex;
@@ -316,23 +333,23 @@
             .vcprofile {
                 border-radius: 50%;
                 object-fit: cover;
-                height: 22px;
-                width: 22px;
+                height: 1.375em;
+                width: 1.375em;
                 margin: 1px 3px;
                 vertical-align: bottom;
             }
 
             .vcimage {
                 object-fit: cover;
-                height: 22px;
+                height: 1.375em;
                 width: auto;
                 vertical-align: bottom;
             }
 
             .vcbadge {
-                padding-left: 5px;
-                transform: translateY(3px);
-                height: 20px;
+                padding-left: 0.3125em;
+                transform: translateY(0.1875em);
+                height: 1.25em;
                 width: auto;
             }
 
@@ -406,15 +423,28 @@
         <script>
             const messageInput = document.querySelector("#vcmessage");
 
+            const connPresent = typeof conn !== "undefined";
+            const requirePresent = typeof require !== "undefined";
+
             let currentWindow;
             let shell;
 
-            if (typeof require !== "undefined") {
+            messageInput.addEventListener("keyup", (e) => {
+                if (e.key == "Enter") {
+                    sendChat();
+                }
+            });
+
+            document.querySelector("#vcsend").addEventListener("click", () => {
+                sendChat();
+            });
+
+            if (requirePresent) {
                 // We're not in the simulation
                 currentWindow = require("electron").remote.getCurrentWindow();
                 shell = require("electron").shell;
 
-                document.body.classList.add("isPopout");
+                document.body.classList.add("is-popout");
 
                 document.querySelector("#close").addEventListener("click", () => {
                     currentWindow.close();
@@ -423,22 +453,45 @@
                 document.querySelector("#minimize").addEventListener("click", () => {
                     currentWindow.minimize();
                 });
+            } else if (connPresent) {
+                document.body.classList.add("is-dock");
 
-                messageInput.addEventListener("keyup", (e) => {
-                    if (e.key == "Enter") {
-                        currentWindow.emit("send_message", messageInput.value);
-                        messageInput.value = "";
-                    }
-                });
+                conn.on("eval", eval);
+                conn.on("config", updateConfig);
 
-                document.querySelector("#vcsend").addEventListener("click", () => {
+                conn.emit("ready_init");
+            }
+
+            function updateConfig(config) {
+                document.body.style.fontSize = `${config.font_size}px`;
+
+                if (config.show_viewers) {
+                    document.body.classList.remove("hideviewers");
+                } else {
+                    document.body.classList.add("hideviewers");
+                }
+            }
+
+            function sendChat() {
+                if (connPresent) {
+                    conn.emit("chat", messageInput.value);
+                } else if (requirePresent) {
                     currentWindow.emit("send_message", messageInput.value);
-                    messageInput.value = "";
-                });
+                } else {
+                    document.dispatchEvent(new CustomEvent("send_message", {
+                        detail: {
+                            message: messageInput.value
+                        }
+                    }));
+                }
+
+                messageInput.value = "";
             }
 
             function openLink(link) {
-                if (currentWindow) {
+                if (connPresent) {
+                    conn.emit("open_link", link);
+                } else if (currentWindow) {
                     shell.openExternal(link);
                 } else {
                     document.dispatchEvent(new CustomEvent("open_link", {
@@ -450,7 +503,9 @@
             }
 
             function upvote(id) {
-                if (currentWindow) {
+                if (connPresent) {
+                    conn.emit("upvote", id);
+                } else if (currentWindow) {
                     currentWindow.emit("upvote_request", id);
                 } else {
                     document.dispatchEvent(new CustomEvent("upvote_request", {
@@ -600,7 +655,7 @@
                 tryJump();
             }
 
-            function addStatus(profile, lang, id) {
+            function addStatus(profile, lang, id, type) {
                 // Prevent duplicates
                 if (!id || !document.querySelector("[vc_message_id='" + event.id + "']")) {
                     const div = document.createElement("div");
@@ -620,6 +675,10 @@
                     div.classList.add("vcstatus");
                     div.appendChild(pfp);
                     div.appendChild(text);
+
+                    if (type === "viewer") {
+                        div.classList.add("vcviewerstatus");
+                    }
 
                     msg.appendChild(div);
 

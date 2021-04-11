@@ -65,7 +65,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
             this.processCommand(event);
         });
 
-        setInterval(() => this.check(), 1000);
+        setInterval(() => this.check(), 2000);
 
         const element = document.querySelector("#casterlabs_now_playing_" + this.id).querySelector("[name=login]");
 

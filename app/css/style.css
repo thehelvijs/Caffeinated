@@ -646,6 +646,7 @@ nav ul li .menu-button {
     padding: 10px 15px;
     border-bottom: 1px solid #383838;
     transition: 0.2s linear;
+    user-select: none;
 }
 
 nav ul li .menu-button:hover {
@@ -688,15 +689,20 @@ nav ul li .dropdown-item {
     list-style: none;
     margin: 0;
     padding: 0;
+    user-select: none;
 }
 
 #manage-widgets-button {
     text-align: center;
 }
 
+nav ul li .button-icon {
+    top: 3px !important
+}
+
 nav ul li .dropdown-icon {
     position: absolute !important;
-    top: -2px !important;
+    top: -2px;
     right: 0 !important;
     display: inline-block !important;
     font-size: 18px;

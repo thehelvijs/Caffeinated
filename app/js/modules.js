@@ -2,9 +2,9 @@
 class ModuleHolder {
     #module;
     sockets = [];
+    dockSockets = [];
     #elements;
 
-    // TODO implement holders properly.
     constructor(module, elements = []) {
         this.#module = module;
         this.#elements = elements;
@@ -53,6 +53,18 @@ class Modules {
     }
 
     emitIO(module, channel, data, socket = module.holder.sockets) {
+        let uuid = module.namespace + ":" + module.id;
+
+        if (Array.isArray(socket)) {
+            socket.forEach((sock) => {
+                sock.emit(uuid + " " + channel, data);
+            })
+        } else {
+            socket.emit(uuid + " " + channel, data);
+        }
+    }
+
+    emitDockIO(module, channel, data, socket = module.holder.dockSockets) {
         let uuid = module.namespace + ":" + module.id;
 
         if (Array.isArray(socket)) {
@@ -116,16 +128,36 @@ class Modules {
 
                     await this.initalizeModuleSettingsPage(module, module.page, true);
                 }
-            } else {
+            } else if (types.includes("APPLICATION")) {
                 if (types.includes("SETTINGS")) {
-                    await this.initalizeModuleSettingsPage(module);
-                } else if (types.includes("APPLICATION")) {
-                    this.initalizeModulePage(module);
+                    module.settingsPage = this.createPage(module);
 
-                    if (module.pageSrc) {
-                        await this.createContentFrame(module.page, module.pageSrc, "moduleframe");
+                    const selector = `${module.namespace}-${module.id}`;
+
+                    module.settingsPage.appendChild(document.createElement("br"));
+
+                    await this.initalizeModuleSettingsPage(module, module.settingsPage, false);
+
+                    if (!module.widgetDisplay) {
+                        module.widgetDisplay = [];
                     }
+
+                    module.widgetDisplay.push({
+                        name: "Settings",
+                        icon: "settings",
+                        onclick(instance) {
+                            navigate(selector);
+                        }
+                    });
                 }
+
+                this.initalizeModulePage(module);
+
+                if (module.pageSrc) {
+                    await this.createContentFrame(module.page, module.pageSrc, "moduleframe");
+                }
+            } else if (types.includes("SETTINGS")) {
+                await this.initalizeModuleSettingsPage(module);
             }
 
             LANG.translate(module.page);
@@ -169,17 +201,19 @@ class Modules {
     }
 
     initalizeModulePage(module) {
-        this.createPage(module);
+        module.page = this.createPage(module, true);
 
-        let selector = module.namespace + "-" + module.id;
-        let name = module.displayname ? module.displayname : prettifyString(module.id);
+        const selector = `${module.namespace}-${module.id}-application-page`;
+        const name = module.displayname ? module.displayname : prettifyString(module.id);
 
         let li = document.createElement("li");
         let a = document.createElement("a");
         let ion = document.createElement("ion-icon");
         let text = document.createElement("div");
+        let icons = document.createElement("div");
 
         li.appendChild(a);
+        li.style = "position: relative;";
         li.setAttribute("id", "menu-" + selector);
 
         // Setting hidden icon. On hide() => $("#menu-ion-icon").remove("hide")
@@ -195,10 +229,30 @@ class Modules {
             text.setAttribute("lang", module.displayname);
         }
 
+        icons.classList = "button-icon dropdown-icon";
+
+        if (module.widgetDisplay) {
+            for (const display of module.widgetDisplay) {
+                let peeper = document.createElement("a");
+                let ion = document.createElement("ion-icon");
+
+                ion.setAttribute("name", display.icon);
+
+                peeper.appendChild(ion);
+                peeper.setAttribute("title", display.name);
+                peeper.addEventListener("click", () => {
+                    display.onclick(module);
+                });
+
+                icons.appendChild(peeper);
+            }
+        }
+
         a.classList.add("menu-button");
         a.addEventListener("click", () => navigate(selector));
         a.appendChild(ion);
         a.appendChild(text);
+        a.appendChild(icons);
 
         document.querySelector("#page-menu").insertBefore(li, document.querySelector("#page-menu").lastChild);
 
@@ -206,7 +260,7 @@ class Modules {
     }
 
     initalizeModuleWidgetPage(module) {
-        this.createPage(module);
+        module.page = this.createPage(module);
 
         let selector = module.namespace + "-" + module.id;
         let name = module.displayname ? module.displayname : prettifyString(module.id);
@@ -283,8 +337,12 @@ class Modules {
         document.getElementById("widgets").appendChild(div);
     }
 
-    createPage(module) {
-        const selector = module.namespace + "-" + module.id;
+    createPage(module, isAppPage) {
+        let selector = module.namespace + "-" + module.id;
+
+        if (isAppPage) {
+            selector = selector + "-application-page"
+        }
 
         const name = module.displayname ? module.displayname : prettifyString(module.id);
 
@@ -294,9 +352,9 @@ class Modules {
         page.setAttribute("navbar-title", name);
         page.classList = "content page hide";
 
-        module.page = page;
-
         document.querySelector(".pages").appendChild(page);
+
+        return page;
     }
 
     async initalizeModuleSettingsPage(module, parent = document.getElementById("settings"), isWidget) {
@@ -308,7 +366,9 @@ class Modules {
         const div = document.createElement("div");
         const label = document.createElement("label");
 
-        module.page = container;
+        if (!module.page) {
+            module.page = container;
+        }
 
         const formCallback = async () => {
             const result = FORMSJS.readForm("#" + settingsSelector);

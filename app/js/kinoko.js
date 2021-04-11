@@ -54,60 +54,62 @@ class Kinoko {
     }
 
     connect(channel, type = "client", proxy = false) {
-        const uri = this.baseUri + "?channel=" + encodeURIComponent(channel) + "&type=" + encodeURIComponent(type) + "&proxy=" + encodeURIComponent(proxy);
+        setTimeout(() => {
+            const uri = this.baseUri + "?channel=" + encodeURIComponent(channel) + "&type=" + encodeURIComponent(type) + "&proxy=" + encodeURIComponent(proxy);
 
-        this.disconnect();
+            this.disconnect();
 
-        this.ws = new WebSocket(uri);
-        this.proxy = proxy;
+            this.ws = new WebSocket(uri);
+            this.proxy = proxy;
 
-        this.ws.onerror = () => {
-            setTimeout(() => this.connect(channel, type, proxy), 1000);
-        }
+            this.ws.onerror = () => {
+                this.connect(channel, type, proxy);
+            }
 
-        this.ws.onopen = () => {
-            this.broadcast("open");
-        };
+            this.ws.onopen = () => {
+                this.broadcast("open");
+            };
 
-        this.ws.onclose = () => {
-            this.broadcast("close");
-        };
+            this.ws.onclose = () => {
+                this.broadcast("close");
+            };
 
-        this.ws.onmessage = (message) => {
-            const data = message.data;
+            this.ws.onmessage = (message) => {
+                const data = message.data;
 
-            switch (data) {
-                case ":ping": {
-                    if (!this.proxy) {
-                        this.ws.send(":ping");
-                        return;
-                    }
-                }
-
-                case ":orphaned": {
-                    this.broadcast("orphaned");
-                    return;
-                }
-
-                case ":adopted": {
-                    this.broadcast("adopted");
-                    return;
-                }
-
-                default: {
-                    if (this.proxy) {
-                        this.broadcast("message", data);
-                    } else {
-                        try {
-                            this.broadcast("message", JSON.parse(data));
-                        } catch (ignored) {
-                            this.broadcast("message", data);
+                switch (data) {
+                    case ":ping": {
+                        if (!this.proxy) {
+                            this.ws.send(":ping");
+                            return;
                         }
                     }
-                    return
+
+                    case ":orphaned": {
+                        this.broadcast("orphaned");
+                        return;
+                    }
+
+                    case ":adopted": {
+                        this.broadcast("adopted");
+                        return;
+                    }
+
+                    default: {
+                        if (this.proxy) {
+                            this.broadcast("message", data);
+                        } else {
+                            try {
+                                this.broadcast("message", JSON.parse(data));
+                            } catch (ignored) {
+                                this.broadcast("message", data);
+                            }
+                        }
+                        return
+                    }
                 }
-            }
-        };
+            };
+        }, 1500);
     }
 
 }
