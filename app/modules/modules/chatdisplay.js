@@ -1,5 +1,5 @@
 
-MODULES.moduleClasses["casterlabs_chat_display"] = class {
+MODULES.uniqueModuleClasses["casterlabs_chat_display"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_chat_display";

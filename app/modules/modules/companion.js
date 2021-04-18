@@ -1,5 +1,5 @@
 
-MODULES.moduleClasses["casterlabs_companion"] = class {
+MODULES.uniqueModuleClasses["casterlabs_companion"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_companion";

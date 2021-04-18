@@ -1,6 +1,6 @@
 let KOFI_ENABLED = false;
 
-MODULES.moduleClasses["kofi_integration"] = class {
+MODULES.uniqueModuleClasses["kofi_integration"] = class {
 
     constructor(id) {
         this.namespace = "kofi_integration";

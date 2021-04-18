@@ -482,7 +482,10 @@ class Caffeinated {
                     const loaded = MODULES.getFromUUID(namespace + ":" + id);
 
                     if (!loaded) {
-                        MODULES.initalizeModule(new MODULES.moduleClasses[namespace](id));
+                        const clazz = MODULES.moduleClasses[namespace] ?? MODULES.uniqueModuleClasses[namespace];
+                        const module = new clazz(id);
+
+                        MODULES.initalizeModule(module);
                     }
                 } catch (e) {
                     console.info(`Removed unloaded module namespace "${namespace}" from config.`)
