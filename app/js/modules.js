@@ -122,12 +122,15 @@ class Modules {
         }
     }
 
-    getAllModules() {
+    getAllModules(excludePersist) {
         const copy = [];
 
-        this.#modules
-            .values()
-            .forEach(copy.push);
+        Array.from(this.#modules.values())
+            .forEach((holder) => {
+                if (!excludePersist || !holder.getInstance().persist) {
+                    copy.push(holder);
+                }
+            });
 
         return copy;
     }

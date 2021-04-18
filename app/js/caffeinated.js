@@ -610,6 +610,8 @@ class Caffeinated {
 
         server.listen(this.store.get("port"));
 
+        UI.regenerateWidgetManager();
+
         // Kickstart koi, a crucial part to the UI.
         koi.reconnect();
     }
@@ -1112,6 +1114,61 @@ const UI = {
         }
     },
 
+    async regenerateWidgetManager() {
+        // Create the select box.
+        {
+            const createTypes = document.querySelector("#manage-widgets #create-type");
+
+            const types = [];
+
+            MODULES.getAllModuleNamespaces().forEach((namespace) => {
+                const name = prettifyString(namespace);
+
+                types.push(`
+                    <option value=${namespace}>
+                        ${name}
+                    </option>
+                `);
+            });
+
+            createTypes.innerHTML = types.join();
+        }
+
+        // Create the delete buttons
+        {
+            const moduleDeletionElement = document.querySelector("#manage-widgets #module-deletion");
+
+            moduleDeletionElement.innerHTML = "";
+
+            MODULES.getAllModules(true).forEach((holder) => {
+                const module = holder.getInstance();
+
+                const container = document.createElement("span");
+                const deleteButton = document.createElement("a");
+
+                deleteButton.innerHTML = `<ion-icon name="trash"></ion-icon>`;
+
+                deleteButton.addEventListener("click", () => {
+                    MODULES.deleteModuleInstance(module);
+                    UI.regenerateWidgetManager();
+                });
+
+                const name = module.displayname ?
+                    LANG.getTranslation(module.displayname) :
+                    prettifyString(module.id);
+
+                container.innerHTML = `
+                    <span>${name}</span>
+                `;
+
+                container.appendChild(deleteButton);
+
+                moduleDeletionElement.appendChild(container);
+                moduleDeletionElement.appendChild(document.createElement("br"));
+            });
+        }
+    },
+
     setBackCallback(callback) {
         if (callback) {
             this.backCallback = callback;
@@ -1362,6 +1419,27 @@ if (CAFFEINATED.store.get("experimental.manage_widgets")) {
 } else {
     document.querySelector(".manage-widgets-container").classList.add("hide");
 }
+
+/* Manage Widgets Page */
+
+document.querySelector("#submit-create").addEventListener("click", async () => {
+    const createTypeElement = document.querySelector("#manage-widgets #create-type");
+    const nameElement = document.querySelector("#manage-widgets #create-name");
+
+    const namespace = createTypeElement.options[createTypeElement.selectedIndex].value;
+    const name = nameElement.value.trim();
+
+    nameElement.value = "";
+
+    if (name.length == 0) {
+        alert("Widget must have a name.");
+    } else {
+
+        await MODULES.createNewModuleInstance(namespace, name);
+
+        UI.regenerateWidgetManager();
+    }
+});
 
 /* Koi */
 koi.addEventListener("close", () => {
