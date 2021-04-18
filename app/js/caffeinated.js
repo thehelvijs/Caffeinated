@@ -1442,6 +1442,13 @@ koi.addEventListener("x_caffeinated_command", async (command) => {
                 return;
             }
 
+            case "/caffeinated forceupdate": {
+                CAFFEINATED.store.set("protocol_version", -1);
+                app.relaunch();
+                app.exit();
+                return;
+            }
+
             default: {
                 alert(`Unrecognized command: "${text}"`);
                 return;
