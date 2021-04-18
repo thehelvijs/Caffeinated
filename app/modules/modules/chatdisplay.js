@@ -7,6 +7,7 @@ MODULES.uniqueModuleClasses["casterlabs_chat_display"] = class {
         this.type = "application settings";
         this.id = id;
         this.icon = "chatbox";
+        this.persist = true;
 
         this.messageHistory = [];
         this.viewersList = [];

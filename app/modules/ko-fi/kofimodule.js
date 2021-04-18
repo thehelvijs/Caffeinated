@@ -7,6 +7,7 @@ MODULES.uniqueModuleClasses["kofi_integration"] = class {
         this.displayname = "Ko-fi Integration";
         this.type = "settings";
         this.id = id;
+        this.persist = true;
 
         this.kinoko = new Kinoko();
 

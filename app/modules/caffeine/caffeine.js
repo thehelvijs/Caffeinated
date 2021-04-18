@@ -7,6 +7,7 @@ MODULES.uniqueModuleClasses["caffeine_integration"] = class {
         this.type = "settings";
         this.id = id;
         this.supportedPlatforms = ["CAFFEINE"];
+        this.persist = true;
 
         this.schedule = -1;
 

@@ -7,6 +7,7 @@ MODULES.uniqueModuleClasses["casterlabs_supporters"] = class {
         this.type = "application";
         this.id = id;
         this.icon = "star";
+        this.persist = true;
 
     }
 

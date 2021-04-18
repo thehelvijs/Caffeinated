@@ -6,6 +6,7 @@ MODULES.uniqueModuleClasses["casterlabs_companion"] = class {
         this.displayname = "caffeinated.companion.title";
         this.type = "settings";
         this.id = id;
+        this.persist = true;
 
         this.messageHistory = [];
         this.viewersList = [];

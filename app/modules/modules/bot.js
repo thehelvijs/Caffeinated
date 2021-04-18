@@ -6,6 +6,7 @@ MODULES.uniqueModuleClasses["casterlabs_bot"] = class {
         this.displayname = "caffeinated.chatbot.title";
         this.type = "settings";
         this.id = id;
+        this.persist = true;
     }
 
     getDataToStore() {
