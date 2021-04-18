@@ -21,7 +21,14 @@ class ModuleHolder {
 
         this.#elements.forEach((element) => element.remove());
 
-        delete MODULES.moduleClasses[this.#module.namespace];
+        this.sockets.forEach((socket) => socket.disconnect());
+        this.dockSockets.forEach((socket) => socket.disconnect());
+
+        // delete MODULES.moduleClasses[this.#module.namespace];
+    }
+
+    associateElement(element) {
+        this.#elements.push(element);
     }
 
     getElements() {
@@ -40,6 +47,7 @@ class ModuleHolder {
 
 class Modules {
     moduleClasses = {};
+    uniqueModuleClasses = {};
     #modules = new Map();
 
     getAllModuleNamespaces() {
@@ -99,7 +107,11 @@ class Modules {
     saveToStore(module) {
         try {
             const path = `modules.${module.namespace}.${module.id}`;
-            const data = module.getDataToStore();
+            const data = module.getDataToStore() ?? {};
+
+            data.__module = {
+                customdisplayname: module.customdisplayname
+            };
 
             CAFFEINATED.store.set(path, data);
 
@@ -110,10 +122,63 @@ class Modules {
         }
     }
 
+    getAllModules(excludePersist) {
+        const copy = [];
+
+        Array.from(this.#modules.values())
+            .forEach((holder) => {
+                if (!excludePersist || !holder.getInstance().persist) {
+                    copy.push(holder);
+                }
+            });
+
+        return copy;
+    }
+
+    async createNewModuleInstance(namespace, name) {
+        const clazz = this.moduleClasses[namespace];
+        const id = generateUUID();
+
+        const module = new clazz(id);
+
+        module.displayname = name;
+        module.customdisplayname = name;
+
+        await this.initalizeModule(module);
+
+        this.saveToStore(module);
+
+        return module;
+    }
+
+    async deleteModuleInstance(module, namespace = module.namespace, id = module.id) {
+        const uuid = `${namespace}:${id}`;
+        const holder = this.getHolderFromUUID(uuid);
+
+        if (holder.getInstance().persist) {
+            throw "Module is a persistient module.";
+        } else {
+            this.#modules.delete(uuid);
+            holder.unload();
+
+            const path = `modules.${namespace}.${id}`;
+
+            CAFFEINATED.store.delete(path);
+
+            koi.broadcast("module_unload", uuid);
+        }
+    }
+
     async initalizeModule(module) {
         try {
             const holder = new ModuleHolder(module);
             const types = holder.getTypes();
+
+            const customdisplayname = CAFFEINATED.store.get(`modules.${module.namespace}.${module.id}.__module.customdisplayname`);
+
+            if (customdisplayname) {
+                module.customdisplayname = customdisplayname;
+            }
 
             module.holder = holder;
 
@@ -165,6 +230,8 @@ class Modules {
             if (module.init) await module.init();
 
             this.#modules.set(holder.getUUID(), holder);
+
+            koi.broadcast("module_load", holder);
         } catch (e) {
             console.error("Unable to initalize module due to an exception:");
             console.error(e);
@@ -335,6 +402,7 @@ class Modules {
         div.appendChild(icons);
 
         document.getElementById("widgets").appendChild(div);
+        module.holder.associateElement(div);
     }
 
     createPage(module, isAppPage) {
@@ -353,6 +421,7 @@ class Modules {
         page.classList = "content page hide";
 
         document.querySelector(".pages").appendChild(page);
+        module.holder.associateElement(page);
 
         return page;
     }
@@ -425,6 +494,7 @@ class Modules {
         }
 
         parent.appendChild(container);
+        module.holder.associateElement(container);
 
         module.settings = stored;
 

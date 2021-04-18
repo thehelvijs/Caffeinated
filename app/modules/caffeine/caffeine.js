@@ -1,5 +1,5 @@
 
-MODULES.moduleClasses["caffeine_integration"] = class {
+MODULES.uniqueModuleClasses["caffeine_integration"] = class {
 
     constructor(id) {
         this.namespace = "caffeine_integration";
@@ -7,6 +7,7 @@ MODULES.moduleClasses["caffeine_integration"] = class {
         this.type = "settings";
         this.id = id;
         this.supportedPlatforms = ["CAFFEINE"];
+        this.persist = true;
 
         this.schedule = -1;
 

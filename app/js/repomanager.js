@@ -47,20 +47,30 @@ class RepoManager {
 
                 if (Array.isArray(modules.simple)) {
                     for (let instance of modules.simple) {
-                        let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
+                        const namespace = instance.namespace;
+                        const id = instance.id;
+
+                        let loaded = await MODULES.getFromUUID(namespace + ":" + id);
 
                         if (!loaded) {
-                            await MODULES.initalizeModule(new MODULES.moduleClasses[instance.namespace](instance.id, repo));
+                            const clazz = MODULES.moduleClasses[namespace] ?? MODULES.uniqueModuleClasses[namespace];
+                            const module = new clazz(id);
+
+                            await MODULES.initalizeModule(module);
                         }
                     }
                 }
 
                 if (Array.isArray(modules.required)) {
                     for (let instance of modules.required) {
-                        let loaded = await MODULES.getFromUUID(instance.namespace + ":" + instance.id);
+                        const namespace = instance.namespace;
+                        const id = instance.id;
+
+                        let loaded = await MODULES.getFromUUID(namespace + ":" + id);
 
                         if (!loaded) {
-                            let module = new MODULES.moduleClasses[instance.namespace](instance.id, repo);
+                            const clazz = MODULES.moduleClasses[namespace] ?? MODULES.uniqueModuleClasses[namespace];
+                            const module = new clazz(id);
 
                             await MODULES.initalizeModule(module);
 

@@ -142,7 +142,25 @@
                 </div>
                 <div class="pages">
                     <div class="content page widget-settings-page hide" page="settings" id="settings"></div>
-                    <div class="content page hide" page="manage-widgets" id="manage-widgets"></div>
+                    <div class="content page hide" page="manage-widgets" id="manage-widgets">
+                        <div class="is-unselectable">
+                            <label class="settings-label">
+                                Manage Widgets
+                            </label>
+                            <br />
+                        </div>
+                        <div style="margin: auto;">
+                            <select class="select is-inline" id="create-type" style="height: 3em !important;"></select>
+                            <input class="input is-inline" id="create-name" type="text" placeholder="My new widget name">
+                            <button class="button is-inline" id="submit-create">Create</button>
+                        </div>
+                        <div class="is-unselectable">
+                            <br />
+                            <br />
+                        </div>
+                        <div id="module-deletion">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="login" class="center-text hide">

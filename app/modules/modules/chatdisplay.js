@@ -1,5 +1,5 @@
 
-MODULES.moduleClasses["casterlabs_chat_display"] = class {
+MODULES.uniqueModuleClasses["casterlabs_chat_display"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_chat_display";
@@ -7,6 +7,7 @@ MODULES.moduleClasses["casterlabs_chat_display"] = class {
         this.type = "application settings";
         this.id = id;
         this.icon = "chatbox";
+        this.persist = true;
 
         this.messageHistory = [];
         this.viewersList = [];

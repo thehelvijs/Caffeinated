@@ -1,11 +1,12 @@
 
-MODULES.moduleClasses["casterlabs_bot"] = class {
+MODULES.uniqueModuleClasses["casterlabs_bot"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_bot";
         this.displayname = "caffeinated.chatbot.title";
         this.type = "settings";
         this.id = id;
+        this.persist = true;
     }
 
     getDataToStore() {

@@ -1,5 +1,5 @@
 
-MODULES.moduleClasses["casterlabs_supporters"] = class {
+MODULES.uniqueModuleClasses["casterlabs_supporters"] = class {
 
     constructor(id) {
         this.namespace = "casterlabs_supporters";
@@ -7,6 +7,7 @@ MODULES.moduleClasses["casterlabs_supporters"] = class {
         this.type = "application";
         this.id = id;
         this.icon = "star";
+        this.persist = true;
 
     }
 

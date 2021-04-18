@@ -1,12 +1,13 @@
 let KOFI_ENABLED = false;
 
-MODULES.moduleClasses["kofi_integration"] = class {
+MODULES.uniqueModuleClasses["kofi_integration"] = class {
 
     constructor(id) {
         this.namespace = "kofi_integration";
         this.displayname = "Ko-fi Integration";
         this.type = "settings";
         this.id = id;
+        this.persist = true;
 
         this.kinoko = new Kinoko();
 

@@ -181,7 +181,7 @@ class Koi {
             }
 
             if (this.isAlive() && event) {
-                if (event.streamer.platform === "TWITCH") {
+                if (event.streamer.platform !== "CAFFEINE") {
                     message = message.replace(/\n/gm, " ");
                 }
 
@@ -206,6 +206,12 @@ class Koi {
                     return 500;
 
                 case "TROVO":
+                    return 300;
+
+                case "GLIMESH":
+                    return 255;
+
+                case "BRIME":
                     return 300;
 
                 default:
