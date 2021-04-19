@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
+        <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
+        <style>
+            :root {
+                --color: #c0c0c0;
+                --width: 475px;
+                --margin: 15px;
+                --social-size: 50px;
+            }
+
+            html {
+                background-color: transparent !important;
+            }
+
+            body {
+                background-color: rgba(10, 10, 10, .5);
+            }
+
+            /* Scrollbar */
+
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #444444;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #AAAAAA;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #505050;
+            }
+
+            ::-webkit-slider-runnable-track {
+                width: 300px;
+                height: 2px;
+                border: none;
+                border-radius: 3px;
+            }
+
+            ::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                border: none;
+                height: 12px;
+                width: 12px;
+                border-radius: 500%;
+                background: var(--background-color);
+                border: 2px solid #515151;
+                margin-top: -5px;
+                cursor: pointer;
+            }
+
+            /* Socials */
+
+            .socials {
+                position: fixed;
+                left: calc((50vw - (var(--width) / 2)) - (var(--margin) * 6));
+                top: 35px;
+                width: var(--social-size);
+            }
+
+            .social {
+                width: var(--social-size);
+                height: var(--social-size);
+                border-radius: 50%;
+                font-size: 1.6em;
+                position: relative;
+                display: block;
+                margin-bottom: 8px;
+            }
+
+            .social ion-icon {
+                pointer-events: none !important;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                color: white;
+            }
+
+            /* Changelog */
+
+            .changelog {
+                width: calc(var(--width) + (var(--margin) * 4));
+                padding-bottom: 50px;
+                margin: auto;
+            }
+
+            .changelog>div {
+                color: var(--color) !important;
+                width: calc(var(--width) + (var(--margin) * 2));
+                filter: grayscale(1);
+                margin: var(--margin);
+                margin-bottom: 0px;
+                padding: var(--margin);
+                padding-bottom: calc(var(--margin) * 3);
+                border-radius: 15px;
+                background-color: #141414;
+            }
+
+            .current-version {
+                --color: white !important;
+                filter: none !important;
+            }
+
+            h2 {
+                color: var(--color) !important;
+                margin-bottom: 5px !important;
+            }
+
+            h6 {
+                color: var(--color) !important;
+                margin-bottom: 10px !important;
+                margin-left: 1px !important;
+            }
+
+            h4 {
+                color: var(--color) !important;
+                margin-bottom: 5px !important;
+                margin-top: 20px !important;
+            }
+
+            div>ul {
+                margin-top: 0px !important;
+                color: var(--color) !important;
+            }
+
+            .separator {
+                width: var(--width);
+                height: 1px;
+                background-color: grey;
+            }
+
+            .platform-icon {
+                height: 1em;
+                vertical-align: bottom;
+            }
+
+            pre {
+                padding: 0 !important;
+                display: inline;
+            }
+        </style>
+        <script>
+            const TWITTER = "https://casterlabs.co/twitter";
+            const DISCORD = "https://casterlabs.co/discord";
+            const INSTAGRAM = "https://casterlabs.co/instagram";
+
+            function openLink(link) {
+                window.open(link, "_blank");
+            }
+
+        </script>
+    </head>
+
+    <body>
+        <div class="socials">
+            <a class="social" onclick="openLink(TWITTER)" title="Twitter" style="background-color: #00acee;">
+                <ion-icon name="logo-twitter"></ion-icon>
+            </a>
+            <a class="social" onclick="openLink(DISCORD)" title="Discord" style="background-color: #7289da;">
+                <ion-icon name="logo-discord"></ion-icon>
+            </a>
+            <a class="social" onclick="openLink(INSTAGRAM)" title="Instagram" style="background: radial-gradient(circle farthest-corner at 35% 90%, #fec564, transparent 50%), radial-gradient(circle farthest-corner at 0 140%, #fec564, transparent 50%), radial-gradient(ellipse farthest-corner at 0 -25%, #5258cf, transparent 50%), radial-gradient(ellipse farthest-corner at 20% -50%, #5258cf, transparent 50%), radial-gradient(ellipse farthest-corner at 100% 0, #893dc2, transparent 50%), radial-gradient(ellipse farthest-corner at 60% -20%, #893dc2, transparent 50%), radial-gradient(ellipse farthest-corner at 100% 100%, #d9317a, transparent), linear-gradient(#6559ca, #bc318f 30%, #e33f5f 50%, #f77638 70%, #fec66d 100%);">
+                <ion-icon name="logo-instagram"></ion-icon>
+            </a>
+        </div>
+
+        <div class="changelog content">
+            <div class="current-version">
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 30
+                </h2>
+                <h6>
+                    April 18, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Add a new debug command:
+                        <pre>/caffeinated forceupdate</pre>
+                    </li>
+                    <li>
+                        Complete the experimental widget manager, you can enable it by typing
+                        <pre>/caffeinated experimental manage_widgets</pre>
+                        into the chatbox in the app.
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/glimesh/icon.png" /> Glimesh & <img class="platform-icon" src="https://assets.casterlabs.co/brime/icon.png" /> Brime:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed the chat length limits.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 29
+                </h2>
+                <h6>
+                    April 11, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        We now support OBS browser docks!
+                    </li>
+                    <li>
+                        You can disable seeing viewers in the chat log.
+                    </li>
+                    <li>
+                        You can adjust the font size of the chat log aswell.
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/brime/icon.png" /> Brime:
+                </h4>
+                <ul>
+                    <li>
+                        We've disabled viewer join/leave notifications, you can still use the viewer list.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 28
+                </h2>
+                <h6>
+                    April 10, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed Discord integration falsly setting your status.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 27
+                </h2>
+                <h6>
+                    April 8, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        We now update your status in Discord.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 25
+                </h2>
+                <h6>
+                    March 31, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/brime/icon.png" /> Brime:
+                </h4>
+                <ul>
+                    <li>
+                        You can now login, again.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 24
+                </h2>
+                <h6>
+                    March 21, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/brime/icon.png" /> Brime:
+                </h4>
+                <ul>
+                    <li>
+                        Fix all the things.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 23
+                </h2>
+                <h6>
+                    March 21, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/brime/icon.png" /> Brime:
+                </h4>
+                <ul>
+                    <li>
+                        You can now login :D
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 22
+                </h2>
+                <h6>
+                    March 19, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed fonts not properly loading in.
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/glimesh/icon.png" /> Glimesh:
+                </h4>
+                <ul>
+                    <li>
+                        The "Login with Glimesh" button now appears in the stable channel.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 21
+                </h2>
+                <h6>
+                    March 18, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed time formatting in the uptime command.
+                    </li>
+                    <li>
+                        Added a time streamed widget.
+                    </li>
+                    <li>
+                        Fixed issue with the donation goal current amount field being uneditable.
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/glimesh/icon.png" /> Glimesh:
+                </h4>
+                <ul>
+                    <li>
+                        We now properly hide all unsupported widgets from Glimesh users.
+                    </li>
+                    <li>
+                        All follower related widgets aswell as the subscriber goal work on Glimesh now. (Server side change)
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 20
+                </h2>
+                <h6>
+                    March 15, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed the Spotify widget.
+                    </li>
+                    <li>
+                        Added an easier way to switch to the beta channel for the next thing...
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/glimesh/icon.png" /> Glimesh:
+                </h4>
+                <ul>
+                    <li>
+                        We now support Glimesh on the beta channel.
+                        <br />
+                        Enter the beta by typing
+                        <pre>/caffeinated channel beta</pre>
+                        into the chatbox in the app.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 19
+                </h2>
+                <h6>
+                    March 9, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Made the chatbot linking process a lot smoother.
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/twitch/icon.png" /> Twitch:
+                </h4>
+                <ul>
+                    <li>
+                        Made it so you can properly link another account.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 18
+                </h2>
+                <h6>
+                    March 9, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        You can now link an account for the chatbot!
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 17
+                </h2>
+                <h6>
+                    February 28, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        VideoShare widget
+                        <ul>
+                            <li>
+                                Added a volume slider.
+                            </li>
+                            <li>
+                                Added a Play/Pause button.
+                            </li>
+                            <li>
+                                Added a no frame option as well.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 16
+                </h2>
+                <h6>
+                    February 28, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Fix some misc bugs.
+                    </li>
+                    <li>
+                        Add an uptime command.
+                    </li>
+                    <li>
+                        Fix bug with links not opening in the chat popout.
+                    </li>
+                    <li>
+                        Add a changelog viewer. (You're using it now :D)
+                    </li>
+                    <li>
+                        Add a videoshare widget.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 15
+                </h2>
+                <h6>
+                    February 26, 2021
+                </h6>
+                <div class="separator"></div>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Fix bug with invalid auth not properly sending users to the signin screen.
+                    </li>
+                    <li>
+                        Remove the debug commands.
+                    </li>
+                    <li>
+                        Finish the Spanish translation. (Thanks @Eslerand!)
+                    </li>
+                    <li>
+                        Add upvotes to the chat widget.
+                    </li>
+                    <li>
+                        Fix the upvote button disappearing too soon.
+                    </li>
+                    <li>
+                        Fix oddity with the close button not behaving. (visually)
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/caffeine/icon.png" /> Caffeine:
+                </h4>
+                <ul>
+                    <li>
+                        Make Ko-fi enable the subscriber widgets, since people can subscribe to you on Ko-fi.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 14
+                </h2>
+                <h6>
+                    February 25, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed alerts not keeping their image and audio files.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 13
+                </h2>
+                <h6>
+                    February 22, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        There's now a warning when you pick a large file, and files are now handled differently to help make the app launch smoother.
+                    </li>
+                    <li>
+                        Added back the solid spotify widget background option. (Works now)
+                    </li>
+                    <li>
+                        Fix bug in Ko-fi alerts.
+                    </li>
+                    <li>
+                        Added a speed slider in the emoji rain options.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 12
+                </h2>
+                <h6>
+                    February 18, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        We can now remotely deliver banner messages to you.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 11
+                </h2>
+                <h6>
+                    February 17, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Add the Dutch language.
+                    </li>
+                    <li>
+                        Add Spanish aswell.
+                    </li>
+                    <li>
+                        Fix some funky things with languages in general.
+                    </li>
+                    <li>
+                        Fixed third party modules resetting every launch.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Some widget updates
+                </h2>
+                <h6>
+                    February 16, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Adjust how badges and emotes are displayed in chat, for those funky fonts.
+                    </li>
+                    <li>
+                        Made alert images have a minimum size that is proportional to the source size.
+                    </li>
+                    <li>
+                        The emoji rain will now obey the custom framerate you have set in the source properties (https://i.imgur.com/9vFmXLh.png)
+                        <ul>
+                            <li>
+                                Also made the emojis not pop off screen violently
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 10
+                </h2>
+                <h6>
+                    February 15, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Made the companion be on nearly the same feature level as the built in chat view. (Can't upvote or send messages for now)
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/twitch/icon.png" /> Twitch:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed a misc. bug with Twitch cheers not displaying properly in the chat view.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 9
+                </h2>
+                <h6>
+                    February 13, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Added scriptable bot commands. (Docs coming <i>eventually</i>)
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/caffeine/icon.png" /> Caffeine:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed upvotes not displaying.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 8
+                </h2>
+                <h6>
+                    February 7, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Hopefully fixed a bug with external modules not saving
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 7
+                </h2>
+                <h6>
+                    February 6, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed a bug with the localization code causing <b>large</b> amounts of errors.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 6
+                </h2>
+                <h6>
+                    February 5, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Ko-fi subscriptions (when linked) will trigger the subscription alert.
+                    </li>
+                    <li>
+                        Added a QR code to the companion, to make it easier to get going on your device.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 5
+                </h2>
+                <h6>
+                    February 5, 2021
+                </h6>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/trovo/icon.png" /> Trovo:
+                </h4>
+                <ul>
+                    <li>
+                        Sneaky patch for Trovo users, made the app not break when you get donations.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 4
+                </h2>
+                <h6>
+                    February 3, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Fix reply loop in chat bot.
+                    </li>
+                    <li>
+                        Fix Spotify widget.
+                    </li>
+                    <li>
+                        Add an option for a !song command in the Spotify widget settings.
+                    </li>
+                    <li>
+                        Add back in the userbar text, it now alternates between follower and subscriber count. (only shows followers on Caffeine, since they don't have subscriptions)
+                    </li>
+                    <li>
+                        Removed the padding around the now playing and goal widgets. They should snug up into corners perfectly now.
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/trovo/icon.png" /> Trovo:
+                </h4>
+                <ul>
+                    <li>
+                        Added a welcome callout to the chatbot.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 3
+                </h2>
+                <h6>
+                    February 2, 2021
+                </h6>
+                <h4>
+                    Everyone:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed a problem with some widgets not properly saving. All should be good now.
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/caffeine/icon.png" /> Caffeine:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed the broadcast image setter/game picker/whatever.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 2
+                </h2>
+                <h6>
+                    February 2, 2021
+                </h6>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/trovo/icon.png" /> Trovo:
+                </h4>
+                <ul>
+                    <li>
+                        Added in follower and subscriber goals.
+                    </li>
+                </ul>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/twitch/icon.png" /> Twitch:
+                </h4>
+                <ul>
+                    <li>
+                        Fixed issue with duplicate channelpoint messages.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>
+                    Casterlabs Caffeinated 1.1 Stable 1
+                </h2>
+                <h6>
+                    February 2, 2021
+                </h6>
+                <h4>
+                    <img class="platform-icon" src="https://assets.casterlabs.co/trovo/icon.png" /> Trovo:
+                </h4>
+                <ul>
+                    <li>
+                        Trovo support is now publicly available!
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </body>
+
+</html>
