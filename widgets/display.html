@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <title>Caffeinated (undefined)</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+        <script src="overlayutil.js"></script>
+        <style>
+            #html {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <span id="html"></span>
+    </body>
+
+    <footer>
+        <script>
+            const overlay = new OverlayUtil(vars.namespace);
+            let config = null;
+            let html = "";
+
+            document.title = "Caffeinated (" + vars.namespace + ")";
+
+            overlay.on("config", (data) => {
+                config = data;
+
+                overlay.changeFont(config.font);
+
+                update();
+            });
+
+            overlay.on("event", (data) => {
+                if (config) {
+                    html = data;
+                    update();
+                }
+            });
+
+            function update() {
+                document.querySelector("#html").innerHTML = html;
+            }
+
+        </script>
+    </footer>
+
+</html>

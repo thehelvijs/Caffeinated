@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <style>
+            img {
+                height: 2ex;
+                width: auto;
+                vertical-align: middle;
+            }
+
+            body {
+                position: absolute;
+                left: 0px;
+                bottom: 0px;
+                width: 100%;
+                overflow: hidden;
+                text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.3);
+                overflow-wrap: break-word;
+            }
+
+            .right-align {
+                text-align: right;
+                padding-right: 15px;
+            }
+
+            .message {
+                padding-left: .5ch;
+            }
+
+            .badge {
+                padding-left: .25ch;
+            }
+
+            /* Upvotes */
+
+            .upvote-1 {
+                /* 1+ */
+                color: #FF00FF;
+            }
+
+            .upvote-2 {
+                /* 10+ */
+                color: #00FF00;
+            }
+
+            .upvote-3 {
+                /* 100+ */
+                color: #FFFF00;
+            }
+
+            .upvote-4 {
+                /* 1000+ */
+                color: #FFFFFF;
+            }
+        </style>
+        <title>Caffeinated Chat</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+        <script src="overlayutil.js"></script>
+    </head>
+
+    <body>
+        <div id="div"></div>
+    </body>
+
+    <footer>
+        <script>
+            const overlay = new OverlayUtil("casterlabs_chat");
+            let config = {};
+
+            overlay.changeFont("Poppins");
+
+            overlay.on("config", (data) => {
+                console.debug(data);
+
+                if (config.chat_direction != data.chat_direction) {
+                    document.getElementById("div").innerHTML = "";
+                }
+
+                if (config.chat_animation != data.chat_animation) {
+                    document.getElementById("div").innerHTML = "";
+                }
+
+                config = data;
+
+                overlay.changeFont(config.font);
+
+                document.getElementById("div").style = "color: " + config.text_color + "; font-size: " + config.font_size + "px;";// width: " + config.overlay_width + "px;";
+            });
+
+            overlay.on("event", (event) => {
+                if (config) {
+                    console.debug(event);
+
+                    let div;
+
+                    switch (event.event_type) {
+                        case "DONATION":
+                        case "CHAT":
+                            div = createChatMessageElement(event);
+                            break;
+
+                        case "META":
+                            messageMeta(event);
+                            return;
+
+                        case "STATUS":
+                            // Prevent duplicates
+                            if (!event.id || !document.querySelector("[message_id='" + event.id + "']")) {
+                                div = createStatusMessageElement(event);
+                            } else {
+                                return;
+                            }
+
+                    }
+
+                    switch (config.chat_animation) {
+                        case "Slide": animateSlide(div); break;
+
+                        case "Slide (Disappearing)": animateSlide(div); disappear(div); break;
+
+                        case "Disappearing": disappear(div); break;
+                    }
+
+                    if (config.text_align == "Right") {
+                        div.classList = "right-align";
+                    }
+
+                    if (event.donations) {
+                        event.donations.forEach((donation) => {
+                            // TODO Trovo, when we figure that out.
+                            if (donation.type === "CAFFEINE_PROP") {
+                                const img = document.createElement("img");
+
+                                img.src = donation.animated_image;
+
+                                div.appendChild(img);
+                            }
+                        });
+                    }
+
+                    if (config.chat_direction.toUpperCase() == "UP") {
+                        document.body.style = "top: 0px;";
+                        document.getElementById("div").insertBefore(div, document.getElementById("div").firstChild);
+                    } else {
+                        document.body.style = "bottom: 0px;";
+                        document.getElementById("div").appendChild(div);
+                    }
+                }
+            });
+
+            function messageMeta(event) {
+                const element = document.querySelector("[message_id='" + event.id + "']");
+
+                if (element) {
+                    if (event.is_visible) {
+                        element.innerText = event.upvotes;
+
+                        if (event.upvotes >= 1000) {
+                            element.classList = "upvote-4";
+                        } else if (event.upvotes >= 100) {
+                            element.classList = "upvote-3";
+                        } else if (event.upvotes >= 10) {
+                            element.classList = "upvote-2";
+                        } else if (event.upvotes >= 1) {
+                            element.classList = "upvote-1";
+                        }
+                    } else {
+                        element.remove();
+                    }
+                }
+            }
+
+            function createChatMessageElement(event) {
+                const div = document.createElement("div");
+                const msg = document.createElement("span");
+                const user = document.createElement("span");
+                const counter = document.createElement("sup");
+
+                user.innerText = event.sender.displayname;
+                user.classList = "username";
+                user.style = "color: " + event.sender.color + ";";
+
+                event.message = escapeHtml(event.message);
+
+                for (const [name, link] of Object.entries(event.emotes)) {
+                    event.message = event.message.split(name).join(`<img title="${name}" src="${link}" />`);
+                }
+
+                msg.classList = "message";
+                msg.innerHTML = event.message + " ";
+
+                counter.setAttribute("message_id", event.id);
+
+                div.appendChild(user);
+
+                event.sender.badges.forEach((badge) => {
+                    let badgeIcon = document.createElement("img");
+
+                    badgeIcon.src = badge;
+                    badgeIcon.classList = "badge";
+
+                    div.appendChild(badgeIcon);
+                });
+
+                div.appendChild(msg);
+                div.appendChild(counter);
+
+                return div;
+            }
+
+            function createStatusMessageElement(event) {
+                const div = document.createElement("div");
+
+                div.innerHTML = event.lang;
+                div.setAttribute("message_id", event.id);
+
+                return div;
+            }
+
+            function disappear(div) {
+                setTimeout(() => {
+                    anime({
+                        targets: div,
+                        opacity: 0,
+                        easing: 'easeOutExpo'
+                    }).finished.then(() => {
+                        div.remove();
+                    });
+                }, 30 * 1000); // 30s, disappear
+            }
+
+            function animateSlide(div, direction) {
+                if (direction === "Left") {
+                    div.style.transform = "translateX(" + window.innerWidth + "px)";
+                } else {
+                    div.style.transform = "translateX(" + div.offsetWidth + "px)";
+                }
+
+                anime({
+                    targets: div,
+                    translateX: 0,
+                    easing: "easeOutExpo"
+                });
+            }
+
+        </script>
+    </footer>
+
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Caffeinated Goal</title>
+        <style>
+            body {
+                font-family: "Trebuchet MS", Helvetica, sans-serif;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                background-color: rgba(0, 0, 0, 0);
+                color: white;
+                -webkit-app-region: drag;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                text-shadow: 2px 2px rgba(0, 0, 0, 0.5);
+                margin: 0;
+            }
+
+            .hide {
+                display: none;
+            }
+
+            /* All html objects will be wrapped in the #wrap div */
+            .goal_cont {
+                color: white;
+                box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+            }
+
+            #title {
+                font-size: 28px;
+                text-align: center;
+                text-shadow: 0px 0px 10px #000;
+                margin: 0;
+                width: 70%;
+                z-index: 1;
+            }
+
+            #goal_bar {
+                /* border: 4px solid white; */
+                background-color: rgba(1, 1, 1, 0.5);
+                padding: 16px;
+                display: flex;
+                position: relative;
+                overflow: hidden;
+            }
+
+            #goal_current,
+            #goal_total {
+                margin: 0;
+                font-family: Roboto, sans-serif;
+                font-weight: bold;
+                font-size: 28px;
+                text-shadow: 0px 0px 10px #000;
+                width: 15%;
+                z-index: 1;
+            }
+
+            #goal_total {
+                text-align: right;
+            }
+
+            #total_bar {
+                position: absolute;
+                width: calc(100% - 8px);
+                height: calc(100% - 8px);
+                max-width: 100%;
+                background: #31f8ff;
+                top: 4px;
+                left: 4px;
+                overflow: hidden;
+                width: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="goal_cont">
+            <div style="position: relative">
+                <div id="goal_bar">
+                    <p id="goal_current"></p>
+                    <p id="title"></p>
+                    <p id="goal_total">&nbsp;</p>
+                    <div id="total_bar"></div>
+                </div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="overlayutil.js"></script>
+        <script>
+            const overlay = new OverlayUtil(vars.namespace);
+            let config = {};
+
+            document.title = "Caffeinated (" + vars.namespace + ")";
+
+            overlay.on("config", (data) => {
+                config = data;
+
+                document.getElementById("title").innerHTML = config.title;
+                document.getElementById("title").style.color = config.text_color;
+
+                document.getElementById("goal_current").style.color = config.text_color;
+
+                document.getElementById("goal_total").style.color = config.text_color;
+
+                document.getElementById("total_bar").style.background = config.bar_color;
+            });
+
+            overlay.on("display", (display) => {
+                document.getElementById("goal_current").innerHTML = display;
+            });
+
+            overlay.on("goaldisplay", (display) => {
+                document.getElementById("goal_total").innerHTML = display;
+            });
+
+            overlay.on("amount", (amount) => {
+                let percentage = Math.round(amount / config.goal_amount * 100);
+
+                $("#total_bar").css("width", percentage + "%").css("width", "-=8px");
+            });
+        </script>
+    </body>
+
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <style>
+            html {
+                opacity: 0.7;
+            }
+
+            canvas {
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                width: 100vw;
+            }
+        </style>
+        <title>Emoji Rain</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="https://caffeinated.casterlabs.co/overlayutil.js"></script>
+    </head>
+
+    <body>
+        <canvas id="canvas"></canvas>
+    </body>
+
+    <footer>
+        <script>
+            let timeout = 10 * 1000;
+            let maxEmojis = 1000;
+            let size = 15;
+            let speed = 1;
+
+            const overlay = new OverlayUtil("casterlabs_rain");
+            const minOpacity = 0.8;
+            let avgTickTime = 0;
+            let emojis = [];
+            let canvas;
+            let ctx;
+
+            const targetDelta = 1000 / 60; // 60hz
+
+            overlay.on("config", (config) => {
+                timeout = config["life_time (Seconds)"] * 1000;
+                maxEmojis = config.max_emojis;
+                size = config.size;
+                speed = config.speed || 1;
+
+                ctx.font = size + "px Sans-Serif";
+            });
+
+            overlay.on("event", (event) => {
+                let message = event.message.match(EMOJI_REGEX);
+
+                if (event.emotes) {
+                    for (const [pattern, link] of Object.entries(event.emotes)) {
+                        let occurs = event.message.split(pattern).length - 1;
+
+                        for (let i = 0; i != occurs; i++) {
+                            create(link);
+                        }
+                    }
+                }
+
+                if (event.custom_emotes) {
+                    for (const [pattern, link] of Object.entries(event.custom_emotes)) {
+                        let occurs = event.message.toLowerCase().split(pattern.toLowerCase()).length - 1;
+
+                        for (let i = 0; i != occurs; i++) {
+                            create(link);
+                        }
+                    }
+                }
+
+                if (message) {
+                    message.forEach(create);
+                }
+            });
+
+            function create(c) {
+                if (emojis.length < maxEmojis) {
+                    const scale = (Math.random() * (1 - minOpacity)) + minOpacity;
+
+                    emojis.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        ys: Math.random() + 2,
+                        scale: scale,
+                        opacity: 0.01,
+                        text: c,
+                        dying: false,
+                        time: performance.now()
+                    });
+                }
+            }
+
+            let start = performance.now();
+
+            function draw() {
+                const delta = performance.now() - start;
+                const deltaRate = delta / targetDelta;
+
+                start += delta;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "white";
+
+                if (emojis.length > 0) {
+                    emojis.forEach((emoji) => {
+                        ctx.save();
+
+                        emoji.y += (emoji.ys * deltaRate) * speed;
+
+                        const relativeSize = size * emoji.scale;
+
+                        if ((emoji.time + timeout) < start) {
+                            emoji.dying = true;
+                        }
+
+                        ctx.globalAlpha = emoji.opacity;
+
+                        if (emoji.text.startsWith("http")) {
+                            const image = new Image();
+
+                            image.src = emoji.text;
+
+                            ctx.drawImage(image, emoji.x, emoji.y, relativeSize, relativeSize);
+                        } else {
+                            ctx.fillText(emoji.text, emoji.x, emoji.y);
+                        }
+
+                        if (emoji.dying) {
+                            if (emoji.opacity > 0.005) {
+                                emoji.opacity -= 0.01;
+
+                                if (emoji.opacity < 0) {
+                                    emoji.opacity = 0;
+                                }
+                            } else {
+                                emojis.splice(emojis.indexOf(emoji), 1);
+                            }
+                        } else if (emoji.opacity < 1) {
+                            emoji.opacity += 0.01;
+                        }
+
+                        if (emoji.y > (canvas.height + relativeSize)) {
+                            emoji.x = Math.random() * canvas.width;
+                            emoji.y = -relativeSize;
+                        }
+
+                        ctx.restore();
+                    });
+                }
+
+                const time = performance.now() - start;
+
+                avgTickTime = (avgTickTime + time) / 2;
+
+                requestAnimationFrame(draw);
+            }
+
+            /*setInterval(() => {
+                console.debug(avgTickTime.toFixed(2) + "ms/frame " + emojis.length + " emojis (" + ((avgTickTime / frameTime) * 100).toFixed(2) + "% of the frame budget)");
+            }, 10000);*/
+
+            canvas = document.querySelector("#canvas");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            ctx = this.canvas.getContext("2d");
+
+            ctx.font = size + "px Sans-Serif";
+
+            requestAnimationFrame(draw);
+        </script>
+    </footer>
+
+</html>
