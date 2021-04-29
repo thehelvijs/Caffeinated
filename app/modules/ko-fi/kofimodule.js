@@ -18,7 +18,7 @@ MODULES.uniqueModuleClasses["kofi_integration"] = class {
         this.kinoko.on("close", () => this.kinoko.connect(this.uuid, "parent"));
 
         this.kinoko.on("message", (form) => {
-            const data = JSON.parse(decodeURIComponent(form.substring(5).replace(/\+/g, " ")));
+            const data = JSON.parse(form.data);
 
             console.debug(data);
 
