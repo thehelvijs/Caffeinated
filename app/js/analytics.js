@@ -6,10 +6,9 @@ woopra.config({
     protocol: "https"
 });
 
-woopra.track("pv", {});
-
 const ANALYTICS = (() => {
     let hasLoggedSignin = false;
+    let hasTracked = false;
 
     return {
         async logSignin() {
@@ -36,6 +35,11 @@ const ANALYTICS = (() => {
                 name: name,
                 language: language
             });
+
+            if (!hasTracked) {
+                hasTracked = true;
+                woopra.track();
+            }
 
             woopra.push();
         },
