@@ -8,8 +8,8 @@ const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remo
 const windowStateKeeper = require("electron-window-state");
 const RPC = require("discord-rpc");
 
-const PROTOCOLVERSION = 71;
-const VERSION = "1.1-stable31";
+const PROTOCOLVERSION = 72;
+const VERSION = "1.1-stable32";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
