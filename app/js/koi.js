@@ -18,6 +18,8 @@ class Koi {
     }
 
     broadcast(type, data) {
+        ANALYTICS.logEvent(data);
+
         const listeners = this.listeners[type.toLowerCase()];
 
         if (listeners) {

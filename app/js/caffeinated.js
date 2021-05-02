@@ -8,8 +8,8 @@ const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remo
 const windowStateKeeper = require("electron-window-state");
 const RPC = require("discord-rpc");
 
-const PROTOCOLVERSION = 71;
-const VERSION = "1.1-stable31";
+const PROTOCOLVERSION = 72;
+const VERSION = "1.1-stable32";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
@@ -119,10 +119,6 @@ If someone tells you to paste code here, they might be trying to steal important
 
 console.log("\n\n");
 
-{
-
-}
-
 class Caffeinated {
 
     constructor() {
@@ -142,6 +138,10 @@ class Caffeinated {
 
         if (!this.store.has("server_domain")) {
             this.store.set("server_domain", "api.casterlabs.co");
+        }
+
+        if (!this.store.has("enable_discord_presence")) {
+            this.store.set("enable_discord_presence", true);
         }
 
         if (!this.store.has("cleared_events")) {
@@ -327,6 +327,11 @@ class Caffeinated {
                     type: "select",
                     isLang: true
                 },
+                enable_discord_integration: {
+                    display: "caffeinated.settings.enable_discord_integration",
+                    type: "checkbox",
+                    isLang: true
+                },
                 signout: {
                     display: "caffeinated.settings.signout",
                     type: "button",
@@ -336,6 +341,9 @@ class Caffeinated {
 
             onSettingsUpdate() {
                 CAFFEINATED.setLanguage(LANG.supportedLanguages[this.settings.language]);
+
+                CAFFEINATED.store.set("enable_discord_presence", this.settings.enable_discord_integration);
+                DiscordRPC.set();
             },
 
             init() {
@@ -385,6 +393,7 @@ class Caffeinated {
                         }, 500);
                     }
                 },
+                enable_discord_integration: true,
                 signout: () => {
                     CAFFEINATED.signOut();
                 },
@@ -631,6 +640,8 @@ class Caffeinated {
     setLanguage(language) {
         this.store.set("language", language);
 
+        ANALYTICS.logUserUpdate();
+
         LANG.translate(document);
     }
 
@@ -697,6 +708,12 @@ class Caffeinated {
     }
 
     setPuppetToken(puppetToken) {
+        if (puppetToken) {
+            ANALYTICS.logPuppetSignin();
+        } else {
+            ANALYTICS.logPuppetSignout();
+        }
+
         this.puppetToken = puppetToken;
         this.store.set("puppet_token", this.puppetToken);
 
@@ -709,6 +726,8 @@ class Caffeinated {
     }
 
     signOut() {
+        ANALYTICS.logSignout();
+
         UI.authCallback = (token) => this.setToken(token);
 
         const token = this.token;
@@ -729,33 +748,37 @@ class Caffeinated {
 const DiscordRPC = {
 
     async set() {
-        const { streamer, start_time, title } = CAFFEINATED.streamdata;
+        if (CAFFEINATED.store.get("enable_discord_presence") && CAFFEINATED.streamdata.is_live) {
+            const { streamer, start_time, title } = CAFFEINATED.streamdata;
 
-        const image = `${streamer.platform.toLowerCase()}-logo`;
-        const start = new Date(start_time);
+            const image = `${streamer.platform.toLowerCase()}-logo`;
+            const start = new Date(start_time);
 
-        const link = streamer.link;
+            const link = streamer.link;
 
-        const liveMessage = `Live on ${prettifyString(streamer.platform)}`;
+            const liveMessage = `Live on ${prettifyString(streamer.platform)}`;
 
-        discordRPCClient.request("SET_ACTIVITY", {
-            pid: process.pid,
-            activity: {
-                state: title,
-                timestamps: {
-                    // Funky normalization below...
-                    start: start.getTime() + 2
-                    // Told ya.
-                },
-                assets: {
-                    large_image: image,
-                    large_text: liveMessage
-                },
-                buttons: [
-                    { label: "Watch Now", url: link }
-                ]
-            }
-        });
+            discordRPCClient.request("SET_ACTIVITY", {
+                pid: process.pid,
+                activity: {
+                    state: title,
+                    timestamps: {
+                        // Funky normalization below...
+                        start: start.getTime() + 2
+                        // Told ya.
+                    },
+                    assets: {
+                        large_image: image,
+                        large_text: liveMessage
+                    },
+                    buttons: [
+                        { label: "Watch Now", url: link }
+                    ]
+                }
+            });
+        } else {
+            this.clear();
+        }
     },
 
     async clear() {
@@ -1184,6 +1207,7 @@ const UI = {
 
         // 15min timeout
         auth.awaitAuthMessage((15 * 1000) * 60).then((token) => {
+            ANALYTICS.logSignin();
             this.authCallback(token);
         }).catch((reason) => {
             console.error("Could not await for token: " + reason);
@@ -1243,6 +1267,7 @@ const UI = {
 
                 fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=CAFFEINE&token=${refreshToken}`).then((nResult) => nResult.json()).then((nResponse) => {
                     if (nResponse.data) {
+                        ANALYTICS.logSignin();
                         this.authCallback(nResponse.data.token);
                     } else {
                         this.loginScreen("CAFFEINE");
@@ -1280,6 +1305,7 @@ const UI = {
 
                 fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=BRIME&token=${token}`).then((nResult) => nResult.json()).then((nResponse) => {
                     if (nResponse.data) {
+                        ANALYTICS.logSignin();
                         this.authCallback(nResponse.data.token);
                     } else {
                         this.loginScreen("BRIME");
@@ -1434,7 +1460,6 @@ document.querySelector("#submit-create").addEventListener("click", async () => {
     if (name.length == 0) {
         alert("Widget must have a name.");
     } else {
-
         await MODULES.createNewModuleInstance(namespace, name);
 
         UI.regenerateWidgetManager();
@@ -1457,6 +1482,8 @@ koi.addEventListener("close", () => {
 });
 
 koi.addEventListener("user_update", (event) => {
+    ANALYTICS.logUserUpdate(event);
+
     UI.splashScreen(false);
     UI.loginScreen("HIDE");
     UI.setUserImage(event.streamer.image_link, event.streamer.displayname);
@@ -1543,6 +1570,8 @@ koi.addEventListener("error", (event) => {
 
     switch (error) {
         case "PUPPET_AUTH_INVALID": {
+            ANALYTICS.logPuppetSignout();
+
             CAFFEINATED.store.delete("puppet_token");
             CAFFEINATED.puppetToken = null;
 
@@ -1552,6 +1581,8 @@ koi.addEventListener("error", (event) => {
         }
 
         case "USER_AUTH_INVALID": {
+            ANALYTICS.logSignout();
+
             CAFFEINATED.userdata = null;
 
             DiscordRPC.clear();

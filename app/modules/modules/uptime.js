@@ -37,7 +37,7 @@ MODULES.moduleClasses["casterlabs_uptime"] = class {
     async update() {
         const delta =
             (CAFFEINATED.streamdata && CAFFEINATED.streamdata.is_live) ?
-                (new Date() - CAFFEINATED.streamdata.start_time) : 0;
+                (new Date() - new Date(CAFFEINATED.streamdata.start_time)) : 0;
 
         MODULES.emitIO(this, "event", `
             <span style="font-size: ${this.settings.font_size}px; color: ${this.settings.text_color};">
