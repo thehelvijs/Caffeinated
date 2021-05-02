@@ -708,6 +708,12 @@ class Caffeinated {
     }
 
     setPuppetToken(puppetToken) {
+        if (puppetToken) {
+            ANALYTICS.logPuppetSignin();
+        } else {
+            ANALYTICS.logPuppetSignout();
+        }
+
         this.puppetToken = puppetToken;
         this.store.set("puppet_token", this.puppetToken);
 
@@ -1564,6 +1570,8 @@ koi.addEventListener("error", (event) => {
 
     switch (error) {
         case "PUPPET_AUTH_INVALID": {
+            ANALYTICS.logPuppetSignout();
+
             CAFFEINATED.store.delete("puppet_token");
             CAFFEINATED.puppetToken = null;
 
