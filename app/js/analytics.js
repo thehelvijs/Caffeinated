@@ -65,7 +65,7 @@ const ANALYTICS = (() => {
             if (event && !event.isTest) {
                 switch (event.event_type) {
                     case "STREAM_STATUS": {
-                        if (CAFFEINATED.streamdata && (event.title != CAFFEINATED.streamdata)) {
+                        if (CAFFEINATED.streamdata && (event.title != CAFFEINATED.streamdata.title)) {
                             woopra.track("stream_title_update", {
                                 title: event.title
                             });
