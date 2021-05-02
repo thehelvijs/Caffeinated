@@ -119,10 +119,6 @@ If someone tells you to paste code here, they might be trying to steal important
 
 console.log("\n\n");
 
-{
-
-}
-
 class Caffeinated {
 
     constructor() {
@@ -631,6 +627,8 @@ class Caffeinated {
     setLanguage(language) {
         this.store.set("language", language);
 
+        ANALYTICS.logUserUpdate();
+
         LANG.translate(document);
     }
 
@@ -709,6 +707,8 @@ class Caffeinated {
     }
 
     signOut() {
+        ANALYTICS.logSignout();
+
         UI.authCallback = (token) => this.setToken(token);
 
         const token = this.token;
@@ -1184,6 +1184,7 @@ const UI = {
 
         // 15min timeout
         auth.awaitAuthMessage((15 * 1000) * 60).then((token) => {
+            ANALYTICS.logSignin();
             this.authCallback(token);
         }).catch((reason) => {
             console.error("Could not await for token: " + reason);
@@ -1243,6 +1244,7 @@ const UI = {
 
                 fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=CAFFEINE&token=${refreshToken}`).then((nResult) => nResult.json()).then((nResponse) => {
                     if (nResponse.data) {
+                        ANALYTICS.logSignin();
                         this.authCallback(nResponse.data.token);
                     } else {
                         this.loginScreen("CAFFEINE");
@@ -1280,6 +1282,7 @@ const UI = {
 
                 fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/natsukashii/create?platform=BRIME&token=${token}`).then((nResult) => nResult.json()).then((nResponse) => {
                     if (nResponse.data) {
+                        ANALYTICS.logSignin();
                         this.authCallback(nResponse.data.token);
                     } else {
                         this.loginScreen("BRIME");
@@ -1434,7 +1437,6 @@ document.querySelector("#submit-create").addEventListener("click", async () => {
     if (name.length == 0) {
         alert("Widget must have a name.");
     } else {
-
         await MODULES.createNewModuleInstance(namespace, name);
 
         UI.regenerateWidgetManager();
@@ -1457,6 +1459,8 @@ koi.addEventListener("close", () => {
 });
 
 koi.addEventListener("user_update", (event) => {
+    ANALYTICS.logUserUpdate(event);
+
     UI.splashScreen(false);
     UI.loginScreen("HIDE");
     UI.setUserImage(event.streamer.image_link, event.streamer.displayname);
@@ -1552,6 +1556,8 @@ koi.addEventListener("error", (event) => {
         }
 
         case "USER_AUTH_INVALID": {
+            ANALYTICS.logSignout();
+
             CAFFEINATED.userdata = null;
 
             DiscordRPC.clear();
