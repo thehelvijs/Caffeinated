@@ -56,6 +56,7 @@ LANG.absorbLang({
     "caffeinated.settings.view_changelog": "View Changelog",
     "caffeinated.settings.chatbot_login": "Link chatbot account",
     "caffeinated.settings.chatbot_logout": "Unlink chatbot account",
+    "caffeinated.settings.enable_discord_integration": "Enable Discord Integration",
 
     // Stream Uptime
     "caffeinated.uptime.title": "Stream Uptime",

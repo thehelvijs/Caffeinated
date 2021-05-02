@@ -140,6 +140,10 @@ class Caffeinated {
             this.store.set("server_domain", "api.casterlabs.co");
         }
 
+        if (!this.store.has("enable_discord_presence")) {
+            this.store.set("enable_discord_presence", true);
+        }
+
         if (!this.store.has("cleared_events")) {
             this.store.set("cleared_events", []);
         }
@@ -323,6 +327,11 @@ class Caffeinated {
                     type: "select",
                     isLang: true
                 },
+                enable_discord_integration: {
+                    display: "caffeinated.settings.enable_discord_integration",
+                    type: "checkbox",
+                    isLang: true
+                },
                 signout: {
                     display: "caffeinated.settings.signout",
                     type: "button",
@@ -332,6 +341,9 @@ class Caffeinated {
 
             onSettingsUpdate() {
                 CAFFEINATED.setLanguage(LANG.supportedLanguages[this.settings.language]);
+
+                CAFFEINATED.store.set("enable_discord_presence", this.settings.enable_discord_integration);
+                DiscordRPC.set();
             },
 
             init() {
@@ -381,6 +393,7 @@ class Caffeinated {
                         }, 500);
                     }
                 },
+                enable_discord_integration: true,
                 signout: () => {
                     CAFFEINATED.signOut();
                 },
@@ -729,33 +742,37 @@ class Caffeinated {
 const DiscordRPC = {
 
     async set() {
-        const { streamer, start_time, title } = CAFFEINATED.streamdata;
+        if (CAFFEINATED.store.get("enable_discord_presence") && CAFFEINATED.streamdata.is_live) {
+            const { streamer, start_time, title } = CAFFEINATED.streamdata;
 
-        const image = `${streamer.platform.toLowerCase()}-logo`;
-        const start = new Date(start_time);
+            const image = `${streamer.platform.toLowerCase()}-logo`;
+            const start = new Date(start_time);
 
-        const link = streamer.link;
+            const link = streamer.link;
 
-        const liveMessage = `Live on ${prettifyString(streamer.platform)}`;
+            const liveMessage = `Live on ${prettifyString(streamer.platform)}`;
 
-        discordRPCClient.request("SET_ACTIVITY", {
-            pid: process.pid,
-            activity: {
-                state: title,
-                timestamps: {
-                    // Funky normalization below...
-                    start: start.getTime() + 2
-                    // Told ya.
-                },
-                assets: {
-                    large_image: image,
-                    large_text: liveMessage
-                },
-                buttons: [
-                    { label: "Watch Now", url: link }
-                ]
-            }
-        });
+            discordRPCClient.request("SET_ACTIVITY", {
+                pid: process.pid,
+                activity: {
+                    state: title,
+                    timestamps: {
+                        // Funky normalization below...
+                        start: start.getTime() + 2
+                        // Told ya.
+                    },
+                    assets: {
+                        large_image: image,
+                        large_text: liveMessage
+                    },
+                    buttons: [
+                        { label: "Watch Now", url: link }
+                    ]
+                }
+            });
+        } else {
+            this.clear();
+        }
     },
 
     async clear() {
