@@ -294,10 +294,16 @@ class Caffeinated {
             frame.contentWindow.openLink = openLink;
         });
 
-        if (!this.store.get("cleared_events").includes(`${PROTOCOLVERSION}-changelog`)) {
-            this.store.set("cleared_events", this.store.get("cleared_events").concat(`${PROTOCOLVERSION}-changelog`));
-
-            document.querySelector("#changelog").classList = "";
+        // Don't show the page on first install, this is the easy way to accomplish this.
+        if (CAFFEINATED.store.get("token")) {
+            CAFFEINATED.triggerBanner(`${PROTOCOLVERSION}-changelog`, (element) => {
+                element.innerHTML = `
+                    Caffeinated was updated to version ${VERSION}. 
+                    <a style="margin-left: 5px; color: white; text-decoration: underline;" onclick="this.parentElement.parentElement.remove(); document.querySelector('#changelog').classList = '';">
+                        See what's new.
+                    </a>
+                `;
+            }, "#06d6a0");
         }
 
         MODULES.initalizeModule({
