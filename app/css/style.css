@@ -140,12 +140,69 @@ ion-icon {
 .service-disclaimer {
     position: absolute;
     color: #777777;
-    left: 50vw;
+    left: 50%;
     bottom: 50px;
-    width: 370px;
+    min-width: 320px;
+    max-width: 370px;
     transform: translateX(-50%);
 }
 
+/* Streamer Portraits */
+
+#login-streamer {
+    position: absolute;
+    top: var(--title-bar-height);
+    bottom: 0;
+    width: 40%;
+}
+
+#login-contents {
+    position: absolute;
+    top: var(--title-bar-height);
+    bottom: 0;
+    width: 60%;
+}
+
+#login-contents.streamer-portrait-right {
+    left: 0;
+}
+
+#login-contents.streamer-portrait-left {
+    right: 0;
+}
+
+#login-streamer.portrait-right {
+    right: 0;
+}
+
+#login-streamer.portrait-left {
+    left: 0;
+}
+
+#login-streamer .streamer-portrait {
+    display: flex;
+}
+
+#login-streamer .streamer-portrait img {
+    align-self: flex-end;
+    max-height: 90%;
+}
+
+#login-streamer.portrait-left .streamer-portrait .streamer-link {
+    right: 1em !important;
+}
+
+#login-streamer.portrait-right .streamer-portrait .streamer-link {
+    left: 1em !important;
+}
+
+#login-streamer .streamer-portrait .streamer-link {
+    font-family: "Poppins", sans-serif;
+    position: absolute;
+    bottom: 1em;
+    color: white !important;
+    text-decoration: none;
+}
 /* Scrollbar */
 
 ::-webkit-scrollbar {

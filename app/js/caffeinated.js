@@ -8,8 +8,8 @@ const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remo
 const windowStateKeeper = require("electron-window-state");
 const RPC = require("discord-rpc");
 
-const PROTOCOLVERSION = 72;
-const VERSION = "1.1-stable32";
+const PROTOCOLVERSION = 73;
+const VERSION = "1.1-stable33";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
@@ -294,10 +294,16 @@ class Caffeinated {
             frame.contentWindow.openLink = openLink;
         });
 
-        if (!this.store.get("cleared_events").includes(`${PROTOCOLVERSION}-changelog`)) {
-            this.store.set("cleared_events", this.store.get("cleared_events").concat(`${PROTOCOLVERSION}-changelog`));
-
-            document.querySelector("#changelog").classList = "";
+        // Don't show the page on first install, this is the easy way to accomplish this.
+        if (CAFFEINATED.store.get("token")) {
+            CAFFEINATED.triggerBanner(`${PROTOCOLVERSION}-changelog`, (element) => {
+                element.innerHTML = `
+                    Caffeinated was updated to version ${VERSION}. 
+                    <a style="margin-left: 5px; color: white; text-decoration: underline;" onclick="this.parentElement.parentElement.remove(); document.querySelector('#changelog').classList = '';">
+                        See what's new.
+                    </a>
+                `;
+            }, "#06d6a0");
         }
 
         MODULES.initalizeModule({
@@ -1003,6 +1009,8 @@ const UI = {
                         document.querySelector("#login").classList.add("hide");
                     });
                 } else if (screen === "NONE") {
+                    showAnotherRandomStreamer();
+
                     buttons.classList.remove("hide");
 
                     anime({
