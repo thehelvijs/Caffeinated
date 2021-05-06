@@ -1003,6 +1003,8 @@ const UI = {
                         document.querySelector("#login").classList.add("hide");
                     });
                 } else if (screen === "NONE") {
+                    showAnotherRandomStreamer();
+
                     buttons.classList.remove("hide");
 
                     anime({

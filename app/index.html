@@ -167,18 +167,24 @@
                 <br />
                 <br />
                 <div id="login-buttons">
-                    <span class="subtitle is-3">
-                        Welcome to Casterlabs
-                    </span>
-                    <!-- <sub><i>ITALICS</i> <b>BOLD <i>VARIETY</i></b></sub> New merch? -->
-                    <br />
-                    <br />
-                    <div class="button-container">
+                    <div id="login-streamer">
                     </div>
-                    <div class="service-disclaimer">
-                        <span>
-                            By logging in, you agree to our <a onclick="openLink('https:\/\/casterlabs.co/terms-of-service');">Terms of Service</a> and acknowledge that our <a onclick="openLink('https:\/\/casterlabs.co/privacy-policy')">Privacy Policy</a> applies to you.
+                    <div id="login-contents">
+                        <br />
+                        <br />
+                        <span class="subtitle is-3">
+                            Welcome to Casterlabs
                         </span>
+                        <br />
+                        <!-- <sub><i>ITALICS</i> <b>BOLD</b> <i style="text-decoration: underline;">VARIETY</i></sub> -->
+                        <br />
+                        <div class="button-container">
+                        </div>
+                        <div class="service-disclaimer">
+                            <span>
+                                By logging in, you agree to our <a onclick="openLink('https:\/\/casterlabs.co/terms-of-service');">Terms of Service</a> and acknowledge that our <a onclick="openLink('https:\/\/casterlabs.co/privacy-policy')">Privacy Policy</a> applies to you.
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div id="login-waiting" class="hide">
@@ -302,6 +308,23 @@
         <script src="js/modules.js"></script>
         <script src="js/repomanager.js"></script>
         <script src="js/caffeinated.js"></script>
+        <script type="module">
+            import { showRandomStreamer } from "https://assets.casterlabs.co/caffeinated/randomstreamer.mjs"
+
+            const streamerElement = document.querySelector("#login-streamer");
+            const contentsElement = document.querySelector("#login-contents");
+
+            window.showAnotherRandomStreamer = () => {
+                console.log("Showing a random streamer!");
+
+                streamerElement.innerHTML = "";
+                streamerElement.classList = "";
+
+                const direction = showRandomStreamer(streamerElement, false, openLink, true);
+
+                contentsElement.classList = `streamer-${direction}`;
+            };
+        </script>
         <script>
             window.addEventListener("beforeunload", () => {
                 const current = electron.getCurrentWindow();
