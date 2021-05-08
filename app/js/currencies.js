@@ -304,9 +304,9 @@ async function convertCurrency(amount, from, to) {
         } else if (from === "TROVO_ELIXIR") {
             usd = (amount / 1000) * 5; // https://trovo.live/support?topicid=C02F691C6E4A05DD%2F8F61C86D1EA7869B
         } else if (from === "CAFFEINE_CREDITS") {
-            usd = amount / 91; // Something we figured out, no official source for this though.
+            usd = amount / 182; // Something we figured out, no official source for this though.
         } else if (from === "CAFFEINE_GOLD") {
-            usd = (amount * 3) / 91;
+            usd = (amount * 3) / 182;
         } else if ((from === "TWITCH_BITS") || (from === "TWITCH BITS")) {
             usd = amount / 100; // https://twitchbitstousd.com/
         } else {
@@ -318,9 +318,9 @@ async function convertCurrency(amount, from, to) {
         } else if (to === "TROVO_ELIXIR") {
             result = (usd / 5) * 1000; // https://trovo.live/support?topicid=C02F691C6E4A05DD%2F8F61C86D1EA7869B
         } else if (to === "CAFFEINE_CREDITS") {
-            result = usd * 91; // Something we figured out, no official source for this though.
+            result = usd * 182; // Something we figured out, no official source for this though.
         } else if (to === "CAFFEINE_GOLD") {
-            result = (usd * 91) / 3;
+            result = (usd * 182) / 3;
         } else if ((to === "TWITCH_BITS") || (to === "TWITCH BITS")) {
             result = usd * 100; // https://twitchbitstousd.com/
         } else {
