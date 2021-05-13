@@ -23,12 +23,14 @@
         "modules/recentfollow.js",
         "modules/recentdonation.js",
         "modules/topdonation.js",
+        "modules/followcounter.js",
         "modules/donationticker.js",
         "modules/bot.js",
         "modules/raidalert.js",
         "modules/subscriptionalert.js",
         "modules/subscriptiongoal.js",
         "modules/recentsubscription.js",
+        "modules/subscribercounter.js",
         "modules/videoshare.js",
         "modules/uptime.js",
         "caffeine/caffeine.js",
@@ -76,6 +78,10 @@
             "id": "recent_follow"
         },
         {
+            "namespace": "casterlabs_follow_counter",
+            "id": "follow_counter"
+        },
+        {
             "namespace": "casterlabs_raid",
             "id": "raid"
         },
@@ -90,6 +96,10 @@
         {
             "namespace": "casterlabs_recent_subscription",
             "id": "recent_subscription"
+        },
+        {
+            "namespace": "casterlabs_subscriber_counter",
+            "id": "subscriber_counter"
         },
         {
             "namespace": "casterlabs_now_playing",
