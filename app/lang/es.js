@@ -22,6 +22,8 @@ LANG.absorbLang({
     "generic.currency": "Moneda",
     "generic.enable_audio": "Activar audio personalizado",
     "generic.use_custom_image": "Utilizar imagen personalizada",
+    // TODO "generic.height": "Height (px)",
+    // TODO "generic.height": "Width (px)",
 
     // Video Share
     // TODO "caffeinated.videoshare.title": "Video Share",
