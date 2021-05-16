@@ -76,6 +76,21 @@ MODULES.moduleClasses["casterlabs_follower_goal"] = class {
             type: "number",
             isLang: true
         },
+        height: {
+            display: "generic.height",
+            type: "number",
+            isLang: true
+        },
+        font: {
+            display: "generic.font",
+            type: "font",
+            isLang: true
+        },
+        font_size: {
+            display: "generic.font.size",
+            type: "number",
+            isLang: true
+        },
         text_color: {
             display: "caffeinated.generic_goal.text_color",
             type: "color",
@@ -90,7 +105,10 @@ MODULES.moduleClasses["casterlabs_follower_goal"] = class {
 
     defaultSettings = {
         title: "",
-        goal_amount: "10",
+        goal_amount: 10,
+        height: 60,
+        font: "Roboto",
+        font_size: 28,
         text_color: "#FFFFFF",
         bar_color: "#31F8FF"
     };

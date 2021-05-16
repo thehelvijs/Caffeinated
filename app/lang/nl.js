@@ -22,6 +22,8 @@ LANG.absorbLang({
     "generic.currency": "Valuta",
     "generic.enable_audio": "Schakel audio op maat in",
     "generic.use_custom_image": "Gebruik een aangepaste afbeelding",
+    // TODO "generic.height": "Height (px)",
+    // TODO "generic.height": "Width (px)",
 
     // Video Share
     // TODO "caffeinated.videoshare.title": "Video Share",

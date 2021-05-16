@@ -192,14 +192,32 @@ function formatCurrency(amount, currency) {
     if (currency === "TROVO_ELIXIR") {
         return `
             <span>
-                <img src="https://static.trovo.live/imgupload/shop/20200422_h5b26j9k0pj.png" />
+                <div style="
+                    display: inline-block; 
+                    height: 1em; 
+                    width: 1em; 
+                    transform: translateY(.1em); 
+                    background-image: url('https://static.trovo.live/imgupload/shop/20200422_h5b26j9k0pj.png'); 
+                    background-repeat: no-repeat;
+                    background-size: 350%;
+                    background-position: center;
+                "></div>
                 ${amount.toFixed(0)}
             </span>
         `;
     } else if (currency === "TROVO_MANA") {
         return `
             <span>
-                <img src="https://static.trovo.live/cat/img/e2374dd.png" />
+                <div style="
+                    display: inline-block; 
+                    height: 1em; 
+                    width: 1em; 
+                    transform: translateY(.1em); 
+                    background-image: url('https://static.trovo.live/cat/img/e2374dd.png'); 
+                    background-repeat: no-repeat;
+                    background-size: 100%;
+                    background-position: center;
+                "></div>
                 ${amount.toFixed(0)}
             </span>
         `;
