@@ -309,6 +309,11 @@
         <script src="js/repomanager.js"></script>
         <script src="js/caffeinated.js"></script>
         <script type="module">
+            import FormElements from "./js/form-elements.mjs";
+
+            window.FormElements = FormElements;
+
+
             import { showRandomStreamer } from "https://assets.casterlabs.co/caffeinated/randomstreamer.mjs"
 
             const streamerElement = document.querySelector("#login-streamer");

@@ -115,14 +115,14 @@ MODULES.uniqueModuleClasses["casterlabs_bot"] = class {
         });
         */
 
-        this.page.querySelector("[name=follow_callout][owner=chat_bot]").setAttribute("maxlength", max);
-        this.page.querySelector("[name=donation_callout][owner=chat_bot]").setAttribute("maxlength", max);
-        this.page.querySelector("[name=welcome_callout][owner=chat_bot]").setAttribute("maxlength", max);
+        this.page.querySelector("[name=follow_callout]").setAttribute("maxlength", max);
+        this.page.querySelector("[name=donation_callout]").setAttribute("maxlength", max);
+        this.page.querySelector("[name=welcome_callout]").setAttribute("maxlength", max);
 
         if (CAFFEINATED.userdata && (CAFFEINATED.userdata.streamer.platform === "TROVO")) {
-            this.page.querySelector("[name=welcome_callout][owner=chat_bot]").parentElement.classList.remove("hide");
+            this.page.querySelector("[name=welcome_callout]").parentElement.classList.remove("hide");
         } else {
-            this.page.querySelector("[name=welcome_callout][owner=chat_bot]").parentElement.classList.add("hide");
+            this.page.querySelector("[name=welcome_callout]").parentElement.classList.add("hide");
         }
     }
 
