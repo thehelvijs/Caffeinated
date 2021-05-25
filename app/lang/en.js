@@ -133,6 +133,12 @@ LANG.absorbLang({
     // Recent Subscription
     "caffeinated.recent_subscription.title": "Recent Subscription",
 
+    // Follow Counter
+    "caffeinated.follow_counter.title": "Follow Counter",
+
+    // Subscriber Counter
+    "caffeinated.subscriber_counter.title": "Subscriber Counter",
+
     // Chat Bot
     "caffeinated.chatbot.title": "Chat Bot",
     "caffeinated.chatbot.commands": "Commands",
