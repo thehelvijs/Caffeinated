@@ -6,6 +6,10 @@
         <style>
             body {
                 text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.3);
+                padding: 0;
+                margin: 0;
+                width: 100vw;
+                width: 100vmin;
             }
 
             #image,
@@ -13,23 +17,27 @@
                 display: block;
                 margin-left: auto;
                 margin-right: auto;
-                object-fit: cover;
-                min-height: 25vh;
-                max-height: 70vh;
-                max-width: 100vw;
-            }
-
-            #event {
+                object-fit: contain;
                 height: 100%;
                 width: 100%;
-                text-align: center;
             }
 
-            #text-container {
-                word-wrap: break-word;
-                margin-left: auto;
-                margin-right: auto;
-                max-width: 85vw;
+            .draggable {
+                overflow: hidden;
+                position: absolute;
+            }
+
+            .container {
+                left: 50%;
+                top: 50%;
+                width: 100vmin;
+                height: 100vmin;
+                transform: translate(-50%, -50%);
+                position: absolute;
+            }
+
+            #alert-text {
+                text-align: center;
             }
 
             .emote {
@@ -44,49 +52,79 @@
                 display: none !important;
             }
         </style>
-        <title>Caffeinated Donations</title>
+        <title>Caffeinated Alert</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
         <script src="overlayutil.js"></script>
+        <script src="draggable.js"></script>
     </head>
 
     <body>
-        <h1 id="event" style="opacity: 0;">
-            <img src="" id="image" />
-            <video src="" id="video"></video>
-            <div class="text-container">
-                <span id="user"></span>
-                <br />
-                <span id="text"></span>
+        <div class="container" style="opacity: 0;">
+            <div id="alert-text" class="draggable"></div>
+            <div id="alert-image" class="draggable">
+                <img src="" id="image" class="hide" />
+                <video src="" id="video" class="hide"></video>
             </div>
-        </h1>
+        </div>
     </body>
 
     <footer>
         <script>
             const overlay = new OverlayUtil("casterlabs_donation");
+
             const DISPLAY_TIME = 10 * 1000;
             const FADE_TIME = 1000;
+
+            const eText = document.querySelector("#alert-text");
+            const eImage = document.querySelector("#alert-image");
+            const eContainer = document.querySelector(".container");
+
             const video = document.querySelector("#video");
-            const user = document.querySelector("#user");
             const img = document.querySelector("#image");
-            const text = document.querySelector("#text");
-            const textContainer = document.querySelector(".text-container");
+
             let config = null;
             let files = {};
             let audio = {};
             let queue = [];
 
-            overlay.changeFont("Poppins");
+            const textDraggable = new Draggable(eText);
+            const imageDraggable = new Draggable(eImage);
 
-            overlay.on("config", (data) => {
+            function update(data) {
                 config = data;
 
                 overlay.changeFont(config.font);
 
-                audio.volume = config.volume;
-                textContainer.style = "color: " + config.text_color + "; font-size: " + config.font_size + "px;";
+                const sizeDelta = (config.font_size / 1000) * eContainer.offsetWidth;
+
+                eText.style.color = config.text_color;
+                eText.style.fontSize = `${sizeDelta}px`;
+
+                updateDraggables();
+            }
+
+            function updateDraggables(draggable_positions = config.draggable_positions) {
+                const { alert_text, alert_image } = draggable_positions;
+
+                textDraggable.setSize(alert_text.width, alert_text.height);
+                textDraggable.setPosition(alert_text.posX, alert_text.posY);
+                textDraggable.setZ(alert_text.zIndex);
+
+                imageDraggable.setSize(alert_image.width, alert_image.height);
+                imageDraggable.setPosition(alert_image.posX, alert_image.posY);
+                imageDraggable.setZ(alert_image.zIndex);
+            }
+
+            overlay.on("config", update);
+
+            window.addEventListener("resize", () => {
+                update(config);
+            });
+
+            overlay.on("draggable_update", (data) => {
+                updateDraggables(data);
             });
 
             overlay.on("audio_file", (data) => {
@@ -97,9 +135,9 @@
                 files.image_file = data;
             });
 
-            overlay.on("event", (event) => {
+            overlay.on("event", (html) => {
                 if (config) {
-                    queue.push(event);
+                    queue.push(html);
 
                     if (queue.length == 1) {
                         render();
@@ -109,7 +147,7 @@
 
             async function render() {
                 let displayTime = DISPLAY_TIME;
-                let event = queue[0];
+                const event = queue[0];
 
                 video.classList = "hide";
                 img.classList = "hide";
@@ -123,7 +161,8 @@
                             video.play();
                             video.classList = "";
                             video.addEventListener("loadeddata", () => {
-                                displayTime = video.duration * 1000;
+                                const duration = video.duration * 1000;
+                                displayTime += (duration - DISPLAY_TIME);
                             });
                         } else {
                             img.classList = "";
@@ -155,10 +194,7 @@
                     event.message = event.message.split(name).join(`<img class="emote" title="${name}" src="${image}" />`);
                 }
 
-                text.innerHTML = event.message;
-
-                user.innerText = event.sender.displayname;
-                user.style = "color: " + event.sender.color + ";";
+                eText.innerHTML = `<span style="color: ${event.sender.color};">${event.sender.displayname}</span><br /><span>${event.message}</span>`;
 
                 switch (config.audio) {
                     case "Custom Audio": {
@@ -179,10 +215,10 @@
                     case "None": break;
                 }
 
-                displayTime -= (FADE_TIME * 2);
+                displayTime -= (FADE_TIME * 2); // So it stops perfectly
 
                 anime({
-                    targets: "#event",
+                    targets: ".container",
                     easing: "linear",
                     opacity: 1,
                     duration: FADE_TIME
@@ -190,7 +226,7 @@
                     await sleep(displayTime);
 
                     anime({
-                        targets: "#event",
+                        targets: ".container",
                         easing: "linear",
                         opacity: 0,
                         duration: FADE_TIME
@@ -204,30 +240,15 @@
                 });
             }
 
-            function playTTS(text) {
+            function playAudio() {
                 try {
-                    audio = new Audio("https://api.casterlabs.co/v1/polly?voice=" + config.text_to_speech_voice + "&text=" + text);
+                    audio = new Audio(files.audio_file);
 
                     audio.volume = config.volume;
                     audio.play();
                 } catch (e) {
                     audio = {};
                 }
-            }
-
-            function playAudio() {
-                return new Promise((resolve) => {
-                    try {
-                        audio = new Audio(files.audio_file);
-
-                        audio.addEventListener("ended", resolve);
-
-                        audio.volume = config.volume;
-                        audio.play();
-                    } catch (e) {
-                        audio = {};
-                    }
-                });
             }
 
             function sleep(ms) {

@@ -171,6 +171,7 @@ class Caffeinated {
         this.token = this.store.get("token");
         this.puppetToken = this.store.get("puppet_token");
         this.userdata = null;
+        this.viewerList = [];
         this.streamdata = null;
         this.notifiedUpdate = false;
 
@@ -1500,6 +1501,10 @@ koi.addEventListener("user_update", (event) => {
 
     CAFFEINATED.userdata = event;
     UI.toggleMetaDisplay();
+});
+
+koi.addEventListener("viewer_list", (event) => {
+    CAFFEINATED.viewerList = event.viewers;
 });
 
 koi.addEventListener("stream_status", (event) => {

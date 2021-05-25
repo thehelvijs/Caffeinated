@@ -8,7 +8,7 @@ const createElement = async (module, key, data, stored, formCallback, defaultVal
     let loaded = false;
 
     frame.classList = "settingsframe";
-    frame.style = `height: ${data.height}`;
+    frame.style = "width: 100%; height: 100%; border: 0; left: 0; top: 0; position: absolute;";
     frame.addEventListener("load", () => {
         if (!loaded) {
             loaded = true;
@@ -26,6 +26,7 @@ const createElement = async (module, key, data, stored, formCallback, defaultVal
     const container = document.createElement("div");
 
     container.id = uuid;
+    container.style = "position: relative; overflow: hidden; user-select: none; " + data.style;
     container.classList = "module-settings-element iframe-src data";
     container.setAttribute("name", key);
     container.setAttribute("owner", module.id);
