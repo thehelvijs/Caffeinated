@@ -20,7 +20,7 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
             name: "Copy",
             icon: "copy",
             onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/chat.html?id=" + instance.id);
+                putInClipboard("https://widgets.casterlabs.co/chat.html?id=" + instance.id);
             }
         }
     ]

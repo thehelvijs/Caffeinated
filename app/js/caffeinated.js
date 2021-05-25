@@ -1687,3 +1687,11 @@ setTimeout(() => {
         `;
     }, "#00acee");
 }, (25 * 60) * 1000);
+
+CAFFEINATED.triggerBanner("1.2-widgets-warning", (element) => {
+    element.innerHTML = `
+        <span style="margin-left: 5px; color: white;">
+            We changed where widgets are stored, you will have to redo your links in obs.
+        </span>
+    `;
+}, "hsl(344 87% 49% / 1)");

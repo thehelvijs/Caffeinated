@@ -13,7 +13,7 @@ MODULES.moduleClasses["casterlabs_video_share"] = class {
             name: "Copy",
             icon: "copy",
             onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/videoshare.html?id=" + instance.id);
+                putInClipboard("https://widgets.casterlabs.co/videoshare.html?id=" + instance.id);
             }
         }
     ]

@@ -22,7 +22,7 @@ MODULES.moduleClasses["casterlabs_donation"] = class {
             name: "Copy",
             icon: "copy",
             onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/donation.html?id=" + instance.id);
+                putInClipboard("https://widgets.casterlabs.co/donation.html?id=" + instance.id);
             }
         }
     ]

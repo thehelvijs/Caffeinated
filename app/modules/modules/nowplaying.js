@@ -13,7 +13,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
             name: "Copy",
             icon: "copy",
             onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/nowplaying.html?id=" + instance.id);
+                putInClipboard("https://widgets.casterlabs.co/nowplaying.html?id=" + instance.id);
             }
         }
     ]

@@ -15,7 +15,7 @@ MODULES.moduleClasses["casterlabs_subscriber_counter"] = class {
             name: "Copy",
             icon: "copy",
             onclick(instance) {
-                putInClipboard("https://caffeinated.casterlabs.co/display.html?namespace=" + instance.namespace + "&id=" + instance.id);
+                putInClipboard("https://widgets.casterlabs.co/display.html?namespace=" + instance.namespace + "&id=" + instance.id);
             }
         }
     ]
