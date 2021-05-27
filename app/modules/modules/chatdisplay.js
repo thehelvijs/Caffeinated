@@ -38,6 +38,11 @@ MODULES.uniqueModuleClasses["casterlabs_chat_display"] = class {
                     koi.upvote(id);
                 }, socket);
 
+
+                MODULES.addIOHandler(this, "delete", (id) => {
+                    koi.deleteMessage(id);
+                }, socket);
+
                 MODULES.addIOHandler(this, "chat", (message) => {
                     koi.sendMessage(message);
                 }, socket);
@@ -118,6 +123,10 @@ MODULES.uniqueModuleClasses["casterlabs_chat_display"] = class {
 
         this.contentDocument.addEventListener("upvote_request", (e) => {
             koi.upvote(e.detail.id);
+        });
+
+        this.contentDocument.addEventListener("delete_request", (e) => {
+            koi.deleteMessage(e.detail.id);
         });
 
         this.contentDocument.addEventListener("send_message", (e) => {
@@ -292,6 +301,10 @@ MODULES.uniqueModuleClasses["casterlabs_chat_display"] = class {
 
             this.popoutWindow.addListener("upvote_request", (id) => {
                 koi.upvote(id);
+            });
+
+            this.popoutWindow.addEventListener("delete_request", (id) => {
+                koi.deleteMessage(id);
             });
 
             this.popoutWindow.addListener("send_message", (message) => {

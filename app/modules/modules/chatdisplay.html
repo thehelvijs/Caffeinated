@@ -502,7 +502,7 @@
                 }
             }
 
-            function upvote(id) {
+            function upvoteMesage(id) {
                 if (connPresent) {
                     conn.emit("upvote", id);
                 } else if (currentWindow) {
@@ -516,24 +516,40 @@
                 }
             }
 
+            function deleteMessage(id) {
+                if (connPresent) {
+                    conn.emit("delete", id);
+                } else if (currentWindow) {
+                    currentWindow.emit("delete_request", id);
+                } else {
+                    document.dispatchEvent(new CustomEvent("delete_request", {
+                        detail: {
+                            id: id
+                        }
+                    }));
+                }
+            }
+
             function messageMeta(event) {
-                const element = document.querySelector("[vc_message_id='" + event.id + "']");
+                const element = document.querySelector(`[vc_message_id='${event.id}']`);
 
                 if (element) {
                     if (event.is_visible) {
-                        element.innerText = event.upvotes;
+                        if (event.upvotes > 0) {
+                            element.innerText = event.upvotes;
 
-                        if (event.upvotes >= 1000) {
-                            element.classList = "upvote-4";
-                        } else if (event.upvotes >= 100) {
-                            element.classList = "upvote-3";
-                        } else if (event.upvotes >= 10) {
-                            element.classList = "upvote-2";
-                        } else if (event.upvotes >= 1) {
-                            element.classList = "upvote-1";
+                            if (event.upvotes >= 1000) {
+                                element.classList = "upvote-4";
+                            } else if (event.upvotes >= 100) {
+                                element.classList = "upvote-3";
+                            } else if (event.upvotes >= 10) {
+                                element.classList = "upvote-2";
+                            } else if (event.upvotes >= 1) {
+                                element.classList = "upvote-1";
+                            }
                         }
                     } else {
-                        element.remove();
+                        element.parentElement.parentElement.remove();
                     }
                 }
             }
@@ -624,27 +640,43 @@
                 replytooltip.classList.add("tooltipbtn");
                 tooltip.appendChild(replytooltip);
 
-                if (event.sender.platform === "CAFFEINE") {
-                    if (event.id) {
-                        const upvotetooltip = document.createElement("li");
-                        const upvotebtn = document.createElement("a");
+                if (event.event_abilities.upvotable) {
+                    const upvotetooltip = document.createElement("li");
+                    const upvotebtn = document.createElement("a");
 
-                        upvotebtn.innerHTML = `<ion-icon name="arrow-up"></ion-icon>`;
-                        upvotebtn.title = "Upvote";
-                        upvotebtn.addEventListener("click", () => {
-                            upvote(event.id);
-                            upvotetooltip.remove();
-                        });
+                    upvotebtn.innerHTML = `<ion-icon name="arrow-up"></ion-icon>`;
+                    upvotebtn.title = "Upvote";
+                    upvotebtn.addEventListener("click", () => {
+                        upvoteMesage(event.id);
+                        upvotetooltip.remove();
+                    });
 
+                    if (event.sender.platform === "CAFFEINE") {
                         // Caffeine won't let you upvote a message past 10 minutes
                         setTimeout(() => {
                             upvotetooltip.remove();
                         }, (10 * 60) * 1000);
-
-                        upvotetooltip.appendChild(upvotebtn);
-                        upvotetooltip.classList.add("tooltipbtn");
-                        tooltip.appendChild(upvotetooltip);
                     }
+
+                    upvotetooltip.appendChild(upvotebtn);
+                    upvotetooltip.classList.add("tooltipbtn");
+                    tooltip.appendChild(upvotetooltip);
+                }
+
+                if (event.event_abilities.deletable) {
+                    const deletetooltip = document.createElement("li");
+                    const deletebtn = document.createElement("a");
+
+                    deletebtn.innerHTML = `<ion-icon name="trash"></ion-icon>`;
+                    deletebtn.title = "Delete";
+                    deletebtn.addEventListener("click", () => {
+                        deleteMessage(event.id);
+                        deletetooltip.remove();
+                    });
+
+                    deletetooltip.appendChild(deletebtn);
+                    deletetooltip.classList.add("tooltipbtn");
+                    tooltip.appendChild(deletetooltip);
                 }
 
                 tooltip.classList.add("tip");

@@ -174,6 +174,15 @@ class Koi {
         }
     }
 
+    deleteMessage(messageId) {
+        if (this.isAlive()) {
+            this.ws.send(JSON.stringify({
+                type: "DELETE",
+                message_id: messageId
+            }));
+        }
+    }
+
     sendMessage(message, event = CAFFEINATED.userdata, chatter = "CLIENT") {
         if (message.startsWith("/caffeinated")) {
             this.broadcast("x_caffeinated_command", { text: message });
