@@ -530,6 +530,16 @@
                 }
             }
 
+            function clearChat(event) {
+                if (event.clear_type == "ALL") {
+                    document.getElementById("chatbox").innerHTML = "";
+                } else {
+                    Array
+                        .from(document.querySelectorAll(`[vc_sender_upid='${event.user_upid}']`))
+                        .forEach((e) => e.remove());
+                }
+            }
+
             function messageMeta(event) {
                 const element = document.querySelector(`[vc_message_id='${event.id}']`);
 
@@ -555,136 +565,139 @@
             }
 
             function addMessage(event) {
-                const div = document.createElement("div");
-                const username = document.createElement("span");
-                const pfp = document.createElement("img");
-                const text = document.createElement("span");
+                if (!document.querySelector(`[message_id='${event.id}']`)) {
+                    const div = document.createElement("div");
+                    const username = document.createElement("span");
+                    const pfp = document.createElement("img");
+                    const text = document.createElement("span");
 
-                const msg = document.createElement("li");
-                const tooltip = document.createElement("ul");
-                const counter = document.createElement("sup");
+                    const msg = document.createElement("li");
+                    const tooltip = document.createElement("ul");
+                    const counter = document.createElement("sup");
 
-                pfp.src = event.sender.image_link;
-                pfp.classList.add("vcprofile");
-                pfp.setAttribute("title", "Click to open channel in your web browser");
-                pfp.addEventListener("click", () => {
-                    openLink(event.sender.link);
-                });
-
-                username.classList.add("vcusername");
-                username.style = "color: " + event.sender.color + ";";
-                username.appendChild(pfp);
-                username.appendChild(document.createTextNode(event.sender.displayname));
-
-                event.sender.badges.forEach((badge) => {
-                    const badgeIcon = document.createElement("img");
-
-                    badgeIcon.src = badge;
-                    badgeIcon.classList = "vcbadge";
-
-                    username.appendChild(badgeIcon);
-                });
-
-                username.appendChild(text);
-
-                text.classList.add("vctext");
-
-                event.message = escapeHtml(event.message);
-
-                for (const [name, image] of Object.entries(event.emotes)) {
-                    event.message = event.message.split(name).join(`<img class="vcimage" title="${name}" src="${image}" />`);
-                }
-
-                event.links.forEach((pattern) => {
-                    const link = pattern.includes("://") ? pattern : ("https://" + pattern);
-
-                    event.message = event.message.split(pattern).join(`<a onclick="openLink('${link}')">${pattern}</a>`);
-                });
-
-                text.innerHTML = " " + event.message + " ";
-
-                counter.setAttribute("vc_message_id", event.id);
-
-                div.classList.add("vcchatmessage");
-                div.appendChild(username);
-
-                div.appendChild(counter);
-
-                if (event.donations) {
-                    event.donations.forEach((donation) => {
-                        // Caffeine Props & Trovo Spells don't appear in chat like Twitch Cheers do.
-                        if (donation.type !== "TWITCH_BITS") {
-                            const img = document.createElement("img");
-
-                            img.src = donation.image;
-                            img.classList = "vcimage";
-
-                            username.appendChild(img);
-                        }
-                    });
-                }
-
-                msg.appendChild(div);
-
-                const replytooltip = document.createElement("li");
-                const replybtn = document.createElement("a");
-
-                replybtn.innerHTML = `<ion-icon name="arrow-redo-outline"></ion-icon>`;
-                replybtn.title = "Reply";
-                replybtn.addEventListener("click", () => {
-                    messageInput.value = `@${event.sender.displayname} `;
-                    messageInput.focus();
-                });
-
-                replytooltip.appendChild(replybtn);
-                replytooltip.classList.add("tooltipbtn");
-                tooltip.appendChild(replytooltip);
-
-                if (event.event_abilities.upvotable) {
-                    const upvotetooltip = document.createElement("li");
-                    const upvotebtn = document.createElement("a");
-
-                    upvotebtn.innerHTML = `<ion-icon name="arrow-up"></ion-icon>`;
-                    upvotebtn.title = "Upvote";
-                    upvotebtn.addEventListener("click", () => {
-                        upvoteMesage(event.id);
-                        upvotetooltip.remove();
+                    pfp.src = event.sender.image_link;
+                    pfp.classList.add("vcprofile");
+                    pfp.setAttribute("title", "Click to open channel in your web browser");
+                    pfp.addEventListener("click", () => {
+                        openLink(event.sender.link);
                     });
 
-                    if (event.sender.platform === "CAFFEINE") {
-                        // Caffeine won't let you upvote a message past 10 minutes
-                        setTimeout(() => {
-                            upvotetooltip.remove();
-                        }, (10 * 60) * 1000);
+                    username.classList.add("vcusername");
+                    username.style = "color: " + event.sender.color + ";";
+                    username.appendChild(pfp);
+                    username.appendChild(document.createTextNode(event.sender.displayname));
+
+                    event.sender.badges.forEach((badge) => {
+                        const badgeIcon = document.createElement("img");
+
+                        badgeIcon.src = badge;
+                        badgeIcon.classList = "vcbadge";
+
+                        username.appendChild(badgeIcon);
+                    });
+
+                    username.appendChild(text);
+
+                    text.classList.add("vctext");
+
+                    event.message = escapeHtml(event.message);
+
+                    for (const [name, image] of Object.entries(event.emotes)) {
+                        event.message = event.message.split(name).join(`<img class="vcimage" title="${name}" src="${image}" />`);
                     }
 
-                    upvotetooltip.appendChild(upvotebtn);
-                    upvotetooltip.classList.add("tooltipbtn");
-                    tooltip.appendChild(upvotetooltip);
-                }
+                    event.links.forEach((pattern) => {
+                        const link = pattern.includes("://") ? pattern : ("https://" + pattern);
 
-                if (event.event_abilities.deletable) {
-                    const deletetooltip = document.createElement("li");
-                    const deletebtn = document.createElement("a");
-
-                    deletebtn.innerHTML = `<ion-icon name="trash"></ion-icon>`;
-                    deletebtn.title = "Delete";
-                    deletebtn.addEventListener("click", () => {
-                        deleteMessage(event.id);
-                        deletetooltip.remove();
+                        event.message = event.message.split(pattern).join(`<a onclick="openLink('${link}')">${pattern}</a>`);
                     });
 
-                    deletetooltip.appendChild(deletebtn);
-                    deletetooltip.classList.add("tooltipbtn");
-                    tooltip.appendChild(deletetooltip);
+                    text.innerHTML = " " + event.message + " ";
+
+                    counter.setAttribute("vc_message_id", event.id);
+                    msg.setAttribute("vc_sender_upid", event.sender.UPID);
+
+                    div.classList.add("vcchatmessage");
+                    div.appendChild(username);
+
+                    div.appendChild(counter);
+
+                    if (event.donations) {
+                        event.donations.forEach((donation) => {
+                            // Caffeine Props & Trovo Spells don't appear in chat like Twitch Cheers do.
+                            if (donation.type !== "TWITCH_BITS") {
+                                const img = document.createElement("img");
+
+                                img.src = donation.image;
+                                img.classList = "vcimage";
+
+                                username.appendChild(img);
+                            }
+                        });
+                    }
+
+                    msg.appendChild(div);
+
+                    const replytooltip = document.createElement("li");
+                    const replybtn = document.createElement("a");
+
+                    replybtn.innerHTML = `<ion-icon name="arrow-redo-outline"></ion-icon>`;
+                    replybtn.title = "Reply";
+                    replybtn.addEventListener("click", () => {
+                        messageInput.value = `@${event.sender.displayname} `;
+                        messageInput.focus();
+                    });
+
+                    replytooltip.appendChild(replybtn);
+                    replytooltip.classList.add("tooltipbtn");
+                    tooltip.appendChild(replytooltip);
+
+                    if (event.event_abilities.upvotable) {
+                        const upvotetooltip = document.createElement("li");
+                        const upvotebtn = document.createElement("a");
+
+                        upvotebtn.innerHTML = `<ion-icon name="arrow-up"></ion-icon>`;
+                        upvotebtn.title = "Upvote";
+                        upvotebtn.addEventListener("click", () => {
+                            upvoteMesage(event.id);
+                            upvotetooltip.remove();
+                        });
+
+                        if (event.sender.platform === "CAFFEINE") {
+                            // Caffeine won't let you upvote a message past 10 minutes
+                            setTimeout(() => {
+                                upvotetooltip.remove();
+                            }, (10 * 60) * 1000);
+                        }
+
+                        upvotetooltip.appendChild(upvotebtn);
+                        upvotetooltip.classList.add("tooltipbtn");
+                        tooltip.appendChild(upvotetooltip);
+                    }
+
+                    if (event.event_abilities.deletable) {
+                        const deletetooltip = document.createElement("li");
+                        const deletebtn = document.createElement("a");
+
+                        deletebtn.innerHTML = `<ion-icon name="trash"></ion-icon>`;
+                        deletebtn.title = "Delete";
+                        deletebtn.addEventListener("click", () => {
+                            deleteMessage(event.id);
+                            deletetooltip.remove();
+                        });
+
+                        deletetooltip.appendChild(deletebtn);
+                        deletetooltip.classList.add("tooltipbtn");
+                        tooltip.appendChild(deletetooltip);
+                    }
+
+                    tooltip.classList.add("tip");
+                    msg.appendChild(tooltip);
+
+                    document.querySelector("#chatbox").appendChild(msg);
+
+                    tryJump();
                 }
-
-                tooltip.classList.add("tip");
-                msg.appendChild(tooltip);
-
-                document.querySelector("#chatbox").appendChild(msg);
-
-                tryJump();
             }
 
             function addStatus(profile, lang, id, type) {
@@ -770,6 +783,8 @@
                         case "MESSAGE": addMessage(event.event); break;
 
                         case "STATUS": addStatus(event.profile, event.lang, event.id); break;
+
+                        case "CLEARCHAT": clearChat(event); break;
 
                     }
                 });

@@ -107,6 +107,10 @@
                             messageMeta(event);
                             return;
 
+                        case "CLEARCHAT":
+                            clearChat(event);
+                            return;
+
                         case "STATUS":
                             // Prevent duplicates
                             if (!event.id || !document.querySelector("[message_id='" + event.id + "']")) {
@@ -117,59 +121,72 @@
 
                     }
 
-                    switch (config.chat_animation) {
-                        case "Slide": animateSlide(div); break;
+                    if (!document.querySelector(`[message_id='${event.id}']`)) {
+                        switch (config.chat_animation) {
+                            case "Slide": animateSlide(div); break;
 
-                        case "Slide (Disappearing)": animateSlide(div); disappear(div); break;
+                            case "Slide (Disappearing)": animateSlide(div); disappear(div); break;
 
-                        case "Disappearing": disappear(div); break;
-                    }
+                            case "Disappearing": disappear(div); break;
+                        }
 
-                    if (config.text_align == "Right") {
-                        div.classList = "right-align";
-                    }
+                        if (config.text_align == "Right") {
+                            div.classList = "right-align";
+                        }
 
-                    if (event.donations) {
-                        event.donations.forEach((donation) => {
-                            // TODO Trovo, when we figure that out.
-                            if (donation.type === "CAFFEINE_PROP") {
-                                const img = document.createElement("img");
+                        if (event.donations) {
+                            event.donations.forEach((donation) => {
+                                // TODO Trovo, when we figure that out.
+                                if (donation.type === "CAFFEINE_PROP") {
+                                    const img = document.createElement("img");
 
-                                img.src = donation.animated_image;
+                                    img.src = donation.animated_image;
 
-                                div.appendChild(img);
-                            }
-                        });
-                    }
+                                    div.appendChild(img);
+                                }
+                            });
+                        }
 
-                    if (config.chat_direction.toUpperCase() == "UP") {
-                        document.body.style = "top: 0px;";
-                        document.getElementById("div").insertBefore(div, document.getElementById("div").firstChild);
-                    } else {
-                        document.body.style = "bottom: 0px;";
-                        document.getElementById("div").appendChild(div);
+                        if (config.chat_direction.toUpperCase() == "UP") {
+                            document.body.style = "top: 0px;";
+                            document.getElementById("div").insertBefore(div, document.getElementById("div").firstChild);
+                        } else {
+                            document.body.style = "bottom: 0px;";
+                            document.getElementById("div").appendChild(div);
+                        }
                     }
                 }
             });
 
+            function clearChat(event) {
+                if (event.clear_type == "ALL") {
+                    document.getElementById("div").innerHTML = "";
+                } else {
+                    Array.from(document.querySelectorAll(`[sender_upid='${event.user_upid}']`))
+                        .forEach((e) => e.remove());
+                }
+            }
+
             function messageMeta(event) {
-                const element = document.querySelector("[message_id='" + event.id + "']");
+                const element = document.querySelector(`[message_id='${event.id}']`);
 
                 if (element) {
                     if (event.is_visible) {
-                        element.innerText = event.upvotes;
+                        if (event.upvotes > 0) {
+                            element.innerText = event.upvotes;
 
-                        if (event.upvotes >= 1000) {
-                            element.classList = "upvote-4";
-                        } else if (event.upvotes >= 100) {
-                            element.classList = "upvote-3";
-                        } else if (event.upvotes >= 10) {
-                            element.classList = "upvote-2";
-                        } else if (event.upvotes >= 1) {
-                            element.classList = "upvote-1";
+                            if (event.upvotes >= 1000) {
+                                element.classList = "upvote-4";
+                            } else if (event.upvotes >= 100) {
+                                element.classList = "upvote-3";
+                            } else if (event.upvotes >= 10) {
+                                element.classList = "upvote-2";
+                            } else if (event.upvotes >= 1) {
+                                element.classList = "upvote-1";
+                            }
                         }
                     } else {
-                        element.remove();
+                        element.parentElement.remove();
                     }
                 }
             }
@@ -194,6 +211,7 @@
                 msg.innerHTML = event.message + " ";
 
                 counter.setAttribute("message_id", event.id);
+                div.setAttribute("sender_upid", event.sender.UPID);
 
                 div.appendChild(user);
 

@@ -86,6 +86,10 @@ MODULES.uniqueModuleClasses["casterlabs_chat_display"] = class {
             this.messageMeta(event);
         });
 
+        koi.addEventListener("clearchat", (event) => {
+            this.clearChat(event);
+        });
+
         koi.addEventListener("channel_points", (event) => {
             this.addPointStatus(event.sender, event.reward, "caffeinated.chatdisplay.reward_text", event.id);
         });
@@ -340,6 +344,23 @@ MODULES.uniqueModuleClasses["casterlabs_chat_display"] = class {
         });
 
         this.contentWindow.messageMeta(event);
+    }
+
+    clearChat(event) {
+        const script = `clearChat(${JSON.stringify(event)})`;
+
+        MODULES.emitDockIO(this, "eval", script);
+
+        if (this.popoutWindow) {
+            this.popoutWindow.webContents.executeJavaScript(script);
+        }
+
+        this.messageHistory.push({
+            type: "CLEARCHAT",
+            event: Object.assign({}, event)
+        });
+
+        this.contentWindow.clearChat(event);
     }
 
     addMessage(event) {
