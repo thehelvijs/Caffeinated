@@ -97,6 +97,8 @@
 
                     let div;
 
+                    if (!event.event_type) event.event_type = "CHAT";
+
                     switch (event.event_type) {
                         case "DONATION":
                         case "CHAT":
@@ -115,10 +117,13 @@
                             // Prevent duplicates
                             if (!event.id || !document.querySelector("[message_id='" + event.id + "']")) {
                                 div = createStatusMessageElement(event);
+                                break;
                             } else {
                                 return;
                             }
 
+                        default:
+                            return;
                     }
 
                     if (!document.querySelector(`[message_id='${event.id}']`)) {

@@ -6,6 +6,8 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
         this.displayname = "caffeinated.chat.title";
         this.type = "overlay settings";
         this.id = id;
+
+        this.catchups = [];
     }
 
     widgetDisplay = [
@@ -31,22 +33,21 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
 
     onConnection(socket) {
         MODULES.emitIO(this, "config", this.settings, socket);
+        this.sendCatchups(socket);
     }
 
     init() {
-        const instance = this;
-
         koi.addEventListener("meta", (event) => {
-            MODULES.emitIO(instance, "event", event);
+            this.sendMessage(event);
         });
 
         koi.addEventListener("chat", (event) => {
-            MODULES.emitIO(instance, "event", event);
+            this.sendMessage(event);
         });
 
         koi.addEventListener("donation", (event) => {
-            if (instance.settings.show_donations) {
-                MODULES.emitIO(instance, "event", event);
+            if (this.settings.show_donations) {
+                this.sendMessage(event);
             }
         });
 
@@ -58,6 +59,27 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
             // this.addStatus(event.follower, "caffeinated.chatdisplay.follow_text");
         });
 
+        koi.addEventListener("CATCHUP", (event) => {
+            this.catchups = event.events;
+            this.sendCatchups();
+        });
+
+    }
+
+    sendCatchups(socket) {
+        for (const catchup of this.catchups) {
+            MODULES.emitIO(this, "event", catchup, socket);
+        }
+    }
+
+    sendMessage(event) {
+        this.catchups.push(event);
+
+        MODULES.emitIO(this, "event", event);
+
+        if (this.catchups.length > 100) {
+            this.catchups.shift();
+        }
     }
 
     // TODO status messages.
@@ -79,7 +101,7 @@ MODULES.moduleClasses["casterlabs_chat"] = class {
         }
     
         addManualStatus(lang) {
-            MODULES.emitIO(instance, "event", {
+            this.sendMessage({
                 type: "STATUS",
                 lang: lang
             });
