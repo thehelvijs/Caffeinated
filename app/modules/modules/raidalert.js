@@ -27,9 +27,6 @@ MODULES.moduleClasses["casterlabs_raid"] = class {
     ]
 
     getDataToStore() {
-        FileStore.setFile(this, "audio_file", this.audio_file);
-        FileStore.setFile(this, "image_file", this.image_file);
-
         return nullFields(this.settings, ["audio_file", "image_file"]);
     }
 
@@ -41,18 +38,20 @@ MODULES.moduleClasses["casterlabs_raid"] = class {
     }
 
     init() {
+        this.iframeWindow = this.page.querySelector("iframe").contentWindow;
+        this.iframeDocument = this.iframeWindow.document;
+
         koi.addEventListener("raid", (event) => {
-            MODULES.emitIO(
-                this,
-                "event",
-                `<span style="color: ${event.host.color};">${event.host.displayname}</span> just raided with <span style="color: ${event.host.color};">${event.viewers}</span> ${event.viewers == 1 ? "viewer" : "viewers"}`
-            );
+            const raider = `<span style="color: ${event.host.color};">${event.host.displayname}</span>`;
+
+            MODULES.emitIO(this, "event", LANG.getTranslation("caffeinated.raid_alert.format.now_raiding", raider, event.viewers));
         });
 
         if (this.settings.audio_file) {
             this.audio_file = this.settings.audio_file;
             delete this.settings.audio_file;
 
+            FileStore.setFile(this, "audio_file", this.audio_file);
             MODULES.saveToStore(this);
         } else {
             this.audio_file = FileStore.getFile(this, "audio_file", this.audio_file);
@@ -62,26 +61,84 @@ MODULES.moduleClasses["casterlabs_raid"] = class {
             this.image_file = this.settings.image_file;
             delete this.settings.image_file;
 
+            FileStore.setFile(this, "image_file", this.image_file);
             MODULES.saveToStore(this);
         } else {
             this.image_file = FileStore.getFile(this, "image_file", this.image_file);
         }
+
+        this.iframeDocument.addEventListener("draggable_save", () => {
+            MODULES.saveToStore(this);
+        });
+
+        this.iframeDocument.addEventListener("draggable_update", (e) => {
+            const update = e.detail;
+
+            this.settings.draggable_positions[update.type] = update;
+
+            MODULES.emitIO(this, "draggable_update", this.settings.draggable_positions);
+        });
+
+        // Give the frame time to render.
+        setTimeout(() => {
+            this.iframeWindow.init(this.settings);
+            this.updateIframe();
+            this.iframeWindow.updateImage(this.settings, this.image_file);
+        }, 5000);
+
+        setInterval(() => {
+            // Randomize the displayed user.
+            this.updateIframeText();
+        }, 10000);
+    }
+
+    updateIframeText() {
+        const viewers = [...CAFFEINATED.viewerList];
+
+        // Add Casterlabs to the mix, incase they don't have any viewers
+        viewers.push({
+            color: "#ea4c4c",
+            displayname: "Casterlabs"
+        });
+
+        const viewer = viewers[Math.floor(Math.random() * viewers.length)];
+        const viewerCount = Math.floor(Math.random() * 10);
+
+        const raider = `<span style="color: ${viewer.color};">${viewer.displayname}</span>`;
+
+        const translated = LANG.getTranslation("caffeinated.raid_alert.format.now_raiding", raider, viewerCount);
+
+        this.iframeWindow.updateText(translated);
+    }
+
+    updateIframe() {
+        this.iframeWindow.update(this.settings);
+        this.updateIframeText();
     }
 
     async onSettingsUpdate() {
-        MODULES.emitIO(this, "config", nullFields(this.settings, ["audio_file", "image_file"]));
+        const nulled = nullFields(this.settings, ["audio_file", "image_file"]);
 
-        if (this.settings.audio_file.files.length > 0) {
+        MODULES.emitIO(this, "config", nulled);
+
+        if (this.settings.audio_file?.files.length > 0) {
             this.audio_file = await fileToBase64(this.settings.audio_file, "audio");
+            this.settings.audio_file = null;
 
             MODULES.emitIO(this, "audio_file", this.audio_file);
+            FileStore.setFile(this, "audio_file", this.audio_file);
         }
 
-        if (this.settings.image_file.files.length > 0) {
+        if (this.settings.image_file?.files.length > 0) {
             this.image_file = await fileToBase64(this.settings.image_file);
+            this.settings.image_file = null;
 
             MODULES.emitIO(this, "image_file", this.image_file);
+            FileStore.setFile(this, "image_file", this.image_file);
         }
+
+        this.iframeWindow.updateImage(nulled, this.image_file);
+        this.updateIframe();
     }
 
     settingsDisplay = {
@@ -124,18 +181,41 @@ MODULES.moduleClasses["casterlabs_raid"] = class {
             display: "generic.image.file",
             type: "file",
             isLang: true
+        },
+        editor_frame: {
+            type: "iframe-src",
+            style: "margin-top: 1em; width: 100%; padding-bottom: 100%;"
         }
     };
 
     defaultSettings = {
         font: "Poppins",
-        font_size: "16",
+        font_size: 30,
         text_color: "#FFFFFF",
         volume: 1,
-        enable_audio: true,
-        use_custom_image: true,
+        enable_audio: false,
+        use_custom_image: false,
         audio_file: "",
-        image_file: ""
+        image_file: "",
+
+        editor_frame: __dirname + "/modules/modules/alert_editor.html",
+
+        draggable_positions: {
+            alert_text: {
+                type: "alert_text",
+                width: 0.65,
+                height: 0.1,
+                posX: 0.175,
+                posY: 0.5
+            },
+            alert_image: {
+                type: "alert_image",
+                width: 0.65,
+                height: 0.35,
+                posX: 0.175,
+                posY: 0.12
+            }
+        }
     };
 
 };
