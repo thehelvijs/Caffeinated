@@ -42,7 +42,11 @@ MODULES.moduleClasses["casterlabs_raid"] = class {
 
     init() {
         koi.addEventListener("raid", (event) => {
-            MODULES.emitIO(this, "event", `<span style="color: ${event.host.color};">${event.host.displayname}</span> started following`);
+            MODULES.emitIO(
+                this,
+                "event",
+                `<span style="color: ${event.host.color};">${event.host.displayname}</span> just raided with <span style="color: ${event.host.color};">${event.viewers}</span> ${event.viewers == 1 ? "viewer" : "viewers"}`
+            );
         });
 
         if (this.settings.audio_file) {
