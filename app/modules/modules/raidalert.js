@@ -6,7 +6,7 @@ MODULES.moduleClasses["casterlabs_raid"] = class {
         this.displayname = "caffeinated.raid_alert.title";
         this.type = "overlay settings";
         this.id = id;
-        this.supportedPlatforms = ["TWITCH", "TROVO"];
+        this.supportedPlatforms = ["TWITCH", "TROVO", "BRIME"];
     }
 
     widgetDisplay = [

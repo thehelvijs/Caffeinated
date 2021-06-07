@@ -13,6 +13,8 @@ const VERSION = "1.2-beta2";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
+const BRIME_CLIENT_ID = "605fadfe563212359ce4eb8b";
+
 const discordRPCClient = new RPC.Client({
     transport: "ipc"
 });
@@ -1299,7 +1301,7 @@ const UI = {
 
         this.loginScreen("WAITING");
 
-        fetch("https://api-staging.brimelive.com/internal/auth/login?client_id=605fadfe563212359ce4eb8b", {
+        fetch("https://api-staging.brimelive.com/internal/auth/login?client_id=" + BRIME_CLIENT_ID, {
             method: "POST",
             body: JSON.stringify(loginPayload),
             headers: new Headers({
