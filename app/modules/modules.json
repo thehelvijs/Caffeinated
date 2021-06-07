@@ -34,6 +34,7 @@
         "modules/videoshare.js",
         "modules/uptime.js",
         "caffeine/caffeine.js",
+        "brime/brime.js",
         "ko-fi/kofimodule.js"
     ],
     "simple": [
@@ -118,6 +119,10 @@
         {
             "namespace": "caffeine_integration",
             "id": "caffeine_integration"
+        },
+        {
+            "namespace": "brime_integration",
+            "id": "brime_integration"
         },
         {
             "namespace": "casterlabs_bot",
