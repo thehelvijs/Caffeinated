@@ -299,13 +299,23 @@ class Caffeinated {
 
         // Don't show the page on first install, this is the easy way to accomplish this.
         if (CAFFEINATED.store.get("token")) {
-            CAFFEINATED.triggerBanner(`${PROTOCOLVERSION}-changelog`, (element) => {
-                element.innerHTML = `
+            const channel = this.getChannel();
+            let banner;
+
+            if (channel == "stable") {
+                banner = `
                     Caffeinated was updated to version ${VERSION}. 
                     <a style="margin-left: 5px; color: white; text-decoration: underline;" onclick="this.parentElement.parentElement.remove(); document.querySelector('#changelog').classList = '';">
                         See what's new.
                     </a>
                 `;
+            } else {
+                banner = `Caffeinated was updated to version ${VERSION}.`;
+            }
+
+
+            CAFFEINATED.triggerBanner(`${PROTOCOLVERSION}-changelog`, (element) => {
+                element.innerHTML = banner;
             }, "#06d6a0");
         }
 
