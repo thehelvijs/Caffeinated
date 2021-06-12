@@ -64,27 +64,7 @@ const ANALYTICS = (() => {
         async logEvent(event) {
             if (event && !event.isTest) {
                 switch (event.event_type) {
-                    case "STREAM_STATUS": {
-                        if (CAFFEINATED.streamdata && (event.title != CAFFEINATED.streamdata.title)) {
-                            woopra.track("stream_title_update", {
-                                title: event.title
-                            });
-                        }
 
-                        if (
-                            // If there is existing stream data and it doesn't equal the previous state.
-                            (CAFFEINATED.streamdata && (event.is_live != CAFFEINATED.streamdata.is_live)) ||
-                            // OR if there isn't existing stream data and the person is live (We should log it.) 
-                            (!CAFFEINATED.streamdata && event.is_live)
-                        ) {
-                            if (event.is_live) {
-                                woopra.track("stream_online", {});
-                            } else {
-                                woopra.track("stream_offline", {});
-                            }
-                        }
-                        break;
-                    }
                 }
             }
         }
