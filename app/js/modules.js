@@ -265,7 +265,7 @@ class Modules {
                         reload();
                     },
                     baseSrc: baseSrc + "/",
-                    owner: owner,
+                    // owner: owner,
                     on: (type, callback) => {
                         type = type.toLowerCase();
 
