@@ -313,7 +313,6 @@
 
             window.FormElements = FormElements;
 
-
             import { showRandomStreamer } from "https://assets.casterlabs.co/caffeinated/randomstreamer.mjs"
 
             const streamerElement = document.querySelector("#login-streamer");
@@ -329,8 +328,7 @@
 
                 contentsElement.classList = `streamer-${direction}`;
             };
-        </script>
-        <script>
+
             window.addEventListener("beforeunload", () => {
                 const current = electron.getCurrentWindow();
 
