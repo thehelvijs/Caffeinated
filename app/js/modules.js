@@ -246,6 +246,9 @@ class Modules {
 
         const reload = () => {
             return new Promise(async (resolve) => {
+                // Sandbox listeners should be cleared to prevent memory leaks.
+                sandboxListeners = {};
+
                 frame?.remove();
 
                 frame = document.createElement("iframe");
