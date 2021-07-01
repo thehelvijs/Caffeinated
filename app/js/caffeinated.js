@@ -157,7 +157,7 @@ class Caffeinated {
         this.isDevEnviroment = !location.href.includes(".asar") || this.store.get("force_dev");
 
         if (this.isDevEnviroment) {
-            this.store.set("cleared_events", []);
+            // this.store.set("cleared_events", []);
             this.store.set("protocol_version", -1);
 
             this.triggerBanner("dev", (element) => {
