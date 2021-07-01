@@ -26,6 +26,10 @@ class RepoManager {
                         script.src = repo + "/" + src;
                         script.setAttribute("repo", modules.name);
 
+                        if (src.includes(".mjs")) {
+                            script.type = "module";
+                        }
+
                         this.elements.push(script);
                         document.querySelector("#scripts").appendChild(script);
                         await RepoUtil.waitForScriptToLoad(script);
@@ -38,6 +42,10 @@ class RepoManager {
 
                         script.src = external;
                         script.setAttribute("repo", modules.name);
+
+                        if (external.includes(".mjs")) {
+                            script.type = "module";
+                        }
 
                         this.elements.push(script);
                         document.querySelector("#scripts").appendChild(script);
