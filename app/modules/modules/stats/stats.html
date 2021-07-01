@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Caffeinated Stats</title>
+        <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/cyborg/bulmaswatch.min.css" />
+        <link rel="stylesheet" href="./stats.css" caffeinated-rewrite path="stats.css" />
+        <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.4.0/dist/chart.min.js"></script>
+    </head>
+
+    <body>
+        <section id="graphing">
+            <div id="graph-data-selectors" class="columns">
+                <template>
+                    <a class="column is-one-fifth hover-button">
+                        <p class="numbers">
+                            <span class="counter">
+                                --
+                            </span><span class="delta">
+                                <ion-icon name="remove"></ion-icon>
+                                <ion-icon name="chevron-up"></ion-icon>
+                                <ion-icon name="chevron-down"></ion-icon>
+                            </span>
+                        </p>
+                        <p class="stat-name">--</p>
+                    </a>
+                </template>
+            </div>
+            <div id="graph-display">
+                <a id="data-export" title="Export Data">
+                    <ion-icon name="download-outline"></ion-icon>
+                </a>
+                <canvas></canvas>
+            </div>
+            <div id="graph-timeline-selector">
+                <a class="hover-button timeline-navigator back">
+                    <span>
+                        <ion-icon name="chevron-back"></ion-icon>
+                    </span>
+                </a>
+                <span id="graph-timeline-range">
+                    6/23/2021 - 6/28/2021
+                </span>
+                <a class="hover-button timeline-navigator forward disabled">
+                    <span>
+                        <ion-icon name="chevron-forward"></ion-icon>
+                    </span>
+                </a>
+            </div>
+        </section>
+    </body>
+
+    <footer>
+        <script>
+            // Graph Selectors
+            {
+                const template = document.querySelector("#graph-data-selectors template");
+
+                for (let i = 0; i < 5; i++) {
+                    const clone = template.content.cloneNode(true);
+
+                    clone.children[0].id = `graph-data-selector-${i + 1}`;
+                    clone.children[0].querySelector(".numbers").classList.add(`graph-delta-none`);
+
+                    document
+                        .querySelector("#graph-data-selectors")
+                        .appendChild(clone);
+                }
+
+                template.remove();
+            }
+
+
+            function prettifyString(str) {
+                let splitStr = str.toLowerCase().split("_");
+
+                if (splitStr.length == 0) {
+                    return splitStr[0].charAt(0).toUpperCase() + splitStr[0].substring(1);
+                } else {
+                    for (let i = 0; i < splitStr.length; i++) {
+                        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+                    }
+
+                    return splitStr.join(" ");
+                }
+            }
+
+            function getDelta(oldData, freshData) {
+                if (isNaN(oldData) || isNaN(freshData)) {
+                    return "level";
+                } else {
+                    if (freshData > oldData) {
+                        return "up";
+                    } else if (oldData > freshData) {
+                        return "down";
+                    } else {
+
+                        return "level";
+                    }
+                }
+            }
+
+            Chart.defaults.color = "#aaaaaa";
+            Chart.defaults.borderColor = "#383838";
+
+            const CHART_COLORS = [
+                "rgb(255, 99, 132)",
+                "rgb(255, 205, 86)",
+                "rgb(75, 192, 192)",
+                "rgb(54, 162, 235)",
+                "rgb(153, 102, 255)"
+            ];
+
+            const graphCanvas = document.querySelector("#graph-display canvas");
+            const graphCtx = graphCanvas.getContext("2d");
+            const graphChart = new Chart(graphCtx, {
+                type: "line",
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    scales: {
+                        yAxis: {
+                            min: 0
+                        }
+                    },
+                    spanGaps: true,
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "top",
+                        }
+                    }
+                },
+            });
+
+
+            let graphDataLabels = [];
+            let graphDataTypes = {};
+
+            function updateChartData(timelineData) {
+                graphDataLabels = [];
+                graphDataTypes = {};
+
+                let dtf = Intl.DateTimeFormat();
+
+                for (const dateData of timelineData) {
+                    graphDataLabels.push(dtf.format(new Date(dateData.timestamp)));
+
+                    for (const data of dateData.data) {
+                        if (!data.display) {
+                            data.display = Intl.NumberFormat().format(data.value.toFixed(1));
+                        }
+
+                        const dataType = graphDataTypes[data.type] || [];
+
+                        dataType.push(data);
+
+                        graphDataTypes[data.type] = dataType;
+                    }
+                }
+            }
+
+            function updateChartDisplay() {
+                graphChart.data = {
+                    labels: graphDataLabels,
+                    datasets: []
+                };
+
+                const nf = Intl.NumberFormat();
+
+                let idx = 1;
+                for (const [type, values] of Object.entries(graphDataTypes)) {
+                    const name = prettifyString(type);
+                    const display = values[values.length - 1].display;
+
+                    let points = [];
+
+                    for (const value of values) {
+                        points.push(value.value);
+                    }
+
+                    const delta = getDelta(points[points.length - 2], points[points.length - 1]);
+
+                    graphChart.data.datasets.push({
+                        label: name,
+                        data: points,
+                        borderColor: CHART_COLORS[idx - 1],
+                        borderWidth: 1.75
+                    });
+
+                    const dataSelector = document.querySelector(`#graph-data-selector-${idx}`);
+
+                    dataSelector.querySelector(".stat-name").innerText = name;
+                    dataSelector.querySelector(".numbers").classList = `numbers graph-delta-${delta}`;
+                    dataSelector.querySelector(".counter").innerHTML = display;
+
+                    if (name.endsWith("*")) {
+                        dataSelector.querySelector(".stat-name").setAttribute("title", "Estimated");
+                    } else if (name.endsWith("~")) {
+                        dataSelector.querySelector(".stat-name").innerText = `~${name.substring(0, name.length - 1)}`;
+                        dataSelector.querySelector(".stat-name").setAttribute("title", "Approximate");
+                    } else {
+                        dataSelector.querySelector(".stat-name").removeAttribute("title");
+                    }
+
+                    idx++;
+                }
+
+                for (idx; idx <= 5; idx++) {
+                    const dataSelector = document.querySelector(`#graph-data-selector-${idx}`);
+
+                    dataSelector.querySelector(".stat-name").innerText = "--";
+                    dataSelector.querySelector(".stat-name").removeAttribute("title");
+                    dataSelector.querySelector(".counter").innerText = "--";
+                    dataSelector.querySelector(".numbers").classList = `numbers graph-delta-none`;
+                }
+
+                graphChart.update();
+
+                document
+                    .querySelector("#graph-timeline-range")
+                    .innerText = `${graphDataLabels[0]} - ${graphDataLabels[graphDataLabels.length - 1]}`;
+            }
+
+            // TEST
+            {
+                function getRandomArbitrary(min, max, floor) {
+                    let rnd = Math.random() * (max - min) + min;
+
+                    if (floor) {
+                        return Math.floor(rnd);
+                    } else {
+                        return rnd;
+                    }
+                }
+
+                const now = Date.now();
+
+                let idx = 0;
+
+                let rndData = [];
+
+                function addRndData() {
+                    const revenue = getRandomArbitrary(0, 5);
+
+                    rndData.push({
+                        timestamp: now - (8.64e+7 * idx++),
+                        data: [
+                            {
+                                type: "AVERAGE_VIEWERS",
+                                value: getRandomArbitrary(8, 15)
+                            },
+                            {
+                                type: "CHAT_MESSAGES",
+                                value: getRandomArbitrary(100, 125)
+                            },
+                            {
+                                type: "MAX_VIEWERS",
+                                value: getRandomArbitrary(15, 20, true)
+                            },
+                            {
+                                type: "FOLLOWERS",
+                                value: getRandomArbitrary(125, 150, true)
+                            },
+                            {
+                                type: "REVENUE*",
+                                value: revenue,
+                                display: `$${revenue.toFixed(2)}`,
+                            }
+                        ]
+                    });
+                }
+
+                addRndData();
+                addRndData();
+                addRndData();
+                addRndData();
+                addRndData();
+                addRndData();
+
+                updateChartData(rndData.reverse());
+                updateChartDisplay();
+            }
+        </script>
+    </footer>
+
+</html>

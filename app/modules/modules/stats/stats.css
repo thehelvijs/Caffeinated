@@ -1,0 +1,353 @@
+:root {
+    --casterlabs: #e94b4b;
+    --user-bar-height: 55px;
+
+    --theme: #e94b4b;
+    --icon-color: #DCDCDC;
+    --icon-color-hover: #7a7a7a;
+    --menu-background-color: #1b1b1b;
+    --menu-border-color: #383838;
+    --background-color: #141414;
+    --box-background-color: #181818;
+}
+
+html {
+    color: white;
+    background-color: var(--background-color);
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+}
+
+ion-icon {
+    pointer-events: none !important;
+    /* stroke: var(--menu-icon-color) !important;
+    color: var(--menu-icon-color) !important;
+    fill: var(--menu-icon-color) !important; */
+    transition: 0.2s linear;
+}
+
+.hide {
+    display: none !important;
+}
+
+a {
+    color: var(--theme);
+}
+
+.box {
+    background-color: var(--box-background-color);
+}
+
+.center-text {
+    text-align: center;
+}
+
+/* Hover Button */
+
+.hover-button {
+    color: var(--icon-color) !important;
+}
+
+.hover-button.disabled {
+    color: var(--icon-color-hover) !important;
+    background-color: none !important;
+    transition: .15s;
+    pointer-events: none;
+}
+
+.hover-button:hover:not(.disabled) {
+    background-color: var(--icon-color-hover) !important;
+    transition: .15s;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #444444;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #AAAAAA;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #505050;
+}
+
+::-webkit-slider-runnable-track {
+    width: 300px;
+    height: 2px;
+    border: none;
+    border-radius: 3px;
+}
+
+::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 12px;
+    width: 12px;
+    border-radius: 500%;
+    background: var(--background-color);
+    border: 2px solid #515151;
+    margin-top: -5px;
+    cursor: pointer;
+}
+
+/* Inputs */
+
+input[type=search]::-webkit-search-decoration,
+input[type=search]::-webkit-search-cancel-button,
+input[type=search]::-webkit-search-results-button,
+input[type=search]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+}
+
+input:focus,
+input:active,
+input:hover,
+select:focus,
+select:active,
+select:hover,
+textarea:focus,
+textarea:active,
+textarea:hover,
+.file-button:focus,
+.file-button:active,
+.file-button:hover {
+    outline: none !important;
+    border: 1px solid #DCDCDC !important;
+}
+
+input::-webkit-input-placeholder {
+    color: #A5A5A5 !important;
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+}
+
+input,
+select,
+textarea {
+    background-color: var(--menu-background-color) !important;
+    color: var(--icon-color) !important;
+    border-radius: 6px !important;
+    border: 1px solid #4a4a4a;
+    cursor: auto;
+    outline: none !important;
+    height: 2.5em;
+}
+
+input[type=checkbox] {
+    margin-left: 8px;
+    transform: translateY(1px);
+    height: 1em !important;
+}
+
+select {
+    cursor: pointer;
+}
+
+input[type=search] {
+    height: 3em !important;
+    width: 180px;
+}
+
+input[type=range] {
+    height: 4px !important;
+}
+
+input[type=color] {
+    cursor: pointer;
+    width: 53px;
+}
+
+input[type=number] {
+    background-color: white;
+    cursor: auto;
+    font-size: 15px;
+    width: 65px;
+    outline: none !important;
+}
+
+.file-button {
+    background-color: var(--menu-background-color) !important;
+    color: var(--icon-color) !important;
+    border-radius: 6px;
+    border: 1px solid #4a4a4a;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 5px;
+}
+
+.file-button:focus {
+    outline: none;
+}
+
+/* Graph */
+
+.graph-delta-up {
+    --graph-delta-color: #73EB5C;
+}
+
+.graph-delta-level {
+    --graph-delta-color: #FFAF47;
+}
+
+.graph-delta-down {
+    --graph-delta-color: #AF3E4D;
+}
+
+#graphing {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* Graph Data Selectors */
+
+#graph-data-selectors {
+    user-select: none;
+    flex: 0 1 auto;
+}
+
+#graph-data-selectors .column.is-one-fifth {
+    flex: none;
+    width: 20%;
+}
+
+#graph-data-selectors.columns {
+    display: flex;
+}
+
+#graph-data-selectors .column {
+    text-align: center;
+    position: relative;
+    background-color: var(--menu-background-color);
+}
+
+#graph-data-selectors .column:not(:last-child) {
+    border-right: 1px solid var(--menu-border-color);
+}
+
+#graph-data-selectors .numbers {
+    vertical-align: center;
+    font-size: 1.5em;
+}
+
+#graph-data-selectors .numbers .counter {
+    color: var(--graph-data-color);
+}
+
+#graph-data-selectors .numbers .delta {
+    font-size: .25em;
+    vertical-align: center;
+    color: var(--graph-delta-color) !important;
+}
+
+#graph-data-selectors .numbers .delta ion-icon {
+    height: 2.5em;
+    width: 2.5em;
+    display: none;
+}
+
+#graph-data-selectors .graph-delta-up .delta ion-icon[name="chevron-up"] {
+    display: inline-block;
+}
+
+#graph-data-selectors .graph-delta-level .delta ion-icon[name="remove"] {
+    display: inline-block;
+    --ionicon-stroke-width: 64px;
+}
+
+#graph-data-selectors .graph-delta-down .delta ion-icon[name="chevron-down"] {
+    display: inline-block;
+}
+
+/* Graph Display */
+
+#graph-display {
+    flex: 1 1 auto;
+    position: relative;
+    user-select: none;
+}
+
+#graph-display canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+}
+
+/* NOT READY */
+#graph-display #data-export {
+    position: absolute;
+    right: 1em;
+    top: 0;
+    color: white;
+    z-index: 20;
+    display: none;
+}
+
+#graph-display #data-export ion-icon {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+/* Graph Timeline Selector */
+
+#graph-timeline-selector {
+    user-select: none;
+    position: relative;
+    text-align: center;
+    background-color: var(--menu-background-color);
+    flex: 0 0 var(--user-bar-height);
+    border-top: 1px solid #646464;
+}
+
+#graph-timeline-range {
+    font-size: 27.5px;
+    line-height: 50px;
+}
+
+#graph-timeline-selector .timeline-navigator {
+    width: var(--user-bar-height);
+    height: var(--user-bar-height);
+    position: absolute;
+    color: white;
+    text-align: center;
+    background-color: none;
+    transition: .15s;
+}
+
+#graph-timeline-selector .timeline-navigator ion-icon {
+    height: 20px;
+    width: 20px;
+}
+
+#graph-timeline-selector .timeline-navigator span {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 60px;
+}
+
+#graph-timeline-selector .back {
+    left: 0;
+    top: 0;
+}
+
+#graph-timeline-selector .forward {
+    right: 0;
+    top: 0;
+}

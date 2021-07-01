@@ -33,6 +33,7 @@
         "modules/subscribercounter.js",
         "modules/videoshare.js",
         "modules/uptime.js",
+        "modules/stats.mjs",
         "caffeine/caffeine.js",
         "brime/brime.js",
         "ko-fi/kofimodule.js"
@@ -147,6 +148,10 @@
         {
             "namespace": "casterlabs_video_share",
             "id": "video_share"
+        },
+        {
+            "namespace": "casterlabs_stats",
+            "id": "stats"
         }
     ]
 }
