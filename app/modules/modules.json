@@ -148,10 +148,6 @@
         {
             "namespace": "casterlabs_video_share",
             "id": "video_share"
-        },
-        {
-            "namespace": "casterlabs_stats",
-            "id": "stats"
         }
     ]
 }
