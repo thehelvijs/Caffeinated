@@ -238,117 +238,34 @@ class Modules {
         }
     }
 
-    createContentFrame(page, src, classList = "", owner = null) {
-        let frame = null;
+    createContentFrame(page, src, classList = "") {
+        const splitSrc = src.split(/[/\\]/g);
+        splitSrc.pop();
+        const baseSrc = splitSrc.join("/");
 
-        let moduleListeners = {};
-        let sandboxListeners = {};
-
-        const reload = () => {
-            return new Promise(async (resolve) => {
-                // Sandbox listeners should be cleared to prevent memory leaks.
-                sandboxListeners = {};
-
-                frame?.remove();
-
-                frame = document.createElement("iframe");
-
-                const contents = await this.loadContents(src);
-
+        return new Promise(async (resolve) => {
+            const div = createSandboxedIframe(src, (frame) => {
                 frame.classList = classList;
 
-                page.appendChild(frame);
-
-                const splitSrc = src.split(/[/\\]/g);
-                splitSrc.pop();
-                const baseSrc = splitSrc.join("/");
-
-                const CaffeinatedWindow = {
-                    reload: () => {
-                        reload();
-                    },
-                    baseSrc: baseSrc + "/",
-                    // owner: owner,
-                    on: (type, callback) => {
-                        type = type.toLowerCase();
-
-                        let callbacks = sandboxListeners[type];
-
-                        if (!callbacks) callbacks = [];
-
-                        callbacks.push(callback);
-
-                        sandboxListeners[type] = callbacks;
-                    },
-                    emit: (type, data) => {
-                        const listeners = moduleListeners[type.toLowerCase()];
-
-                        if (listeners) {
-                            listeners.forEach((callback) => {
-                                try {
-                                    callback(data);
-                                } catch (e) {
-                                    console.error("A frame event listener produced an exception: ");
-                                    console.error(e);
-                                }
-                            });
-                        }
-                    }
-                };
-
-                Object.freeze(CaffeinatedWindow);
-
-                frame.addEventListener("load", () => {
+                frame.on("document_content_load", () => {
+                    frame.CaffeinatedWindow.eval(`
                     try {
-                        for (const rewriteElement of frame.contentDocument.querySelectorAll("[caffeinated-rewrite]")) {
+                        for (const rewriteElement of document.querySelectorAll("[caffeinated-rewrite]")) {
                             if (rewriteElement.href) {
-                                rewriteElement.href = `${baseSrc}/${rewriteElement.getAttribute("path")}`;
+                                rewriteElement.href = \`${baseSrc}/\${ rewriteElement.getAttribute("path") }\`;
                             } else if (rewriteElement.src) {
-                                rewriteElement.src = `${baseSrc}/${rewriteElement.getAttribute("path")}`;
+                                rewriteElement.src = \`${baseSrc}/\${ rewriteElement.getAttribute("path") }\`;
                             }
                         }
-                    } catch (ignored) { } finally {
-                        resolve(frame);
-                    }
+                    } catch (ignored) { console.log(ignored) }
+                    `);
+
+                    resolve(div);
                 });
-
-                frame.contentDocument.open();
-                frame.contentDocument.write(contents);
-                frame.contentDocument.close();
-
-                frame.contentWindow.CaffeinatedWindow = CaffeinatedWindow;
-                frame.CaffeinatedWindow = CaffeinatedWindow;
-
-                frame.on = (type, callback) => {
-                    type = type.toLowerCase();
-
-                    let callbacks = moduleListeners[type];
-
-                    if (!callbacks) callbacks = [];
-
-                    callbacks.push(callback);
-
-                    moduleListeners[type] = callbacks;
-                };
-
-                frame.emit = (type, data) => {
-                    const listeners = sandboxListeners[type.toLowerCase()];
-
-                    if (listeners) {
-                        listeners.forEach((callback) => {
-                            try {
-                                callback(data);
-                            } catch (e) {
-                                console.error("A frame event listener produced an exception: ");
-                                console.error(e);
-                            }
-                        });
-                    }
-                };
             });
-        };
 
-        return reload();
+            page.appendChild(div);
+        });
     }
 
     loadContents(src) {

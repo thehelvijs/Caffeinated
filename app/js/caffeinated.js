@@ -292,10 +292,11 @@ class Caffeinated {
 
         PLATFORM_DATA = await (await fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/koi/platforms`)).json();
 
-        MODULES.createContentFrame(document.querySelector("#changelog"), "https://api.casterlabs.co/v1/caffeinated/changelog").then((frame) => {
-            // Map the openLink function to ours.
-            frame.contentWindow.openLink = openLink;
-        });
+        {
+            const div = await createSandboxedIframe("https://api.casterlabs.co/v1/caffeinated/changelog");
+
+            document.querySelector("#changelog").appendChild(div);
+        }
 
         // Don't show the page on first install, this is the easy way to accomplish this.
         if (CAFFEINATED.store.get("token")) {

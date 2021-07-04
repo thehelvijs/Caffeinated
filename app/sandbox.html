@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <title>Casterlabs Caffeinated Sandbox</title>
+        <script src="./js/invokable.js"></script>
+        <script>
+            {
+                const parentWindow = window.parent;
+                const invokable = new Invokable((data) => {
+                    parentWindow.postMessage(data, "*");
+                }, location.href.split("?")[1]);
+
+                delete Invokable;
+
+                // They get deregistered when you call document.open
+                function addListeners() {
+                    window.addEventListener("message", (event) => {
+                        console.debug(`[Module Sandbox, Outside -> (${invokable.id})]`, event.data)
+                        invokable.trigger(event.data);
+                    });
+                }
+
+                addListeners();
+
+                let listeners = {};
+
+                const CaffeinatedWindow = {
+                    ...invokable.funcs("reload", "openLink", "emit"),
+
+                    on: function (type, callback) {
+                        let callbacks = listeners[type];
+
+                        if (!callbacks) callbacks = [];
+
+                        callbacks.push(callback);
+
+                        listeners[type] = callbacks;
+                    }
+                };
+
+                const UnsafeCaffeinatedWindow = {
+                    ...CaffeinatedWindow,
+
+                    broadcast: (type, data) => {
+                        const eventListeners = listeners[type.toLowerCase()];
+
+                        if (eventListeners) {
+                            eventListeners.forEach((callback) => {
+                                try {
+                                    callback(data);
+                                } catch (e) {
+                                    console.error("A frame event listener produced an exception: ");
+                                    console.error(e);
+                                }
+                            });
+                        }
+                    },
+
+                    eval: eval,
+
+                    // This allows us to keep existing variables. :)
+                    loadDocumentContent: (contents) => {
+                        try {
+                            document.open();
+                            document.write(contents);
+                            document.close();
+                        } catch (e) {
+                            console.error(e);
+                        }
+
+                        addListeners();
+
+                        CaffeinatedWindow.emit("document_content_load", {});
+                    },
+                };
+
+                invokable.target = UnsafeCaffeinatedWindow;
+
+                Object.freeze(CaffeinatedWindow);
+                Object.freeze(UnsafeCaffeinatedWindow);
+
+                Object.defineProperty(window, "CaffeinatedWindow", {
+                    value: CaffeinatedWindow,
+                    writable: false,
+                    configurable: false
+                });
+
+                // Isolate.
+                for (const property of ["parent", "top", "frameElement"]) {
+                    try {
+                        Object.defineProperty(window, property, {
+                            value: null,
+                            writable: false,
+                            configurable: false
+                        });
+                    } catch (ignored) { }
+                }
+
+                // Trigger this event.
+                CaffeinatedWindow.emit("document_content_load", {});
+            }
+        </script>
+    </head>
+
+    <body>
+
+    </body>
+
+</html>
