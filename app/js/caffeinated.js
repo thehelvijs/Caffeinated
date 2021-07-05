@@ -320,253 +320,253 @@ class Caffeinated {
             }, "#06d6a0");
         }
 
-        MODULES.initalizeModule({
-            displayname: "caffeinated.settings.title",
-            namespace: "casterlabs_caffeinated_settings",
-            type: "settings",
-            persist: true,
-            id: "settings",
+        // MODULES.initalizeModule({
+        //     displayname: "caffeinated.settings.title",
+        //     namespace: "casterlabs_caffeinated_settings",
+        //     type: "settings",
+        //     persist: true,
+        //     id: "settings",
 
-            getDataToStore() {
-                return this.settings;
-            },
+        //     getDataToStore() {
+        //         return this.settings;
+        //     },
 
-            settingsDisplay: {
-                view_changelog: {
-                    display: "caffeinated.settings.view_changelog",
-                    type: "button",
-                    isLang: true
-                },
-                chatbot_login: {
-                    display: "caffeinated.settings.chatbot_login",
-                    type: "button",
-                    isLang: true
-                },
-                language: {
-                    display: "caffeinated.settings.language",
-                    type: "select",
-                    isLang: true
-                },
-                enable_discord_integration: {
-                    display: "caffeinated.settings.enable_discord_integration",
-                    type: "checkbox",
-                    isLang: true
-                },
-                signout: {
-                    display: "caffeinated.settings.signout",
-                    type: "button",
-                    isLang: true
-                }
-            },
+        //     settingsDisplay: {
+        //         view_changelog: {
+        //             display: "caffeinated.settings.view_changelog",
+        //             type: "button",
+        //             isLang: true
+        //         },
+        //         chatbot_login: {
+        //             display: "caffeinated.settings.chatbot_login",
+        //             type: "button",
+        //             isLang: true
+        //         },
+        //         language: {
+        //             display: "caffeinated.settings.language",
+        //             type: "select",
+        //             isLang: true
+        //         },
+        //         enable_discord_integration: {
+        //             display: "caffeinated.settings.enable_discord_integration",
+        //             type: "checkbox",
+        //             isLang: true
+        //         },
+        //         signout: {
+        //             display: "caffeinated.settings.signout",
+        //             type: "button",
+        //             isLang: true
+        //         }
+        //     },
 
-            onSettingsUpdate() {
-                CAFFEINATED.setLanguage(LANG.supportedLanguages[this.settings.language]);
+        //     onSettingsUpdate() {
+        //         CAFFEINATED.setLanguage(LANG.supportedLanguages[this.settings.language]);
 
-                CAFFEINATED.store.set("enable_discord_presence", this.settings.enable_discord_integration);
-                DiscordRPC.set();
-            },
+        //         CAFFEINATED.store.set("enable_discord_presence", this.settings.enable_discord_integration);
+        //         DiscordRPC.set();
+        //     },
 
-            init() {
-                this.puppetLoginElement = document.querySelector("#casterlabs_caffeinated_settings_settings").querySelector("[name=chatbot_login]");
+        //     init() {
+        //         this.puppetLoginElement = document.querySelector("#casterlabs_caffeinated_settings_settings").querySelector("[name=chatbot_login]");
 
-                this.updatePuppetElement();
+        //         this.updatePuppetElement();
 
-                koi.addEventListener("error", (event) => {
-                    let error = event.error;
+        //         koi.addEventListener("error", (event) => {
+        //             let error = event.error;
 
-                    switch (error) {
-                        case "PUPPET_AUTH_INVALID": {
-                            instance.updatePuppetElement(false);
-                        }
-                    }
-                });
+        //             switch (error) {
+        //                 case "PUPPET_AUTH_INVALID": {
+        //                     instance.updatePuppetElement(false);
+        //                 }
+        //             }
+        //         });
 
-            },
+        //     },
 
-            updatePuppetElement(valid = CAFFEINATED.puppetToken) {
-                if (valid) {
-                    this.puppetLoginElement.setAttribute("lang", "caffeinated.settings.chatbot_logout");
-                } else {
-                    this.puppetLoginElement.setAttribute("lang", "caffeinated.settings.chatbot_login");
-                }
+        //     updatePuppetElement(valid = CAFFEINATED.puppetToken) {
+        //         if (valid) {
+        //             this.puppetLoginElement.setAttribute("lang", "caffeinated.settings.chatbot_logout");
+        //         } else {
+        //             this.puppetLoginElement.setAttribute("lang", "caffeinated.settings.chatbot_login");
+        //         }
 
-                LANG.translate(this.puppetLoginElement.parentElement);
-            },
+        //         LANG.translate(this.puppetLoginElement.parentElement);
+        //     },
 
-            defaultSettings: {
-                chatbot_login: (instance) => {
-                    if (CAFFEINATED.puppetToken) {
-                        CAFFEINATED.setPuppetToken(null);
-                        instance.updatePuppetElement(false);
-                    } else {
-                        const platform = CAFFEINATED.userdata.streamer.platform.toLowerCase();
+        //     defaultSettings: {
+        //         chatbot_login: (instance) => {
+        //             if (CAFFEINATED.puppetToken) {
+        //                 CAFFEINATED.setPuppetToken(null);
+        //                 instance.updatePuppetElement(false);
+        //             } else {
+        //                 const platform = CAFFEINATED.userdata.streamer.platform.toLowerCase();
 
-                        UI.loginPuppet();
+        //                 UI.loginPuppet();
 
-                        setTimeout(() => {
-                            instance.updatePuppetElement(true);
+        //                 setTimeout(() => {
+        //                     instance.updatePuppetElement(true);
 
-                            LOGIN_CALLBACKS[platform](() => {
-                                instance.updatePuppetElement(false);
-                                UI.loginScreen("HIDE");
-                            });
-                        }, 500);
-                    }
-                },
-                enable_discord_integration: true,
-                signout: () => {
-                    CAFFEINATED.signOut();
-                },
-                view_changelog: () => {
-                    document.querySelector("#changelog").classList = "";
-                },
-                language: Object.keys(LANG.supportedLanguages)
-            }
-        });
+        //                     LOGIN_CALLBACKS[platform](() => {
+        //                         instance.updatePuppetElement(false);
+        //                         UI.loginScreen("HIDE");
+        //                     });
+        //                 }, 500);
+        //             }
+        //         },
+        //         enable_discord_integration: true,
+        //         signout: () => {
+        //             CAFFEINATED.signOut();
+        //         },
+        //         view_changelog: () => {
+        //             document.querySelector("#changelog").classList = "";
+        //         },
+        //         language: Object.keys(LANG.supportedLanguages)
+        //     }
+        // });
 
-        await this.repomanager.addRepo(__dirname + "/modules");
+        // await this.repomanager.addRepo(__dirname + "/modules");
 
-        await MODULES.initalizeModule({
-            namespace: "casterlabs_caffeinated_modules",
-            type: "settings",
-            persist: true,
-            id: "third_party_modules",
+        // await MODULES.initalizeModule({
+        //     namespace: "casterlabs_caffeinated_modules",
+        //     type: "settings",
+        //     persist: true,
+        //     id: "third_party_modules",
 
-            getDataToStore() {
-                return this.settings;
-            },
+        //     getDataToStore() {
+        //         return this.settings;
+        //     },
 
-            async init() {
-                if (CAFFEINATED.store.has("repos")) {
-                    CAFFEINATED.store.get("repos").forEach((url) => {
-                        this.settings.third_party_repos.push({ repo_url: url });
-                    });
+        //     async init() {
+        //         if (CAFFEINATED.store.has("repos")) {
+        //             CAFFEINATED.store.get("repos").forEach((url) => {
+        //                 this.settings.third_party_repos.push({ repo_url: url });
+        //             });
 
-                    CAFFEINATED.store.delete("repos");
-                }
+        //             CAFFEINATED.store.delete("repos");
+        //         }
 
-                for (const repo of this.settings.third_party_repos) {
-                    try {
-                        await CAFFEINATED.repomanager.addRepo(repo.repo_url);
-                    } catch (e) {
-                        console.error(e);
-                    }
-                }
+        //         for (const repo of this.settings.third_party_repos) {
+        //             try {
+        //                 await CAFFEINATED.repomanager.addRepo(repo.repo_url);
+        //             } catch (e) {
+        //                 console.error(e);
+        //             }
+        //         }
 
-                MODULES.saveToStore(this);
-            },
+        //         MODULES.saveToStore(this);
+        //     },
 
-            settingsDisplay: {
-                third_party_repos: "dynamic",
-                apply: {
-                    display: "Apply (Requires Reload)",
-                    type: "button",
-                    isLang: false
-                }
-            },
+        //     settingsDisplay: {
+        //         third_party_repos: "dynamic",
+        //         apply: {
+        //             display: "Apply (Requires Reload)",
+        //             type: "button",
+        //             isLang: false
+        //         }
+        //     },
 
-            defaultSettings: {
-                third_party_repos: {
-                    display: {
-                        repo_url: {
-                            display: "Repo URL",
-                            type: "input",
-                            isLang: false
-                        }
-                    },
-                    default: {
-                        repo_url: ""
-                    }
-                },
-                apply: () => {
-                    MODULES.saveToStore(this);
-                    location.reload();
-                }
-            }
-        });
+        //     defaultSettings: {
+        //         third_party_repos: {
+        //             display: {
+        //                 repo_url: {
+        //                     display: "Repo URL",
+        //                     type: "input",
+        //                     isLang: false
+        //                 }
+        //             },
+        //             default: {
+        //                 repo_url: ""
+        //             }
+        //         },
+        //         apply: () => {
+        //             MODULES.saveToStore(this);
+        //             location.reload();
+        //         }
+        //     }
+        // });
 
-        for (const payload of Object.values(this.store.get("resource_tokens"))) {
-            try {
-                const response = await fetch(`https://${payload.server_location}/data?token=${payload.token}`)
+        // for (const payload of Object.values(this.store.get("resource_tokens"))) {
+        //     try {
+        //         const response = await fetch(`https://${payload.server_location}/data?token=${payload.token}`)
 
-                if (response.status == 200) {
-                    const result = await response.json();
+        //         if (response.status == 200) {
+        //             const result = await response.json();
 
-                    try {
-                        await this.repomanager.addRepo(result.data.module_url);
-                    } catch (e) {
-                        console.error(e);
-                    }
-                } else {
-                    this.removeResourceToken(payload.token);
-                }
-            } catch (e) {
-                alert("Unable to connect to resource server, some resources will not be available.");
-            }
-        }
+        //             try {
+        //                 await this.repomanager.addRepo(result.data.module_url);
+        //             } catch (e) {
+        //                 console.error(e);
+        //             }
+        //         } else {
+        //             this.removeResourceToken(payload.token);
+        //         }
+        //     } catch (e) {
+        //         alert("Unable to connect to resource server, some resources will not be available.");
+        //     }
+        // }
 
-        for (const [namespace, modules] of Object.entries(this.store.get("modules"))) {
-            for (const id of Object.keys(modules)) {
-                try {
-                    const loaded = MODULES.getFromUUID(namespace + ":" + id);
+        // for (const [namespace, modules] of Object.entries(this.store.get("modules"))) {
+        //     for (const id of Object.keys(modules)) {
+        //         try {
+        //             const loaded = MODULES.getFromUUID(namespace + ":" + id);
 
-                    if (!loaded) {
-                        const clazz = MODULES.moduleClasses[namespace] ?? MODULES.uniqueModuleClasses[namespace];
-                        const module = new clazz(id);
+        //             if (!loaded) {
+        //                 const clazz = MODULES.moduleClasses[namespace] ?? MODULES.uniqueModuleClasses[namespace];
+        //                 const module = new clazz(id);
 
-                        MODULES.initalizeModule(module);
-                    }
-                } catch (e) {
-                    console.info(`Removed unloaded module namespace "${namespace}" from config.`)
-                    this.store.delete(`modules.${namespace}`);
-                } // Delete values, module is not present.
-            }
-        }
+        //                 MODULES.initalizeModule(module);
+        //             }
+        //         } catch (e) {
+        //             console.info(`Removed unloaded module namespace "${namespace}" from config.`)
+        //             this.store.delete(`modules.${namespace}`);
+        //         } // Delete values, module is not present.
+        //     }
+        // }
 
-        await MODULES.initalizeModule({
-            namespace: "casterlabs_caffeinated_redeem",
-            type: "settings",
-            persist: true,
-            id: "resource_redeem",
+        // await MODULES.initalizeModule({
+        //     namespace: "casterlabs_caffeinated_redeem",
+        //     type: "settings",
+        //     persist: true,
+        //     id: "resource_redeem",
 
-            onSettingsUpdate() {
-                this.page.querySelector('[name="code_to_redeem"]').value = "";
+        //     onSettingsUpdate() {
+        //         this.page.querySelector('[name="code_to_redeem"]').value = "";
 
-                CAFFEINATED.addResourceToken(this.settings.code_to_redeem);
-            },
+        //         CAFFEINATED.addResourceToken(this.settings.code_to_redeem);
+        //     },
 
-            settingsDisplay: {
-                code_to_redeem: "input"
-            },
+        //     settingsDisplay: {
+        //         code_to_redeem: "input"
+        //     },
 
-            defaultSettings: {
-                code_to_redeem: ""
-            }
-        });
+        //     defaultSettings: {
+        //         code_to_redeem: ""
+        //     }
+        // });
 
-        MODULES.initalizeModule({
-            displayname: "caffeinated.credits.title",
-            namespace: "casterlabs_credits",
-            type: "settings",
-            persist: true,
-            id: "credits",
+        // MODULES.initalizeModule({
+        //     displayname: "caffeinated.credits.title",
+        //     namespace: "casterlabs_credits",
+        //     type: "settings",
+        //     persist: true,
+        //     id: "credits",
 
-            onFrameLoad(frame) {
-                frame.contentWindow.openLink = openLink;
-            },
+        //     onFrameLoad(frame) {
+        //         frame.contentWindow.openLink = openLink;
+        //     },
 
-            settingsDisplay: {
-                content: {
-                    type: "iframe-src",
-                    height: "475px",
-                    isLang: false
-                }
-            },
+        //     settingsDisplay: {
+        //         content: {
+        //             type: "iframe-src",
+        //             height: "475px",
+        //             isLang: false
+        //         }
+        //     },
 
-            defaultSettings: {
-                content: __dirname + "/credits.html"
-            }
-        });
+        //     defaultSettings: {
+        //         content: __dirname + "/credits.html"
+        //     }
+        // });
 
         setTimeout(() => {
             if (!CONNECTED) {
