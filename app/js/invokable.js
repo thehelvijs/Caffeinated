@@ -132,7 +132,7 @@ class Invokable {
 
         for (const name of names) {
             result[name] = function () {
-                instance.func(name, ...arguments)
+                return instance.func(name, ...arguments)
             };
         }
 

@@ -34,7 +34,7 @@ function createSandboxedIframe(src, onLoadListener, moduleHolder) {
                 (await caffeinatedWindowInvokable.trigger(event.data)) ||
                 (await koiInvokable.trigger(event.data))
             ) {
-                // console.debug(`[Module Sandbox, (${caffeinatedWindowInvokable.id}) -> Outside]`, event.data)
+                console.debug(`[Module Sandbox, (${caffeinatedWindowInvokable.id}) -> Outside]`, event.data)
             }
         });
 

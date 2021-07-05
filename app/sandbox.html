@@ -48,7 +48,7 @@
                 // They get deregistered when you call document.open
                 function addListeners() {
                     window.addEventListener("message", async (event) => {
-                        // console.debug(`[Module Sandbox, Outside -> (${frameId})]`, event.data);
+                        console.debug(`[Module Sandbox, Outside -> (${frameId})]`, event.data);
 
                         // Go down the Invokable chain.
                         (await caffeinatedWindowInvokable.trigger(event.data)) ||
@@ -63,8 +63,7 @@
 
                 // UNSAFE
                 const UNSAFE = {
-                    ...caffeinatedInvokable.funcs("getModuleInfo"),
-                    ...caffeinatedInvokable.funcs("getSystemInfo")
+                    ...unsafeInvokable.funcs("getModuleInfo", "getSystemInfo")
                 };
 
                 unsafeInvokable.target = UNSAFE;
@@ -75,6 +74,8 @@
                     writable: false,
                     configurable: false
                 });
+
+                window.UNSAFE = UNSAFE;
 
                 // CaffeinatedWindow
                 {
@@ -219,8 +220,8 @@
                         // ...caffeinatedInvokable.funcs("getProductChannel", "triggerOneTimeBanner", "canTriggerOneTimeEvent"),
 
                         getTimeStreamedInMilliseconds() {
-                            if (koi.streamData.is_live) {
-                                return Date.now() - new Date(koi.streamData.start_time).getTime();
+                            if (Koi.streamData.is_live) {
+                                return Date.now() - new Date(Koi.streamData.start_time).getTime();
                             } else {
                                 return 0;
                             }
@@ -264,10 +265,6 @@
                         }
 
                     };
-
-                    moduleEventHandler.on("settings_update", (newSettings) => {
-
-                    });
 
                     moduleInvokable.target = Module;
 
