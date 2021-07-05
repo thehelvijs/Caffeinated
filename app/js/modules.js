@@ -11,7 +11,51 @@ class ModuleHolder {
     }
 
     getUUID() {
-        return this.#module.namespace + ":" + this.#module.id;
+        return this.namespace + ":" + this.id;
+    }
+
+    get namespace() {
+        // TEMPORARY
+        return this.#module.namespace;
+    }
+
+    get id() {
+        // TEMPORARY
+        return this.#module.id;
+    }
+
+    get displayname() {
+        // TEMPORARY
+        return this.#module.displayname ?? prettifyString(this.id);
+    }
+
+    get settings() {
+        try {
+            const path = `modules.${module.namespace}.${module.id}`;
+
+            return CAFFEINATED.store.get(path) ?? {};
+        } catch (e) {
+            console.error("Unable to save module");
+            console.error(e);
+        }
+    }
+
+    set settings(value) {
+        try {
+            const path = `modules.${module.namespace}.${module.id}`;
+            const data = value ?? {};
+
+            data.__module = {
+                customdisplayname: module.customdisplayname
+            };
+
+            CAFFEINATED.store.set(path, data);
+
+            console.debug(`Save succeeded. (${module.namespace}:${module.id})`);
+        } catch (e) {
+            console.error("Unable to save module");
+            console.error(e);
+        }
     }
 
     unload() {
@@ -238,7 +282,7 @@ class Modules {
         }
     }
 
-    createContentFrame(page, src, classList = "") {
+    createContentFrame(page, src, classList = "", module) {
         const splitSrc = src.split(/[/\\]/g);
         splitSrc.pop();
         const baseSrc = splitSrc.join("/");
@@ -262,7 +306,7 @@ class Modules {
 
                     resolve(div);
                 });
-            });
+            }, `${module.namespace}:${module.id}`);
 
             page.appendChild(div);
         });

@@ -4,26 +4,99 @@ class Invokable {
         this.transmissionHandler = transmissionHandler;
         this.target = null;
         this.id = id;
+        this.callbacks = {};
 
         const instance = this;
 
+        function createLoosePromise() {
+            let resolve;
+            let reject;
+            let state = "pending";
+
+            let promise = new Promise((_resolve, _reject) => {
+                resolve = (value) => {
+                    state = "fulfilled";
+                    _resolve(value);
+                };
+                reject = (error) => {
+                    state = "rejected";
+                    _reject(error);
+                };
+            });
+
+            Object.defineProperty(promise, "resolve", {
+                get: () => {
+                    return resolve;
+                }
+            });
+
+            Object.defineProperty(promise, "reject", {
+                get: () => {
+                    return reject;
+                }
+            });
+
+            Object.defineProperty(promise, "state", {
+                get: () => {
+                    return state;
+                }
+            });
+
+            return promise;
+        }
+
         this.func = function (name, ...args) {
+            // Invokable Proxy.
+            const nonce = (Math.random() * 100000).toFixed(0);
+
             instance.transmissionHandler({
                 __meta: `invokable_js_${this.id}`,
                 type: "func",
                 field: name,
-                args: args
+                args: args,
+                nonce: nonce
             });
+
+            const promise = createLoosePromise();
+
+            instance.callbacks[nonce] = promise;
+
+            return promise;
         }
     }
 
-    trigger(data) {
+    async trigger(data) {
         if (this.target && (data.__meta == `invokable_js_${this.id}`)) {
             try {
-                if (data.type == "data") {
+                if (data.type == "result") {
+                    const callback = this.callbacks[data.nonce];
+
+                    if (data.state == "fulfilled") {
+                        callback.resolve(data.result);
+                    } else {
+                        callback.reject(data.result);
+                    }
+                } else if (data.type == "data") {
                     this.target[data.field] = data.value;
                 } else if (data.type == "func") {
-                    this.target[data.field](...data.args);
+                    let result;
+                    let state;
+
+                    try {
+                        result = await this.target[data.field](...data.args);
+                        state = "fulfilled";
+                    } catch (e) {
+                        result = e;
+                        state = "rejected";
+                    } finally {
+                        this.transmissionHandler({
+                            __meta: `invokable_js_${this.id}`,
+                            type: "result",
+                            result: result,
+                            state: state,
+                            nonce: data.nonce
+                        });
+                    }
                 }
             } catch (e) {
                 console.error(e);

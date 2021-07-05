@@ -5,101 +5,290 @@
         <meta charset="utf-8" />
         <title>Casterlabs Caffeinated Sandbox</title>
         <script src="./js/invokable.js"></script>
+        <script src="./js/event-handler.js"></script>
         <script>
             {
-                const parentWindow = window.parent;
-                const invokable = new Invokable((data) => {
-                    parentWindow.postMessage(data, "*");
-                }, location.href.split("?")[1]);
+                const urlVars = (() => {
+                    let vars = {};
 
-                delete Invokable;
+                    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
+                        vars[key] = value;
+                    });
+
+                    return vars;
+                })();
+
+                const { frameId, consolePrefix, isDevEnviroment } = urlVars;
+
+                const parentWindow = window.parent;
+                const invokableHandler = (data) => {
+                    parentWindow.postMessage(data, "*");
+                };
+
+                // Add a prefix to console.log
+                {
+                    const { info, log, warn, error, debug } = console;
+
+                    for (const func of [info, log, warn, error, debug]) {
+                        console[func.name] = function () {
+                            func.apply(console, [
+                                `[${consolePrefix}]`,
+                                ...arguments
+                            ]);
+                        };
+                    }
+                }
+
+                const caffeinatedWindowInvokable = new Invokable(invokableHandler, `${frameId}_caffeinatedwindow`);
+                const koiInvokable = new Invokable(invokableHandler, `${frameId}_koi`);
+                const caffeinatedInvokable = new Invokable(invokableHandler, `${frameId}_caffeinated`);
+                const moduleInvokable = new Invokable(invokableHandler, `${frameId}_module`);
+                const unsafeInvokable = new Invokable(invokableHandler, `${frameId}_unsafe`);
 
                 // They get deregistered when you call document.open
                 function addListeners() {
-                    window.addEventListener("message", (event) => {
-                        console.debug(`[Module Sandbox, Outside -> (${invokable.id})]`, event.data)
-                        invokable.trigger(event.data);
+                    window.addEventListener("message", async (event) => {
+                        // console.debug(`[Module Sandbox, Outside -> (${frameId})]`, event.data);
+
+                        // Go down the Invokable chain.
+                        (await caffeinatedWindowInvokable.trigger(event.data)) ||
+                            (await koiInvokable.trigger(event.data)) ||
+                            (await caffeinatedInvokable.trigger(event.data)) ||
+                            (await moduleInvokable.trigger(event.data)) ||
+                            (await unsafeInvokable.trigger(event.data));
                     });
                 }
 
                 addListeners();
 
-                let listeners = {};
-
-                const CaffeinatedWindow = {
-                    ...invokable.funcs("reload", "openLink", "emit"),
-
-                    on: function (type, callback) {
-                        let callbacks = listeners[type];
-
-                        if (!callbacks) callbacks = [];
-
-                        callbacks.push(callback);
-
-                        listeners[type] = callbacks;
-                    }
+                // UNSAFE
+                const UNSAFE = {
+                    ...caffeinatedInvokable.funcs("getModuleInfo"),
+                    ...caffeinatedInvokable.funcs("getSystemInfo")
                 };
 
-                const UnsafeCaffeinatedWindow = {
-                    ...CaffeinatedWindow,
+                unsafeInvokable.target = UNSAFE;
 
-                    broadcast: (type, data) => {
-                        const eventListeners = listeners[type.toLowerCase()];
-
-                        if (eventListeners) {
-                            eventListeners.forEach((callback) => {
-                                try {
-                                    callback(data);
-                                } catch (e) {
-                                    console.error("A frame event listener produced an exception: ");
-                                    console.error(e);
-                                }
-                            });
-                        }
-                    },
-
-                    eval: eval,
-
-                    // This allows us to keep existing variables. :)
-                    loadDocumentContent: (contents) => {
-                        try {
-                            document.open();
-                            document.write(contents);
-                            document.close();
-                        } catch (e) {
-                            console.error(e);
-                        }
-
-                        addListeners();
-
-                        CaffeinatedWindow.emit("document_content_load", {});
-                    },
-                };
-
-                invokable.target = UnsafeCaffeinatedWindow;
-
-                Object.freeze(CaffeinatedWindow);
-                Object.freeze(UnsafeCaffeinatedWindow);
-
-                Object.defineProperty(window, "CaffeinatedWindow", {
-                    value: CaffeinatedWindow,
+                Object.freeze(UNSAFE);
+                Object.defineProperty(window, "UNSAFE", {
+                    value: UNSAFE,
                     writable: false,
                     configurable: false
                 });
 
+                // CaffeinatedWindow
+                {
+
+                    let listeners = {};
+
+                    const CaffeinatedWindow = {
+                        ...caffeinatedWindowInvokable.funcs("reload", "openLink", "emit"),
+
+                        on: function (type, callback) {
+                            let callbacks = listeners[type];
+
+                            if (!callbacks) callbacks = [];
+
+                            callbacks.push(callback);
+
+                            listeners[type] = callbacks;
+                        }
+                    };
+
+                    const UnsafeCaffeinatedWindow = {
+                        ...CaffeinatedWindow,
+
+                        broadcast: (type, data) => {
+                            const eventListeners = listeners[type.toLowerCase()];
+
+                            console.debug(type, data);
+
+                            if (eventListeners) {
+                                eventListeners.forEach((callback) => {
+                                    try {
+                                        callback(data);
+                                    } catch (e) {
+                                        console.error("A frame event listener produced an exception: ");
+                                        console.error(e);
+                                    }
+                                });
+                            }
+                        },
+
+                        eval: eval,
+
+                        // This allows us to keep existing variables. :)
+                        loadDocumentContent: (contents) => {
+                            try {
+                                document.open();
+                                document.write(contents);
+                                document.close();
+                            } catch (e) {
+                                console.error(e);
+                            }
+
+                            addListeners();
+
+                            CaffeinatedWindow.emit("document_content_load", {});
+                        },
+                    };
+
+                    caffeinatedWindowInvokable.target = UnsafeCaffeinatedWindow;
+
+                    Object.freeze(CaffeinatedWindow);
+                    Object.freeze(UnsafeCaffeinatedWindow);
+
+                    Object.defineProperty(window, "CaffeinatedWindow", {
+                        value: CaffeinatedWindow,
+                        writable: false,
+                        configurable: false
+                    });
+
+                    // Trigger this event.
+                    CaffeinatedWindow.emit("document_content_load", {});
+                }
+
+                // Koi
+                {
+                    const listeners = {};
+
+                    const koiEventHandler = new EventHandler();
+                    let warnedDeprecated_addEventListener = false;
+
+                    let viewerList = [];
+                    let userData = null;
+                    let streamData = null;
+
+                    const koi = {
+                        ...koiInvokable.funcs("sendChat", "getMaxLength", "isAlive", "upvote", "deleteMessage", "test"),
+
+                        ...koiEventHandler,
+
+                        // Deprecated
+                        addEventListener: function () {
+                            if (!warnedDeprecated_addEventListener) {
+                                warnedDeprecated_addEventListener = true;
+                                console.warn("Calls to koi.addEventListener are deprecated. Tell the author of this plugin to use koi.on instead.");
+                            }
+
+                            koiEventHandler.on(...arguments);
+                        },
+                    };
+
+                    koi.on("user_update", (event) => {
+                        viewerList = event;
+                    });
+                    koi.on("user_update", (event) => {
+                        userData = event;
+                    });
+                    koi.on("stream_status", (event) => {
+                        streamData = event;
+                    });
+
+                    koiInvokable.target = koi;
+
+                    Object.defineProperty(koi, "viewerList", {
+                        get: () => viewerList,
+                        configurable: false
+                    });
+                    Object.defineProperty(koi, "userData", {
+                        get: () => userData,
+                        configurable: false
+                    });
+                    Object.defineProperty(koi, "streamData", {
+                        get: () => streamData,
+                        configurable: false
+                    });
+
+                    Object.freeze(koi);
+                    Object.defineProperty(window, "Koi", {
+                        value: koi,
+                        writable: false,
+                        configurable: false
+                    });
+                }
+
+                // Caffeinated
+                {
+                    let systemInfo = null;
+
+                    UNSAFE.getSystemInfo()
+                        .then((info) => systemInfo = info);
+
+                    const Caffeinated = {
+                        // ...caffeinatedInvokable.funcs("getProductChannel", "triggerOneTimeBanner", "canTriggerOneTimeEvent"),
+
+                        getTimeStreamedInMilliseconds() {
+                            if (koi.streamData.is_live) {
+                                return Date.now() - new Date(koi.streamData.start_time).getTime();
+                            } else {
+                                return 0;
+                            }
+                        }
+                    };
+
+                    caffeinatedInvokable.target = Caffeinated;
+
+                    Object.freeze(Caffeinated);
+                    Object.defineProperty(window, "Caffeinated", {
+                        value: Caffeinated,
+                        writable: false,
+                        configurable: false
+                    });
+                }
+
+                // Module
+                {
+                    let moduleInfo = null;
+
+                    UNSAFE.getModuleInfo()
+                        .then((info) => moduleInfo = info);
+
+                    const moduleEventHandler = new EventHandler();
+
+                    const Module = {
+                        // ...moduleInvokable.funcs(""),
+
+                        ...moduleEventHandler,
+
+                        get id() {
+                            return moduleInfo.id;
+                        },
+
+                        get namespace() {
+                            return moduleInfo.namespace;
+                        },
+
+                        get types() {
+                            return moduleInfo.types;
+                        }
+
+                    };
+
+                    moduleEventHandler.on("settings_update", (newSettings) => {
+
+                    });
+
+                    moduleInvokable.target = Module;
+
+                    Object.freeze(Module);
+                    Object.defineProperty(window, "Module", {
+                        value: Module,
+                        writable: false,
+                        configurable: false
+                    });
+                }
+
                 // Isolate.
-                for (const property of ["parent", "top", "frameElement"]) {
+                for (const property of ["parent", "top", "frameElement", "require"]) {
                     try {
                         Object.defineProperty(window, property, {
-                            value: null,
+                            value: undefined,
                             writable: false,
                             configurable: false
                         });
                     } catch (ignored) { }
                 }
-
-                // Trigger this event.
-                CaffeinatedWindow.emit("document_content_load", {});
             }
         </script>
     </head>

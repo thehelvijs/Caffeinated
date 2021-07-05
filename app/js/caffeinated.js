@@ -671,7 +671,7 @@ class Caffeinated {
 
     getTimeLiveInMilliseconds() {
         if (this.streamdata.is_live) {
-            return new Date().getTime() - new Date(this.streamdata.start_time).getTime();
+            return Date.now() - new Date(this.streamdata.start_time).getTime();
         } else {
             return 0;
         }

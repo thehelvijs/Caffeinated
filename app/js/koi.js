@@ -1,37 +1,44 @@
 class Koi {
+
     constructor(address) {
         this.address = address;
-        this.listeners = {};
         this.credentialCallbacks = [];
-    }
 
-    addEventListener(type, callback) {
-        type = type.toLowerCase();
+        this.eventHandler = new EventHandler();
 
-        let callbacks = this.listeners[type];
+        // Add the event handler
+        this.addEventListener = this.eventHandler.on; // Deprecated
+        this.on = this.eventHandler.on;
+        this.removeListener = this.eventHandler.removeListener;
+        this.broadcast = this.eventHandler.broadcast;
 
-        if (!callbacks) callbacks = [];
+        // Add static properties
+        let viewerList = null;
+        let userData = null;
+        let streamData = null;
 
-        callbacks.push(callback);
+        this.eventHandler.on("viewer_list", (event) => {
+            viewerList = event
+        });
+        this.eventHandler.on("user_update", (event) => {
+            userData = event
+        });
+        this.eventHandler.on("stream_status", (event) => {
+            streamData = event
+        });
 
-        this.listeners[type] = callbacks;
-    }
-
-    broadcast(type, data) {
-        ANALYTICS.logEvent(data);
-
-        const listeners = this.listeners[type.toLowerCase()];
-
-        if (listeners) {
-            listeners.forEach((callback) => {
-                try {
-                    callback(Object.assign({}, data));
-                } catch (e) {
-                    console.error("An event listener produced an exception: ");
-                    console.error(e);
-                }
-            });
-        }
+        Object.defineProperty(this, "viewerList", {
+            get: () => viewerList,
+            configurable: false
+        });
+        Object.defineProperty(this, "userData", {
+            get: () => userData,
+            configurable: false
+        });
+        Object.defineProperty(this, "streamData", {
+            get: () => streamData,
+            configurable: false
+        });
     }
 
     reconnect() {
@@ -142,6 +149,8 @@ class Koi {
 
                         this.broadcast("event", event);
                         this.broadcast(type.toLowerCase(), event);
+
+                        ANALYTICS.logEvent(event);
                     } else {
                         this.broadcast("message", json);
                     }
