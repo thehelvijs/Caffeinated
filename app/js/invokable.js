@@ -49,6 +49,10 @@ class Invokable {
             // Invokable Proxy.
             const nonce = (Math.random() * 100000).toFixed(0);
 
+            const promise = createLoosePromise();
+
+            instance.callbacks[nonce] = promise;
+
             instance.transmissionHandler({
                 __meta: `invokable_js_${this.id}`,
                 type: "func",
@@ -56,10 +60,6 @@ class Invokable {
                 args: args,
                 nonce: nonce
             });
-
-            const promise = createLoosePromise();
-
-            instance.callbacks[nonce] = promise;
 
             return promise;
         }
@@ -124,6 +124,14 @@ class Invokable {
             field: name,
             args: args
         });
+    }
+
+    getFunc(name) {
+        const instance = this;
+
+        return function () {
+            return instance.func(name, ...arguments);
+        };
     }
 
     funcs(...names) {

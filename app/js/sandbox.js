@@ -22,31 +22,61 @@ function createSandboxedIframe(src, onLoadListener, moduleHolder) {
         };
 
         // Proxy all calls through postMessage.
-        const caffeinatedWindowInvokable = new Invokable(invokableHandler, `${frameId}_caffeinatedwindow`);
-        const koiInvokable = new Invokable(invokableHandler, `${frameId}_koi`);
-        const caffeinatedInvokable = new Invokable(invokableHandler, `${frameId}_caffeinated`);
-        const moduleInvokable = new Invokable(invokableHandler, `${frameId}_module`);
-        const unsafeInvokable = new Invokable(invokableHandler, `${frameId}_unsafe`);
+        const invokable = new Invokable(invokableHandler, frameId);
 
         window.addEventListener("message", async (event) => {
-            if (
-                // Down the Invokable rabbit hole.
-                (await caffeinatedWindowInvokable.trigger(event.data)) ||
-                (await koiInvokable.trigger(event.data))
-            ) {
-                console.debug(`[Module Sandbox, (${caffeinatedWindowInvokable.id}) -> Outside]`, event.data)
+            if (await invokable.trigger(event.data)) {
+                console.debug(`[Module Sandbox, (${invokable.id}) -> Outside]`, event.data)
             }
         });
 
-        // Caffeinated Window
+        const PROXY = {
+            // UNSAFE
+            unsafe_getSystemInfo() {
+                return {
+                    implementation: "Casterlabs Caffeinated",
+                    enviroment: "DESKTOP",
+                    version: VERSION,
+                    protocolVersion: PROTOCOLVERSION,
+                    productChannel: CAFFEINATED.getChannel(),
+                    serverDomain: CAFFEINATED.store.get("server_domain"),
+                    languagePreference: CAFFEINATED.store.get("language")
+                };
+            },
+            unsafe_getModuleInfo() {
+                if (moduleHolder) {
+                    return {
+                        id: moduleHolder.id,
+                        namespace: moduleHolder.namespace,
+                        types: moduleHolder.getTypes()
+                    };
+                } else {
+                    return {
+                        id: null,
+                        namespace: null,
+                        types: null
+                    };
+                }
+            },
 
-        const CaffeinatedWindow = {
+            // CaffeinatedWindow
             reload: () => {
                 reload();
             },
             openLink: (link) => {
                 openLink(link);
             },
+
+            // Koi
+            ...invokable.funcs("koi_broadcast"),
+            koi_sendChat: koi.sendChat,
+            koi_getMaxLength: koi.getMaxLength,
+            koi_isAlive: koi.isAlive,
+            koi_upvote: koi.upvote,
+            koi_deleteMessage: koi.deleteMessage,
+            koi_test: koi.test,
+
+            // Misc
             emit: (type, data) => {
                 const listeners = moduleListeners[type.toLowerCase()];
 
@@ -61,14 +91,27 @@ function createSandboxedIframe(src, onLoadListener, moduleHolder) {
                     });
                 }
             },
-
-            ...caffeinatedWindowInvokable.funcs("loadDocumentContent", "eval")
+            ...invokable.funcs("loadDocumentContent", "eval")
         };
 
-        caffeinatedWindowInvokable.target = CaffeinatedWindow;
+        // Koi
+        function sendKoiEvent(event) {
+            if (event) {
+                PROXY.koi_broadcast("event", event);
+                PROXY.koi_broadcast(event.event_type, event);
+            }
+        }
 
-        // Add helpers for exposing the frame to the outside.
-        frame.CaffeinatedWindow = CaffeinatedWindow;
+        const koiListenerId = koi.addEventListener("event", sendKoiEvent);
+
+
+        invokable.target = PROXY;
+
+
+        // Init
+        if (onLoadListener) {
+            onLoadListener(frame);
+        }
 
         frame.on = (type, callback) => {
             type = type.toLowerCase();
@@ -82,63 +125,9 @@ function createSandboxedIframe(src, onLoadListener, moduleHolder) {
             moduleListeners[type] = callbacks;
         };
 
-        frame.emit = (type, data) => {
-            caffeinatedWindowInvokable.callFunc("broadcast", type, data);
-        };
-
-        // Koi
-        const koiProxy = {
-            ...koiInvokable.funcs("broadcast"),
-
-            // Proxy to global koi
-            sendChat: koi.sendChat,
-            getMaxLength: koi.getMaxLength,
-            isAlive: koi.isAlive,
-            upvote: koi.upvote,
-            deleteMessage: koi.deleteMessage,
-            test: koi.test,
-        };
-
-        function sendKoiEvent(event) {
-            if (event) {
-                koiProxy.broadcast("event", event);
-                koiProxy.broadcast(event.event_type, event);
-            }
-        }
-
-        const koiListenerId = koi.addEventListener("event", sendKoiEvent);
-
-        koiInvokable.target = koiProxy;
-
-        // UNSAFE
-        const unsafeProxy = {
-            getSystemInfo() {
-                return {
-                    implementation: "Casterlabs Caffeinated",
-                    enviroment: "DESKTOP",
-                    version: VERSION,
-                    protocolVersion: PROTOCOLVERSION,
-                    productChannel: CAFFEINATED.getChannel(),
-                    serverDomain: CAFFEINATED.store.get("server_domain"),
-                    languagePreference: CAFFEINATED.store.get("language")
-                };
-            },
-
-            getModuleInfo() {
-                return {
-                    id: moduleHolder.id,
-                    namespace: moduleHolder.namespace,
-                    types: moduleHolder.getTypes()
-                };
-            }
-        };
-
-        unsafeInvokable.target = unsafeProxy;
-
-        // Init
-        if (onLoadListener) {
-            onLoadListener(frame);
-        }
+        // frame.emit = (type, data) => {
+        //     invokable.callFunc("broadcast", type, data);
+        // };
 
         let alreadyLoadedSrc = false;
 
@@ -148,7 +137,7 @@ function createSandboxedIframe(src, onLoadListener, moduleHolder) {
 
                 const contents = await (await fetch(src)).text();
 
-                CaffeinatedWindow.loadDocumentContent(contents);
+                PROXY.loadDocumentContent(contents);
             }
 
             sendKoiEvent(koi.viewerList);
@@ -156,12 +145,12 @@ function createSandboxedIframe(src, onLoadListener, moduleHolder) {
             sendKoiEvent(koi.streamData);
         });
 
-        frame.unregister = () => {
+        frame.destroy = () => {
             koi.removeListener("event", koiListenerId);
             frame.remove();
         };
 
-        const consolePrefix = moduleHolder ? `` : "anonymous-sandboxed-window";
+        const consolePrefix = moduleHolder ? `sandboxed-window` : "anonymous-sandboxed-window";
 
         // Load the sandbox helper.
         frame.src = `${__dirname}/sandbox.html?frameId=${frameId}&consolePrefix=${consolePrefix}`;

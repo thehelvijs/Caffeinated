@@ -39,114 +39,65 @@
                     }
                 }
 
-                const caffeinatedWindowInvokable = new Invokable(invokableHandler, `${frameId}_caffeinatedwindow`);
-                const koiInvokable = new Invokable(invokableHandler, `${frameId}_koi`);
-                const caffeinatedInvokable = new Invokable(invokableHandler, `${frameId}_caffeinated`);
-                const moduleInvokable = new Invokable(invokableHandler, `${frameId}_module`);
-                const unsafeInvokable = new Invokable(invokableHandler, `${frameId}_unsafe`);
+                const invokable = new Invokable(invokableHandler, `${frameId}`);
+                const caffeinatedWindowEventHandler = new EventHandler();
 
                 // They get deregistered when you call document.open
                 function addListeners() {
                     window.addEventListener("message", async (event) => {
                         console.debug(`[Module Sandbox, Outside -> (${frameId})]`, event.data);
-
-                        // Go down the Invokable chain.
-                        (await caffeinatedWindowInvokable.trigger(event.data)) ||
-                            (await koiInvokable.trigger(event.data)) ||
-                            (await caffeinatedInvokable.trigger(event.data)) ||
-                            (await moduleInvokable.trigger(event.data)) ||
-                            (await unsafeInvokable.trigger(event.data));
+                        await invokable.trigger(event.data);
                     });
                 }
 
                 addListeners();
 
-                // UNSAFE
-                const UNSAFE = {
-                    ...unsafeInvokable.funcs("getModuleInfo", "getSystemInfo")
+                const PROXY = {
+                    // Koi
+                    koi_broadcast: null, // Set down below.
+
+                    // Misc
+                    ...invokable.funcs("emit"),
+                    eval: eval,
+                    loadDocumentContent: (contents) => {
+                        try {
+                            // This allows us to keep existing variables. :)
+                            document.open();
+                            document.write(contents);
+                            document.close();
+                        } catch (e) {
+                            console.error(e);
+                        }
+
+                        addListeners();
+
+                        PROXY.emit("document_content_load", {});
+                    },
                 };
 
-                unsafeInvokable.target = UNSAFE;
+                invokable.target = PROXY;
 
-                Object.freeze(UNSAFE);
-                Object.defineProperty(window, "UNSAFE", {
-                    value: UNSAFE,
-                    writable: false,
-                    configurable: false
-                });
+                // UNSAFE
+                const UNSAFE = {
+                    getModuleInfo: invokable.getFunc("unsafe_getModuleInfo"),
+                    getSystemInfo: invokable.getFunc("unsafe_getSystemInfo")
+                };
 
-                window.UNSAFE = UNSAFE;
+                window.UNSAFE = UNSAFE; // TEMP
 
                 // CaffeinatedWindow
                 {
-
-                    let listeners = {};
-
                     const CaffeinatedWindow = {
-                        ...caffeinatedWindowInvokable.funcs("reload", "openLink", "emit"),
-
-                        on: function (type, callback) {
-                            let callbacks = listeners[type];
-
-                            if (!callbacks) callbacks = [];
-
-                            callbacks.push(callback);
-
-                            listeners[type] = callbacks;
-                        }
+                        reload: invokable.getFunc("caffeinatedWindow_reload"),
+                        openLink: invokable.getFunc("caffeinatedWindow_openLink")
                     };
-
-                    const UnsafeCaffeinatedWindow = {
-                        ...CaffeinatedWindow,
-
-                        broadcast: (type, data) => {
-                            const eventListeners = listeners[type.toLowerCase()];
-
-                            console.debug(type, data);
-
-                            if (eventListeners) {
-                                eventListeners.forEach((callback) => {
-                                    try {
-                                        callback(data);
-                                    } catch (e) {
-                                        console.error("A frame event listener produced an exception: ");
-                                        console.error(e);
-                                    }
-                                });
-                            }
-                        },
-
-                        eval: eval,
-
-                        // This allows us to keep existing variables. :)
-                        loadDocumentContent: (contents) => {
-                            try {
-                                document.open();
-                                document.write(contents);
-                                document.close();
-                            } catch (e) {
-                                console.error(e);
-                            }
-
-                            addListeners();
-
-                            CaffeinatedWindow.emit("document_content_load", {});
-                        },
-                    };
-
-                    caffeinatedWindowInvokable.target = UnsafeCaffeinatedWindow;
 
                     Object.freeze(CaffeinatedWindow);
-                    Object.freeze(UnsafeCaffeinatedWindow);
-
                     Object.defineProperty(window, "CaffeinatedWindow", {
                         value: CaffeinatedWindow,
                         writable: false,
                         configurable: false
                     });
-
-                    // Trigger this event.
-                    CaffeinatedWindow.emit("document_content_load", {});
                 }
 
                 // Koi
@@ -160,8 +111,15 @@
                     let userData = null;
                     let streamData = null;
 
+                    PROXY.koi_broadcast = koiEventHandler.broadcast;
+
                     const koi = {
-                        ...koiInvokable.funcs("sendChat", "getMaxLength", "isAlive", "upvote", "deleteMessage", "test"),
+                        sendChat: invokable.getFunc("koi_sendChat"),
+                        getMaxLength: invokable.getFunc("koi_getMaxLength"),
+                        isAlive: invokable.getFunc("koi_isAlive"),
+                        upvote: invokable.getFunc("koi_upvote"),
+                        deleteMessage: invokable.getFunc("koi_deleteMessage"),
+                        test: invokable.getFunc("koi_test"),
 
                         ...koiEventHandler,
 
@@ -169,7 +127,7 @@
                         addEventListener: function () {
                             if (!warnedDeprecated_addEventListener) {
                                 warnedDeprecated_addEventListener = true;
-                                console.warn("Calls to koi.addEventListener are deprecated. Tell the author of this plugin to use koi.on instead.");
+                                console.warn("Calls to koi.addEventListener are deprecated. Tell the author of this plugin to use `koi.on` instead.");
                             }
 
                             koiEventHandler.on(...arguments);
@@ -185,8 +143,6 @@
                     koi.on("stream_status", (event) => {
                         streamData = event;
                     });
-
-                    koiInvokable.target = koi;
 
                     Object.defineProperty(koi, "viewerList", {
                         get: () => viewerList,
@@ -228,8 +184,6 @@
                         }
                     };
 
-                    caffeinatedInvokable.target = Caffeinated;
-
                     Object.freeze(Caffeinated);
                     Object.defineProperty(window, "Caffeinated", {
                         value: Caffeinated,
@@ -248,8 +202,6 @@
                     const moduleEventHandler = new EventHandler();
 
                     const Module = {
-                        // ...moduleInvokable.funcs(""),
-
                         ...moduleEventHandler,
 
                         get id() {
@@ -265,8 +217,6 @@
                         }
 
                     };
-
-                    moduleInvokable.target = Module;
 
                     Object.freeze(Module);
                     Object.defineProperty(window, "Module", {
@@ -286,6 +236,9 @@
                         });
                     } catch (ignored) { }
                 }
+
+                // Finally signal that we're done.
+                PROXY.emit("document_content_load", {});
             }
         </script>
     </head>
