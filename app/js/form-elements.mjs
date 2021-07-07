@@ -5,7 +5,7 @@ import FormCurrency from "./form-elements/currency.mjs";
 import FormDynamic from "./form-elements/dynamic.mjs";
 import FormFile from "./form-elements/file.mjs";
 import FormFont from "./form-elements/font.mjs";
-import FormIframe from "./form-elements/iframe.mjs";
+// import FormIframe from "./form-elements/iframe.mjs";
 import FormNumber from "./form-elements/number.mjs";
 import FormPassword from "./form-elements/password.mjs";
 import FormRange from "./form-elements/range.mjs";
@@ -22,16 +22,14 @@ const ELEMENTS = {
     "dynamic": FormDynamic,
     "file": FormFile,
     "font": FormFont,
-    "iframe-src": FormIframe,
+    // "iframe-src": FormIframe,
     "number": FormNumber,
     "password": FormPassword,
     "range": FormRange,
     "search": FormSearch,
     "select": FormSelect,
     "textarea": FormTextArea,
-    "text": FormText,
-
-    "input": FormText // Alias of "text"
+    "text": FormText
 };
 
 const getModuleElement = async (module, key, data, stored, formCallback, defaultValue = module.defaultSettings[key]) => {
