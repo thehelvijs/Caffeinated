@@ -292,11 +292,10 @@ class Caffeinated {
 
         PLATFORM_DATA = await (await fetch(`https://${CAFFEINATED.store.get("server_domain")}/v2/koi/platforms`)).json();
 
-        {
-            const div = await createSandboxedIframe("https://api.casterlabs.co/v1/caffeinated/changelog");
-
-            document.querySelector("#changelog").appendChild(div);
-        }
+        MODULES.createContentFrame(document.querySelector("#changelog"), "https://api.casterlabs.co/v1/caffeinated/changelog").then((frame) => {
+            // Map the openLink function to ours.
+            frame.contentWindow.openLink = openLink;
+        });
 
         // Don't show the page on first install, this is the easy way to accomplish this.
         if (CAFFEINATED.store.get("token")) {
@@ -671,7 +670,7 @@ class Caffeinated {
 
     getTimeLiveInMilliseconds() {
         if (this.streamdata.is_live) {
-            return Date.now() - new Date(this.streamdata.start_time).getTime();
+            return new Date().getTime() - new Date(this.streamdata.start_time).getTime();
         } else {
             return 0;
         }

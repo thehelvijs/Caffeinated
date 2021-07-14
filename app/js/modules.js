@@ -11,51 +11,7 @@ class ModuleHolder {
     }
 
     getUUID() {
-        return this.namespace + ":" + this.id;
-    }
-
-    get namespace() {
-        // TEMPORARY
-        return this.#module.namespace;
-    }
-
-    get id() {
-        // TEMPORARY
-        return this.#module.id;
-    }
-
-    get displayname() {
-        // TEMPORARY
-        return this.#module.displayname ?? prettifyString(this.id);
-    }
-
-    get settings() {
-        try {
-            const path = `modules.${module.namespace}.${module.id}`;
-
-            return CAFFEINATED.store.get(path) ?? {};
-        } catch (e) {
-            console.error("Unable to save module");
-            console.error(e);
-        }
-    }
-
-    set settings(value) {
-        try {
-            const path = `modules.${module.namespace}.${module.id}`;
-            const data = value ?? {};
-
-            data.__module = {
-                customdisplayname: module.customdisplayname
-            };
-
-            CAFFEINATED.store.set(path, data);
-
-            console.debug(`Save succeeded. (${module.namespace}:${module.id})`);
-        } catch (e) {
-            console.error("Unable to save module");
-            console.error(e);
-        }
+        return this.#module.namespace + ":" + this.#module.id;
     }
 
     unload() {
@@ -282,34 +238,117 @@ class Modules {
         }
     }
 
-    createContentFrame(page, src, classList = "", module) {
-        const splitSrc = src.split(/[/\\]/g);
-        splitSrc.pop();
-        const baseSrc = splitSrc.join("/");
+    createContentFrame(page, src, classList = "", owner = null) {
+        let frame = null;
 
-        return new Promise(async (resolve) => {
-            const div = createSandboxedIframe(src, (frame) => {
+        let moduleListeners = {};
+        let sandboxListeners = {};
+
+        const reload = () => {
+            return new Promise(async (resolve) => {
+                // Sandbox listeners should be cleared to prevent memory leaks.
+                sandboxListeners = {};
+
+                frame?.remove();
+
+                frame = document.createElement("iframe");
+
+                const contents = await this.loadContents(src);
+
                 frame.classList = classList;
 
-                frame.on("document_content_load", () => {
-                    frame.CaffeinatedWindow.eval(`
+                page.appendChild(frame);
+
+                const splitSrc = src.split(/[/\\]/g);
+                splitSrc.pop();
+                const baseSrc = splitSrc.join("/");
+
+                const CaffeinatedWindow = {
+                    reload: () => {
+                        reload();
+                    },
+                    baseSrc: baseSrc + "/",
+                    // owner: owner,
+                    on: (type, callback) => {
+                        type = type.toLowerCase();
+
+                        let callbacks = sandboxListeners[type];
+
+                        if (!callbacks) callbacks = [];
+
+                        callbacks.push(callback);
+
+                        sandboxListeners[type] = callbacks;
+                    },
+                    emit: (type, data) => {
+                        const listeners = moduleListeners[type.toLowerCase()];
+
+                        if (listeners) {
+                            listeners.forEach((callback) => {
+                                try {
+                                    callback(data);
+                                } catch (e) {
+                                    console.error("A frame event listener produced an exception: ");
+                                    console.error(e);
+                                }
+                            });
+                        }
+                    }
+                };
+
+                Object.freeze(CaffeinatedWindow);
+
+                frame.addEventListener("load", () => {
                     try {
-                        for (const rewriteElement of document.querySelectorAll("[caffeinated-rewrite]")) {
+                        for (const rewriteElement of frame.contentDocument.querySelectorAll("[caffeinated-rewrite]")) {
                             if (rewriteElement.href) {
-                                rewriteElement.href = \`${baseSrc}/\${ rewriteElement.getAttribute("path") }\`;
+                                rewriteElement.href = `${baseSrc}/${rewriteElement.getAttribute("path")}`;
                             } else if (rewriteElement.src) {
-                                rewriteElement.src = \`${baseSrc}/\${ rewriteElement.getAttribute("path") }\`;
+                                rewriteElement.src = `${baseSrc}/${rewriteElement.getAttribute("path")}`;
                             }
                         }
-                    } catch (ignored) { console.log(ignored) }
-                    `);
-
-                    resolve(div);
+                    } catch (ignored) { } finally {
+                        resolve(frame);
+                    }
                 });
-            }, `${module.namespace}:${module.id}`);
 
-            page.appendChild(div);
-        });
+                frame.contentDocument.open();
+                frame.contentDocument.write(contents);
+                frame.contentDocument.close();
+
+                frame.contentWindow.CaffeinatedWindow = CaffeinatedWindow;
+                frame.CaffeinatedWindow = CaffeinatedWindow;
+
+                frame.on = (type, callback) => {
+                    type = type.toLowerCase();
+
+                    let callbacks = moduleListeners[type];
+
+                    if (!callbacks) callbacks = [];
+
+                    callbacks.push(callback);
+
+                    moduleListeners[type] = callbacks;
+                };
+
+                frame.emit = (type, data) => {
+                    const listeners = sandboxListeners[type.toLowerCase()];
+
+                    if (listeners) {
+                        listeners.forEach((callback) => {
+                            try {
+                                callback(data);
+                            } catch (e) {
+                                console.error("A frame event listener produced an exception: ");
+                                console.error(e);
+                            }
+                        });
+                    }
+                };
+            });
+        };
+
+        return reload();
     }
 
     loadContents(src) {

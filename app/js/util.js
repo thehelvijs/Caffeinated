@@ -1,29 +1,5 @@
 const FILE_SIZE_THRESHOLD = 1048576 * 10; // 10mb
 
-function createLoosePromise() {
-    let resolve;
-    let reject;
-
-    let promise = new Promise(function (_resolve, _reject) {
-        resolve = _resolve;
-        reject = _reject;
-    });
-
-    Object.defineProperty(promise, "resolve", {
-        get: () => {
-            return resolve;
-        }
-    });
-
-    Object.defineProperty(promise, "reject", {
-        get: () => {
-            return reject;
-        }
-    });
-
-    return promise;
-}
-
 function looseInterpret(code, ...args) {
     try {
         return Function(code)(...args);
