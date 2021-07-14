@@ -1,72 +1,107 @@
 
 class ModuleHolder {
-    #module;
-    sockets = [];
-    dockSockets = [];
+    #id;
+    #namespace;
+    #types;
     #elements;
 
-    constructor(module, elements = []) {
-        this.#module = module;
-        this.#elements = elements;
+    module = null;
+
+    constructor(id, namespace, types) {
+        this.#id = id;
+        this.#namespace = namespace;
+        this.#types = types;
+
+        const moduleEventHandler = new EventHandler();
+        let settingsDisplay = {};
+
+        const instance = this;
+
+        this.module = {
+            ...moduleEventHandler,
+
+            getInfo() {
+                return {
+                    id: instance.#id,
+                    namespace: instance.#namespace,
+                    types: instance.#types,
+                };
+            },
+
+            // Settings
+            getSettings() {
+                try {
+                    const path = `modules.${instance.#namespace}.${instance.#id}`;
+
+                    return CAFFEINATED.store.get(path) ?? {};
+                } catch (e) {
+                    console.error("Unable to save module");
+                    console.error(e);
+                }
+            },
+
+            setSettings(value) {
+                try {
+                    const path = `modules.${instance.#namespace}.${instance.#id}`;
+                    const data = value ?? {};
+
+                    data.__module = {
+                        // customdisplayname: module.customdisplayname
+                    };
+
+                    CAFFEINATED.store.set(path, data);
+
+                    console.debug(`Save succeeded. (${instance.#namespace}:${instance.#id})`);
+                } catch (e) {
+                    console.error("Unable to save module");
+                    console.error(e);
+                }
+            },
+
+            // Settings Display
+            getSettingsDisplay() {
+                return settingsDisplay;
+            },
+
+            setSettingsDisplay(value) {
+                // TODO
+            },
+
+            renderSettingsDisplay() {
+                // TODO
+            },
+
+            updateSettingsDisplay() {
+                // TODO
+            }
+        };
+
+        Object.freeze(this);
+        Object.freeze(this.module);
     }
 
     getUUID() {
-        return this.namespace + ":" + this.id;
-    }
-
-    get namespace() {
-        // TEMPORARY
-        return this.#module.namespace;
+        return `${this.#namespace}:${this.#id}`;
     }
 
     get id() {
-        // TEMPORARY
-        return this.#module.id;
+        return this.#id;
+    }
+
+    get namespace() {
+        return this.#namespace;
     }
 
     get displayname() {
-        // TEMPORARY
-        return this.#module.displayname ?? prettifyString(this.id);
-    }
-
-    get settings() {
-        try {
-            const path = `modules.${module.namespace}.${module.id}`;
-
-            return CAFFEINATED.store.get(path) ?? {};
-        } catch (e) {
-            console.error("Unable to save module");
-            console.error(e);
-        }
-    }
-
-    set settings(value) {
-        try {
-            const path = `modules.${module.namespace}.${module.id}`;
-            const data = value ?? {};
-
-            data.__module = {
-                customdisplayname: module.customdisplayname
-            };
-
-            CAFFEINATED.store.set(path, data);
-
-            console.debug(`Save succeeded. (${module.namespace}:${module.id})`);
-        } catch (e) {
-            console.error("Unable to save module");
-            console.error(e);
-        }
+        return prettifyString(this.#id);
     }
 
     unload() {
-        if (this.#module.onUnload) {
-            this.#module.onUnload();
-        }
 
         this.#elements.forEach((element) => element.remove());
 
-        this.sockets.forEach((socket) => socket.disconnect());
-        this.dockSockets.forEach((socket) => socket.disconnect());
+        // this.sockets.forEach((socket) => socket.disconnect());
+        // this.dockSockets.forEach((socket) => socket.disconnect());
 
         // delete MODULES.moduleClasses[this.#module.namespace];
     }
@@ -79,19 +114,13 @@ class ModuleHolder {
         return this.#elements;
     }
 
-    getInstance() {
-        return this.#module;
-    }
-
     getTypes() {
-        return this.#module.type.toUpperCase().split(" ");
+        return this.#types;
     }
 
 }
 
 class Modules {
-    moduleClasses = {};
-    uniqueModuleClasses = {};
     #modules = new Map();
 
     getAllModuleNamespaces() {

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <title>Casterlabs Caffeinated Sandbox</title>
+        <script src="./js/invokable.js"></script>
+        <script src="./js/event-handler.js"></script>
+        <script>
+            (async () => {
+                const urlVars = (() => {
+                    let vars = {};
+
+                    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
+                        vars[key] = value;
+                    });
+
+                    return vars;
+                })();
+
+                const { frameId, consolePrefix, isDevEnviroment, type } = urlVars;
+
+                const parentWindow = window.parent;
+                const invokableHandler = (data) => {
+                    parentWindow.postMessage(data, "*");
+                };
+
+                // Add a prefix to console.log
+                {
+                    const { info, log, warn, error, debug } = console;
+
+                    for (const func of [info, log, warn, error, debug]) {
+                        console[func.name] = function () {
+                            func.apply(console, [
+                                `[${consolePrefix}]`,
+                                ...arguments
+                            ]);
+                        };
+                    }
+                }
+
+                // UNSAFE
+                const unsafeInvokable = new Invokable(invokableHandler, `${frameId}_unsafe`);
+
+                const UNSAFE = {
+                    ...unsafeInvokable.funcs("getSystemInfo"),
+
+                    eval: eval,
+
+                    loadDocumentContent: (contents) => {
+                        try {
+                            // This allows us to keep existing variables. :)
+                            document.open();
+                            document.write(contents);
+                            document.close();
+                        } catch (e) {
+                            console.error(e);
+                        }
+
+                        addListeners();
+
+                        UNSAFE.emit("document_content_load", {});
+                    }
+                };
+
+                window.UNSAFE = UNSAFE; // TEMP
+                unsafeInvokable.target = UNSAFE;
+
+                const invokables = [
+                    unsafeInvokable,
+                    await new CaffeinatedWindowProxy(invokableHandler, frameId),
+                    await new ModuleProxy(invokableHandler, frameId, type),
+                    await new CaffeinatedProxy(invokableHandler, frameId),
+                    await new KoiProxy(invokableHandler, frameId)
+                ];
+
+                // They get deregistered when you call document.open
+                function addListeners() {
+                    window.addEventListener("message", async (event) => {
+                        for (const invokable of invokables) {
+                            if (await invokable.trigger(devent.data)) {
+                                console.debug(`[Module Sandbox, Outside -> (${frameId})]`, event.data);
+                                break;
+                            }
+                        }
+                    });
+                }
+
+                addListeners();
+
+                // Isolate.
+                for (const property of ["parent", "top", "frameElement", "require"]) {
+                    try {
+                        Object.defineProperty(window, property, {
+                            value: undefined,
+                            writable: false,
+                            configurable: false
+                        });
+                    } catch (ignored) { }
+                }
+
+                // Finally signal that we're done.
+                PROXY.emit("document_content_load", {});
+            })();
+        </script>
+    </head>
+
+    <body>
+
+    </body>
+
+</html>

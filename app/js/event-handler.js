@@ -23,17 +23,36 @@ function EventHandler() {
         },
 
         broadcast(type, data) {
-            const callbacks = listeners[type.toLowerCase()];
+            // Broadcast under a wildcard.
+            {
+                const wildCardCallbacks = listeners["*"];
 
-            if (callbacks) {
-                Object.values(callbacks).forEach((callback) => {
-                    try {
-                        callback(Object.assign({}, data));
-                    } catch (e) {
-                        console.error("A listener produced an exception: ");
-                        console.error(e);
-                    }
-                });
+                if (wildCardCallbacks) {
+                    Object.values(wildCardCallbacks).forEach((callback) => {
+                        try {
+                            callback(type, Object.assign({}, data));
+                        } catch (e) {
+                            console.error("A listener produced an exception: ");
+                            console.error(e);
+                        }
+                    });
+                }
+            }
+
+            // Broadcast under type.
+            {
+                const callbacks = listeners[type.toLowerCase()];
+
+                if (callbacks) {
+                    Object.values(callbacks).forEach((callback) => {
+                        try {
+                            callback(Object.assign({}, data));
+                        } catch (e) {
+                            console.error("A listener produced an exception: ");
+                            console.error(e);
+                        }
+                    });
+                }
             }
         }
     };

@@ -22,90 +22,98 @@ function createSandboxedIframe(src, onLoadListener, moduleHolder) {
         };
 
         // Proxy all calls through postMessage.
-        const invokable = new Invokable(invokableHandler, frameId);
+        const unsafeInvokable = new Invokable(invokableHandler, `${frameId}_unsafe`);
+        const koiInvokable = new Invokable(invokableHandler, `${frameId}_koi`);
+        const moduleInvokable = new Invokable(invokableHandler, `${frameId}_module`);
+        const caffeinatedWindowInvokable = new Invokable(invokableHandler, `${frameId}_caffeinatedWindow`);
+        const caffeinatedInvokable = new Invokable(invokableHandler, `${frameId}_caffeinated`);
 
         window.addEventListener("message", async (event) => {
-            if (await invokable.trigger(event.data)) {
+            if (
+                await unsafeInvokable.trigger(event.data) ||
+                await moduleInvokable.trigger(event.data) ||
+                await caffeinatedWindowInvokable.trigger(event.data) ||
+                await caffeinatedInvokable.trigger(event.data) ||
+                await koiInvokable.trigger(event.data)
+            ) {
                 console.debug(`[Module Sandbox, (${invokable.id}) -> Outside]`, event.data)
             }
         });
 
-        const PROXY = {
-            // UNSAFE
-            unsafe_getSystemInfo() {
-                return {
-                    implementation: "Casterlabs Caffeinated",
-                    enviroment: "DESKTOP",
-                    version: VERSION,
-                    protocolVersion: PROTOCOLVERSION,
-                    productChannel: CAFFEINATED.getChannel(),
-                    serverDomain: CAFFEINATED.store.get("server_domain"),
-                    languagePreference: CAFFEINATED.store.get("language")
-                };
-            },
-            unsafe_getModuleInfo() {
-                if (moduleHolder) {
+        // Unsafe
+        {
+            const UnsafeProxy = {
+                ...invokable.funcs("loadDocumentContent", "eval"),
+
+                emit: (type, data) => {
+                    const listeners = moduleListeners[type.toLowerCase()];
+
+                    if (listeners) {
+                        listeners.forEach((callback) => {
+                            try {
+                                callback(data);
+                            } catch (e) {
+                                console.error("A frame event listener produced an exception: ");
+                                console.error(e);
+                            }
+                        });
+                    }
+                },
+
+                getSystemInfo() {
                     return {
-                        id: moduleHolder.id,
-                        namespace: moduleHolder.namespace,
-                        types: moduleHolder.getTypes()
-                    };
-                } else {
-                    return {
-                        id: null,
-                        namespace: null,
-                        types: null
+                        implementation: "Casterlabs Caffeinated",
+                        enviroment: "DESKTOP",
+                        version: VERSION,
+                        protocolVersion: PROTOCOLVERSION,
+                        productChannel: CAFFEINATED.getChannel(),
+                        serverDomain: CAFFEINATED.store.get("server_domain"),
+                        languagePreference: CAFFEINATED.store.get("language")
                     };
                 }
-            },
+            };
 
-            // CaffeinatedWindow
-            reload: () => {
-                reload();
-            },
-            openLink: (link) => {
-                openLink(link);
-            },
+            unsafeInvokable.target = UnsafeProxy;
+        }
 
-            // Koi
-            ...invokable.funcs("koi_broadcast"),
-            koi_sendChat: koi.sendChat,
-            koi_getMaxLength: koi.getMaxLength,
-            koi_isAlive: koi.isAlive,
-            koi_upvote: koi.upvote,
-            koi_deleteMessage: koi.deleteMessage,
-            koi_test: koi.test,
+        // Module
+        {
+            // Proxy events to the module.
+            moduleHolder.module.on("*", moduleInvokable.func("emit"));
 
-            // Misc
-            emit: (type, data) => {
-                const listeners = moduleListeners[type.toLowerCase()];
+            moduleInvokable.target = moduleHolder.module;
+        }
 
-                if (listeners) {
-                    listeners.forEach((callback) => {
-                        try {
-                            callback(data);
-                        } catch (e) {
-                            console.error("A frame event listener produced an exception: ");
-                            console.error(e);
-                        }
-                    });
-                }
-            },
-            ...invokable.funcs("loadDocumentContent", "eval")
-        };
+        // CaffeinatedWindow
+        {
+            const CaffeinatedWindowProxy = {
+
+            };
+
+            caffeinatedWindowInvokable.target = CaffeinatedWindowProxy;
+        }
 
         // Koi
+        const KoiProxy = {
+            ...invokable.funcs("broadcast"),
+
+            sendChat: koi.sendChat,
+            getMaxLength: koi.getMaxLength,
+            isAlive: koi.isAlive,
+            upvote: koi.upvote,
+            deleteMessage: koi.deleteMessage,
+            test: koi.test
+        };
+
         function sendKoiEvent(event) {
             if (event) {
-                PROXY.koi_broadcast("event", event);
-                PROXY.koi_broadcast(event.event_type, event);
+                KoiProxy.broadcast(event.event_type, event);
             }
         }
 
         const koiListenerId = koi.addEventListener("event", sendKoiEvent);
 
-
-        invokable.target = PROXY;
+        koiInvokable.target = KoiProxy;
 
 
         // Init
