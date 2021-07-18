@@ -307,7 +307,7 @@ MODULES.uniqueModuleClasses["casterlabs_chat_display"] = class {
                 koi.upvote(id);
             });
 
-            this.popoutWindow.addEventListener("delete_request", (id) => {
+            this.popoutWindow.addListener("delete_request", (id) => {
                 koi.deleteMessage(id);
             });
 
