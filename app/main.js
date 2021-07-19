@@ -1,38 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
-const windowStateKeeper = require("electron-window-state");
+const { app, BrowserWindow } = require("electron");
 
-function createWindow() {
-    const mainWindowState = windowStateKeeper({
-        defaultWidth: 700,
-        defaultHeight: 500,
-        file: "main-window.json"
-    });
-
-    // Create the browser window.
-    const mainWindow = new BrowserWindow({
-        minWidth: 700,
-        minHeight: 500,
-        width: mainWindowState.width,
-        height: mainWindowState.height,
-        x: mainWindowState.x,
-        y: mainWindowState.y,
-        transparent: false,
-        resizable: true,
-        backgroundColor: "#141414",
-        icon: __dirname + "/media/app_icon.png",
-        frame: false,
-        webPreferences: {
-            nodeIntegration: true,
-            enableRemoteModule: true,
-            webSecurity: false
-        }
-    })
-
-    // and load the index.html of the app.
-    mainWindow.loadFile("index.html")
-
-    mainWindowState.manage(mainWindow);
-}
+const createWindow = require("./createWindow.js");
 
 // Disable web cache.
 app.commandLine.appendSwitch("disable-http-cache");
