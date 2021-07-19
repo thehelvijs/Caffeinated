@@ -1,7 +1,7 @@
 const { BrowserWindow } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 
-function createWindow() {
+function createWindow(baseDir) {
     const mainWindowState = windowStateKeeper({
         defaultWidth: 700,
         defaultHeight: 500,
@@ -20,17 +20,18 @@ function createWindow() {
         resizable: true,
         show: false,
         backgroundColor: "#141414",
-        icon: __dirname + "/media/app_icon.png",
+        icon: baseDir + "/media/app_icon.png",
         frame: false,
         webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false,
             enableRemoteModule: true,
             webSecurity: false
         }
     })
 
     // and load the index.html of the app.
-    mainWindow.loadFile("index.html");
+    mainWindow.loadFile(baseDir + "/index.html");
     mainWindowState.manage(mainWindow);
 
     // Emitted when the window is closed.
@@ -46,6 +47,8 @@ function createWindow() {
     mainWindow.once("ready-to-show", () => {
         mainWindow.show();
     });
+
+    return mainWindow;
 }
 
 module.exports = createWindow;
