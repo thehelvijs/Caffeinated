@@ -8,8 +8,8 @@ const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron").remo
 const windowStateKeeper = require("electron-window-state");
 const RPC = require("discord-rpc");
 
-const PROTOCOLVERSION = 94;
-const VERSION = "1.2-beta4";
+const PROTOCOLVERSION = 95;
+const VERSION = "1.2-beta5";
 const CLIENT_ID = "LmHG2ux992BxqQ7w9RJrfhkW";
 const BROWSERWINDOW = electron.getCurrentWindow();
 
@@ -74,11 +74,28 @@ const LOGIN_BUTTONS = {
 const LOGIN_CALLBACKS = {
     twitch(backCallback) {
         UI.setBackCallback(backCallback);
-        UI.login("caffeinated_twitch", "https://id.twitch.tv/oauth2/authorize?client_id=ekv4a842grsldmwrmsuhrw8an1duxt&force_verify=true&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth?type=caffeinated_twitch&response_type=code&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions&state=");
+        UI.login(
+            "caffeinated_twitch",
+            "https://id.twitch.tv/oauth2/authorize" +
+            "?client_id=ekv4a842grsldmwrmsuhrw8an1duxt" +
+            "&force_verify=true" +
+            `&redirect_uri=${encodeURIComponent("https://casterlabs.co/auth")}` +
+            "&response_type=code" +
+            "&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions" +
+            "&state="
+        );
     },
     trovo(backCallback) {
         UI.setBackCallback(backCallback);
-        UI.login("caffeinated_trovo", "https://open.trovo.live/page/login.html?client_id=BGUnwUJUSJS2wf5xJpa2QrJRU4ZVcMgS&response_type=token&scope=channel_details_self+chat_send_self+send_to_my_channel+user_details_self+chat_connect&redirect_uri=https%3A%2F%2Fcasterlabs.co/auth/trovo&state=");
+        UI.login(
+            "caffeinated_trovo",
+            "https://open.trovo.live/page/login.html" +
+            "?client_id=BGUnwUJUSJS2wf5xJpa2QrJRU4ZVcMgS" +
+            `&redirect_uri=${encodeURIComponent("https://casterlabs.co/auth/trovo")}` +
+            "&response_type=token" +
+            "&scope=channel_details_self+chat_send_self+send_to_my_channel+user_details_self+chat_connect" +
+            "&state="
+        );
     },
     caffeine(backCallback) {
         UI.setBackCallback(backCallback);
@@ -86,11 +103,28 @@ const LOGIN_CALLBACKS = {
     },
     glimesh(backCallback) {
         UI.setBackCallback(backCallback);
-        UI.login("caffeinated_glimesh", "https://glimesh.tv/oauth/authorize?force_verify=true&client_id=3c60c5b45bbae0eadfeeb35d1ee0c77e580b31fd42a5fbc8ae965ca7106c5139&redirect_uri=https%3A%2F%2Fcasterlabs.co%2Fauth%2Fglimesh&response_type=code&scope=public+email+chat&state=");
+        UI.login(
+            "caffeinated_glimesh",
+            "https://glimesh.tv/oauth/authorize" +
+            "?client_id=3c60c5b45bbae0eadfeeb35d1ee0c77e580b31fd42a5fbc8ae965ca7106c5139" +
+            "&force_verify=true" +
+            `&redirect_uri=${encodeURIComponent("https://casterlabs.co/auth/glimesh")}` +
+            "&response_type=code" +
+            "&scope=public+email+chat" +
+            "&state="
+        );
     },
     brime(backCallback) {
         UI.setBackCallback(backCallback);
-        UI.loginScreen("BRIME");
+        UI.login(
+            "caffeinated_brime",
+            "https://auth.brime.tv/authorize" +
+            "?client_id=l87k8wMUeyuotnCp9HFsOzQ4gTi66atj" +
+            `&redirect_uri=${encodeURIComponent("https://casterlabs.co/auth")}` +
+            "&response_type=code" +
+            "&scope=offline_access" +
+            "&state="
+        );
     }
 }
 
