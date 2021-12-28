@@ -76,25 +76,14 @@ const LOGIN_CALLBACKS = {
         UI.setBackCallback(backCallback);
         UI.login(
             "caffeinated_twitch",
-            "https://id.twitch.tv/oauth2/authorize" +
-            "?client_id=ekv4a842grsldmwrmsuhrw8an1duxt" +
-            "&force_verify=true" +
-            `&redirect_uri=${encodeURIComponent("https://casterlabs.co/auth")}` +
-            "&response_type=code" +
-            "&scope=user:read:email%20chat:read%20chat:edit%20bits:read%20channel:read:subscriptions%20channel_subscriptions%20channel:read:redemptions" +
-            "&state="
+            "https://casterlabs.co/auth/redirect/twitch?state="
         );
     },
     trovo(backCallback) {
         UI.setBackCallback(backCallback);
         UI.login(
             "caffeinated_trovo",
-            "https://open.trovo.live/page/login.html" +
-            "?client_id=BGUnwUJUSJS2wf5xJpa2QrJRU4ZVcMgS" +
-            `&redirect_uri=${encodeURIComponent("https://casterlabs.co/auth/trovo")}` +
-            "&response_type=token" +
-            "&scope=channel_details_self+chat_send_self+send_to_my_channel+user_details_self+chat_connect" +
-            "&state="
+            "https://casterlabs.co/auth/redirect/trovo?state="
         );
     },
     caffeine(backCallback) {
@@ -105,25 +94,14 @@ const LOGIN_CALLBACKS = {
         UI.setBackCallback(backCallback);
         UI.login(
             "caffeinated_glimesh",
-            "https://glimesh.tv/oauth/authorize" +
-            "?client_id=3c60c5b45bbae0eadfeeb35d1ee0c77e580b31fd42a5fbc8ae965ca7106c5139" +
-            "&force_verify=true" +
-            `&redirect_uri=${encodeURIComponent("https://casterlabs.co/auth/glimesh")}` +
-            "&response_type=code" +
-            "&scope=public+email+chat" +
-            "&state="
+            "https://casterlabs.co/auth/redirect/glimesh?state="
         );
     },
     brime(backCallback) {
         UI.setBackCallback(backCallback);
         UI.login(
             "caffeinated_brime",
-            "https://auth.brime.tv/authorize" +
-            "?client_id=l87k8wMUeyuotnCp9HFsOzQ4gTi66atj" +
-            `&redirect_uri=${encodeURIComponent("https://casterlabs.co/auth")}` +
-            "&response_type=code" +
-            "&scope=offline_access" +
-            "&state="
+            "https://casterlabs.co/auth/redirect/brime?state="
         );
     }
 }
