@@ -97,7 +97,7 @@ class Koi {
                         this.broadcast("error", json);
                     } else if (json.type == "EVENT") {
                         const event = json.event;
-                        const type = event.event_type;
+                        let type = event.event_type;
 
                         if ((type === "DONATION") && (event.sender.platform === "CASTERLABS_SYSTEM")) {
                             const streamerPlatform = CAFFEINATED.userdata.streamer.platform; // TODO MOVE AWAY FROM THIS
@@ -132,6 +132,9 @@ class Koi {
                             event.isTest = true;
                         } else if ((type === "SUBSCRIPTION") && event.subscriber && (event.subscriber.platform === "CASTERLABS_SYSTEM")) {
                             event.isTest = true;
+                        } else if (type === "PLATFORM_MESSAGE") { // TEMP FIX.
+                            event.event_type = "CHAT";
+                            type = "CHAT";
                         }
 
                         if ((type === "USER_UPDATE") && !userAuthReached) {

@@ -19,7 +19,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
     ]
 
     async setToken(code) {
-        const response = await fetch("https://api.casterlabs.co/proxy/spotify/token?code=" + code);
+        const response = await fetch("https://api.casterlabs.co/v2/natsukashii/spotify?code=" + code);
         const authResult = await response.json();
 
         if (!authResult.error) {
@@ -91,7 +91,7 @@ MODULES.moduleClasses["casterlabs_now_playing"] = class {
     async check() {
         if (this.refreshToken) {
             if (!this.accessToken) {
-                const auth = await (await fetch("https://api.casterlabs.co/proxy/spotify/token?refresh_token=" + this.refreshToken)).json();
+                const auth = await (await fetch("https://api.casterlabs.co/v2/natsukashii/spotify?refresh_token=" + this.refreshToken)).json();
 
                 if (auth.error) {
                     this.refreshToken = null;
