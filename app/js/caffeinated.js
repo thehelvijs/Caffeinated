@@ -507,25 +507,25 @@ class Caffeinated {
             }
         });
 
-        for (const payload of Object.values(this.store.get("resource_tokens"))) {
-            try {
-                const response = await fetch(`https://${payload.server_location}/data?token=${payload.token}`)
+        // for (const payload of Object.values(this.store.get("resource_tokens"))) {
+        //     try {
+        //         const response = await fetch(`https://${payload.server_location}/data?token=${payload.token}`)
 
-                if (response.status == 200) {
-                    const result = await response.json();
+        //         if (response.status == 200) {
+        //             const result = await response.json();
 
-                    try {
-                        await this.repomanager.addRepo(result.data.module_url);
-                    } catch (e) {
-                        console.error(e);
-                    }
-                } else {
-                    this.removeResourceToken(payload.token);
-                }
-            } catch (e) {
-                alert("Unable to connect to resource server, some resources will not be available.");
-            }
-        }
+        //             try {
+        //                 await this.repomanager.addRepo(result.data.module_url);
+        //             } catch (e) {
+        //                 console.error(e);
+        //             }
+        //         } else {
+        //             this.removeResourceToken(payload.token);
+        //         }
+        //     } catch (e) {
+        //         alert("Unable to connect to resource server, some resources will not be available.");
+        //     }
+        // }
 
         for (const [namespace, modules] of Object.entries(this.store.get("modules"))) {
             for (const id of Object.keys(modules)) {
@@ -545,26 +545,26 @@ class Caffeinated {
             }
         }
 
-        await MODULES.initalizeModule({
-            namespace: "casterlabs_caffeinated_redeem",
-            type: "settings",
-            persist: true,
-            id: "resource_redeem",
+        // await MODULES.initalizeModule({
+        //     namespace: "casterlabs_caffeinated_redeem",
+        //     type: "settings",
+        //     persist: true,
+        //     id: "resource_redeem",
 
-            onSettingsUpdate() {
-                this.page.querySelector('[name="code_to_redeem"]').value = "";
+        //     onSettingsUpdate() {
+        //         this.page.querySelector('[name="code_to_redeem"]').value = "";
 
-                CAFFEINATED.addResourceToken(this.settings.code_to_redeem);
-            },
+        //         CAFFEINATED.addResourceToken(this.settings.code_to_redeem);
+        //     },
 
-            settingsDisplay: {
-                code_to_redeem: "input"
-            },
+        //     settingsDisplay: {
+        //         code_to_redeem: "input"
+        //     },
 
-            defaultSettings: {
-                code_to_redeem: ""
-            }
-        });
+        //     defaultSettings: {
+        //         code_to_redeem: ""
+        //     }
+        // });
 
         MODULES.initalizeModule({
             displayname: "caffeinated.credits.title",
